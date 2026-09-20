@@ -14,16 +14,16 @@ struct EditorView: View {
     @State private var exportRequest: ExportRequest?
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
+    @State private var focusedAdjustmentID: String?
     @Environment(\.scenePhase) private var scenePhase
     private enum Panel: String, CaseIterable {
-        case light = "Lumière", color = "Couleur", curve = "Courbes", mixer = "Mélangeur", grading = "Grading", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets"
+        case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets"
         var symbol: String {
             switch self {
             case .light: "sun.max"
             case .color: "slider.horizontal.3"
             case .curve: "point.topleft.down.to.point.bottomright.curvepath"
-            case .mixer: "circle.lefthalf.filled"
-            case .grading: "circle.hexagongrid"
+            case .colorTools: "circle.lefthalf.filled"
             case .effects: "camera.filters"
             case .detail: "triangle"
             case .optics: "camera.aperture"
@@ -36,12 +36,16 @@ struct EditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
+            header.dimsDuringAdjustment()
             if let result = session.result {
-                HistogramView(histogram: result.histogram).padding(.vertical, 8)
+                HistogramView(histogram: result.histogram)
+                    .frame(height: 52).padding(.vertical, 4)
+                    .dimsDuringAdjustment()
                 PhotoCanvas(result: result, showingOriginal: $session.showingOriginal,
-                            activeMask: panel == .masks ? session.selectedMask : nil,
+                            activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
+                            showsMaskOverlay: !isAdjustingSelectedMask,
+                            allowsMaskEditing: panel == .masks,
                             brushMode: session.brushMode,
                             onBrushBegin: session.beginBrushStroke,
                             onBrushPoint: session.appendBrushPoint,
@@ -60,99 +64,19 @@ struct EditorView: View {
                 HStack {
                     Text(session.document?.originalName ?? "Photographie").lineLimit(1)
                     Text("·")
-                    Label(session.activeLayerName,
-                          systemImage: session.selectedMaskID == nil ? "rectangle.fill" : "circle.dashed")
-                        .lineLimit(1).accessibilityIdentifier("active-layer")
+                    activeLayerMenu
                     Spacer()
                     if session.isRendering { ProgressView().controlSize(.mini) }
                     Text(result.isRAW ? "RAW" : "\(result.sourceWidth) × \(result.sourceHeight)")
-                }.font(.caption2).foregroundStyle(.secondary).padding(.horizontal).padding(.vertical, 6)
-                if panel == .curve {
-                    ScrollView {
-                        ToneCurveEditor(curves: session.activeState.curves, histogram: result.histogram,
-                                        onBegin: { session.beginInteraction($0) },
-                                        onChange: session.setCurve, onEnd: session.finishInteraction)
-                    }.frame(height: 335)
-                } else if panel == .mixer {
-                    ScrollView {
-                        ColorMixerView(mixer: session.activeState.colorMixer,
-                                       onBegin: { session.beginInteraction($0) },
-                                       onChange: session.setMixer, onEnd: session.finishInteraction)
-                    }.accessibilityIdentifier("mixer-controls").frame(height: 380)
-                } else if panel == .grading {
-                    ScrollView {
-                        ColorGradingView(grading: session.activeState.colorGrading,
-                                         onBegin: { session.beginInteraction($0) },
-                                         onChange: session.setGrading, onEnd: session.finishInteraction)
-                    }.accessibilityIdentifier("grading-controls").frame(height: 380)
-                } else if panel == .effects {
-                    effectsControls
-                } else if panel == .detail {
-                    DetailView(settings: session.activeState.detail,
-                               onBegin: session.beginInteraction,
-                               onChange: session.setDetail,
-                               onEnd: session.finishInteraction,
-                               onReset: session.resetDetail)
-                        .frame(height: 340)
-                } else if panel == .optics {
-                    OpticsView(settings: session.state.optics, availability: result.optics, isRAW: result.isRAW,
-                               onProfileChange: session.setProfileCorrection,
-                               onBegin: session.beginInteraction,
-                               onChange: session.setOptics,
-                               onEnd: session.finishInteraction,
-                               onReset: session.resetOptics)
-                        .frame(height: 330)
-                } else if panel == .geometry {
-                    GeometryView(settings: session.state.geometry,
-                                 onRotate: session.rotateGeometry,
-                                 onFlip: session.toggleGeometryFlip,
-                                 onAspect: session.setCropAspect,
-                                 onAutoStraighten: { Task { await session.autoStraighten() } },
-                                 onAutoPerspective: { Task { await session.autoPerspective() } },
-                                 isAnalyzing: session.isAnalyzingGeometry,
-                                 onBegin: session.beginInteraction,
-                                 onChange: session.setGeometry,
-                                 onEnd: session.finishInteraction,
-                                 onResetAdjustment: session.resetGeometry,
-                                 onResetAll: session.resetGeometry)
-                        .frame(height: 350)
-                } else if panel == .masks {
-                    MasksView(masks: session.state.masks,
-                              selectedMaskID: session.selectedMaskID,
-                              selectedComponentID: session.selectedMaskComponentID,
-                              brushMode: session.brushMode,
-                              onSelectBase: session.selectBaseLayer,
-                              onSelectMask: session.selectMask,
-                              onSelectComponent: session.selectMaskComponent,
-                              onComponentOperation: session.setSelectedMaskComponentOperation,
-                              onMoveComponent: session.moveSelectedMaskComponent,
-                              onDeleteComponent: session.deleteSelectedMaskComponent,
-                              onBrushMode: { session.brushMode = $0 },
-                              onCreate: session.createMask,
-                              onAddComponent: session.addMaskComponent,
-                              onGenerate: { kind, operation in
-                                  Task { await session.generateSmartMask(kind, operation: operation) }
-                              },
-                              isGenerating: session.isGeneratingMask,
-                              onDelete: session.deleteSelectedMask,
-                              onRename: session.renameSelectedLayer,
-                              onToggleVisibility: session.toggleSelectedLayerVisibility,
-                              onOpacity: session.setSelectedLayerOpacity,
-                              onMove: session.moveSelectedLayer,
-                              onInvert: session.toggleMaskInversion,
-                              onBegin: session.beginInteraction,
-                              onAdjustment: session.setLocalAdjustment,
-                              onResetAdjustment: session.resetLocalAdjustment,
-                              onParameter: session.setMaskParameter,
-                              onEnd: session.finishInteraction)
-                        .frame(height: 370)
-                } else if panel == .presets {
-                    PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
-                        .frame(height: 370)
-                } else {
-                    controls
                 }
-                toolBar
+                .font(.caption2).foregroundStyle(.secondary)
+                .padding(.horizontal).frame(height: 28)
+                .dimsDuringAdjustment()
+                editorControls(result)
+                    .frame(height: 252)
+                    .background(.black)
+                    .clipped()
+                toolBar.dimsDuringAdjustment()
                 #if DEBUG
                 if showMetrics { metrics(result) }
                 #endif
@@ -167,6 +91,9 @@ struct EditorView: View {
             }
         }
         .background(Color(red: 0.055, green: 0.065, blue: 0.07))
+        .environment(\.adjustmentFocus,
+                     AdjustmentFocusContext(activeID: focusedAdjustmentID,
+                                            setActive: { focusedAdjustmentID = $0 }))
         .tint(.mint).preferredColorScheme(.dark)
         .overlay {
             if session.isImporting || photoLoading {
@@ -244,6 +171,132 @@ struct EditorView: View {
             Button { showFiles = true } label: { Label("Fichiers", systemImage: "folder").padding(6) }.buttonStyle(.bordered)
         }
     }
+
+    private var activeLayerMenu: some View {
+        Menu {
+            Button {
+                selectQuickLayer(nil)
+            } label: {
+                Label("Photo entière",
+                      systemImage: session.selectedMaskID == nil ? "checkmark" : "rectangle.fill")
+            }
+            .accessibilityIdentifier("quick-layer-base")
+            if !session.state.masks.isEmpty { Divider() }
+            ForEach(Array(session.state.masks.enumerated()), id: \.element.id) { index, mask in
+                Button {
+                    selectQuickLayer(mask.id)
+                } label: {
+                    Label(mask.name,
+                          systemImage: mask.id == session.selectedMaskID
+                              ? "checkmark"
+                              : (mask.isVisible ? "circle.fill" : "eye.slash"))
+                }
+                .accessibilityIdentifier("quick-layer-mask-\(index)")
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: session.selectedMaskID == nil ? "rectangle.fill" : "circle.dashed")
+                Text(session.activeLayerName).lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 8, weight: .semibold))
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Calque actif")
+        .accessibilityValue(session.activeLayerName)
+        .accessibilityIdentifier("active-layer")
+    }
+
+    private func selectQuickLayer(_ id: UUID?) {
+        focusedAdjustmentID = nil
+        if let id {
+            session.selectMask(id)
+            if panel == .optics || panel == .geometry { panel = .light }
+        } else {
+            session.selectBaseLayer()
+        }
+    }
+
+    @ViewBuilder private func editorControls(_ result: RenderResult) -> some View {
+        switch panel {
+        case .curve:
+            ScrollView {
+                ToneCurveEditor(curves: session.activeState.curves, histogram: result.histogram,
+                                onBegin: { session.beginInteraction($0) },
+                                onChange: session.setCurve, onEnd: session.finishInteraction)
+            }
+        case .colorTools:
+            ColorToolsView(mixer: session.activeState.colorMixer,
+                           grading: session.activeState.colorGrading,
+                           onBegin: session.beginInteraction,
+                           onMixerChange: session.setMixer,
+                           onGradingChange: session.setGrading,
+                           onEnd: session.finishInteraction)
+        case .effects:
+            effectsControls
+        case .detail:
+            DetailView(settings: session.activeState.detail,
+                       onBegin: session.beginInteraction,
+                       onChange: session.setDetail,
+                       onEnd: session.finishInteraction,
+                       onReset: session.resetDetail)
+        case .optics:
+            OpticsView(settings: session.state.optics, availability: result.optics, isRAW: result.isRAW,
+                       onProfileChange: session.setProfileCorrection,
+                       onBegin: session.beginInteraction,
+                       onChange: session.setOptics,
+                       onEnd: session.finishInteraction,
+                       onReset: session.resetOptics)
+        case .geometry:
+            GeometryView(settings: session.state.geometry,
+                         onRotate: session.rotateGeometry,
+                         onFlip: session.toggleGeometryFlip,
+                         onAspect: session.setCropAspect,
+                         onAutoStraighten: { Task { await session.autoStraighten() } },
+                         onAutoPerspective: { Task { await session.autoPerspective() } },
+                         isAnalyzing: session.isAnalyzingGeometry,
+                         onBegin: session.beginInteraction,
+                         onChange: session.setGeometry,
+                         onEnd: session.finishInteraction,
+                         onResetAdjustment: session.resetGeometry,
+                         onResetAll: session.resetGeometry)
+        case .masks:
+            MasksView(masks: session.state.masks,
+                      selectedMaskID: session.selectedMaskID,
+                      selectedComponentID: session.selectedMaskComponentID,
+                      brushMode: session.brushMode,
+                      onSelectBase: session.selectBaseLayer,
+                      onSelectMask: session.selectMask,
+                      onSelectComponent: session.selectMaskComponent,
+                      onComponentOperation: session.setSelectedMaskComponentOperation,
+                      onMoveComponent: session.moveSelectedMaskComponent,
+                      onDeleteComponent: session.deleteSelectedMaskComponent,
+                      onBrushMode: { session.brushMode = $0 },
+                      onCreate: session.createMask,
+                      onAddComponent: session.addMaskComponent,
+                      onGenerate: { kind, operation in
+                          Task { await session.generateSmartMask(kind, operation: operation) }
+                      },
+                      isGenerating: session.isGeneratingMask,
+                      onDelete: session.deleteSelectedMask,
+                      onRename: session.renameSelectedLayer,
+                      onToggleVisibility: session.toggleSelectedLayerVisibility,
+                      onOpacity: session.setSelectedLayerOpacity,
+                      onMove: session.moveSelectedLayer,
+                      onInvert: session.toggleMaskInversion,
+                      onBegin: session.beginInteraction,
+                      onAdjustment: session.setLocalAdjustment,
+                      onResetAdjustment: session.resetLocalAdjustment,
+                      onParameter: session.setMaskParameter,
+                      onEnd: session.finishInteraction)
+        case .presets:
+            PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
+        case .light, .color:
+            controls
+        }
+    }
+
     private var controls: some View {
         ScrollView {
             VStack(spacing: 6) {
@@ -256,33 +309,38 @@ struct EditorView: View {
                 }
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }
-        .frame(height: 230)
     }
     private var toolBar: some View {
-        HStack(spacing: 6) {
-            ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
-            ForEach(Panel.allCases, id: \.self) { item in
-                Button { selectPanel(item) } label: {
-                    Label(item.rawValue, systemImage: item.symbol)
-                        .font(.subheadline.weight(.medium)).frame(minHeight: 44)
-                        .padding(.horizontal, 10)
-                        .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
-                }.foregroundStyle(panel == item ? .mint : .secondary)
-                    .accessibilityAddTraits(panel == item ? .isSelected : [])
+                ForEach(Panel.allCases, id: \.self) { item in
+                    Button { selectPanel(item) } label: {
+                        Label(item.rawValue, systemImage: item.symbol)
+                            .font(.subheadline.weight(.medium)).frame(minHeight: 44)
+                            .padding(.horizontal, 10)
+                            .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
+                    }.foregroundStyle(panel == item ? .mint : .secondary)
+                        .accessibilityAddTraits(panel == item ? .isSelected : [])
+                }
             }
-            }
-            }
-            .accessibilityIdentifier("tools-toolbar")
-            Button { session.showingOriginal.toggle() } label: {
-                Image(systemName: session.showingOriginal ? "eye.fill" : "eye").frame(width: 44, height: 44)
-            }.accessibilityLabel("Avant / après").accessibilityValue(session.showingOriginal ? "Original" : "Retouchée")
-        }.padding(.horizontal, 12).padding(.vertical, 6).background(.black.opacity(0.3))
+        }
+        .accessibilityIdentifier("tools-toolbar")
+        .padding(.horizontal, 12).padding(.vertical, 6).background(.black.opacity(0.3))
     }
     private func selectPanel(_ item: Panel) {
+        focusedAdjustmentID = nil
         if item == .optics || item == .geometry { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
+    }
+    private var isAdjustingSelectedMask: Bool {
+        guard session.selectedMaskID != nil, let id = focusedAdjustmentID else { return false }
+        if Adjustment(rawValue: id) != nil { return true }
+        return id.hasPrefix("mask-adjustment-")
+            || id.hasPrefix("effect-")
+            || id.hasPrefix("detail-")
+            || id.hasPrefix("mixer-")
+            || id.hasPrefix("grading-")
     }
     private var effectsControls: some View {
         ScrollView {
@@ -299,7 +357,6 @@ struct EditorView: View {
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }
         .accessibilityIdentifier("effects-controls")
-        .frame(height: 300)
     }
     #if DEBUG
     private func metrics(_ result: RenderResult) -> some View {

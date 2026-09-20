@@ -57,7 +57,7 @@ enum MaskRenderer {
     /// Produces the editor visualization from the exact composed matte. The matte luminance
     /// becomes red alpha, so brush softness, gradient feathering, subtraction and inversion
     /// are represented exactly as they affect the image.
-    static func makeRedOverlay(_ mask: LocalMask, extent: CGRect, opacity: CGFloat = 0.42) throws -> CIImage {
+    static func makeRedOverlay(_ mask: LocalMask, extent: CGRect, opacity: CGFloat = 0.55) throws -> CIImage {
         let matte = try makeMask(mask, extent: extent)
         let matrix = CIFilter.colorMatrix()
         matrix.inputImage = matte

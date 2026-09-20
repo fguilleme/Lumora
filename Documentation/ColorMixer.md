@@ -1,5 +1,7 @@
 # Mélangeur HSL — troisième étape
 
+Le mélangeur se trouve désormais dans **Colorimétrie**, sous-onglet **Mélangeur**. Il partage ce panneau avec le Grading afin de regrouper les outils chromatiques sans réduire la hauteur de l’aperçu.
+
 ## Utilisation
 
 Faire défiler la barre d’outils inférieure jusqu’à **Mélangeur**. Les huit plages sont Rouge, Orange, Jaune, Vert, Turquoise, Bleu, Violet et Magenta ; faire défiler leurs pastilles horizontalement pour accéder aux dernières.

@@ -13,6 +13,7 @@ struct DetailView: View {
                 ForEach(Array(DetailAdjustment.groups.enumerated()), id: \.offset) { index, group in
                     Text(group.0).font(.headline).foregroundStyle(index == 0 ? .primary : .secondary)
                         .padding(.top, index == 0 ? 2 : 12)
+                        .dimsDuringAdjustment()
                     ForEach(group.1) { adjustment in
                         AdjustmentSlider(title: adjustment.title, range: adjustment.range,
                                          step: adjustment.step, precision: adjustment.precision,
@@ -21,10 +22,38 @@ struct DetailView: View {
                                          onBegin: { onBegin("\(group.0) — \(adjustment.title)") },
                                          onChange: { onChange(adjustment, $0) }, onEnd: onEnd,
                                          onReset: { onReset(adjustment) })
+                            .disabled(!isEnabled(adjustment))
+                            .opacity(isEnabled(adjustment) ? 1 : 0.35)
+                    }
+                    if let requirement = requirement(for: index) {
+                        Text(requirement).font(.caption2).foregroundStyle(.secondary)
+                            .dimsDuringAdjustment()
                     }
                 }
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }
         .accessibilityIdentifier("detail-controls")
+    }
+
+    private func isEnabled(_ adjustment: DetailAdjustment) -> Bool {
+        switch adjustment {
+        case .sharpeningRadius, .sharpeningDetail, .sharpeningMasking:
+            settings.sharpening.amount > 0
+        case .luminanceDetail, .luminanceContrast:
+            settings.noiseReduction.luminance > 0
+        case .colorDetail, .colorSmoothness:
+            settings.colorNoiseReduction.color > 0
+        default:
+            true
+        }
+    }
+
+    private func requirement(for group: Int) -> String? {
+        switch group {
+        case 0 where settings.sharpening.amount == 0: "Augmentez Gain pour activer les réglages de netteté."
+        case 1 where settings.noiseReduction.luminance == 0: "Augmentez Luminance pour activer Détail et Contraste."
+        case 2 where settings.colorNoiseReduction.color == 0: "Augmentez Couleur pour activer Détail et Lissage."
+        default: nil
+        }
     }
 }

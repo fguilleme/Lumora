@@ -204,6 +204,36 @@ private func syntheticPortrait() throws -> CGImage {
     #expect(green(bytes, x: 50, y: 50) < 5)
 }
 
+@Test func redMaskOverlaySupportsBrushLinearAndGeneratedMasks() throws {
+    var brush = BrushMask()
+    brush.size = 24; brush.feather = 35
+    brush.strokes = [[MaskPoint(x: 0.2, y: 0.8), MaskPoint(x: 0.8, y: 0.2)]]
+    let brushMask = LocalMask(name: "Pinceau", components: [MaskComponent(shape: .brush(brush))])
+    let brushOverlay = try maskBytes(MaskRenderer.makeRedOverlay(brushMask, extent: maskExtent))
+    #expect(alpha(brushOverlay, x: 20, y: 80) > 40)
+    #expect(alpha(brushOverlay, x: 5, y: 95) < 5)
+
+    var linear = LinearGradientMask(); linear.angle = 0; linear.feather = 20
+    let linearMask = LocalMask(name: "Linéaire", components: [MaskComponent(shape: .linear(linear))])
+    let linearOverlay = try maskBytes(MaskRenderer.makeRedOverlay(linearMask, extent: maskExtent))
+    #expect(alpha(linearOverlay, x: 10, y: 50) > alpha(linearOverlay, x: 50, y: 50))
+    #expect(alpha(linearOverlay, x: 50, y: 50) > alpha(linearOverlay, x: 90, y: 50))
+    #expect(alpha(linearOverlay, x: 90, y: 50) < 5)
+
+    var halfOpacityLinear = linearMask
+    halfOpacityLinear.opacity = 50
+    let halfOpacityOverlay = try maskBytes(
+        MaskRenderer.makeRedOverlay(halfOpacityLinear, extent: maskExtent)
+    )
+    #expect(alpha(halfOpacityOverlay, x: 10, y: 50) < alpha(linearOverlay, x: 10, y: 50))
+
+    let skin = GeneratedMask(kind: .skin, pngData: try halfMaskPNG(), width: 10, height: 10)
+    let skinMask = LocalMask(name: "Peau", components: [MaskComponent(shape: .generated(skin))])
+    let skinOverlay = try maskBytes(MaskRenderer.makeRedOverlay(skinMask, extent: maskExtent))
+    #expect(alpha(skinOverlay, x: 10, y: 50) > 95)
+    #expect(alpha(skinOverlay, x: 90, y: 50) < 5)
+}
+
 @Test func subtractComponentCutsARealHole() throws {
     var outer = RadialGradientMask(); outer.radiusX = 0.48; outer.radiusY = 0.48; outer.feather = 5
     var inner = RadialGradientMask(); inner.radiusX = 0.12; inner.radiusY = 0.12; inner.feather = 5
@@ -245,7 +275,7 @@ private func syntheticPortrait() throws -> CGImage {
 }
 
 @Test func generatedMaskSerializesScalesAndAppliesLocally() throws {
-    #expect(SmartMaskKind.allCases == [.subject, .background, .person, .face, .sky, .skin])
+    #expect(SmartMaskKind.allCases == [.subject, .background, .person, .face, .eyes, .sky, .skin])
     let generated = GeneratedMask(kind: .subject, pngData: try halfMaskPNG(), width: 10, height: 10)
     var adjustment = LocalAdjustmentState(); adjustment.exposure = 2
     let mask = LocalMask(name: "Sujet", components: [MaskComponent(shape: .generated(generated))],
@@ -266,10 +296,29 @@ private func syntheticPortrait() throws -> CGImage {
     #expect(try JSONDecoder().decode(GeneratedMask.self, from: JSONEncoder().encode(person)) == person)
     let face = GeneratedMask(kind: .face, pngData: try halfMaskPNG(), width: 10, height: 10)
     #expect(try JSONDecoder().decode(GeneratedMask.self, from: JSONEncoder().encode(face)) == face)
+    let eyes = GeneratedMask(kind: .eyes, pngData: try halfMaskPNG(), width: 10, height: 10)
+    #expect(try JSONDecoder().decode(GeneratedMask.self, from: JSONEncoder().encode(eyes)) == eyes)
     let sky = GeneratedMask(kind: .sky, pngData: try halfMaskPNG(), width: 10, height: 10)
     #expect(try JSONDecoder().decode(GeneratedMask.self, from: JSONEncoder().encode(sky)) == sky)
     let skin = GeneratedMask(kind: .skin, pngData: try halfMaskPNG(), width: 10, height: 10)
     #expect(try JSONDecoder().decode(GeneratedMask.self, from: JSONEncoder().encode(skin)) == skin)
+}
+
+@Test func eyeMaskCreatesTwoSeparateFeatheredRegions() throws {
+    let left = [CGPoint(x: 24, y: 58), CGPoint(x: 30, y: 61),
+                CGPoint(x: 36, y: 58), CGPoint(x: 30, y: 55)]
+    let right = [CGPoint(x: 64, y: 58), CGPoint(x: 70, y: 61),
+                 CGPoint(x: 76, y: 58), CGPoint(x: 70, y: 55)]
+    let bitmap = try #require(EyeMaskGenerator.makeMask(
+        imageSize: CGSize(width: 100, height: 100), eyeRegions: [left, right]
+    ))
+    let pixels = try maskBytes(CIImage(cgImage: bitmap))
+    // The CGContext byte rows read top-down here, hence 100 - 58 for the landmark Y.
+    #expect(red(pixels, x: 30, y: 42) > 245)
+    #expect(red(pixels, x: 70, y: 42) > 245)
+    #expect(red(pixels, x: 50, y: 42) < 10)
+    #expect(red(pixels, x: 2, y: 2) < 5)
+    #expect((10...240).contains(red(pixels, x: 37, y: 42)))
 }
 
 @Test func skyMaskSelectsConnectedBlueUpperRegion() throws {

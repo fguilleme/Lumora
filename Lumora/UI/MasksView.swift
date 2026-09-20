@@ -83,7 +83,7 @@ struct MasksView: View {
                         }
                         Divider()
                         Text("Raccourcis du calque").font(.headline)
-                        Text("Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent aussi sur ce calque tant qu’il reste sélectionné.")
+                        Text("Lumière, Couleur, Courbes, Colorimétrie, Effets et Détail agissent aussi sur ce calque tant qu’il reste sélectionné.")
                             .font(.caption).foregroundStyle(.secondary)
                         ForEach(LocalAdjustment.allCases) { adjustment in
                             AdjustmentSlider(title: adjustment.title, range: adjustment.range,

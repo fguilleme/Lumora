@@ -8,7 +8,7 @@ struct ColorMixerView: View {
     @State private var channel: MixerChannel = .red
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 5) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 4) {
                     ForEach(MixerChannel.allCases) { item in
@@ -17,7 +17,7 @@ struct ColorMixerView: View {
                         } label: {
                             VStack(spacing: 4) {
                                 Circle().fill(Color(hue: item.center / 360, saturation: 0.8, brightness: 0.95))
-                                    .frame(width: 26, height: 26)
+                                    .frame(width: 22, height: 22)
                                     .overlay {
                                         if item == channel {
                                             Image(systemName: "checkmark").font(.caption.bold()).foregroundStyle(.black)
@@ -26,14 +26,15 @@ struct ColorMixerView: View {
                                     .padding(6)
                                     .overlay(Circle().stroke(item == channel ? Color.white : .clear, lineWidth: 1.5))
                                 Text(item.title).font(.caption2).foregroundStyle(item == channel ? .primary : .secondary)
-                            }.frame(minWidth: 62, minHeight: 60)
+                            }.frame(minWidth: 52, minHeight: 50)
                         }
                         .accessibilityLabel("Plage \(item.title)")
                         .accessibilityIdentifier("mixer-band-\(item.rawValue)")
                         .accessibilityAddTraits(item == channel ? .isSelected : [])
                     }
-                }.padding(.horizontal, 4)
+                }.padding(.horizontal, 2)
             }
+            .dimsDuringAdjustment()
             HStack {
                 Text("Mélangeur · \(channel.title)").font(.subheadline.weight(.medium))
                 Spacer()
@@ -42,6 +43,7 @@ struct ColorMixerView: View {
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
                     .accessibilityLabel("Réinitialiser la plage \(channel.title)")
             }
+            .dimsDuringAdjustment()
             ForEach(MixerComponent.allCases) { component in
                 AdjustmentSlider(title: component.title, accessibilityID: "mixer-\(component.rawValue)",
                                  value: mixer[channel][component],
@@ -57,7 +59,7 @@ struct ColorMixerView: View {
                                  })
             }
             .id(channel)
-        }.padding(.horizontal, 20).padding(.bottom, 12)
+        }.padding(.horizontal, 14).padding(.bottom, 8)
             .onDisappear(perform: onEnd)
     }
 }

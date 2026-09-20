@@ -104,7 +104,7 @@ struct RadialGradientMask: Codable, Sendable, Equatable {
 }
 
 enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
-    case subject, background, person, face, sky, skin
+    case subject, background, person, face, eyes, sky, skin
 
     var id: String { rawValue }
     var title: String {
@@ -113,6 +113,7 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
         case .background: "Arrière-plan"
         case .person: "Personne"
         case .face: "Visage"
+        case .eyes: "Yeux"
         case .sky: "Ciel"
         case .skin: "Peau"
         }
@@ -123,6 +124,7 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
         case .background: "rectangle.dashed"
         case .person: "figure.stand"
         case .face: "face.smiling"
+        case .eyes: "eye"
         case .sky: "cloud.sun"
         case .skin: "hand.raised"
         }

@@ -2,6 +2,130 @@ import XCTest
 
 final class EditorUITests: XCTestCase {
     @MainActor
+    func testMaskSliderRestoresToolbar() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        if !app.sliders["Exposition"].waitForExistence(timeout: 4) {
+            if app.buttons["Importer et options"].exists { app.buttons["Importer et options"].tap() }
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20))
+            photo.tap()
+            XCTAssertTrue(app.sliders["Exposition"].waitForExistence(timeout: 30))
+        }
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        XCTAssertTrue(canvas.waitForExistence(timeout: 5))
+        let canvasWithoutMask = canvas.screenshot().pngRepresentation
+        let toolbar = app.scrollViews["tools-toolbar"]
+        toolbar.swipeLeft(); toolbar.swipeLeft()
+        app.buttons["Masques"].tap()
+        app.scrollViews["masks-controls"].buttons["Radial"].tap()
+
+        let activeLayerMenu = app.buttons.matching(identifier: "active-layer").firstMatch
+        XCTAssertTrue(activeLayerMenu.waitForExistence(timeout: 3))
+        XCTAssertEqual(activeLayerMenu.value as? String, "Radial 1")
+        activeLayerMenu.tap()
+        app.buttons["quick-layer-base"].tap()
+        XCTAssertEqual(activeLayerMenu.value as? String, "Photo entière")
+        activeLayerMenu.tap()
+        app.buttons["quick-layer-mask-0"].tap()
+        XCTAssertEqual(activeLayerMenu.value as? String, "Radial 1")
+
+        let masks = app.scrollViews["masks-controls"]
+        let exposure = app.sliders["mask-adjustment-exposure"]
+        for _ in 0..<14 {
+            if exposure.isHittable { break }
+            masks.swipeUpAlongLeadingEdge()
+        }
+        XCTAssertTrue(exposure.isHittable)
+        exposure.adjust(toNormalizedSliderPosition: 0.82)
+        XCTAssertNotEqual(exposure.value as? String, "0.00")
+        XCTAssertTrue(toolbar.isHittable)
+
+        toolbar.swipeRight(); toolbar.swipeRight()
+        app.buttons["Lumière"].tap()
+        RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+        XCTAssertNotEqual(canvas.screenshot().pngRepresentation, canvasWithoutMask)
+        let lightExposure = app.sliders["Exposition"]
+        lightExposure.adjust(toNormalizedSliderPosition: 0.72)
+        XCTAssertTrue(toolbar.isHittable)
+
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Lumora — masque rouge dans Lumière"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor
+    func testFixedPreviewAndUnifiedColorTools() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        if app.buttons["Importer et options"].waitForExistence(timeout: 3) {
+            app.buttons["Importer et options"].tap()
+        }
+        app.buttons["Photos"].tap()
+        let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+        XCTAssertTrue(photo.waitForExistence(timeout: 20))
+        photo.tap()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        XCTAssertFalse(app.buttons["Avant / après"].exists)
+        let previewHeight = canvas.frame.height
+        canvas.press(forDuration: 0.4)
+        let canvasCenter = app.coordinate(withNormalizedOffset: .zero).withOffset(
+            CGVector(dx: canvas.frame.midX, dy: canvas.frame.midY)
+        )
+        canvas.pinch(withScale: 2, velocity: 1)
+        XCTAssertNotEqual(canvas.value as? String, "Zoom 100 %")
+        canvasCenter.doubleTap()
+        XCTAssertEqual(canvas.value as? String, "Zoom 100 %")
+        let exposure = app.sliders["Exposition"]
+        XCTAssertTrue(exposure.exists)
+        XCTAssertLessThanOrEqual(exposure.frame.height, 44)
+
+        app.buttons["Colorimétrie"].tap()
+        XCTAssertEqual(canvas.frame.height, previewHeight, accuracy: 1)
+        XCTAssertTrue(app.segmentedControls.buttons["Mélangeur"].exists)
+        app.segmentedControls.buttons["Grading"].tap()
+        XCTAssertEqual(canvas.frame.height, previewHeight, accuracy: 1)
+        XCTAssertEqual(app.descendants(matching: .any).matching(identifier: "grading-wheel").count, 1)
+        XCTAssertTrue(app.segmentedControls.buttons["Ombres"].exists)
+        XCTAssertTrue(app.segmentedControls.buttons["Tons moyens"].exists)
+        XCTAssertTrue(app.segmentedControls.buttons["Hautes lumières"].exists)
+
+        let toolbar = app.scrollViews["tools-toolbar"]
+        app.buttons["Effets"].tap()
+        let beforeEffect = canvas.screenshot().pngRepresentation
+        let dehaze = app.sliders["effect-dehaze"]
+        XCTAssertTrue(dehaze.waitForExistence(timeout: 3))
+        dehaze.adjust(toNormalizedSliderPosition: 0.85)
+        RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+        XCTAssertNotEqual(dehaze.value as? String, "0.00")
+        XCTAssertNotEqual(canvas.screenshot().pngRepresentation, beforeEffect)
+        XCTAssertTrue(toolbar.isHittable)
+
+        toolbar.swipeLeft()
+        app.buttons["Détail"].tap()
+        let beforeDetail = canvas.screenshot().pngRepresentation
+        let gain = app.sliders["detail-sharpeningAmount"]
+        XCTAssertTrue(gain.waitForExistence(timeout: 3))
+        gain.adjust(toNormalizedSliderPosition: 0.8)
+        RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+        XCTAssertNotEqual(gain.value as? String, "0.00")
+        XCTAssertNotEqual(canvas.screenshot().pngRepresentation, beforeDetail)
+        XCTAssertTrue(toolbar.isHittable)
+
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Lumora — colorimétrie unifiée"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor
     func testLibraryBatchSelection() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -210,13 +334,14 @@ final class EditorUITests: XCTestCase {
         XCTAssertEqual(slider.value as? String, "0.00")
         app.buttons["Rétablir"].tap()
         XCTAssertEqual(slider.value as? String, editedValue)
-        app.buttons["Avant / après"].tap()
-        XCTAssertEqual(app.buttons["Avant / après"].value as? String, "Original")
-        app.buttons["Avant / après"].tap()
-        XCTAssertEqual(app.buttons["Avant / après"].value as? String, "Retouchée")
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        XCTAssertTrue(canvas.exists)
+        canvas.press(forDuration: 0.4)
+        XCTAssertFalse(app.buttons["Avant / après"].exists)
         app.buttons["Couleur"].tap()
         XCTAssertTrue(app.sliders["Température"].exists)
-        app.buttons["Grading"].tap()
+        app.buttons["Colorimétrie"].tap()
+        app.segmentedControls.buttons["Grading"].tap()
         app.buttons["Courbes"].tap()
         app.buttons["Ajouter un point"].tap()
         XCTAssertTrue(app.staticTexts["Point 2 / 3"].exists)
@@ -255,7 +380,7 @@ final class EditorUITests: XCTestCase {
         app.segmentedControls.buttons["RVB"].tap()
         XCTAssertTrue(app.staticTexts["Point 1 / 3"].exists)
         app.scrollViews["tools-toolbar"].swipeLeft()
-        app.buttons["Mélangeur"].tap()
+        app.buttons["Colorimétrie"].tap()
         app.buttons["mixer-band-green"].tap()
         let saturation = app.sliders["mixer-saturation"]
         XCTAssertEqual(saturation.value as? String, "0.00")
@@ -280,7 +405,7 @@ final class EditorUITests: XCTestCase {
         app.terminate(); app.launch()
         XCTAssertTrue(app.sliders["Exposition"].waitForExistence(timeout: 15))
         app.scrollViews["tools-toolbar"].swipeLeft()
-        app.buttons["Mélangeur"].tap()
+        app.buttons["Colorimétrie"].tap()
         app.buttons["mixer-band-green"].tap()
         XCTAssertEqual(app.sliders["mixer-saturation"].value as? String, mixerValue)
         XCTAssertEqual(app.sliders["mixer-hue"].value as? String, hueValue)
@@ -291,9 +416,8 @@ final class EditorUITests: XCTestCase {
         XCTAssertEqual(app.sliders["mixer-luminance"].value as? String, "0.00")
         app.buttons["Annuler"].tap()
         XCTAssertEqual(app.sliders["mixer-saturation"].value as? String, mixerValue)
-        app.scrollViews["tools-toolbar"].swipeLeft()
-        app.buttons["Grading"].tap()
-        let shadowWheel = app.descendants(matching: .any).matching(identifier: "grading-wheel-shadows").firstMatch
+        app.segmentedControls.buttons["Grading"].tap()
+        let shadowWheel = app.descendants(matching: .any).matching(identifier: "grading-wheel").firstMatch
         let originalWheel = shadowWheel.value as? String
         let wheelStart = shadowWheel.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
         let wheelEnd = shadowWheel.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.25))
@@ -306,9 +430,9 @@ final class EditorUITests: XCTestCase {
         XCTAssertEqual(shadowWheel.value as? String, shadowValue)
         app.sliders["grading-luminance"].adjust(toNormalizedSliderPosition: 0.6)
         let shadowLuminance = app.sliders["grading-luminance"].value as? String
-        app.buttons["grading-range-midtones"].tap()
+        app.segmentedControls.buttons["Tons moyens"].tap()
         XCTAssertEqual(app.sliders["grading-luminance"].value as? String, "0.00")
-        app.buttons["grading-range-shadows"].tap()
+        app.segmentedControls.buttons["Ombres"].tap()
         XCTAssertEqual(app.sliders["grading-luminance"].value as? String, shadowLuminance)
         app.scrollViews["grading-controls"].swipeUp()
         app.sliders["grading-blending"].adjust(toNormalizedSliderPosition: 0.7)
@@ -323,7 +447,8 @@ final class EditorUITests: XCTestCase {
         app.terminate(); app.launch()
         XCTAssertTrue(app.sliders["Exposition"].waitForExistence(timeout: 15))
         app.scrollViews["tools-toolbar"].swipeLeft()
-        app.buttons["Grading"].tap()
+        app.buttons["Colorimétrie"].tap()
+        app.segmentedControls.buttons["Grading"].tap()
         XCTAssertEqual(shadowWheel.value as? String, shadowValue)
         XCTAssertEqual(app.sliders["grading-luminance"].value as? String, shadowLuminance)
         app.buttons["Réinitialiser grading Ombres"].tap()
@@ -542,14 +667,15 @@ final class EditorUITests: XCTestCase {
         brushMode.buttons["Peindre"].tap()
         let localExposure = app.sliders["mask-adjustment-exposure"]
         XCTAssertTrue(localExposure.waitForExistence(timeout: 5))
-        for _ in 0..<6 {
+        for _ in 0..<14 {
             if localExposure.isHittable { break }
-            app.scrollViews["masks-controls"].swipeUp()
+            app.scrollViews["masks-controls"].swipeUpAlongLeadingEdge()
         }
         XCTAssertTrue(localExposure.isHittable)
         localExposure.adjust(toNormalizedSliderPosition: 0.85)
         let localExposureValue = localExposure.value as? String
         XCTAssertNotEqual(localExposureValue, "0.00")
+        XCTAssertTrue(app.scrollViews["tools-toolbar"].isHittable)
         canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.4))
             .press(forDuration: 0.2, thenDragTo: canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.6)))
         app.buttons["Annuler"].tap()
@@ -663,6 +789,7 @@ final class EditorUITests: XCTestCase {
         app.buttons["mask-new"].tap()
         XCTAssertTrue(app.buttons["Personne"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["Visage"].exists)
+        XCTAssertTrue(app.buttons["Yeux"].exists)
         XCTAssertTrue(app.buttons["Ciel"].exists)
         XCTAssertTrue(app.buttons["Peau"].exists)
         app.buttons["Sujet"].tap()

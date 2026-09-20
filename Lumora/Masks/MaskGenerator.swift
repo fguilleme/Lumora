@@ -6,13 +6,14 @@ import UniformTypeIdentifiers
 import Vision
 
 enum MaskGenerationError: LocalizedError {
-    case noForeground, noPerson, noFace, noSky, noSkin, encodingFailed
+    case noForeground, noPerson, noFace, noEyes, noSky, noSkin, encodingFailed
 
     var errorDescription: String? {
         switch self {
         case .noForeground: "Vision n’a détecté aucun sujet distinct dans cette photographie."
         case .noPerson: "Vision n’a détecté aucune personne dans cette photographie."
         case .noFace: "Vision n’a détecté aucun visage dans cette photographie."
+        case .noEyes: "Vision n’a détecté aucun contour d’œil suffisamment précis dans cette photographie."
         case .noSky: "Lumora n’a détecté aucune zone de ciel suffisamment fiable dans cette photographie."
         case .noSkin: "Lumora a besoin d’au moins un visage visible pour identifier les teintes de peau de cette photographie."
         case .encodingFailed: "Le masque détecté n’a pas pu être enregistré."
@@ -33,6 +34,21 @@ actor MaskGenerator {
             return try encoded(CIImage(cgImage: bitmap), kind: kind)
         }
         let handler = ImageRequestHandler(image, orientation: .up)
+        if kind == .eyes {
+            let faces = try await handler.perform(DetectFaceLandmarksRequest())
+            try Task.checkCancellation()
+            let imageSize = CGSize(width: image.width, height: image.height)
+            let eyeRegions = faces.flatMap { face -> [[CGPoint]] in
+                guard let landmarks = face.landmarks else { return [] }
+                return [landmarks.leftEye, landmarks.rightEye]
+                    .map { $0.pointsInImageCoordinates(imageSize, origin: .lowerLeft) }
+                    .filter { $0.count >= 3 }
+            }
+            guard let bitmap = EyeMaskGenerator.makeMask(imageSize: imageSize, eyeRegions: eyeRegions) else {
+                throw MaskGenerationError.noEyes
+            }
+            return try encoded(CIImage(cgImage: bitmap), kind: kind)
+        }
         if kind == .face || kind == .skin {
             let faces = try await handler.perform(DetectFaceRectanglesRequest())
             try Task.checkCancellation()
@@ -62,7 +78,7 @@ actor MaskGenerator {
             result = try await handler.perform(GenerateForegroundInstanceMaskRequest())
         case .person:
             result = try await handler.perform(GeneratePersonInstanceMaskRequest())
-        case .face, .sky, .skin:
+        case .face, .eyes, .sky, .skin:
             preconditionFailure("Ce masque est traité avant la segmentation d’instances.")
         }
         try Task.checkCancellation()

@@ -2,9 +2,9 @@
 
 ## Utilisation
 
-Faire défiler la barre inférieure jusqu’à **Grading**. Les trois roues correspondent aux **Ombres**, **Tons moyens** et **Hautes lumières**. Glisser dans une roue choisit la teinte par l’angle et l’intensité par la distance au centre. Le centre retire la coloration en conservant la teinte choisie pour le prochain geste.
+Faire défiler la barre inférieure jusqu’à **Colorimétrie**, puis ouvrir le sous-onglet **Grading**. Le sélecteur tonal choisit **Ombres**, **Tons moyens** ou **Hautes lumières** et une roue unique édite la zone active. Glisser dans la roue choisit la teinte par l’angle et l’intensité par la distance au centre. Le centre retire la coloration en conservant la teinte choisie pour le prochain geste.
 
-Le nom situé sous une roue la sélectionne sans changer ses réglages. Le curseur **Luminance** et le reset concernent uniquement cette zone. Déplier **Teinte et saturation précises** pour accéder aux deux curseurs numériques. Les roues disposent aussi d’actions VoiceOver ; le composant `ColorWheel` est indépendant de l’éditeur.
+Changer de zone dans le sélecteur ne modifie pas ses réglages. Le curseur **Luminance** et le reset concernent uniquement la zone affichée. Déplier **Teinte et saturation précises** pour accéder aux deux curseurs numériques. La roue dispose aussi d’actions VoiceOver ; le composant `ColorWheel` reste indépendant de l’éditeur.
 
 Faire défiler le panneau pour accéder aux paramètres globaux :
 

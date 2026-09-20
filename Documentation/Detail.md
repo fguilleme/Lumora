@@ -23,7 +23,7 @@ Le panneau **Détail** regroupe trois familles de réglages.
 - **Détail** conserve progressivement la chrominance fine originale.
 - **Lissage** règle le rayon spatial de la chrominance filtrée.
 
-Les contrôles secondaires n’altèrent pas l’image tant que Gain, Luminance ou Couleur reste à zéro. Leurs valeurs par défaut peuvent donc être préparées sans modifier un développement existant.
+Les contrôles secondaires n’altèrent pas l’image tant que Gain, Luminance ou Couleur reste à zéro. L’interface les désactive et indique le contrôle principal à augmenter ; ils redeviennent disponibles dès que leur traitement est actif.
 
 ## Traitement
 

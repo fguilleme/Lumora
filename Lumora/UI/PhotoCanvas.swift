@@ -6,6 +6,8 @@ struct PhotoCanvas: View {
     @Binding var showingOriginal: Bool
     let activeMask: LocalMask?
     let activeComponentID: UUID?
+    let showsMaskOverlay: Bool
+    let allowsMaskEditing: Bool
     let brushMode: BrushMode
     let onBrushBegin: () -> Void
     let onBrushPoint: (MaskPoint) -> Void
@@ -30,6 +32,7 @@ struct PhotoCanvas: View {
         activeMask?.components.first { $0.id == activeComponentID }
     }
     private var isPainting: Bool {
+        guard allowsMaskEditing else { return false }
         guard let component = activeComponent else { return false }
         if case .brush = component.shape { return true }
         return false
@@ -39,6 +42,7 @@ struct PhotoCanvas: View {
         return brush
     }
     private var hasTransformHandles: Bool {
+        guard allowsMaskEditing else { return false }
         guard let component = activeComponent else { return false }
         switch component.shape {
         case .linear, .radial: return true
@@ -52,32 +56,14 @@ struct PhotoCanvas: View {
             let displayScale = min(6, max(1, zoom * magnification))
             let displayOffset = CGSize(width: offset.width + (zoom > 1 ? translation.width : 0),
                                        height: offset.height + (zoom > 1 ? translation.height : 0))
-            Image(decorative: image, scale: 1)
+            ZStack {
+                Image(decorative: image, scale: 1)
                 .resizable().aspectRatio(contentMode: .fit)
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .scaleEffect(displayScale)
                 .offset(displayOffset)
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .contentShape(Rectangle())
-                .gesture(MagnifyGesture().updating($magnification) { value, state, _ in state = value.magnification }
-                    .onEnded { value in
-                        zoom = min(6, max(1, zoom * value.magnification))
-                        offset = bounded(offset, size: geometry.size)
-                    })
-                .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
-                    if zoom > 1 && !isPainting { state = value.translation }
-                }.onEnded { value in
-                    if zoom > 1 && !isPainting {
-                        offset = bounded(CGSize(width: offset.width + value.translation.width,
-                                                height: offset.height + value.translation.height), size: geometry.size)
-                    }
-                })
-                .simultaneousGesture(LongPressGesture(minimumDuration: 0.3, maximumDistance: 12)
-                    .sequenced(before: DragGesture(minimumDistance: 0))
-                    .updating($pressing) { value, state, _ in
-                        if case .second(true, _) = value { state = true }
-                    })
-                .onTapGesture(count: 2) { zoom = zoom > 1 ? 1 : 2.5; offset = .zero }
                 .clipped()
                 .overlay(alignment: .topLeading) {
                     if showingOriginal || pressing {
@@ -86,11 +72,13 @@ struct PhotoCanvas: View {
                     }
                 }
                 .overlay {
-                    if let activeMask, !showingOriginal && !pressing {
+                    if let activeMask {
                         MaskOverlay(mask: activeMask,
                                     imageSize: CGSize(width: result.image.width, height: result.image.height),
                                     displayScale: displayScale,
                                     displayOffset: displayOffset)
+                            .opacity(showsMaskOverlay && !showingOriginal && !pressing ? 1 : 0)
+                            .accessibilityHidden(!showsMaskOverlay || showingOriginal || pressing)
                             .allowsHitTesting(false)
                     }
                 }
@@ -159,9 +147,37 @@ struct PhotoCanvas: View {
                     }
                 }
                 .accessibilityLabel("Photographie, \(showingOriginal || pressing ? "original" : "développement")")
+                .accessibilityValue("Zoom \(Int((zoom * 100).rounded())) %")
                 .accessibilityIdentifier("photo-canvas")
                 .accessibilityAction(named: "Comparer à l’original") { showingOriginal.toggle() }
-                .accessibilityAction(named: "Zoom") { zoom = zoom > 1 ? 1 : 2.5; offset = .zero }
+                .accessibilityAction(named: "Réinitialiser le zoom") { restoreZoom() }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .contentShape(Rectangle())
+            .gesture(MagnifyGesture().updating($magnification) { value, state, _ in state = value.magnification }
+                .onEnded { value in
+                    zoom = min(6, max(1, zoom * value.magnification))
+                    offset = bounded(offset, size: geometry.size)
+                })
+            .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
+                if zoom > 1 && !isPainting { state = value.translation }
+            }.onEnded { value in
+                if zoom > 1 && !isPainting {
+                    offset = bounded(CGSize(width: offset.width + value.translation.width,
+                                            height: offset.height + value.translation.height), size: geometry.size)
+                }
+            })
+            .simultaneousGesture(
+                TapGesture(count: 2)
+                    .onEnded { restoreZoom() }
+                    .exclusively(before:
+                        LongPressGesture(minimumDuration: 0.3, maximumDistance: 12)
+                            .sequenced(before: DragGesture(minimumDistance: 0))
+                            .updating($pressing) { value, state, _ in
+                                if case .second(true, _) = value { state = true }
+                            }
+                    )
+            )
         }
         .onChange(of: isPainting) { _, painting in if painting { showingOriginal = false } }
         .onChange(of: hasTransformHandles) { _, editing in
@@ -170,6 +186,10 @@ struct PhotoCanvas: View {
         .onChange(of: geometrySettings != nil) { _, editing in
             if editing { zoom = 1; offset = .zero; showingOriginal = false }
         }
+    }
+    private func restoreZoom() {
+        zoom = 1
+        offset = .zero
     }
     private func bounded(_ value: CGSize, size: CGSize) -> CGSize {
         let x = size.width * (zoom - 1) / 2, y = size.height * (zoom - 1) / 2
@@ -543,6 +563,9 @@ private struct MaskOverlay: View {
         .task(id: revision) {
             overlay = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Superposition rouge du masque")
+        .accessibilityIdentifier("mask-red-overlay")
     }
 }
 

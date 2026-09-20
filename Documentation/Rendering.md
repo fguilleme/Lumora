@@ -32,11 +32,11 @@ Les tests couvrent sérialisation/validation, regroupement Undo/Redo, branchemen
 
 - Build Debug iOS Simulator réussi, cible minimale iOS 18.
 - `swift test` : **82 tests réussis**, exécutés sur macOS arm64 avec le véritable moteur Core Image.
-- XCTest UI sur iPhone 18 Pro / iOS 27 Simulator : parcours Masques réussi avec pinceau Peindre/Effacer, renommage, visibilité, opacité, déplacement et contour progressif radial, gestion des composantes, restauration après relance et réordonnancement Undo/Redo. Le menu intelligent expose aussi Personne, Visage, Ciel et Peau ; la segmentation par instances reste sautée sur simulateur lorsque celui-ci ne peut pas créer son contexte d'inférence.
+- XCTest UI sur iPhone 18 Pro / iOS 27 Simulator : parcours Masques réussi avec pinceau Peindre/Effacer, renommage, visibilité, opacité, déplacement et contour progressif radial, gestion des composantes, restauration après relance et réordonnancement Undo/Redo. Le menu intelligent expose aussi Personne, Visage, Yeux, Ciel et Peau ; la segmentation par instances reste sautée sur simulateur lorsque celui-ci ne peut pas créer son contexte d'inférence.
 - Aucun warning du compilateur Swift. Avertissement Xcode non bloquant : extraction de métadonnées App Intents ignorée (aucune dépendance AppIntents). Le runtime du simulateur émet également un diagnostic Apple de classes d’accessibilité dupliquées.
 - Pas de test sur iPhone physique, ni de fixture RAW de boîtier dans cette livraison. JPEG testé dans le simulateur ; PNG et TIFF orienté testés automatiquement. Le support HEIC/RAW repose sur les décodeurs système et reste à valider avec un corpus réel.
 
-Dernier résultat XCTest : `/tmp/LumoraBatchSelectionUI.xcresult`. Le parcours importe deux photos, les sélectionne ensemble, applique une action groupée et vérifie les deux favoris. Le parcours des étiquettes reste archivé dans `/tmp/LumoraLibraryTagsUI-v2.xcresult` et celui des overlays de masques dans `/tmp/LumoraMaskZoomOverlayUI.xcresult`.
+Derniers résultats XCTest : `/tmp/LumoraQuickLayerMenuUI-v2.xcresult` vérifie le sélecteur rapide Photo entière/Radial 1 ainsi que l’overlay rouge dans Lumière après le réglage d’Exposition ; `/tmp/LumoraEffectsDetailFocusUI.xcresult` vérifie que Correction du voile et Gain changent réellement les pixels et libèrent la barre d’outils. Le parcours des gestes d’aperçu reste archivé dans `/tmp/LumoraPreviewGesturesUI-v9.xcresult`, celui des opérations groupées dans `/tmp/LumoraBatchSelectionUI.xcresult` et celui du zoom des masques dans `/tmp/LumoraMaskZoomOverlayUI.xcresult`.
 
 ## Export pleine résolution
 

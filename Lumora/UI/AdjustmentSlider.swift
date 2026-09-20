@@ -1,5 +1,35 @@
 import SwiftUI
 
+struct AdjustmentFocusContext: Sendable {
+    var activeID: String?
+    var setActive: @MainActor @Sendable (String?) -> Void
+}
+
+private struct AdjustmentFocusKey: EnvironmentKey {
+    static let defaultValue = AdjustmentFocusContext(activeID: nil, setActive: { _ in })
+}
+
+extension EnvironmentValues {
+    var adjustmentFocus: AdjustmentFocusContext {
+        get { self[AdjustmentFocusKey.self] }
+        set { self[AdjustmentFocusKey.self] = newValue }
+    }
+}
+
+private struct AdjustmentFocusDimmingModifier: ViewModifier {
+    @Environment(\.adjustmentFocus) private var focus
+    func body(content: Content) -> some View {
+        content
+            .opacity(focus.activeID == nil ? 1 : 0.015)
+            .allowsHitTesting(focus.activeID == nil)
+            .animation(.easeOut(duration: 0.12), value: focus.activeID)
+    }
+}
+
+extension View {
+    func dimsDuringAdjustment() -> some View { modifier(AdjustmentFocusDimmingModifier()) }
+}
+
 struct AdjustmentSlider: View {
     let title: String
     let range: ClosedRange<Double>
@@ -27,6 +57,8 @@ struct AdjustmentSlider: View {
     @State private var fine = false
     @State private var zeroFeedback = 0
     @State private var fineOrigin = 0.0
+    @State private var editing = false
+    @Environment(\.adjustmentFocus) private var focus
 
     private var activeRange: ClosedRange<Double> {
         guard fine else { return range }
@@ -34,43 +66,67 @@ struct AdjustmentSlider: View {
         return max(range.lowerBound, fineOrigin - radius)...min(range.upperBound, fineOrigin + radius)
     }
     var body: some View {
-        VStack(spacing: 2) {
-            HStack {
-                Text(title).font(.subheadline)
-                Spacer()
-                Button {
-                    fine.toggle(); fineOrigin = value
-                } label: {
-                    Text(value, format: .number.precision(.fractionLength(fine ? precision + 1 : precision)))
-                        .font(.system(.subheadline, design: .monospaced)).monospacedDigit()
-                        .foregroundStyle(fine ? Color.mint : Color.secondary)
-                        .frame(minWidth: 54, minHeight: 44)
-                }
-                .accessibilityLabel("\(title), réglage fin")
-                .accessibilityValue(fine ? "Activé" : "Désactivé")
-                Button(action: onReset) { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel("Réinitialiser \(title)")
-            }
+        HStack(spacing: 8) {
+            Text(title)
+                .font(.caption)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .frame(width: 82, alignment: .leading)
             Slider(value: Binding(get: { value }, set: { next in
                 if (value < 0 && next >= 0) || (value > 0 && next <= 0) { zeroFeedback += 1 }
                 onChange(next)
             }), in: activeRange, step: fine ? step / 10 : step, onEditingChanged: { editing in
-                if editing { onBegin() } else { onEnd() }
+                if editing {
+                    self.editing = true
+                    focus.setActive(accessibilityID)
+                    onBegin()
+                } else {
+                    finishEditing()
+                }
             })
             .overlay(alignment: .center) {
                 if !fine && range.lowerBound == -range.upperBound { Rectangle().fill(.white.opacity(0.55)).frame(width: 1, height: 9).allowsHitTesting(false) }
             }
-            .frame(minHeight: 32)
+            .frame(minHeight: 30)
             .onTapGesture(count: 2, perform: onReset)
             .accessibilityLabel(title)
             .accessibilityIdentifier(accessibilityID)
             .accessibilityValue(String(format: "%.2f", value))
             .sensoryFeedback(.selection, trigger: zeroFeedback)
+            .simultaneousGesture(DragGesture(minimumDistance: 0).onEnded { _ in finishEditing() })
+            Button {
+                fine.toggle(); fineOrigin = value
+            } label: {
+                Text(value, format: .number.precision(.fractionLength(fine ? precision + 1 : precision)))
+                    .font(.system(.caption, design: .monospaced)).monospacedDigit()
+                    .foregroundStyle(fine ? Color.mint : Color.secondary)
+                    .frame(width: 48, height: 40)
+            }
+            .accessibilityLabel("\(title), réglage fin")
+            .accessibilityValue(fine ? "Activé" : "Désactivé")
+            Button(action: onReset) {
+                Image(systemName: "arrow.counterclockwise").font(.caption).frame(width: 32, height: 40)
+            }
+            .foregroundStyle(.secondary)
+            .accessibilityLabel("Réinitialiser \(title)")
         }
+        .frame(minHeight: 42)
+        .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0.015)
+        .allowsHitTesting(focus.activeID == nil || focus.activeID == accessibilityID)
+        .animation(.easeOut(duration: 0.12), value: focus.activeID)
         .onChange(of: value) { _, next in
             // Undo/reset can move the value outside the currently magnified interval.
             if fine && !activeRange.contains(next) { fineOrigin = next }
         }
+        .onDisappear {
+            finishEditing()
+        }
+    }
+
+    private func finishEditing() {
+        guard editing else { return }
+        editing = false
+        focus.setActive(nil)
+        onEnd()
     }
 }

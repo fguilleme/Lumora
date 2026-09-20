@@ -280,3 +280,44 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 - `Tests/LumoraCoreTests/EditorTests.swift` : cycle groupé complet sur deux documents réels.
 - `LumoraUITests/EditorUITests.swift` : sélection tactile de deux lignes et vérification de l’ajout commun aux favoris.
 - `Documentation/Library-Batch-Selection-Simulator.png` : deux photos cochées et barre d’actions sur simulateur.
+
+## Trente-et-unième étape : interface compacte et colorimétrie unifiée
+
+- `Lumora/UI/AdjustmentSlider.swift` : curseurs sur une ligne et mode de concentration qui estompe les autres contrôles pendant le geste.
+- `Lumora/UI/EditorView.swift` : hauteur fixe du panneau d’inspection, donc hauteur stable de l’aperçu, et entrée Colorimétrie unique.
+- `Lumora/UI/ColorToolsView.swift` : sous-onglets Mélangeur et Grading dans un même panneau.
+- `Lumora/UI/ColorGradingView.swift` : sélecteur Ombres/Tons moyens/Hautes lumières et roue chromatique unique.
+- `LumoraUITests/EditorUITests.swift` : vérification de la hauteur de l’aperçu, de la compacité et de la structure du panneau.
+- `Documentation/Unified-Color-Interface-Simulator.png` : résultat final validé sur simulateur.
+
+## Trente-deuxième étape : gestes de l’aperçu
+
+- `Lumora/UI/PhotoCanvas.swift` : double toucher ramenant systématiquement le zoom et le déplacement au cadrage initial ; appui long conservé pour afficher temporairement l’original.
+- `Lumora/UI/EditorView.swift` : suppression du bouton œil devenu redondant dans la barre des outils.
+- `LumoraUITests/EditorUITests.swift` : exercice de l’appui long et vérification de l’absence du bouton de comparaison.
+
+## Trente-troisième étape : retour fiable des contrôles
+
+- `Lumora/UI/AdjustmentSlider.swift` : fin de réglage garantie par le geste de glissement, même lorsqu’un rerendu remplace une partie de l’interface.
+- `Lumora/UI/DetailView.swift` : contrôles secondaires désactivés et expliqués tant que Gain, Luminance ou Couleur ne les active pas.
+- `LumoraUITests/EditorUITests.swift` : comparaison des pixels avant/après Effets et Détail, puis vérification du retour de la barre après une exposition locale de masque.
+
+## Trente-quatrième étape : overlay persistant du masque sélectionné
+
+- `Lumora/UI/EditorView.swift` : visibilité de la matte rouge liée au masque sélectionné dans tous les panneaux et masquage temporaire pendant les curseurs photographiques.
+- `Lumora/UI/PhotoCanvas.swift` : séparation entre affichage de l’overlay et autorisation de peindre ou de transformer le masque.
+- `Tests/LumoraCoreTests/MaskTests.swift` : overlay rouge vérifié pour les formes radial, linéaire, pinceau et la matte intelligente Peau.
+- `LumoraUITests/EditorUITests.swift` : overlay contrôlé dans Lumière après création et modification d’un masque radial, avec capture du résultat.
+
+## Trente-cinquième étape : sélection rapide du calque
+
+- `Lumora/UI/EditorView.swift` : le nom du calque sous l’aperçu devient un menu listant Photo entière et tous les masques, avec sélection et visibilité.
+- `LumoraUITests/EditorUITests.swift` : passage de Radial 1 à Photo entière puis retour au masque depuis ce menu.
+
+## Trente-sixième étape : masque Yeux
+
+- `Lumora/Masks/LocalMask.swift` : type intelligent Yeux sérialisable, nommé et présenté avec son icône.
+- `Lumora/Masks/MaskGenerator.swift` : détection des repères faciaux Vision et extraction des contours gauche/droit.
+- `Lumora/Masks/EyeMaskGenerator.swift` : composition de deux ellipses progressives par visage dans une matte huit bits.
+- `Tests/LumoraCoreTests/MaskTests.swift` : séparation des deux yeux, centre opaque, contour progressif et sérialisation.
+- `LumoraUITests/EditorUITests.swift` : présence de Yeux vérifiée dans le menu intelligent.

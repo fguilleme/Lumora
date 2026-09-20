@@ -1,7 +1,7 @@
 # Lumora
 
 Éditeur photo natif SwiftUI, iOS 18+, Swift 6, sans dépendance tierce.
-Cette livraison réalise **l’étape 1, les courbes, le mélangeur HSL, le color grading, les effets, le détail, l’optique, la géométrie avec perspective, les masques locaux et intelligents Sujet/Arrière-plan/Personne/Visage/Ciel/Peau, les presets, la bibliothèque locale et l’export pleine résolution** du cahier des charges. Elle ne prétend pas fournir tous les outils d’un éditeur professionnel complet.
+Cette livraison réalise **l’étape 1, les courbes, le mélangeur HSL, le color grading, les effets, le détail, l’optique, la géométrie avec perspective, les masques locaux et intelligents Sujet/Arrière-plan/Personne/Visage/Yeux/Ciel/Peau, les presets, la bibliothèque locale et l’export pleine résolution** du cahier des charges. Elle ne prétend pas fournir tous les outils d’un éditeur professionnel complet.
 
 ## Exécuter
 
@@ -17,19 +17,20 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 ## Utilisation
 
 - Importer depuis Photos ou Fichiers. Le sélecteur Photos donne uniquement accès au fichier choisi, sans autorisation globale de photothèque.
-- Ajuster Lumière / Couleur. Les panneaux défilent verticalement.
+- Ajuster Lumière / Couleur. La zone d’aperçu conserve la même hauteur dans tous les outils et les contrôles défilent dans un panneau compact.
+- Pendant le déplacement d’un curseur, l’interface secondaire s’efface sur le fond noir pour laisser l’image et le réglage actif au premier plan.
 - Toucher une valeur numérique pour activer/désactiver le réglage fin. Double-toucher le curseur, ou utiliser sa flèche, pour le réinitialiser.
 - Annuler/rétablir avec les boutons supérieurs. Un déplacement continu du curseur crée une opération d’historique.
-- Maintenir la photographie pour voir l’original ; relâcher pour revenir. Le bouton œil permet aussi de basculer durablement.
-- Pincer pour zoomer, déplacer lorsque l’image est agrandie, double-toucher pour ajuster/zoomer.
+- Maintenir la photographie pour voir l’original ; relâcher pour revenir.
+- Pincer pour zoomer, déplacer lorsque l’image est agrandie, puis double-toucher pour rétablir le cadrage initial.
 - Ouvrir **Courbes** pour modifier RVB/Rouge/Vert/Bleu : toucher pour ajouter un point, glisser pour déplacer, ou utiliser les contrôles Entrée/Sortie.
-- Faire défiler les outils jusqu’à **Mélangeur** pour régler Teinte/Saturation/Luminance sur huit plages de couleur.
-- Ouvrir **Grading** pour colorer séparément ombres, tons moyens et hautes lumières avec trois roues, mélange et balance.
+- Ouvrir **Colorimétrie**, puis le sous-onglet **Mélangeur**, pour régler Teinte/Saturation/Luminance sur huit plages de couleur.
+- Dans **Colorimétrie**, ouvrir **Grading**, choisir Ombres, Tons moyens ou Hautes lumières, puis utiliser la roue chromatique unique ainsi que les réglages de mélange et de balance.
 - Ouvrir **Effets** pour régler séparément Texture, Clarté, Correction du voile, Vignette et Grain.
 - Ouvrir **Détail** pour la netteté avec masquage et les réductions de bruit de luminance et de couleur.
 - Ouvrir **Optique** pour le profil constructeur RAW, la distorsion, l’aberration chromatique et le vignetage optique.
 - Ouvrir **Géométrie** pour tourner, redresser l’horizon et corriger les perspectives verticale et horizontale manuellement ou automatiquement, ajuster aspect/échelle/décalage, puis recadrer avec une grille de tiers.
-- Ouvrir **Masques** pour gérer la pile de modifications. **Photo entière** est le premier calque ; chaque masque ajouté devient un calque sélectionnable, renommable, masquable, réordonnable et doté de sa propre opacité. Les poignées blanches et jaunes déplacent et redimensionnent directement les gradients sur la photo. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent sur le calque sélectionné.
+- Ouvrir **Masques** pour gérer la pile de modifications. **Photo entière** est le premier calque ; chaque masque ajouté devient un calque sélectionnable, renommable, masquable, réordonnable et doté de sa propre opacité. Le nom du calque affiché à côté du fichier ouvre aussi un sélecteur rapide accessible depuis les autres panneaux. Les poignées blanches et jaunes déplacent et redimensionnent directement les gradients sur la photo. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent sur le calque sélectionné.
 - Ouvrir **Presets** pour enregistrer des groupes de réglages, les appliquer avec Undo/Redo et les importer ou exporter au format JSON.
 - Choisir **Exporter** dans le menu supérieur : format, dimensions, profil couleur et métadonnées, puis **Créer le fichier** et **Partager ou enregistrer…**.
 - Toucher l’histogramme pour alterner RVB/luminance. Les triangles indiquent un écrêtage observé sur l’aperçu.
@@ -48,7 +49,7 @@ Voir [la feuille de route différée](Documentation/Roadmap.md), [la bibliothèq
 
 ## Périmètre réellement implémenté
 
-Import Photos/Fichiers, bibliothèque locale avec miniatures/recherche/tri/favoris/dossiers/étiquettes multiples/sélection et opérations groupées/réouverture/suppression, décodage ImageIO JPEG/HEIC/PNG/TIFF, décodage RAW/DNG via CIRAWFilter lorsqu’Apple prend en charge le fichier, profil optique RAW lorsque disponible, corrections manuelles de distorsion/aberration/vignetage, orientation, rotation, miroirs, redressement automatique de l’horizon, perspective verticale/horizontale manuelle ou automatique, aspect, échelle, décalage et crop, réglages exposition/contraste/hautes lumières/ombres/blancs/noirs/température/teinte/saturation/vibrance, courbes RVB et par canal, mélangeur HSL à huit plages, color grading à trois roues, Texture, Clarté, Correction du voile, Vignette, Grain, netteté avec masquage, réduction du bruit lumineux et coloré, masques pinceau/linéaire/radial et Sujet/Arrière-plan/Personne/Visage/Ciel/Peau composables, pinceau Peindre/Effacer avec diamètre visible, édition directe de la position, de la taille, de l’angle et du contour progressif des gradients, presets partiels importables/exportables, comparaison, zoom et déplacement, Undo/Redo, histogramme asynchrone, sauvegarde du dernier développement, export JPEG/HEIC/PNG/TIFF selon les encodeurs disponibles, panneau DEBUG de temps de rendu/dimensions/cache/génération.
+Import Photos/Fichiers, bibliothèque locale avec miniatures/recherche/tri/favoris/dossiers/étiquettes multiples/sélection et opérations groupées/réouverture/suppression, décodage ImageIO JPEG/HEIC/PNG/TIFF, décodage RAW/DNG via CIRAWFilter lorsqu’Apple prend en charge le fichier, profil optique RAW lorsque disponible, corrections manuelles de distorsion/aberration/vignetage, orientation, rotation, miroirs, redressement automatique de l’horizon, perspective verticale/horizontale manuelle ou automatique, aspect, échelle, décalage et crop, réglages exposition/contraste/hautes lumières/ombres/blancs/noirs/température/teinte/saturation/vibrance, courbes RVB et par canal, panneau Colorimétrie réunissant mélangeur HSL à huit plages et grading tonal sur une roue unique, Texture, Clarté, Correction du voile, Vignette, Grain, netteté avec masquage, réduction du bruit lumineux et coloré, masques pinceau/linéaire/radial et Sujet/Arrière-plan/Personne/Visage/Yeux/Ciel/Peau composables, pinceau Peindre/Effacer avec diamètre visible, édition directe de la position, de la taille, de l’angle et du contour progressif des gradients, presets partiels importables/exportables, comparaison, zoom et déplacement, Undo/Redo, histogramme asynchrone, sauvegarde du dernier développement, export JPEG/HEIC/PNG/TIFF selon les encodeurs disponibles, panneau DEBUG de temps de rendu/dimensions/cache/génération.
 
 ## Étapes suivantes
 
