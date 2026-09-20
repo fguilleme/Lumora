@@ -1,0 +1,40 @@
+import CoreGraphics
+import Foundation
+
+struct Histogram: Sendable {
+    var red = [Int](repeating: 0, count: 256)
+    var green = [Int](repeating: 0, count: 256)
+    var blue = [Int](repeating: 0, count: 256)
+    var luminance = [Int](repeating: 0, count: 256)
+    var shadows = 0
+    var highlights = 0
+    var samples = 0
+
+    static func compute(_ image: CGImage) -> Self {
+        let width = 160, height = 160
+        var bytes = [UInt8](repeating: 0, count: width * height * 4)
+        let success = bytes.withUnsafeMutableBytes { buffer -> Bool in
+            guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+                  let context = CGContext(data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8,
+                                          bytesPerRow: width * 4, space: space,
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+            context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+            return true
+        }
+        var result = Self()
+        guard success else { return result }
+        for i in stride(from: 0, to: bytes.count, by: 4) where bytes[i + 3] > 0 {
+            let r = Int(bytes[i]), g = Int(bytes[i + 1]), b = Int(bytes[i + 2])
+            result.red[r] += 1; result.green[g] += 1; result.blue[b] += 1
+            let redLuma = 0.2126 * Double(r)
+            let greenLuma = 0.7152 * Double(g)
+            let blueLuma = 0.0722 * Double(b)
+            let bin = Int(redLuma + greenLuma + blueLuma)
+            result.luminance[bin] += 1
+            if max(r, g, b) <= 1 { result.shadows += 1 }
+            if max(r, g, b) >= 254 { result.highlights += 1 }
+            result.samples += 1
+        }
+        return result
+    }
+}

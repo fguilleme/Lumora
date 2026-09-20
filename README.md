@@ -1,0 +1,59 @@
+# Lumora
+
+Éditeur photo natif SwiftUI, iOS 18+, Swift 6, sans dépendance tierce.
+Cette livraison réalise **l’étape 1, les courbes, le mélangeur HSL, le color grading, les effets, le détail, l’optique, la géométrie avec perspective, les masques locaux et intelligents Sujet/Arrière-plan/Personne/Visage/Ciel/Peau, les presets, la bibliothèque locale et l’export pleine résolution** du cahier des charges. Elle ne prétend pas fournir tous les outils d’un éditeur professionnel complet.
+
+## Exécuter
+
+Ouvrir `Lumora.xcodeproj`, choisir le scheme **Lumora**, puis un iPhone ou un simulateur. La signature utilise l’équipe déjà configurée dans le projet ; adapter celle-ci si nécessaire sur un appareil physique.
+
+```sh
+xcodebuild -project Lumora.xcodeproj -scheme Lumora -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+swift test
+```
+
+Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, indépendamment de SwiftUI. Une cible XCTest UI séparée vérifie le parcours Photos → réglage → Undo/Redo → comparaison → restauration sur simulateur. Elle suppose une photothèque de simulateur contenant au moins deux photos et sélectionne une tuile via son identifiant d’accessibilité système.
+
+## Utilisation
+
+- Importer depuis Photos ou Fichiers. Le sélecteur Photos donne uniquement accès au fichier choisi, sans autorisation globale de photothèque.
+- Ajuster Lumière / Couleur. Les panneaux défilent verticalement.
+- Toucher une valeur numérique pour activer/désactiver le réglage fin. Double-toucher le curseur, ou utiliser sa flèche, pour le réinitialiser.
+- Annuler/rétablir avec les boutons supérieurs. Un déplacement continu du curseur crée une opération d’historique.
+- Maintenir la photographie pour voir l’original ; relâcher pour revenir. Le bouton œil permet aussi de basculer durablement.
+- Pincer pour zoomer, déplacer lorsque l’image est agrandie, double-toucher pour ajuster/zoomer.
+- Ouvrir **Courbes** pour modifier RVB/Rouge/Vert/Bleu : toucher pour ajouter un point, glisser pour déplacer, ou utiliser les contrôles Entrée/Sortie.
+- Faire défiler les outils jusqu’à **Mélangeur** pour régler Teinte/Saturation/Luminance sur huit plages de couleur.
+- Ouvrir **Grading** pour colorer séparément ombres, tons moyens et hautes lumières avec trois roues, mélange et balance.
+- Ouvrir **Effets** pour régler séparément Texture, Clarté, Correction du voile, Vignette et Grain.
+- Ouvrir **Détail** pour la netteté avec masquage et les réductions de bruit de luminance et de couleur.
+- Ouvrir **Optique** pour le profil constructeur RAW, la distorsion, l’aberration chromatique et le vignetage optique.
+- Ouvrir **Géométrie** pour tourner, redresser l’horizon et corriger les perspectives verticale et horizontale manuellement ou automatiquement, ajuster aspect/échelle/décalage, puis recadrer avec une grille de tiers.
+- Ouvrir **Masques** pour gérer la pile de modifications. **Photo entière** est le premier calque ; chaque masque ajouté devient un calque sélectionnable, renommable, masquable, réordonnable et doté de sa propre opacité. Les poignées blanches et jaunes déplacent et redimensionnent directement les gradients sur la photo. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent sur le calque sélectionné.
+- Ouvrir **Presets** pour enregistrer des groupes de réglages, les appliquer avec Undo/Redo et les importer ou exporter au format JSON.
+- Choisir **Exporter** dans le menu supérieur : format, dimensions, profil couleur et métadonnées, puis **Créer le fichier** et **Partager ou enregistrer…**.
+- Toucher l’histogramme pour alterner RVB/luminance. Les triangles indiquent un écrêtage observé sur l’aperçu.
+- Ouvrir **Bibliothèque** dans le menu supérieur pour rechercher les développements locaux, les trier par date ou nom, gérer leurs favoris, dossiers et étiquettes multiples, rouvrir une photo ou la supprimer après confirmation. **Sélectionner** permet d’appliquer ces classements ou une suppression à plusieurs photos. Le dernier document reste restauré automatiquement au prochain lancement.
+
+## Architecture
+
+- **Editor** : `EditState` Codable/Sendable, définitions des plages, commandes de paramètres, historique borné et presets partiels ; `EditorSession` Observable sur MainActor orchestre l’UI.
+- **Rendering** : `RenderEngine` est un actor indépendant de SwiftUI. Core Image utilise Metal lorsqu’il est disponible. Deux originaux décodés réduits sont mis en cache, à 960 et 2048 pixels sur le grand côté. Les générations obsolètes ne remplacent jamais un résultat récent.
+- **Adjustments / Masks** : pile ordonnée composée d’un développement pleine image puis de calques masqués. Chaque calque possède nom, visibilité et opacité et peut porter réponse tonale, courbes PCHIP, vibrance, mélangeur HSL, grading, effets, débruitage et netteté. Optique et géométrie restent communes au document.
+- **Library / Persistence** : import par fichier transférable, copie privée unique de l’original, index reconstruit depuis les sidecars, recherche et tri en mémoire, favoris, dossiers et étiquettes multiples persistants, opérations groupées, miniatures locales et JSON atomique versionné. Les écritures périmées ou postérieures à une suppression sont rejetées.
+- **Export** : rendu depuis l’original avec un contexte indépendant, options ImageIO, métadonnées filtrées et partage système.
+- **UI** : écran, canvas, histogramme, curseur réutilisable dans des fichiers distincts.
+
+Voir [la feuille de route différée](Documentation/Roadmap.md), [la bibliothèque locale](Documentation/Library.md), [les presets](Documentation/Presets.md), [la pile de modifications](Documentation/AdjustmentLayers.md), [l’édition directe des masques](Documentation/MaskEditing.md), [les masques locaux](Documentation/Masks.md), [les masques intelligents](Documentation/SmartMasks.md), [la géométrie et le recadrage](Documentation/Geometry.md), [les corrections optiques](Documentation/Optics.md), [le panneau Détail](Documentation/Detail.md), [les effets](Documentation/Effects.md), [l’export et ses limites](Documentation/Export.md), [le color grading](Documentation/ColorGrading.md), [le mélangeur HSL](Documentation/ColorMixer.md), [le fonctionnement des courbes](Documentation/Curves.md), [les choix de rendu et limites](Documentation/Rendering.md) et [l’inventaire](Documentation/Files.md).
+
+## Périmètre réellement implémenté
+
+Import Photos/Fichiers, bibliothèque locale avec miniatures/recherche/tri/favoris/dossiers/étiquettes multiples/sélection et opérations groupées/réouverture/suppression, décodage ImageIO JPEG/HEIC/PNG/TIFF, décodage RAW/DNG via CIRAWFilter lorsqu’Apple prend en charge le fichier, profil optique RAW lorsque disponible, corrections manuelles de distorsion/aberration/vignetage, orientation, rotation, miroirs, redressement automatique de l’horizon, perspective verticale/horizontale manuelle ou automatique, aspect, échelle, décalage et crop, réglages exposition/contraste/hautes lumières/ombres/blancs/noirs/température/teinte/saturation/vibrance, courbes RVB et par canal, mélangeur HSL à huit plages, color grading à trois roues, Texture, Clarté, Correction du voile, Vignette, Grain, netteté avec masquage, réduction du bruit lumineux et coloré, masques pinceau/linéaire/radial et Sujet/Arrière-plan/Personne/Visage/Ciel/Peau composables, pinceau Peindre/Effacer avec diamètre visible, édition directe de la position, de la taille, de l’angle et du contour progressif des gradients, presets partiels importables/exportables, comparaison, zoom et déplacement, Undo/Redo, histogramme asynchrone, sauvegarde du dernier développement, export JPEG/HEIC/PNG/TIFF selon les encodeurs disponibles, panneau DEBUG de temps de rendu/dimensions/cache/génération.
+
+## Étapes suivantes
+
+L’import en lot, la synchronisation de bibliothèque et la calibration architecturale à plusieurs guides ne sont **pas encore implémentés**. La perspective automatique repose sur les structures rectangulaires visibles ; les poignées directes permettent ensuite de corriger manuellement ses quatre coins et le recadrage.
+
+Pas encore de validation RAW multi-boîtiers, de mesure 60 fps sur matériel, de rendu HDR/EDR, de traitement par lots, ni de persistance de l’historique Undo au redémarrage. Une connexion peut être nécessaire pour récupérer un original situé dans iCloud via le sélecteur système ; le développement et sa bibliothèque restent locaux.
+
+Le détail, les critères attendus et l’ordre recommandé sont conservés dans [la feuille de route](Documentation/Roadmap.md).
