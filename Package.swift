@@ -11,6 +11,7 @@ let package = Package(
                 sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
         .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"]),
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
+                    exclude: ["LOW_KEY_CONTRACT.md"],
                     resources: [.copy("Baselines")])
     ]
 )

@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain
+    case highKey, lowKey, grain, tonalContrast
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -27,6 +27,17 @@ enum CreativeEffectCatalog {
     static let descriptors: [CreativeEffectKind: CreativeEffectDescriptor] = [
         .highKey: .init(title: "High Key", category: "Key", symbol: "sun.max", parameters: keyParameters(high: true)),
         .lowKey: .init(title: "Low Key", category: "Key", symbol: "moon", parameters: keyParameters(high: false)),
+        .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
+            .init("globalAmount", "Global", 0...100, 60),
+            .init("highlights", "Hautes lumières", -100...100, 25),
+            .init("midtones", "Tons moyens", -100...100, 30),
+            .init("shadows", "Ombres", -100...100, 20),
+            // Radius is mapped logarithmically to 1.2...24 photographic px on a 3000 px long edge.
+            .init("radius", "Rayon", 0...100, 45),
+            .init("saturation", "Saturation", -100...100),
+            .init("protectHighlights", "Protéger les hautes lumières", 0...100, 50),
+            .init("protectShadows", "Protéger les ombres", 0...100, 55)
+        ]),
         .grain: .init(title: "Grain", category: "Film", symbol: "camera.filters", parameters: [
             .init("amount", "Quantité", 0...100, 35), .init("size", "Taille", 1...100, 35),
             .init("hardness", "Dureté", 0...100, 45), .init("irregularity", "Irrégularité", 0...100, 50),
@@ -43,6 +54,48 @@ enum CreativeEffectCatalog {
          .init("saturation", "Saturation", -100...100),
          .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
          .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+    }
+}
+
+/// Public, serializable view of the catalogue parameters. Amounts are -100...100,
+/// global/radius/protection 0...100, saturation -100...100. Zero tonal amounts
+/// or zero global amount are exact identities; radius and protection then have no effect.
+struct TonalContrastSettings: Codable, Sendable, Equatable {
+    var highlights = 25.0, midtones = 30.0, shadows = 20.0
+    var globalAmount = 60.0, radius = 45.0, saturation = 0.0
+    var protectHighlights = 50.0, protectShadows = 55.0
+    init() {}
+    init(effect: CreativeEffect) {
+        highlights = effect["highlights"]; midtones = effect["midtones"]; shadows = effect["shadows"]
+        globalAmount = effect["globalAmount"]; radius = effect["radius"]; saturation = effect["saturation"]
+        protectHighlights = effect["protectHighlights"]; protectShadows = effect["protectShadows"]
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.tonalContrast)
+        for (key, value) in [("highlights", highlights), ("midtones", midtones), ("shadows", shadows),
+                             ("globalAmount", globalAmount), ("radius", radius), ("saturation", saturation),
+                             ("protectHighlights", protectHighlights), ("protectShadows", protectShadows)] { effect[key] = value }
+        return Self(effect: effect)
+    }
+}
+
+enum TonalContrastProfile: String, CaseIterable, Identifiable {
+    case subtleDetail = "Subtle Detail", naturalTexture = "Natural Texture"
+    case landscapeDefinition = "Landscape Definition", softStructure = "Soft Structure"
+    case strongStructure = "Strong Structure"
+    var id: String { rawValue }
+    func applying(to effect: CreativeEffect) -> CreativeEffect {
+        var result = effect
+        let settings: [String: Double]
+        switch self {
+        case .subtleDetail: settings = ["globalAmount": 40, "highlights": 12, "midtones": 18, "shadows": 10, "radius": 25]
+        case .naturalTexture: settings = ["globalAmount": 60, "highlights": 22, "midtones": 32, "shadows": 18, "radius": 45]
+        case .landscapeDefinition: settings = ["globalAmount": 75, "highlights": 38, "midtones": 42, "shadows": 28, "radius": 60]
+        case .softStructure: settings = ["globalAmount": 55, "highlights": -22, "midtones": -30, "shadows": -18, "radius": 55]
+        case .strongStructure: settings = ["globalAmount": 90, "highlights": 65, "midtones": 75, "shadows": 55, "radius": 70]
+        }
+        for (key, value) in settings { result[key] = value }
+        return result
     }
 }
 

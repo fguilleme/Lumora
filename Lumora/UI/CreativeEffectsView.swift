@@ -14,7 +14,7 @@ struct CreativeEffectsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Menu {
-                        ForEach(["Key", "Film"], id: \.self) { category in
+                        ForEach(["Key", "Detail", "Film"], id: \.self) { category in
                             Section(category) {
                                 ForEach(CreativeEffectKind.allCases.filter { $0.descriptor.category == category }) { kind in
                                     Button(kind.descriptor.title, systemImage: kind.descriptor.symbol) {
@@ -100,7 +100,20 @@ struct CreativeEffectsView: View {
                             }
                         }.dimsDuringAdjustment()
                     }
-                    ForEach(effect.kind.descriptor.parameters.filter { effect.kind != .grain || advanced || ["amount", "size", "hardness"].contains($0.id) }) { spec in
+                    if effect.kind == .tonalContrast {
+                        Menu("Style Lumora") {
+                            ForEach(TonalContrastProfile.allCases) { profile in
+                                Button(profile.rawValue) { update { $0 = profile.applying(to: $0) } }
+                            }
+                        }.dimsDuringAdjustment()
+                        Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
+                            .font(.caption).dimsDuringAdjustment()
+                    }
+                    ForEach(effect.kind.descriptor.parameters.filter { spec in
+                        if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
+                        if effect.kind == .tonalContrast && !advanced { return !spec.id.hasPrefix("protect") }
+                        return true
+                    }) { spec in
                         slider(spec.id, spec.title, spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
                     }
                     if effect.kind == .grain && advanced {
@@ -109,7 +122,7 @@ struct CreativeEffectsView: View {
                         Button("Nouvelle structure") { update { $0.seed = $0.seed &+ 1 } }.dimsDuringAdjustment()
                     }
                 } else {
-                    Text("Empilez High Key, Low Key et Grain. Chaque effet peut cibler un masque existant.")
+                    Text("Empilez High Key, Low Key, Tonal Contrast et Grain. Chaque effet peut cibler un masque existant.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)

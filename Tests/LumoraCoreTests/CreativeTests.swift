@@ -37,6 +37,29 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
     let complete = Preset(name: "FX + zone", sections: [.creative, .masks], values: state).applying(to: old)
     #expect(complete.creative.effects[0].maskID == complete.masks[0].id)
 }
+
+@Test func tonalContrastPersistencePresetHistoryAndValidation() throws {
+    var effect = TonalContrastProfile.naturalTexture.applying(to: CreativeEffect(.tonalContrast))
+    effect["shadows"] = -35
+    effect["radius"] = 88
+    var state = EditState()
+    state.creative.effects = [effect]
+    let encoded = try JSONEncoder().encode(state)
+    let decoded = try JSONDecoder().decode(EditState.self, from: encoded)
+    #expect(decoded == state.validated)
+    let settings = TonalContrastSettings(effect: effect)
+    #expect(try JSONDecoder().decode(TonalContrastSettings.self, from: JSONEncoder().encode(settings)) == settings)
+    var history = HistoryManager()
+    let original = EditState()
+    history.begin("Tonal Contrast", state: original)
+    history.commit(state)
+    #expect(history.undo() == original)
+    #expect(history.redo() == state)
+    let preset = Preset(name: "Texture", sections: [.creative], values: state)
+    #expect(preset.applying(to: original).creative.effects.first?.kind == .tonalContrast)
+    effect["radius"] = .infinity
+    #expect(effect["radius"] == 45)
+}
 @Test func creativeKeyDirectionProtectionAndIdentity() throws {
     for kind in [CreativeEffectKind.highKey, .lowKey] {
         var fx = CreativeEffect(kind); fx["amount"] = 100

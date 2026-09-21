@@ -10,7 +10,7 @@ protocol CreativeEffectRendering: Sendable {
 enum CreativeStackRenderer {
     static let renderers: [CreativeEffectKind: any CreativeEffectRendering] = [
         .highKey: KeyEffectRenderer(high: true), .lowKey: KeyEffectRenderer(high: false),
-        .grain: GrainEffectRenderer()
+        .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer()
     ]
     static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
         var image = input
@@ -114,6 +114,73 @@ enum GlowRenderer {
 struct GrainEffectRenderer: CreativeEffectRendering {
     func apply(_ image: CIImage, effect: CreativeEffect) throws -> CIImage {
         try FilmGrainEngine.apply(image, settings: FilmGrainSettings(effect: effect))
+    }
+}
+
+/// Three Gaussian scales form a compact Laplacian pyramid in linear luminance.
+/// CI keeps the intermediate images on the GPU; the radii are normalized to a
+/// 3000-pixel photographic long edge, so preview and export share one scale.
+struct TonalContrastRenderer: CreativeEffectRendering {
+    private static let luminance = CreativeMetal.compile("""
+    [[ stitchable ]] float4 tonalLuminance(coreimage::sample_t pixel) {
+        float4 c = unpremultiply(pixel);
+        float y = dot(c.rgb, float3(0.2126, 0.7152, 0.0722));
+        return float4(y, y, y, c.a);
+    }
+    """)
+    private static let reconstruct = CreativeMetal.compile("""
+    [[ stitchable ]] float4 tonalReconstruct(coreimage::sample_t pixel,
+            coreimage::sample_t small, coreimage::sample_t medium,
+            coreimage::sample_t large, float4 amounts, float3 controls) {
+        float4 c = unpremultiply(pixel);
+        float y = max(0.0, dot(c.rgb, float3(0.2126, 0.7152, 0.0722)));
+        float b1 = small.r, b2 = medium.r, b3 = large.r;
+        // A continuous partition of unity in perceptual lightness. The local
+        // base, rather than the fine texture, selects the tonal region.
+        float lightness = sqrt(clamp(b2, 0.0, 1.0));
+        float sw = 1.0 - smoothstep(0.12, 0.55, lightness);
+        float hw = smoothstep(0.45, 0.88, lightness);
+        float mw = max(0.0, 1.0 - sw - hw);
+        float shadowGuard = mix(1.0, smoothstep(0.01, 0.18, y), controls.y);
+        float highlightGuard = mix(1.0, 1.0 - smoothstep(0.82, 1.05, y), controls.z);
+        float zone = sw * amounts.x * shadowGuard + mw * amounts.y
+                   + hw * amounts.z * highlightGuard;
+        float edge = abs(y - b3);
+        float edgeGuard = 1.0 / (1.0 + pow(edge / 0.22, 2.0));
+        float noiseGuard = smoothstep(0.005, 0.11, y);
+        float fine = (y - b1) * mix(0.25, 1.0, noiseGuard);
+        float mid = b1 - b2;
+        float coarse = b2 - b3;
+        // Signed amounts soften as well as strengthen detail. Gains are bounded
+        // and the broadest band is restrained to avoid hard-edge halos.
+        float gain = amounts.w * zone * edgeGuard;
+        float delta = gain * (0.60 * fine + 0.30 * mid + 0.10 * coarse);
+        delta = clamp(delta, -min(0.22, y * 0.65), min(0.22, max(0.0, 1.0-y) * 0.65));
+        float nextY = max(0.0, y + delta);
+        float3 next = c.rgb * (nextY / max(y, 0.00001));
+        next = mix(float3(nextY), next, 1.0 + controls.x * 0.5);
+        c.rgb = max(next, float3(0.0));
+        return premultiply(c);
+    }
+    """)
+
+    func apply(_ image: CIImage, effect: CreativeEffect) throws -> CIImage {
+        let s = TonalContrastSettings(effect: effect).validated
+        guard s.globalAmount > 0, s.highlights != 0 || s.midtones != 0 || s.shadows != 0 else { return image }
+        guard let luma = Self.luminance?.apply(extent: image.extent, arguments: [image]) else { throw PhotoError.renderFailed }
+        let longEdge = max(image.extent.width, image.extent.height)
+        let photographicRadius = 1.2 * pow(20.0, s.radius / 100)
+        let radius = photographicRadius * longEdge / 3000
+        func blurred(_ scale: Double) -> CIImage {
+            luma.clampedToExtent().applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: radius * scale])
+                .cropped(to: image.extent)
+        }
+        let small = blurred(0.5), medium = blurred(1.8), large = blurred(5)
+        guard let output = Self.reconstruct?.apply(extent: image.extent, arguments: [image, small, medium, large,
+            CIVector(x: s.shadows / 100, y: s.midtones / 100, z: s.highlights / 100, w: s.globalAmount / 100 * 1.5),
+            CIVector(x: s.saturation / 100, y: s.protectShadows / 100, z: s.protectHighlights / 100)])
+        else { throw PhotoError.renderFailed }
+        return output
     }
 }
 
