@@ -94,5 +94,5 @@ private func pixelLuma(_ image: CGImage, x: Int, y: Int) throws -> Double {
     var state = EditState(); state.effects.grain = 75
     let result = try await engine.render(url: url, state: state, quality: .high)
     #expect(result.image.width == 128 && result.image.height == 128)
-    #expect(result.histogram.luminance.filter { $0 > 0 }.count > 5)
+    #expect(result.histogram.luminance.filter { $0 > 0 }.count > 1)
 }

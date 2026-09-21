@@ -118,20 +118,9 @@ enum EffectsRenderer {
             image = output.cropped(to: extent)
         }
         if settings.grain > 0 {
-            let random = CIFilter.randomGenerator()
-            guard let noise = random.outputImage?.cropped(to: extent) else { throw PhotoError.renderFailed }
-            let monochrome = CIFilter.colorControls()
-            monochrome.inputImage = noise
-            monochrome.saturation = 0
-            // Contrast zero collapses random noise to neutral 50% gray, so the
-            // soft-light result approaches the identity continuously near zero.
-            monochrome.contrast = Float(settings.grain / 100 * 0.7)
-            guard let grayNoise = monochrome.outputImage else { throw PhotoError.renderFailed }
-            let blend = CIFilter.softLightBlendMode()
-            blend.inputImage = grayNoise
-            blend.backgroundImage = image
-            guard let output = blend.outputImage else { throw PhotoError.renderFailed }
-            image = output.cropped(to: extent)
+            var grain = FilmGrainSettings()
+            grain.amount = settings.grain
+            image = try FilmGrainEngine.apply(image, settings: grain)
         }
         return image
     }

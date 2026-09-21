@@ -56,7 +56,7 @@ actor RenderEngine {
         context.clearCaches()
     }
 
-    func render(url: URL, state: EditState, quality: PreviewQuality) throws -> RenderResult {
+    func render(url: URL, state: EditState, quality: PreviewQuality, bypassCreative: Bool = false) throws -> RenderResult {
         try Task.checkCancellation()
         let start = ContinuousClock.now
         if sourceURL != url {
@@ -67,7 +67,7 @@ actor RenderEngine {
         let hit = sources[key] != nil
         let original = try preview(url: url, maximum: quality.rawValue, optics: state.optics)
         try Task.checkCancellation()
-        let image = try adjusted(CIImage(cgImage: original), state: state)
+        let image = try adjusted(CIImage(cgImage: original), state: state, bypassCreative: bypassCreative)
         try Task.checkCancellation()
         guard let space = CGColorSpace(name: CGColorSpace.displayP3),
               let result = context.createCGImage(image, from: image.extent, format: .RGBA8, colorSpace: space)
@@ -82,7 +82,7 @@ actor RenderEngine {
     }
 
     /// Shared adjustment graph for both preview and export. No SwiftUI or bitmap history.
-    private func adjusted(_ input: CIImage, state: EditState) throws -> CIImage {
+    private func adjusted(_ input: CIImage, state: EditState, bypassCreative: Bool = false) throws -> CIImage {
         var image = try OpticsRenderer.apply(input, settings: state.optics)
         image = try applyDevelopment(image, state: state)
         image = GeometryRenderer.apply(image, settings: state.geometry)
@@ -96,6 +96,21 @@ actor RenderEngine {
             blend.maskImage = matte
             guard let output = blend.outputImage else { throw PhotoError.renderFailed }
             image = output.cropped(to: image.extent)
+        }
+        // Legacy grain is retained on disk but now uses the shared engine, after geometry/detail.
+        var grain = FilmGrainSettings(); grain.amount = state.effects.grain
+        image = try FilmGrainEngine.apply(image, settings: grain)
+        for layer in state.masks where layer.isVisible && layer.opacity > 0 && layer.adjustments.effects.grain > 0 {
+            grain.amount = layer.adjustments.effects.grain
+            let output = try FilmGrainEngine.apply(image, settings: grain)
+            let blend = CIFilter.blendWithMask()
+            blend.inputImage = output; blend.backgroundImage = image
+            blend.maskImage = try MaskRenderer.makeMask(layer, extent: image.extent)
+            guard let mixed = blend.outputImage else { throw PhotoError.renderFailed }
+            image = mixed.cropped(to: image.extent)
+        }
+        if !bypassCreative {
+            image = try CreativeStackRenderer.apply(image, stack: state.creative, masks: state.masks)
         }
         return image
     }
@@ -127,6 +142,7 @@ actor RenderEngine {
         colorState.optics = OpticsSettings()
         colorState.geometry = GeometrySettings()
         colorState.masks = []
+        colorState.creative = CreativeEffectStack()
         if colorState != EditState() {
             let data: Data
             if lastLUTState == colorState, let cached = lastLUT { data = cached }
@@ -143,7 +159,8 @@ actor RenderEngine {
         }
         image = try EffectsRenderer.applyBeforeDetail(image, settings: state.effects)
         image = try DetailRenderer.apply(image, settings: state.detail)
-        image = try EffectsRenderer.applyFinishing(image, settings: state.effects)
+        var finishing = state.effects; finishing.grain = 0
+        image = try EffectsRenderer.applyFinishing(image, settings: finishing)
         return image
     }
 
@@ -216,6 +233,39 @@ actor RenderEngine {
             try? FileManager.default.removeItem(at: folder)
             throw error
         }
+    }
+
+    /// Region is normalized in post-geometry coordinates, origin lower-left.
+    /// Builds a lazy full-resolution graph and materializes only a bounded output rectangle.
+    /// Decoder internals may still decode the full original (notably RAW).
+    func renderFullResolutionTile(url: URL, state: EditState, region: CGRect,
+                                  maximum: Int = 1024, bypassCreative: Bool = false) throws -> CGImage {
+        try Task.checkCancellation()
+        guard [region.origin.x, region.origin.y, region.width, region.height].allSatisfy({ $0.isFinite }), region.width > 0, region.height > 0 else { throw PhotoError.renderFailed }
+        defer { context.clearCaches() }
+        let source: CIImage
+        if let rawFilter = CIRAWFilter(imageURL: url) {
+            rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported
+            guard let decoded = rawFilter.outputImage else { throw PhotoError.unreadable }
+            source = decoded
+        } else {
+            guard let decoded = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
+            source = decoded
+        }
+        let normalized = source.transformed(by: CGAffineTransform(translationX: -source.extent.minX, y: -source.extent.minY))
+        let graph = try adjusted(normalized, state: state.validated, bypassCreative: bypassCreative)
+        let extent = graph.extent
+        let limit = CGFloat(min(2048, max(64, maximum)))
+        let width = min(limit, max(1, extent.width * region.width))
+        let height = min(limit, max(1, extent.height * region.height))
+        let x = min(extent.maxX-width, max(extent.minX, extent.minX + region.midX*extent.width-width/2))
+        let y = min(extent.maxY-height, max(extent.minY, extent.minY + region.midY*extent.height-height/2))
+        let bounds = CGRect(x: x, y: y, width: min(width, extent.width), height: min(height, extent.height)).integral.intersection(extent)
+        try Task.checkCancellation()
+        guard let space = CGColorSpace(name: CGColorSpace.displayP3),
+              let tile = context.createCGImage(graph, from: bounds, format: .RGBA8, colorSpace: space) else { throw PhotoError.renderFailed }
+        try Task.checkCancellation()
+        return tile
     }
 
     private func preview(url: URL, maximum: Int, optics: OpticsSettings) throws -> CGImage {

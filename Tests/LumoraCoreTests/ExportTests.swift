@@ -161,3 +161,21 @@ private func exportFixture(width: Int = 128, height: Int = 64, orientation: Int 
         #expect(contents.isEmpty)
     }
 }
+
+@Test func nativeCreativeTileMatchesFullGraphAndHonorsBounds() async throws {
+    let url = try exportFixture(width: 512, height: 256)
+    defer { try? FileManager.default.removeItem(at: url) }
+    let engine = RenderEngine()
+    var state = EditState()
+    state.creative.effects = [CreativeEffect(.highKey), CreativeEffect(.grain)]
+    let whole = try await engine.renderFullResolutionTile(url: url, state: state,
+        region: CGRect(x: 0, y: 0, width: 1, height: 1), maximum: 1024)
+    let tile = try await engine.renderFullResolutionTile(url: url, state: state,
+        region: CGRect(x: 0.25, y: 0.25, width: 0.5, height: 0.5), maximum: 64)
+    #expect(tile.width == 64 && tile.height == 64)
+    let crop = try #require(whole.cropping(to: CGRect(x: 224, y: 96, width: 64, height: 64)))
+    #expect(Histogram.compute(tile).luminance == Histogram.compute(crop).luminance)
+    let bypass = try await engine.renderFullResolutionTile(url: url, state: state,
+        region: CGRect(x: 0.25, y: 0.25, width: 0.5, height: 0.5), maximum: 64, bypassCreative: true)
+    #expect(Histogram.compute(tile).luminance != Histogram.compute(bypass).luminance)
+}

@@ -42,7 +42,7 @@ actor PresetStore {
         let data = try Data(contentsOf: source)
         guard data.count <= 5_000_000 else { throw PresetError.tooLarge }
         let decoded = try decoder.decode(Preset.self, from: data)
-        guard decoded.formatVersion == 1 else { throw PresetError.unsupported }
+        guard (1...2).contains(decoded.formatVersion) else { throw PresetError.unsupported }
         guard var preset = decoded.validated else { throw PresetError.invalid }
         preset.id = UUID(); preset.createdAt = Date()
         return try save(preset)

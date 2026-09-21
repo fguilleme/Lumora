@@ -41,7 +41,7 @@ import Foundation
     #expect(decoded.applying(to: EditState()).exposure == 1.25)
     #expect(Preset(name: "", sections: [.light], values: state).validated == nil)
     #expect(Preset(name: "Vide", sections: [], values: state).validated == nil)
-    var future = preset; future.formatVersion = 2
+    var future = preset; future.formatVersion = 3
     #expect(future.validated == nil)
 }
 

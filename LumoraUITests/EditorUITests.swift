@@ -1,6 +1,158 @@
 import XCTest
+import UIKit
 
 final class EditorUITests: XCTestCase {
+    @MainActor
+    func testLongPressDoesNotStealMaskOrCropHandles() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
+        let toolbar = app.scrollViews["tools-toolbar"]
+        toolbar.swipeLeft(); toolbar.swipeLeft()
+        app.buttons["Masques"].tap()
+        app.scrollViews["masks-controls"].buttons["Radial"].tap()
+        let centerX = app.sliders["mask-parameter-centerX"]
+        XCTAssertTrue(centerX.waitForExistence(timeout: 5))
+        let before = centerX.value as? String
+        let handle = app.descendants(matching: .any).matching(identifier: "mask-handle-center").firstMatch
+        XCTAssertTrue(handle.waitForExistence(timeout: 5))
+        let start = handle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        start.press(forDuration: 0.5, thenDragTo: start.withOffset(CGVector(dx: 60, dy: 0)))
+        XCTAssertNotEqual(centerX.value as? String, before, "A deliberate hold on the mask handle must still move it")
+        XCTAssertFalse(app.staticTexts["ORIGINAL"].exists)
+
+        toolbar.swipeRight()
+        let geometry = app.buttons["Géométrie"]
+        for _ in 0..<4 {
+            if geometry.isHittable { break }
+            toolbar.swipeLeft()
+        }
+        geometry.tap()
+        let cropX = app.sliders["geometry-cropX"]
+        XCTAssertTrue(cropX.waitForExistence(timeout: 5))
+        let cropXBefore = cropX.value as? String
+        let crop = app.descendants(matching: .any).matching(identifier: "geometry-handle-crop-position").firstMatch
+        XCTAssertTrue(crop.waitForExistence(timeout: 5))
+        let cropStart = crop.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        cropStart.press(forDuration: 0.5, thenDragTo: cropStart.withOffset(CGVector(dx: 45, dy: 0)))
+        XCTAssertNotEqual(cropX.value as? String, cropXBefore, "A deliberate hold on the crop handle must still move it")
+        XCTAssertFalse(app.staticTexts["ORIGINAL"].exists)
+        XCTAssertTrue(crop.exists)
+    }
+
+    @MainActor
+    func testSelectedMaskActuallyTintsPreviewRed() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
+        let baseline = try redDominance(canvas.screenshot())
+        let toolbar = app.scrollViews["tools-toolbar"]
+        toolbar.swipeLeft(); toolbar.swipeLeft()
+        app.buttons["Masques"].tap()
+        app.scrollViews["masks-controls"].buttons["Radial"].tap()
+        toolbar.swipeRight(); toolbar.swipeRight()
+        app.buttons["Lumière"].tap()
+        RunLoop.current.run(until: Date().addingTimeInterval(1))
+        // No development adjustment has changed: only the selected matte can tint red.
+        XCTAssertGreaterThan(try redDominance(canvas.screenshot()) - baseline, 10)
+        app.sliders["Exposition"].adjust(toNormalizedSliderPosition: 0.55)
+        XCTAssertTrue(toolbar.isHittable)
+        RunLoop.current.run(until: Date().addingTimeInterval(1))
+        XCTAssertGreaterThan(try redDominance(canvas.screenshot()) - baseline, 10)
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Masque radial — superposition rouge visible"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    private func redDominance(_ screenshot: XCUIScreenshot) throws -> Double {
+        let image = try XCTUnwrap(screenshot.image.cgImage)
+        let size = 64
+        var pixels = [UInt8](repeating: 0, count: size * size * 4)
+        let context = try XCTUnwrap(CGContext(data: &pixels, width: size, height: size,
+            bitsPerComponent: 8, bytesPerRow: size * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: size, height: size))
+        // Central patch is inside the default radial mask and away from controls.
+        var sum = 0.0
+        for y in 24..<40 {
+            for x in 24..<40 {
+                let i = (y * size + x) * 4
+                sum += Double(pixels[i]) - (Double(pixels[i + 1]) + Double(pixels[i + 2])) / 2
+            }
+        }
+        return sum / 256
+    }
+
+    @MainActor
+    func testCreativeStackAndNativeInspector() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        let height = canvas.frame.height
+        app.buttons["Creative"].tap()
+        let controls = app.scrollViews["creative-controls"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        let effects = controls.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "creative-effect-"))
+        let initialCount = effects.count
+        app.buttons["creative-add"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        // UIKit's menu bridge exposes titles but drops SwiftUI item identifiers on iOS 27.
+        let lowKeyItems = app.buttons.matching(NSPredicate(format: "label == %@ AND NOT (identifier BEGINSWITH %@)", "Low Key", "creative-effect-"))
+        XCTAssertTrue(lowKeyItems.firstMatch.waitForExistence(timeout: 3))
+        try XCTUnwrap(lowKeyItems.allElementsBoundByIndex.last).tap()
+        XCTAssertEqual(effects.count, initialCount + 1)
+        XCTAssertEqual(canvas.frame.height, height, accuracy: 1)
+        let amount = app.sliders["creative-amount"]
+        XCTAssertTrue(amount.isHittable)
+        amount.adjust(toNormalizedSliderPosition: 0.7)
+        XCTAssertTrue(app.scrollViews["tools-toolbar"].isHittable)
+        app.buttons["Options de l’effet"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        app.buttons["Dupliquer"].tap()
+        XCTAssertEqual(effects.count, initialCount + 2)
+        app.buttons["Annuler"].tap()
+        XCTAssertEqual(effects.count, initialCount + 1)
+        app.buttons["Détail Creative à résolution native"].tap()
+        XCTAssertTrue(app.navigationBars["Détail Creative"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["100 % · un pixel photo par pixel écran"].exists)
+        app.buttons["Fermer"].tap()
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Creative — panneau compact"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        // Accessibility slider adjustment can emit several discrete edits. Remove only
+        // this test's new effect; duplication undo was asserted separately above.
+        app.buttons["Options de l’effet"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        app.buttons["Supprimer"].tap()
+        XCTAssertEqual(effects.count, initialCount)
+    }
+
     @MainActor
     func testMaskSliderRestoresToolbar() throws {
         continueAfterFailure = false

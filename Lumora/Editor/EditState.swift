@@ -20,6 +20,7 @@ struct EditState: Codable, Sendable, Equatable {
     var detail = DetailSettings()
     var optics = OpticsSettings()
     var geometry = GeometrySettings()
+    var creative = CreativeEffectStack()
     /// Ordered masked adjustment layers. The legacy key name is preserved on disk.
     var masks: [AdjustmentLayer] = []
 
@@ -27,7 +28,7 @@ struct EditState: Codable, Sendable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
-        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, optics, geometry, masks
+        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, optics, geometry, masks, creative
     }
 
     /// Additive migration: older documents have no curve or mixer keys.
@@ -51,6 +52,7 @@ struct EditState: Codable, Sendable, Equatable {
         optics = try values.decodeIfPresent(OpticsSettings.self, forKey: .optics) ?? OpticsSettings()
         geometry = try values.decodeIfPresent(GeometrySettings.self, forKey: .geometry) ?? GeometrySettings()
         masks = try values.decodeIfPresent([LocalMask].self, forKey: .masks) ?? []
+        creative = try values.decodeIfPresent(CreativeEffectStack.self, forKey: .creative) ?? CreativeEffectStack()
         self = validated
     }
 
@@ -67,6 +69,7 @@ struct EditState: Codable, Sendable, Equatable {
         result.detail = detail.validated
         result.optics = optics.validated
         result.geometry = geometry.validated
+        result.creative = creative.validated
         result.masks = masks.prefix(16).map(\.validated)
         return result
     }

@@ -8,7 +8,9 @@ let package = Package(
     targets: [
         .target(name: "LumoraCore", path: "Lumora",
                 exclude: ["ContentView.swift", "MyApp.swift", "UI", "Editor/EditorSession.swift", "Editor/PresetController.swift", "Library/ImportedPhoto.swift", "Masks/MaskGenerator.swift", "Adjustments/GeometryAnalyzer.swift", "Assets.xcassets"],
-                sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
-        .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"])
+                sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
+        .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"]),
+        .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
+                    resources: [.copy("Baselines")])
     ]
 )

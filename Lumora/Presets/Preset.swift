@@ -1,17 +1,17 @@
 import Foundation
 
 enum PresetSection: String, CaseIterable, Codable, Sendable, Identifiable {
-    case light, color, curves, mixer, grading, effects, detail, optics, geometry, masks
+    case light, color, curves, mixer, grading, effects, detail, optics, geometry, masks, creative
     var id: String { rawValue }
     var title: String {
         switch self {
         case .light: "Lumière"; case .color: "Couleur"; case .curves: "Courbes"
         case .mixer: "Mélangeur"; case .grading: "Grading"; case .effects: "Effets"
         case .detail: "Détail"; case .optics: "Optique"; case .geometry: "Géométrie"
-        case .masks: "Masques"
+        case .masks: "Masques"; case .creative: "Creative"
         }
     }
-    static let photographicDefaults: Set<Self> = [.light, .color, .curves, .mixer, .grading, .effects, .detail]
+    static let photographicDefaults: Set<Self> = [.light, .color, .curves, .mixer, .grading, .effects, .detail, .creative]
 }
 
 struct Preset: Codable, Sendable, Equatable, Identifiable {
@@ -20,7 +20,7 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
     var createdAt: Date
     var sections: Set<PresetSection>
     var values: EditState
-    var formatVersion = 1
+    var formatVersion = 2
 
     init(id: UUID = UUID(), name: String, createdAt: Date = Date(), sections: Set<PresetSection>, values: EditState) {
         self.id = id; self.name = name; self.createdAt = createdAt
@@ -30,7 +30,7 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
     var validated: Self? {
         var value = self
         value.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard formatVersion == 1, !value.name.isEmpty, !sections.isEmpty else { return nil }
+        guard (1...2).contains(formatVersion), !value.name.isEmpty, !sections.isEmpty else { return nil }
         value.name = String(value.name.prefix(60))
         value.values = Self.filtered(values.validated, sections: sections)
         return value
@@ -49,6 +49,13 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
         if preset.sections.contains(.optics) { result.optics = preset.values.optics }
         if preset.sections.contains(.geometry) { result.geometry = preset.values.geometry }
         if preset.sections.contains(.masks) { result.masks = preset.values.masks }
+        if preset.sections.contains(.creative) {
+            result.creative = preset.values.creative
+            // A creative-only preset is portable: mask links require the Masks section.
+            if !preset.sections.contains(.masks) {
+                for i in result.creative.effects.indices { result.creative.effects[i].maskID = nil }
+            }
+        }
         return result.validated
     }
 
@@ -64,6 +71,7 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
         if sections.contains(.optics) { result.optics = source.optics }
         if sections.contains(.geometry) { result.geometry = source.geometry }
         if sections.contains(.masks) { result.masks = source.masks }
+        if sections.contains(.creative) { result.creative = source.creative }
         return result.validated
     }
 }

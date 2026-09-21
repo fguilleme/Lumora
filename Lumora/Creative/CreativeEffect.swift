@@ -1,0 +1,156 @@
+import Foundation
+
+struct FXParameter: Sendable, Identifiable {
+    let id: String
+    let title: String
+    let range: ClosedRange<Double>
+    let defaultValue: Double
+    init(_ id: String, _ title: String, _ range: ClosedRange<Double> = 0...100, _ value: Double = 0) {
+        self.id = id; self.title = title; self.range = range; defaultValue = value
+    }
+}
+
+enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
+    case highKey, lowKey, grain
+    var id: String { rawValue }
+    var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
+}
+
+struct CreativeEffectDescriptor: Sendable {
+    let title: String
+    let category: String
+    let symbol: String
+    let parameters: [FXParameter]
+}
+
+enum CreativeEffectCatalog {
+    static let descriptors: [CreativeEffectKind: CreativeEffectDescriptor] = [
+        .highKey: .init(title: "High Key", category: "Key", symbol: "sun.max", parameters: keyParameters(high: true)),
+        .lowKey: .init(title: "Low Key", category: "Key", symbol: "moon", parameters: keyParameters(high: false)),
+        .grain: .init(title: "Grain", category: "Film", symbol: "camera.filters", parameters: [
+            .init("amount", "Quantité", 0...100, 35), .init("size", "Taille", 1...100, 35),
+            .init("hardness", "Dureté", 0...100, 45), .init("irregularity", "Irrégularité", 0...100, 50),
+            .init("clumping", "Agrégation", 0...100, 30), .init("softness", "Douceur", 0...100, 25),
+            .init("shadowAmount", "Ombres", 0...200, 80), .init("midtoneAmount", "Tons moyens", 0...200, 100),
+            .init("highlightAmount", "Hautes lumières", 0...200, 45),
+            .init("chromaAmount", "Grain couleur", 0...100, 15)
+        ])
+    ]
+    private static func keyParameters(high: Bool) -> [FXParameter] {
+        [.init("amount", "Quantité", 0...100, 50), .init("dynamic", "Dynamique", 0...100, 50),
+         .init("glow", "Glow"), .init("glowRadius", "Rayon glow", 1...100, 30),
+         .init("glowThreshold", "Seuil glow", 0...100, 70), .init("contrast", "Contraste", -100...100),
+         .init("saturation", "Saturation", -100...100),
+         .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
+         .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+    }
+}
+
+/// Ordered instructions; maskID references an existing AdjustmentLayer, never a second mask model.
+struct CreativeEffect: Codable, Sendable, Equatable, Identifiable {
+    var id = UUID()
+    var kind: CreativeEffectKind
+    var enabled = true
+    var opacity = 100.0
+    var maskID: UUID?
+    var parameters: [String: Double] = [:]
+    var monochromatic = true
+    var seed: UInt32 = 137
+
+    init(_ kind: CreativeEffectKind, maskID: UUID? = nil) { self.kind = kind; self.maskID = maskID }
+    private enum CodingKeys: String, CodingKey {
+        case id, kind, enabled, opacity, maskID, parameters, monochromatic, seed
+    }
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        kind = try values.decode(CreativeEffectKind.self, forKey: .kind)
+        id = try values.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        enabled = try values.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        opacity = try values.decodeIfPresent(Double.self, forKey: .opacity) ?? 100
+        maskID = try values.decodeIfPresent(UUID.self, forKey: .maskID)
+        parameters = try values.decodeIfPresent([String: Double].self, forKey: .parameters) ?? [:]
+        monochromatic = try values.decodeIfPresent(Bool.self, forKey: .monochromatic) ?? true
+        seed = try values.decodeIfPresent(UInt32.self, forKey: .seed) ?? 137
+        self = validated
+    }
+    subscript(_ key: String) -> Double {
+        get { parameters[key] ?? kind.descriptor.parameters.first { $0.id == key }?.defaultValue ?? 0 }
+        set {
+            guard let spec = kind.descriptor.parameters.first(where: { $0.id == key }) else { return }
+            parameters[key] = newValue.isFinite ? min(spec.range.upperBound, max(spec.range.lowerBound, newValue)) : spec.defaultValue
+        }
+    }
+    var validated: Self {
+        var value = self
+        value.opacity = opacity.isFinite ? min(100, max(0, opacity)) : 100
+        value.parameters = [:]
+        for spec in kind.descriptor.parameters { value[spec.id] = self[spec.id] }
+        return value
+    }
+    mutating func reset() { parameters = [:]; opacity = 100; monochromatic = true; seed = 137 }
+}
+
+struct CreativeEffectStack: Codable, Sendable, Equatable {
+    var effects: [CreativeEffect] = []
+    var validated: Self {
+        var seen = Set<UUID>()
+        return Self(effects: effects.prefix(32).map { effect in
+            var value = effect.validated
+            if !seen.insert(value.id).inserted { value.id = UUID() }
+            return value
+        })
+    }
+    mutating func duplicate(_ id: UUID) {
+        guard effects.count < 32, let index = effects.firstIndex(where: { $0.id == id }) else { return }
+        var copy = effects[index]; copy.id = UUID()
+        effects.insert(copy, at: index + 1)
+    }
+    mutating func move(_ id: UUID, by offset: Int) {
+        guard let index = effects.firstIndex(where: { $0.id == id }) else { return }
+        let target = min(effects.count - 1, max(0, index + offset))
+        guard target != index else { return }
+        effects.insert(effects.remove(at: index), at: target)
+    }
+}
+
+/// Shared public grain settings for Creative, legacy Effects and future monochrome/film modules.
+struct FilmGrainSettings: Sendable, Codable, Equatable {
+    var amount = 35.0, size = 35.0, hardness = 45.0
+    var irregularity = 50.0, clumping = 30.0, softness = 25.0
+    var shadowAmount = 80.0, midtoneAmount = 100.0, highlightAmount = 45.0
+    var monochromatic = true
+    var chromaAmount = 15.0
+    var seed: UInt32 = 137
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; size = effect["size"]; hardness = effect["hardness"]
+        irregularity = effect["irregularity"]; clumping = effect["clumping"]; softness = effect["softness"]
+        shadowAmount = effect["shadowAmount"]; midtoneAmount = effect["midtoneAmount"]; highlightAmount = effect["highlightAmount"]
+        monochromatic = effect.monochromatic; chromaAmount = effect["chromaAmount"]; seed = effect.seed
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.grain)
+        for (key, value) in [("amount", amount), ("size", size), ("hardness", hardness),
+                             ("irregularity", irregularity), ("clumping", clumping), ("softness", softness),
+                             ("shadowAmount", shadowAmount), ("midtoneAmount", midtoneAmount),
+                             ("highlightAmount", highlightAmount), ("chromaAmount", chromaAmount)] { effect[key] = value }
+        effect.monochromatic = monochromatic; effect.seed = seed
+        return Self(effect: effect)
+    }
+}
+
+enum FilmGrainProfile: String, CaseIterable, Identifiable {
+    case fine50 = "Fine 50", classic100 = "Classic 100", classic400 = "Classic 400"
+    case reportage800 = "Reportage 800", push1600 = "Push 1600", rough3200 = "Rough 3200"
+    var id: String { rawValue }
+    func applying(to effect: CreativeEffect) -> CreativeEffect {
+        var value = effect
+        let index = Double(Self.allCases.firstIndex(of: self)!)
+        value["size"] = 12 + index * 15; value["hardness"] = 25 + index * 11
+        value["irregularity"] = 25 + index * 12; value["clumping"] = 10 + index * 14
+        value["softness"] = 35 - index * 5
+        value["shadowAmount"] = 65 + index * 10; value["midtoneAmount"] = 100
+        value["highlightAmount"] = 25 + index * 8
+        return value
+    }
+}

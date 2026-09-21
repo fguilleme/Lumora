@@ -65,6 +65,15 @@ struct PhotoCanvas: View {
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .contentShape(Rectangle())
                 .clipped()
+                // Attach comparison to the photo itself. Interactive overlays above
+                // it keep their touches, so a held mask/crop handle stays draggable.
+                .simultaneousGesture(
+                    LongPressGesture(minimumDuration: 0.3, maximumDistance: 12)
+                        .sequenced(before: DragGesture(minimumDistance: 0))
+                        .updating($pressing) { value, state, _ in
+                            if case .second(true, _) = value { state = true }
+                        }
+                )
                 .overlay(alignment: .topLeading) {
                     if showingOriginal || pressing {
                         Text("ORIGINAL").font(.caption.bold()).padding(8)
@@ -167,17 +176,7 @@ struct PhotoCanvas: View {
                                             height: offset.height + value.translation.height), size: geometry.size)
                 }
             })
-            .simultaneousGesture(
-                TapGesture(count: 2)
-                    .onEnded { restoreZoom() }
-                    .exclusively(before:
-                        LongPressGesture(minimumDuration: 0.3, maximumDistance: 12)
-                            .sequenced(before: DragGesture(minimumDistance: 0))
-                            .updating($pressing) { value, state, _ in
-                                if case .second(true, _) = value { state = true }
-                            }
-                    )
-            )
+            .simultaneousGesture(TapGesture(count: 2).onEnded { restoreZoom() })
         }
         .onChange(of: isPainting) { _, painting in if painting { showingOriginal = false } }
         .onChange(of: hasTransformHandles) { _, editing in
@@ -544,6 +543,11 @@ private struct MaskOverlay: View {
     let displayOffset: CGSize
     @State private var overlay: CGImage?
 
+    private struct RenderKey: Equatable {
+        let mask: Data
+        let imageSize: CGSize
+    }
+
     private var revision: Data {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
@@ -551,17 +555,23 @@ private struct MaskOverlay: View {
     }
 
     var body: some View {
-        Group {
+        // Keep a concrete view alive before the first bitmap exists; an empty
+        // Group does not reliably start its task. Match the photo's canvas frame
+        // before applying zoom and pan, including its letterboxed space.
+        GeometryReader { geometry in
             if let overlay {
                 Image(decorative: overlay, scale: 1)
                     .resizable().aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
                     .scaleEffect(displayScale)
                     .offset(displayOffset)
             }
         }
         .clipped()
-        .task(id: revision) {
-            overlay = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize)
+        .task(id: RenderKey(mask: revision, imageSize: imageSize)) {
+            let rendered = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize)
+            guard !Task.isCancelled else { return }
+            overlay = rendered
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Superposition rouge du masque")

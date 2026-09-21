@@ -17,9 +17,11 @@ struct EditorView: View {
     @State private var focusedAdjustmentID: String?
     @Environment(\.scenePhase) private var scenePhase
     private enum Panel: String, CaseIterable {
+        case creative = "Creative"
         case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets"
         var symbol: String {
             switch self {
+            case .creative: "sparkles"
             case .light: "sun.max"
             case .color: "slider.horizontal.3"
             case .curve: "point.topleft.down.to.point.bottomright.curvepath"
@@ -233,6 +235,8 @@ struct EditorView: View {
                            onMixerChange: session.setMixer,
                            onGradingChange: session.setGrading,
                            onEnd: session.finishInteraction)
+        case .creative:
+            CreativeEffectsView(session: session)
         case .effects:
             effectsControls
         case .detail:
@@ -336,7 +340,7 @@ struct EditorView: View {
     private var isAdjustingSelectedMask: Bool {
         guard session.selectedMaskID != nil, let id = focusedAdjustmentID else { return false }
         if Adjustment(rawValue: id) != nil { return true }
-        return id.hasPrefix("mask-adjustment-")
+        return id.hasPrefix("creative-") || id.hasPrefix("mask-adjustment-")
             || id.hasPrefix("effect-")
             || id.hasPrefix("detail-")
             || id.hasPrefix("mixer-")

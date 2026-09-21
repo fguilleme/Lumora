@@ -19,6 +19,7 @@ final class EditorSession {
     private(set) var generation = 0
     var error: String?
     var showingOriginal = false
+    var bypassCreative = false
     var selectedMaskID: UUID?
     var selectedMaskComponentID: UUID?
     var brushMode = BrushMode.paint
@@ -266,6 +267,25 @@ final class EditorSession {
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
+    func changeCreative(_ name: String, _ change: (inout CreativeEffectStack) -> Void) {
+        if !interacting { history.begin(name, state: state) }
+        change(&state.creative)
+        state.creative = state.creative.validated
+        showingOriginal = false
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
+    func setCreativeBypass(_ bypass: Bool) {
+        finishInteraction(); bypassCreative = bypass; requestRender(.high)
+    }
+    @ObservationIgnored private var creativeTileEngine: RenderEngine?
+    func creativeTile(region: CGRect, maximum: Int = 1024) async throws -> CGImage? {
+        guard let sourceURL else { return nil }
+        // Separate owner prevents tile decode from blocking interactive preview renders.
+        if creativeTileEngine == nil { creativeTileEngine = RenderEngine() }
+        return try await creativeTileEngine!.renderFullResolutionTile(url: sourceURL, state: state,
+            region: region, maximum: maximum, bypassCreative: bypassCreative)
+    }
     func setDetail(_ adjustment: DetailAdjustment, to value: Double) {
         if !interacting { history.begin(adjustment.title, state: state) }
         if let index = selectedMaskIndex { state.masks[index].adjustments.detail[adjustment] = value }
@@ -368,8 +388,12 @@ final class EditorSession {
     }
     func applyPreset(_ preset: Preset) {
         finishInteraction(); history.begin("Preset · \(preset.name)", state: state)
-        if let index = selectedMaskIndex {
+        if let index = selectedMaskIndex, !preset.sections.contains(.masks) {
             let applied = preset.applying(to: state.masks[index].adjustments.editState)
+            if preset.sections.contains(.creative) {
+                state.creative = applied.creative
+                for i in state.creative.effects.indices { state.creative.effects[i].maskID = selectedMaskID }
+            }
             state.masks[index].adjustments = LocalAdjustmentState(editState: applied).validated
         } else {
             state = preset.applying(to: state)
@@ -672,13 +696,13 @@ final class EditorSession {
     private func requestRender(_ quality: PreviewQuality) {
         guard let sourceURL else { return }
         generation += 1
-        let token = generation, snapshot = state
+        let token = generation, snapshot = state, bypass = bypassCreative
         renderTask?.cancel()
         isRendering = true
         renderTask = Task {
             do {
                 try await Task.sleep(for: .milliseconds(quality == .interactive ? 16 : 50))
-                let rendered = try await engine.render(url: sourceURL, state: snapshot, quality: quality)
+                let rendered = try await engine.render(url: sourceURL, state: snapshot, quality: quality, bypassCreative: bypass)
                 try Task.checkCancellation()
                 guard token == generation else { return }
                 result = rendered; isRendering = false
