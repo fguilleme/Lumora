@@ -68,17 +68,21 @@ final class EditorUITests: XCTestCase {
         toolbar.swipeLeft(); toolbar.swipeLeft()
         app.buttons["Masques"].tap()
         app.scrollViews["masks-controls"].buttons["Radial"].tap()
+        RunLoop.current.run(until: Date().addingTimeInterval(1))
+        XCTAssertGreaterThan(try redDominance(canvas.screenshot()) - baseline, 10)
         toolbar.swipeRight(); toolbar.swipeRight()
         app.buttons["Lumière"].tap()
         RunLoop.current.run(until: Date().addingTimeInterval(1))
-        // No development adjustment has changed: only the selected matte can tint red.
-        XCTAssertGreaterThan(try redDominance(canvas.screenshot()) - baseline, 10)
+        // Selection remains active, but the visualization belongs to Masks only.
+        XCTAssertLessThan(abs(try redDominance(canvas.screenshot()) - baseline), 3)
         app.sliders["Exposition"].adjust(toNormalizedSliderPosition: 0.55)
         XCTAssertTrue(toolbar.isHittable)
+        toolbar.swipeLeft(); toolbar.swipeLeft()
+        app.buttons["Masques"].tap()
         RunLoop.current.run(until: Date().addingTimeInterval(1))
         XCTAssertGreaterThan(try redDominance(canvas.screenshot()) - baseline, 10)
         let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Masque radial — superposition rouge visible"
+        attachment.name = "Masque radial — overlay limité à Masques"
         attachment.lifetime = .keepAlways
         add(attachment)
     }

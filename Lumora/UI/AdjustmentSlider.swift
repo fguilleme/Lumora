@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct AdjustmentFocusContext: Sendable {
     var activeID: String?
@@ -20,9 +21,8 @@ private struct AdjustmentFocusDimmingModifier: ViewModifier {
     @Environment(\.adjustmentFocus) private var focus
     func body(content: Content) -> some View {
         content
-            .opacity(focus.activeID == nil ? 1 : 0.015)
+            .opacity(focus.activeID == nil ? 1 : 0)
             .allowsHitTesting(focus.activeID == nil)
-            .animation(.easeOut(duration: 0.12), value: focus.activeID)
     }
 }
 
@@ -72,28 +72,17 @@ struct AdjustmentSlider: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .frame(width: 82, alignment: .leading)
-            Slider(value: Binding(get: { value }, set: { next in
+            TouchTrackingSlider(value: value, range: activeRange, step: fine ? step / 10 : step,
+                                title: title, accessibilityID: accessibilityID,
+                                onBegin: beginEditing, onChange: { next in
                 if (value < 0 && next >= 0) || (value > 0 && next <= 0) { zeroFeedback += 1 }
                 onChange(next)
-            }), in: activeRange, step: fine ? step / 10 : step, onEditingChanged: { editing in
-                if editing {
-                    self.editing = true
-                    focus.setActive(accessibilityID)
-                    onBegin()
-                } else {
-                    finishEditing()
-                }
-            })
+            }, onEnd: finishEditing, onReset: onReset)
             .overlay(alignment: .center) {
                 if !fine && range.lowerBound == -range.upperBound { Rectangle().fill(.white.opacity(0.55)).frame(width: 1, height: 9).allowsHitTesting(false) }
             }
             .frame(minHeight: 30)
-            .onTapGesture(count: 2, perform: onReset)
-            .accessibilityLabel(title)
-            .accessibilityIdentifier(accessibilityID)
-            .accessibilityValue(String(format: "%.2f", value))
             .sensoryFeedback(.selection, trigger: zeroFeedback)
-            .simultaneousGesture(DragGesture(minimumDistance: 0).onEnded { _ in finishEditing() })
             Button {
                 fine.toggle(); fineOrigin = value
             } label: {
@@ -111,9 +100,8 @@ struct AdjustmentSlider: View {
             .accessibilityLabel("Réinitialiser \(title)")
         }
         .frame(minHeight: 42)
-        .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0.015)
+        .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0)
         .allowsHitTesting(focus.activeID == nil || focus.activeID == accessibilityID)
-        .animation(.easeOut(duration: 0.12), value: focus.activeID)
         .onChange(of: value) { _, next in
             // Undo/reset can move the value outside the currently magnified interval.
             if fine && !activeRange.contains(next) { fineOrigin = next }
@@ -128,5 +116,98 @@ struct AdjustmentSlider: View {
         editing = false
         focus.setActive(nil)
         onEnd()
+    }
+
+    private func beginEditing() {
+        guard !editing else { return }
+        editing = true
+        focus.setActive(accessibilityID)
+        onBegin()
+    }
+}
+
+/// UIControl touch-up is the single end-of-edit signal. SwiftUI Slider's editing
+/// callback and an additional DragGesture can each end while the thumb is still
+/// moving, briefly clearing focus between renderer updates.
+private struct TouchTrackingSlider: UIViewRepresentable {
+    let value: Double
+    let range: ClosedRange<Double>
+    let step: Double
+    let title: String
+    let accessibilityID: String
+    let onBegin: () -> Void
+    let onChange: (Double) -> Void
+    let onEnd: () -> Void
+    let onReset: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    func makeUIView(context: Context) -> UISlider {
+        let slider = UISlider()
+        slider.minimumTrackTintColor = .systemMint
+        slider.maximumTrackTintColor = UIColor(white: 0.16, alpha: 1)
+        slider.thumbTintColor = .white
+        slider.isContinuous = true
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.touchDown), for: .touchDown)
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.valueChanged(_:)), for: .valueChanged)
+        slider.addTarget(context.coordinator, action: #selector(Coordinator.touchEnded),
+                         for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        let doubleTap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.reset))
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.cancelsTouchesInView = false
+        slider.addGestureRecognizer(doubleTap)
+        return slider
+    }
+
+    func updateUIView(_ slider: UISlider, context: Context) {
+        context.coordinator.owner = self
+        slider.minimumValue = Float(range.lowerBound)
+        slider.maximumValue = Float(range.upperBound)
+        if !context.coordinator.isTracking {
+            slider.value = Float(value)
+            context.coordinator.lastSent = value
+        }
+        slider.accessibilityLabel = title
+        slider.accessibilityIdentifier = accessibilityID
+        slider.accessibilityValue = String(format: "%.2f", value)
+    }
+
+    @MainActor final class Coordinator: NSObject {
+        var owner: TouchTrackingSlider
+        var isTracking = false
+        var lastSent: Double
+
+        init(_ owner: TouchTrackingSlider) {
+            self.owner = owner
+            lastSent = owner.value
+        }
+
+        @objc func touchDown() {
+            guard !isTracking else { return }
+            isTracking = true
+            owner.onBegin()
+        }
+
+        @objc func valueChanged(_ slider: UISlider) {
+            let discreteAdjustment = !slider.isTracking
+            touchDown()
+            let lower = owner.range.lowerBound
+            let rounded = lower + ((Double(slider.value) - lower) / owner.step).rounded() * owner.step
+            let next = min(owner.range.upperBound, max(lower, rounded))
+            slider.value = Float(next)
+            if next != lastSent {
+                lastSent = next
+                owner.onChange(next)
+            }
+            if discreteAdjustment { touchEnded() }
+        }
+
+        @objc func touchEnded() {
+            guard isTracking else { return }
+            isTracking = false
+            owner.onEnd()
+        }
+
+        @objc func reset() { owner.onReset() }
     }
 }

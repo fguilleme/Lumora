@@ -46,7 +46,7 @@ struct EditorView: View {
                 PhotoCanvas(result: result, showingOriginal: $session.showingOriginal,
                             activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
-                            showsMaskOverlay: !isAdjustingSelectedMask,
+                            showsMaskOverlay: panel == .masks && !isAdjustingSelectedMask,
                             allowsMaskEditing: panel == .masks,
                             brushMode: session.brushMode,
                             onBrushBegin: session.beginBrushStroke,
