@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -52,6 +52,18 @@ enum CreativeEffectCatalog {
             .init("dynamicContrast", "Contraste dynamique", 0...100, 35),
             .init("shadowProtection", "Protéger les ombres", 0...100, 65),
             .init("highlightProtection", "Protéger les hautes lumières", 0...100, 70)
+        ]),
+        .crossProcessing: .init(title: "Cross Processing", category: "Film", symbol: "circle.hexagongrid.fill", parameters: [
+            .init("amount", "Quantité", 0...100, 65),
+            .init("styleStrength", "Force du style", 0...100, 75),
+            .init("contrast", "Contraste", -100...100, 20),
+            .init("saturation", "Saturation", -100...100, 0),
+            .init("shadowHue", "Couleur des ombres", 0...360, 195),
+            .init("shadowStrength", "Force des ombres", 0...100, 30),
+            .init("highlightHue", "Couleur des lumières", 0...360, 35),
+            .init("highlightStrength", "Force des lumières", 0...100, 25),
+            .init("blackLift", "Lever les noirs", 0...100, 0),
+            .init("style", "Style interne", 0...6, 0)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
@@ -132,6 +144,31 @@ struct ProContrastSettings: Codable, Sendable, Equatable {
             effect[key] = value
         }
         return Self(effect: effect)
+    }
+}
+
+/// Seven original analytic RGB curve families. Hue values are circular degrees;
+/// the final Amount blend is applied by the renderer before stack opacity/masks.
+struct CrossProcessingSettings: Codable, Sendable, Equatable {
+    var amount = 65.0, styleStrength = 75.0, contrast = 20.0, saturation = 0.0
+    var shadowHue = 195.0, shadowStrength = 30.0
+    var highlightHue = 35.0, highlightStrength = 25.0, blackLift = 0.0, style = 0.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; styleStrength = effect["styleStrength"]
+        contrast = effect["contrast"]; saturation = effect["saturation"]
+        shadowHue = effect["shadowHue"]; shadowStrength = effect["shadowStrength"]
+        highlightHue = effect["highlightHue"]; highlightStrength = effect["highlightStrength"]
+        blackLift = effect["blackLift"]; style = effect["style"]
+    }
+    var validated: Self {
+        var result = CreativeEffect(.crossProcessing)
+        for (key, value) in [("amount", amount), ("styleStrength", styleStrength),
+                             ("contrast", contrast), ("saturation", saturation),
+                             ("shadowHue", shadowHue), ("shadowStrength", shadowStrength),
+                             ("highlightHue", highlightHue), ("highlightStrength", highlightStrength),
+                             ("blackLift", blackLift), ("style", style)] { result[key] = value }
+        return Self(effect: result)
     }
 }
 
@@ -465,6 +502,25 @@ struct CreativeFXPreset: Identifiable {
                 values("Strong Correction", ["amount": 95, "correctColorCast": 50,
                                             "correctContrast": 95, "dynamicContrast": 80,
                                             "shadowProtection": 45, "highlightProtection": 50])
+            ]
+        case .crossProcessing:
+            return [
+                values("Subtle Cross", ["style": 0, "amount": 55, "styleStrength": 42, "contrast": 8,
+                                        "shadowHue": 205, "shadowStrength": 12, "highlightHue": 32, "highlightStrength": 10]),
+                values("Warm Process", ["style": 1, "amount": 75, "styleStrength": 78, "contrast": 18,
+                                        "shadowHue": 205, "shadowStrength": 12, "highlightHue": 32, "highlightStrength": 30]),
+                values("Cool Process", ["style": 2, "amount": 75, "styleStrength": 78, "contrast": 18,
+                                        "shadowHue": 225, "shadowStrength": 25, "highlightHue": 188, "highlightStrength": 18]),
+                values("Cyan Shadows", ["style": 3, "amount": 78, "styleStrength": 85, "contrast": 22,
+                                        "shadowHue": 190, "shadowStrength": 55, "highlightHue": 36, "highlightStrength": 13]),
+                values("Green-Magenta", ["style": 4, "amount": 80, "styleStrength": 86, "contrast": 24,
+                                         "shadowHue": 135, "shadowStrength": 43, "highlightHue": 310, "highlightStrength": 38]),
+                values("Vintage Process", ["style": 5, "amount": 70, "styleStrength": 72, "contrast": 5,
+                                           "saturation": -12, "shadowHue": 180, "shadowStrength": 15,
+                                           "highlightHue": 40, "highlightStrength": 21, "blackLift": 18]),
+                values("Strong Cross", ["style": 6, "amount": 90, "styleStrength": 100, "contrast": 40,
+                                       "saturation": 12, "shadowHue": 190, "shadowStrength": 65,
+                                       "highlightHue": 25, "highlightStrength": 55, "blackLift": 7])
             ]
         }
     }

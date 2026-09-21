@@ -173,3 +173,18 @@ import Foundation
     }
     print("Pro Contrast report: \(root.appendingPathComponent("ProContrastValidationReport.md").path)")
 }
+
+@Test func crossProcessingValidation() async throws {
+    let repo=URL(fileURLWithPath:#filePath).deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent()
+    let root=ProcessInfo.processInfo.environment["LUMORA_VISUAL_OUTPUT"].map{URL(fileURLWithPath:$0)}
+        ?? repo.appendingPathComponent("TestArtifacts")
+    let lab=try LumoraVisualTestLab(root:root,full:true)
+    try await lab.runCrossProcessing()
+    for c in lab.cases where c.name.hasPrefix("CP_") {
+        for check in c.checks where check.hard {
+            #expect(check.status != "FAIL","\(c.name): \(check.name). Report: \(root.path)")
+        }
+    }
+    print("Cross Processing report: \(root.appendingPathComponent("CrossProcessingValidationReport.md").path)")
+}
