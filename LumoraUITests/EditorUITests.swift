@@ -3,6 +3,44 @@ import UIKit
 
 final class EditorUITests: XCTestCase {
     @MainActor
+    func testGlamourGlowStylesUseOneEffectAndUndoRedo() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
+        app.buttons["Creative"].tap()
+        let controls = app.scrollViews["creative-controls"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        app.buttons["creative-add"].tap()
+        let glow = app.buttons.matching(NSPredicate(format: "label == %@", "Glamour Glow")).firstMatch
+        XCTAssertTrue(glow.waitForExistence(timeout: 5)); glow.tap()
+        let effects = controls.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "creative-effect-"))
+        XCTAssertEqual(effects.count, 1)
+        let strip = app.scrollViews["creative-preset-strip"]
+        XCTAssertTrue(strip.waitForExistence(timeout: 5))
+        let subtle = app.buttons["creative-preset-chip-glamourGlow:Subtle Glow"]
+        XCTAssertTrue(subtle.isHittable); subtle.tap()
+        XCTAssertEqual(subtle.value as? String, "Sélectionné")
+        let portrait = app.buttons["creative-preset-chip-glamourGlow:Portrait Glow"]
+        for _ in 0..<4 where !portrait.isHittable { strip.swipeLeft() }
+        XCTAssertTrue(portrait.isHittable); portrait.tap()
+        XCTAssertEqual(portrait.value as? String, "Sélectionné")
+        XCTAssertEqual(effects.count, 1)
+        app.buttons["Annuler"].tap()
+        XCTAssertEqual(subtle.value as? String, "Sélectionné")
+        app.buttons["Rétablir"].tap()
+        XCTAssertEqual(portrait.value as? String, "Sélectionné")
+    }
+
+    @MainActor
     func testCreativePresetChipsSelectionCustomUndoAndScroll() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

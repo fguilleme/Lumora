@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -27,6 +27,15 @@ enum CreativeEffectCatalog {
     static let descriptors: [CreativeEffectKind: CreativeEffectDescriptor] = [
         .highKey: .init(title: "High Key", category: "Key", symbol: "sun.max", parameters: keyParameters(high: true)),
         .lowKey: .init(title: "Low Key", category: "Key", symbol: "moon", parameters: keyParameters(high: false)),
+        .glamourGlow: .init(title: "Glamour Glow", category: "Film", symbol: "sparkles", parameters: [
+            .init("amount", "Quantité", 0...100, 50),
+            .init("glow", "Diffusion", 0...100, 45),
+            .init("softness", "Douceur", 0...100, 40),
+            .init("warmth", "Chaleur", -100...100),
+            .init("threshold", "Seuil lumineux", 0...100, 40),
+            .init("highlightProtection", "Protéger les hautes lumières", 0...100, 55),
+            .init("shadowProtection", "Protéger les ombres", 0...100, 70)
+        ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
             .init("highlights", "Hautes lumières", -100...100, 25),
@@ -62,6 +71,29 @@ enum CreativeEffectCatalog {
          .init("saturation", "Saturation", -100...100),
          .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
          .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+    }
+}
+
+/// Controls for content-gated, multi-scale optical diffusion in linear light.
+/// Zero amount or zero glow is an exact identity.
+struct GlamourGlowSettings: Codable, Sendable, Equatable {
+    var amount = 50.0, glow = 45.0, softness = 40.0, warmth = 0.0
+    var threshold = 40.0, highlightProtection = 55.0, shadowProtection = 70.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; glow = effect["glow"]
+        softness = effect["softness"]; warmth = effect["warmth"]
+        threshold = effect["threshold"]
+        highlightProtection = effect["highlightProtection"]
+        shadowProtection = effect["shadowProtection"]
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.glamourGlow)
+        for (key, value) in [("amount", amount), ("glow", glow), ("softness", softness),
+                             ("warmth", warmth), ("threshold", threshold),
+                             ("highlightProtection", highlightProtection),
+                             ("shadowProtection", shadowProtection)] { effect[key] = value }
+        return Self(effect: effect)
     }
 }
 
@@ -331,6 +363,16 @@ struct CreativeFXPreset: Identifiable {
             return DetailExtractorProfile.allCases.map { profile in
                 snapshot(profile.rawValue) { profile.applying(to: $0) }
             }
+        case .glamourGlow:
+            return [
+                values("Subtle Glow", ["amount": 28, "glow": 28, "softness": 28]),
+                values("Portrait Glow", ["amount": 48, "glow": 42, "softness": 42, "shadowProtection": 85]),
+                values("Warm Glow", ["amount": 52, "glow": 48, "softness": 48, "warmth": 40]),
+                values("Cool Glow", ["amount": 52, "glow": 48, "softness": 48, "warmth": -40]),
+                values("Dreamy", ["amount": 72, "glow": 68, "softness": 76, "threshold": 28]),
+                values("Strong Glow", ["amount": 88, "glow": 86, "softness": 65, "threshold": 30,
+                                        "highlightProtection": 70])
+            ]
         }
     }
 }

@@ -11,7 +11,7 @@ enum CreativeStackRenderer {
     static let renderers: [CreativeEffectKind: any CreativeEffectRendering] = [
         .highKey: KeyEffectRenderer(high: true), .lowKey: KeyEffectRenderer(high: false),
         .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer(),
-        .detailExtractor: DetailExtractorRenderer()
+        .detailExtractor: DetailExtractorRenderer(), .glamourGlow: GlamourGlowRenderer()
     ]
     static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
         var image = input
@@ -325,7 +325,7 @@ enum FilmGrainEngine {
 }
 
 /// Runtime stitchable Metal compilation is cached once per kernel, outside the render loop.
-private enum CreativeMetal {
+enum CreativeMetal {
     static func compile(_ body: String) -> CIColorKernel? {
         let source = "#include <metal_stdlib>\n#include <CoreImage/CoreImage.h>\nusing namespace metal;\nusing namespace coreimage;\n" + body
         do { return try CIKernel.kernels(withMetalString: source).first as? CIColorKernel }

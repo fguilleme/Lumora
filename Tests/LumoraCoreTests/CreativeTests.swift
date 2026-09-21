@@ -143,6 +143,57 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
     effect["fine"] = .infinity
     #expect(effect["fine"] == 40)
 }
+@Test func glamourGlowIdentityPresetsAndPersistence() throws {
+    let input = patch(0.65, size: 128)
+    let presets = CreativeFXPreset.all(for: .glamourGlow)
+    #expect(presets.map(\.title) == ["Subtle Glow", "Portrait Glow", "Warm Glow",
+                                      "Cool Glow", "Dreamy", "Strong Glow"])
+    var effect = try #require(presets.first).makeEffect()
+    effect["amount"] = 0
+    let zero = try CreativeStackRenderer.apply(input, stack: .init(effects: [effect]), masks: [])
+    #expect(try pixels(zero) == pixels(input))
+    effect["amount"] = 60
+    effect["glow"] = 0
+    let noGlow = try CreativeStackRenderer.apply(input, stack: .init(effects: [effect]), masks: [])
+    #expect(try pixels(noGlow) == pixels(input))
+    effect["glow"] = 70
+    let output = try pixels(CreativeStackRenderer.apply(input, stack: .init(effects: [effect]), masks: []))
+    #expect(output.allSatisfy { $0.isFinite })
+    #expect(output[0] > (try pixels(input))[0])
+    var state = EditState(); state.creative.effects = [effect]
+    #expect(try JSONDecoder().decode(EditState.self, from: JSONEncoder().encode(state)) == state.validated)
+    let settings = GlamourGlowSettings(effect: effect)
+    #expect(try JSONDecoder().decode(GlamourGlowSettings.self, from: JSONEncoder().encode(settings)) == settings)
+    var history = HistoryManager(); history.begin("Glamour Glow", state: EditState()); history.commit(state)
+    #expect(history.undo() == EditState()); #expect(history.redo() == state)
+    effect["softness"] = .infinity
+    #expect(effect["softness"] == 40)
+}
+@Test func glamourGlowPresetCustomUndoRedoKeepsMaskAndStack() throws {
+    let presets = CreativeFXPreset.all(for: .glamourGlow)
+    let portrait = try #require(presets.first { $0.title == "Portrait Glow" })
+    let dreamy = try #require(presets.first { $0.title == "Dreamy" })
+    let maskID = UUID()
+    var initial = EditState()
+    initial.creative.effects = [portrait.makeEffect(maskID: maskID)]
+    var edited = initial
+    edited.creative.effects[0]["warmth"] = 17
+    #expect(CreativeFXPreset.matching(edited.creative.effects[0]) == nil)
+    var history = HistoryManager()
+    history.begin("Glamour Glow style", state: edited)
+    edited.creative.effects[0] = dreamy.applying(to: edited.creative.effects[0])
+    history.commit(edited)
+    #expect(edited.creative.effects.count == 1)
+    #expect(edited.creative.effects[0].id == initial.creative.effects[0].id)
+    #expect(edited.creative.effects[0].maskID == maskID)
+    #expect(CreativeFXPreset.matching(edited.creative.effects[0])?.id == dreamy.id)
+    let undoValue = history.undo()
+    let undone = try #require(undoValue)
+    #expect(CreativeFXPreset.matching(undone.creative.effects[0]) == nil)
+    let redoValue = history.redo()
+    let redone = try #require(redoValue)
+    #expect(CreativeFXPreset.matching(redone.creative.effects[0])?.id == dreamy.id)
+}
 @Test func creativeKeyDirectionProtectionAndIdentity() throws {
     for kind in [CreativeEffectKind.highKey, .lowKey] {
         var fx = CreativeEffect(kind); fx["amount"] = 100

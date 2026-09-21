@@ -137,10 +137,17 @@ struct CreativeEffectsView: View {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
+                    if effect.kind == .glamourGlow {
+                        Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
+                            .font(.caption).dimsDuringAdjustment()
+                    }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
                         if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
                         if (effect.kind == .tonalContrast || effect.kind == .detailExtractor) && !advanced {
                             return !spec.id.hasPrefix("protect")
+                        }
+                        if effect.kind == .glamourGlow && !advanced {
+                            return !["threshold", "highlightProtection", "shadowProtection"].contains(spec.id)
                         }
                         return true
                     }) { spec in
