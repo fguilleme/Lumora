@@ -22,14 +22,14 @@ struct CreativePresetSelector: View {
             }
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 8) {
+                    LazyHStack(spacing: 6) {
                         ForEach(presets) { preset in
                             Button {
                                 guard selectedID != preset.id else { return }
                                 onSelect(preset)
                                 selectionFeedback += 1
                             } label: {
-                                HStack(spacing: 6) {
+                                HStack(spacing: 4) {
                                     Text(preset.title)
                                         .font(.subheadline.weight(selectedID == preset.id ? .semibold : .medium))
                                         .fixedSize(horizontal: true, vertical: false)
@@ -72,9 +72,8 @@ private struct CreativePresetChipStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(.primary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 11)
-            .frame(minHeight: 44)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 7)
             .background {
                 Capsule().fill(selected ? Color.mint.opacity(contrast == .increased ? 0.32 : 0.20)
                                          : Color.primary.opacity(contrast == .increased ? 0.13 : 0.07))
@@ -83,7 +82,8 @@ private struct CreativePresetChipStyle: ButtonStyle {
                 Capsule().strokeBorder(selected ? Color.mint : Color.primary.opacity(contrast == .increased ? 0.48 : 0.20),
                                        lineWidth: selected ? 1.5 : 1)
             }
-            .contentShape(Capsule())
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .opacity(isEnabled ? (configuration.isPressed ? 0.78 : 1) : 0.45)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
