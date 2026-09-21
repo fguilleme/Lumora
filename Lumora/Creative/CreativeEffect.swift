@@ -280,7 +280,14 @@ struct CreativeFXPreset: Identifiable {
     func matches(_ effect: CreativeEffect) -> Bool {
         guard effect.kind == kind else { return false }
         let candidate = effect.validated
-        return candidate.parameters == parameters && candidate.monochromatic == monochromatic
+        return candidate.monochromatic == monochromatic &&
+            kind.descriptor.parameters.allSatisfy { spec in
+                abs(candidate[spec.id] - (parameters[spec.id] ?? spec.defaultValue)) <= 0.000001
+            }
+    }
+
+    static func matching(_ effect: CreativeEffect) -> Self? {
+        all(for: effect.kind).first { $0.matches(effect) }
     }
 
     static func all(for kind: CreativeEffectKind) -> [Self] {

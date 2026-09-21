@@ -2,9 +2,11 @@ import SwiftUI
 
 struct CreativeEffectsView: View {
     @Bindable var session: EditorSession
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var selected: UUID?
     @State private var advanced = false
     @State private var showsTile = false
+    @State private var presetFeedback = 0
     #if DEBUG
     @State private var showsLab = false
     #endif
@@ -30,29 +32,39 @@ struct CreativeEffectsView: View {
                         Divider()
                         Button("Creative FX Lab") { showsLab = true }
                         #endif
-                    } label: { Label("Ajouter", systemImage: "plus.circle") }
+                    } label: {
+                        if dynamicTypeSize.isAccessibilitySize {
+                            Image(systemName: "plus.circle").frame(width: 44, height: 44)
+                        } else { Label("Ajouter", systemImage: "plus.circle") }
+                    }
+                    .accessibilityLabel("Ajouter un effet")
                     .accessibilityIdentifier("creative-add")
                     Menu {
                         ForEach(CreativeEffectKind.allCases) { kind in
                             Section(kind.descriptor.title) {
                                 ForEach(CreativeFXPreset.all(for: kind)) { preset in
                                     Button(preset.title) {
-                                        let effect = preset.makeEffect(maskID: session.selectedMaskID)
-                                        session.changeCreative("Ajouter le preset \(preset.title)") { $0.effects.append(effect) }
-                                        selected = effect.id
+                                        applyCatalogPreset(preset)
                                     }
-                                    .disabled(session.state.creative.effects.count >= 32)
+                                    .disabled(session.state.creative.effects.count >= 32 &&
+                                              !session.state.creative.effects.contains { $0.kind == kind })
                                     .accessibilityIdentifier("creative-preset-add-\(preset.id)")
                                 }
                             }
                         }
-                    } label: { Label("Presets", systemImage: "sparkles") }
+                    } label: { Label("Presets", systemImage: "sparkles").fixedSize(horizontal: true, vertical: false) }
                     .accessibilityIdentifier("creative-presets")
                     Spacer()
-                    Text("FX").font(.caption).foregroundStyle(.secondary)
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Text("FX").font(.caption).foregroundStyle(.secondary)
+                    }
                     Toggle("FX", isOn: Binding(get: { !session.bypassCreative }, set: { session.setCreativeBypass(!$0) }))
                         .labelsHidden().accessibilityLabel("Activer l’aperçu Creative")
-                    Button("100 %") { session.finishInteraction(); showsTile = true }
+                    Button { session.finishInteraction(); showsTile = true } label: {
+                        if dynamicTypeSize.isAccessibilitySize {
+                            Image(systemName: "viewfinder").frame(width: 44, height: 44)
+                        } else { Text("100 %") }
+                    }
                         .accessibilityLabel("Détail Creative à résolution native")
                 }.dimsDuringAdjustment()
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -71,6 +83,11 @@ struct CreativeEffectsView: View {
                     }
                 }.dimsDuringAdjustment()
                 if let effect {
+                    CreativePresetSelector(presets: CreativeFXPreset.all(for: effect.kind),
+                                           selectedID: CreativeFXPreset.matching(effect)?.id) { preset in
+                        update { $0 = preset.applying(to: $0) }
+                    }
+                    .dimsDuringAdjustment()
                     HStack {
                         Button { update { $0.enabled.toggle() } } label: {
                             Image(systemName: effect.enabled ? "eye" : "eye.slash").frame(width: 30, height: 30)
@@ -105,18 +122,8 @@ struct CreativeEffectsView: View {
                         .accessibilityLabel("Options de l’effet")
                     }.font(.caption).dimsDuringAdjustment()
 
+                    Text("Réglages").font(.subheadline.weight(.semibold)).dimsDuringAdjustment()
                     slider("opacity", "Opacité", 0...100, effect.opacity, 100) { value in update { $0.opacity = value } }
-                    Menu {
-                        ForEach(CreativeFXPreset.all(for: effect.kind)) { preset in
-                            Button(preset.title) { update { $0 = preset.applying(to: $0) } }
-                                .accessibilityIdentifier("creative-preset-apply-\(preset.id)")
-                        }
-                    } label: {
-                        Label(CreativeFXPreset.all(for: effect.kind).first(where: { $0.matches(effect) })?.title
-                              ?? "Preset personnalisé", systemImage: "square.stack.3d.up")
-                    }
-                    .accessibilityLabel("Preset \(effect.kind.descriptor.title)")
-                    .dimsDuringAdjustment()
                     if effect.kind == .grain {
                         Picker("Mode", selection: $advanced) {
                             Text("Simple").tag(false); Text("Avancé").tag(true)
@@ -151,6 +158,7 @@ struct CreativeEffectsView: View {
             }.padding(.horizontal, 18).padding(.bottom, 12)
         }
         .accessibilityIdentifier("creative-controls")
+        .sensoryFeedback(.selection, trigger: presetFeedback)
         .onAppear { if selected == nil { selected = session.state.creative.effects.last?.id } }
         .onChange(of: session.state.creative.effects.map(\.id)) { _, ids in
             if selected == nil || !ids.contains(selected!) { selected = ids.last }
@@ -165,6 +173,25 @@ struct CreativeEffectsView: View {
         session.changeCreative("Creative") { stack in
             if let i = stack.effects.firstIndex(where: { $0.id == selected }) { change(&stack.effects[i]) }
         }
+    }
+    private func applyCatalogPreset(_ preset: CreativeFXPreset) {
+        let effects = session.state.creative.effects
+        let matchingID = effects.first(where: { $0.id == selected && $0.kind == preset.kind })?.id
+            ?? effects.last(where: { $0.kind == preset.kind })?.id
+        if let matchingID {
+            selected = matchingID
+            guard let current = effects.first(where: { $0.id == matchingID }), !preset.matches(current) else { return }
+            session.changeCreative("Preset \(preset.title)") { stack in
+                if let index = stack.effects.firstIndex(where: { $0.id == matchingID }) {
+                    stack.effects[index] = preset.applying(to: stack.effects[index])
+                }
+            }
+        } else {
+            let effect = preset.makeEffect(maskID: session.selectedMaskID)
+            session.changeCreative("Ajouter le preset \(preset.title)") { $0.effects.append(effect) }
+            selected = effect.id
+        }
+        presetFeedback += 1
     }
     private func slider(_ id: String, _ title: String, _ range: ClosedRange<Double>, _ value: Double,
                         _ reset: Double, change: @escaping (Double) -> Void) -> some View {

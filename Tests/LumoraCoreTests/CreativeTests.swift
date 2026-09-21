@@ -64,6 +64,42 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
     #expect(ordinary.applying(to: glow.makeEffect())["glow"] == 0)
 }
 
+@Test func creativePresetSelectionCustomUndoRedoAndMask() throws {
+    let presets = CreativeFXPreset.all(for: .detailExtractor)
+    let natural = try #require(presets.first { $0.title == "Natural Detail" })
+    let extreme = try #require(presets.first { $0.title == "Extreme Detail" })
+    let mask = LocalMask(name: "Texture", components: [MaskComponent(shape: .radial(RadialGradientMask()))])
+    var original = EditState()
+    original.masks = [mask]
+    original.creative.effects = [natural.makeEffect(maskID: mask.id)]
+    let originalID = try #require(original.creative.effects.first?.id)
+    #expect(CreativeFXPreset.matching(original.creative.effects[0])?.id == natural.id)
+
+    var history = HistoryManager()
+    var state = original
+    history.begin("Preset Extreme", state: state)
+    state.creative.effects[0] = extreme.applying(to: state.creative.effects[0])
+    history.commit(state)
+    #expect(state.creative.effects.count == 1)
+    #expect(state.creative.effects[0].id == originalID)
+    #expect(state.creative.effects[0].maskID == mask.id)
+    #expect(CreativeFXPreset.matching(state.creative.effects[0])?.id == extreme.id)
+    let undoValue = history.undo()
+    let undone = try #require(undoValue)
+    #expect(CreativeFXPreset.matching(undone.creative.effects[0])?.id == natural.id)
+    let redoValue = history.redo()
+    let redone = try #require(redoValue)
+    #expect(CreativeFXPreset.matching(redone.creative.effects[0])?.id == extreme.id)
+
+    state.creative.effects[0]["fine"] = 71
+    #expect(CreativeFXPreset.matching(state.creative.effects[0]) == nil)
+    state.creative.effects[0] = natural.applying(to: state.creative.effects[0])
+    #expect(CreativeFXPreset.matching(state.creative.effects[0])?.id == natural.id)
+    state.creative.effects[0]["fine"] += 0.0000005
+    #expect(CreativeFXPreset.matching(state.creative.effects[0])?.id == natural.id)
+    #expect(state.creative.effects[0].maskID == mask.id)
+}
+
 @Test func tonalContrastPersistencePresetHistoryAndValidation() throws {
     var effect = TonalContrastProfile.naturalTexture.applying(to: CreativeEffect(.tonalContrast))
     effect["shadows"] = -35

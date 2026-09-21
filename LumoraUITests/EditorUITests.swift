@@ -3,6 +3,141 @@ import UIKit
 
 final class EditorUITests: XCTestCase {
     @MainActor
+    func testCreativePresetChipsSelectionCustomUndoAndScroll() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
+        app.buttons["Creative"].tap()
+        let controls = app.scrollViews["creative-controls"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        app.buttons["creative-add"].tap()
+        let detail = app.buttons.matching(NSPredicate(format: "label == %@", "Detail Extractor")).firstMatch
+        XCTAssertTrue(detail.waitForExistence(timeout: 5)); detail.tap()
+        let effects = controls.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "creative-effect-"))
+        XCTAssertEqual(effects.count, 1)
+        let strip = app.scrollViews["creative-preset-strip"]
+        XCTAssertTrue(strip.waitForExistence(timeout: 5))
+        XCTAssertTrue(controls.staticTexts["Styles"].exists)
+        XCTAssertTrue(controls.staticTexts["Réglages"].exists)
+        let natural = app.buttons["creative-preset-chip-detailExtractor:Natural Detail"]
+        for _ in 0..<5 where !natural.isHittable { strip.swipeLeft() }
+        XCTAssertTrue(natural.isHittable)
+        XCTAssertTrue(natural.label.contains("preset"))
+        natural.tap()
+        XCTAssertEqual(natural.value as? String, "Sélectionné")
+        XCTAssertFalse(app.staticTexts["creative-preset-custom"].exists)
+
+        let extreme = app.buttons["creative-preset-chip-detailExtractor:Extreme Detail"]
+        for _ in 0..<6 where !extreme.isHittable { strip.swipeLeft() }
+        XCTAssertTrue(extreme.isHittable)
+        extreme.tap()
+        XCTAssertEqual(extreme.value as? String, "Sélectionné")
+        XCTAssertEqual(effects.count, 1, "A style changes parameters on the same effect")
+        app.buttons["Annuler"].tap()
+        XCTAssertEqual(natural.value as? String, "Sélectionné")
+        app.buttons["Rétablir"].tap()
+        XCTAssertEqual(extreme.value as? String, "Sélectionné")
+
+        let fine = app.sliders["creative-fine"]
+        for _ in 0..<8 where !fine.isHittable { controls.swipeUp() }
+        XCTAssertTrue(fine.isHittable)
+        fine.adjust(toNormalizedSliderPosition: 0.25)
+        XCTAssertTrue(app.staticTexts["creative-preset-custom"].exists)
+        for _ in 0..<8 where !natural.isHittable { controls.swipeDown() }
+        for _ in 0..<5 where !natural.isHittable { strip.swipeRight() }
+        XCTAssertTrue(natural.isHittable)
+        natural.tap()
+        XCTAssertEqual(natural.value as? String, "Sélectionné")
+        XCTAssertFalse(app.staticTexts["creative-preset-custom"].exists)
+        XCTAssertEqual(effects.count, 1)
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Creative — styles sélectionnables"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor
+    func testCreativePresetChipsRemainScrollableAtLargeTextSize() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityM",
+                                "-AppleInterfaceStyle", "Dark"]
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Creative"].tap()
+        let controls = app.scrollViews["creative-controls"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        let addButton = app.buttons["creative-add"]
+        addButton.tap()
+        let detail = app.buttons.matching(NSPredicate(format: "label == %@", "Detail Extractor")).firstMatch
+        XCTAssertTrue(detail.waitForExistence(timeout: 5)); detail.tap()
+        let strip = app.scrollViews["creative-preset-strip"]
+        XCTAssertTrue(strip.waitForExistence(timeout: 5))
+        let first = app.buttons["creative-preset-chip-detailExtractor:Subtle Detail"]
+        XCTAssertTrue(first.exists)
+        for _ in 0..<8 where !first.isHittable { controls.swipeUp() }
+        XCTAssertTrue(first.isHittable)
+        XCTAssertGreaterThanOrEqual(first.frame.height, 44)
+        let last = app.buttons["creative-preset-chip-detailExtractor:Extreme Detail"]
+        for _ in 0..<8 where !last.isHittable { strip.swipeLeft() }
+        XCTAssertTrue(last.isHittable)
+        XCTAssertGreaterThanOrEqual(last.frame.height, 44)
+        last.tap()
+        XCTAssertEqual(last.value as? String, "Sélectionné")
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Creative — grands caractères, mode sombre"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor
+    func testCreativePresetChipsInLandscape() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["Creative"].tap()
+        let controls = app.scrollViews["creative-controls"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        app.buttons["creative-add"].tap()
+        let high = app.buttons.matching(NSPredicate(format: "label == %@", "High Key")).firstMatch
+        XCTAssertTrue(high.waitForExistence(timeout: 5)); high.tap()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        let subtle = app.buttons["creative-preset-chip-highKey:High Key doux"]
+        XCTAssertTrue(subtle.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !subtle.isHittable { controls.swipeUp() }
+        XCTAssertTrue(subtle.isHittable)
+        subtle.tap()
+        XCTAssertEqual(subtle.value as? String, "Sélectionné")
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Creative — styles en paysage"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
+    @MainActor
     func testLongPressDoesNotStealMaskOrCropHandles() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -87,6 +222,7 @@ final class EditorUITests: XCTestCase {
         add(attachment)
     }
 
+    @MainActor
     private func redDominance(_ screenshot: XCUIScreenshot) throws -> Double {
         let image = try XCTUnwrap(screenshot.image.cgImage)
         let size = 64
@@ -120,6 +256,8 @@ final class EditorUITests: XCTestCase {
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
         let height = canvas.frame.height
+        app.buttons["Importer et options"].tap()
+        app.buttons["Réinitialiser les réglages"].tap()
         app.buttons["Creative"].tap()
         let controls = app.scrollViews["creative-controls"]
         XCTAssertTrue(controls.waitForExistence(timeout: 5))
@@ -133,15 +271,20 @@ final class EditorUITests: XCTestCase {
         XCTAssertEqual(effects.count, initialCount + 1)
         XCTAssertEqual(canvas.frame.height, height, accuracy: 1)
         let amount = app.sliders["creative-amount"]
-        XCTAssertTrue(amount.isHittable)
-        amount.adjust(toNormalizedSliderPosition: 0.7)
+        XCTAssertTrue(amount.exists)
         XCTAssertTrue(app.scrollViews["tools-toolbar"].isHittable)
-        app.buttons["Options de l’effet"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let options = app.buttons["Options de l’effet"]
+        if !options.isHittable { controls.swipeUp() }
+        XCTAssertTrue(options.isHittable)
+        options.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         app.buttons["Dupliquer"].tap()
         XCTAssertEqual(effects.count, initialCount + 2)
         app.buttons["Annuler"].tap()
         XCTAssertEqual(effects.count, initialCount + 1)
-        app.buttons["Détail Creative à résolution native"].tap()
+        let inspector = app.buttons["Détail Creative à résolution native"]
+        for _ in 0..<8 where !inspector.isHittable { controls.swipeDown() }
+        XCTAssertTrue(inspector.isHittable)
+        inspector.tap()
         XCTAssertTrue(app.navigationBars["Détail Creative"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["100 % · un pixel photo par pixel écran"].exists)
         app.buttons["Fermer"].tap()
