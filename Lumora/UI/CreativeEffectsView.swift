@@ -137,7 +137,7 @@ struct CreativeEffectsView: View {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
-                    if effect.kind == .glamourGlow {
+                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass {
                         Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
@@ -149,6 +149,9 @@ struct CreativeEffectsView: View {
                         if effect.kind == .glamourGlow && !advanced {
                             return !["threshold", "highlightProtection", "shadowProtection"].contains(spec.id)
                         }
+                        if effect.kind == .bleachBypass && !advanced {
+                            return !["blackDensity", "highlightRollOff", "shadowProtection"].contains(spec.id)
+                        }
                         return true
                     }) { spec in
                         slider(spec.id, spec.title, spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
@@ -159,7 +162,7 @@ struct CreativeEffectsView: View {
                         Button("Nouvelle structure") { update { $0.seed = $0.seed &+ 1 } }.dimsDuringAdjustment()
                     }
                 } else {
-                    Text("Empilez High Key, Low Key, Tonal Contrast, Detail Extractor et Grain. Chaque effet peut cibler un masque existant.")
+                    Text("Empilez High Key, Low Key, Bleach Bypass, Tonal Contrast, Detail Extractor et Grain. Chaque effet peut cibler un masque existant.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)

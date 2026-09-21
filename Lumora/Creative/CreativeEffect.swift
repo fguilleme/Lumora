@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -35,6 +35,15 @@ enum CreativeEffectCatalog {
             .init("threshold", "Seuil lumineux", 0...100, 40),
             .init("highlightProtection", "Protéger les hautes lumières", 0...100, 55),
             .init("shadowProtection", "Protéger les ombres", 0...100, 70)
+        ]),
+        .bleachBypass: .init(title: "Bleach Bypass", category: "Film", symbol: "circle.lefthalf.filled", parameters: [
+            .init("amount", "Quantité", 0...100, 55),
+            .init("bleach", "Bleach", 0...100, 55),
+            .init("contrast", "Contraste", 0...100, 55),
+            .init("saturation", "Saturation", -100...100),
+            .init("blackDensity", "Densité des noirs", 0...100, 50),
+            .init("highlightRollOff", "Compression des lumières", 0...100, 55),
+            .init("shadowProtection", "Protéger les ombres", 0...100, 40)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
@@ -71,6 +80,29 @@ enum CreativeEffectCatalog {
          .init("saturation", "Saturation", -100...100),
          .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
          .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+    }
+}
+
+/// A color layer and a luminance-derived silver-density layer in linear light.
+/// The full parameter snapshot is serializable through CreativeEffect.
+struct BleachBypassSettings: Codable, Sendable, Equatable {
+    var amount = 55.0, bleach = 55.0, contrast = 55.0, saturation = 0.0
+    var blackDensity = 50.0, highlightRollOff = 55.0, shadowProtection = 40.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; bleach = effect["bleach"]
+        contrast = effect["contrast"]; saturation = effect["saturation"]
+        blackDensity = effect["blackDensity"]; highlightRollOff = effect["highlightRollOff"]
+        shadowProtection = effect["shadowProtection"]
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.bleachBypass)
+        for (key, value) in [("amount", amount), ("bleach", bleach), ("contrast", contrast),
+                             ("saturation", saturation), ("blackDensity", blackDensity),
+                             ("highlightRollOff", highlightRollOff), ("shadowProtection", shadowProtection)] {
+            effect[key] = value
+        }
+        return Self(effect: effect)
     }
 }
 
@@ -372,6 +404,21 @@ struct CreativeFXPreset: Identifiable {
                 values("Dreamy", ["amount": 72, "glow": 68, "softness": 76, "threshold": 28]),
                 values("Strong Glow", ["amount": 88, "glow": 86, "softness": 65, "threshold": 30,
                                         "highlightProtection": 70])
+            ]
+        case .bleachBypass:
+            return [
+                values("Subtle Bypass", ["amount": 32, "bleach": 32, "contrast": 35, "blackDensity": 25,
+                                          "highlightRollOff": 50, "shadowProtection": 65]),
+                values("Classic Bypass", ["amount": 65, "bleach": 60, "contrast": 60, "blackDensity": 55,
+                                           "highlightRollOff": 60, "shadowProtection": 40]),
+                values("Soft Silver", ["amount": 55, "bleach": 72, "contrast": 35, "blackDensity": 35,
+                                       "highlightRollOff": 75, "shadowProtection": 75]),
+                values("Hard Silver", ["amount": 78, "bleach": 82, "contrast": 85, "blackDensity": 80,
+                                       "highlightRollOff": 65, "shadowProtection": 22]),
+                values("Cinematic", ["amount": 68, "bleach": 55, "contrast": 70, "saturation": 12,
+                                     "blackDensity": 65, "highlightRollOff": 78, "shadowProtection": 45]),
+                values("Extreme Bypass", ["amount": 95, "bleach": 95, "contrast": 95,
+                                          "blackDensity": 90, "highlightRollOff": 85, "shadowProtection": 15])
             ]
         }
     }
