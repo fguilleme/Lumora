@@ -13,7 +13,7 @@ enum CreativeStackRenderer {
         .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer(),
         .detailExtractor: DetailExtractorRenderer(), .glamourGlow: GlamourGlowRenderer(),
         .bleachBypass: BleachBypassRenderer(), .proContrast: ProContrastRenderer(),
-        .crossProcessing: CrossProcessingRenderer()
+        .crossProcessing: CrossProcessingRenderer(), .filmEmulation: FilmEmulationRenderer()
     ]
     static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
         var image = input

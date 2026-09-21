@@ -137,7 +137,7 @@ struct CreativeEffectsView: View {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
-                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing {
+                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation {
                         Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
@@ -159,6 +159,10 @@ struct CreativeEffectsView: View {
                             if spec.id == "style" { return false }
                             if !advanced { return !["shadowHue", "shadowStrength", "highlightHue",
                                                    "highlightStrength", "blackLift"].contains(spec.id) }
+                        }
+                        if effect.kind == .filmEmulation {
+                            if spec.id == "style" { return false }
+                            if !advanced { return !["highlightRollOff", "shadowDensity", "colorResponse"].contains(spec.id) }
                         }
                         return true
                     }) { spec in

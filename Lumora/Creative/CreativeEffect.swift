@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -64,6 +64,17 @@ enum CreativeEffectCatalog {
             .init("highlightStrength", "Force des lumières", 0...100, 25),
             .init("blackLift", "Lever les noirs", 0...100, 0),
             .init("style", "Style interne", 0...6, 0)
+        ]),
+        .filmEmulation: .init(title: "Film Emulation", category: "Film", symbol: "film.stack", parameters: [
+            .init("amount", "Quantité", 0...100, 75),
+            .init("filmStrength", "Force du film", 0...100, 80),
+            .init("exposure", "Exposition (EV)", -2...2, 0),
+            .init("contrast", "Contraste", -100...100, 0),
+            .init("saturation", "Saturation", -100...100, 0),
+            .init("highlightRollOff", "Compression des lumières", -100...100, 0),
+            .init("shadowDensity", "Densité des ombres", -100...100, 0),
+            .init("colorResponse", "Réponse couleur", 0...100, 75),
+            .init("style", "Type interne", 0...6, 0)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
@@ -169,6 +180,31 @@ struct CrossProcessingSettings: Codable, Sendable, Equatable {
                              ("highlightHue", highlightHue), ("highlightStrength", highlightStrength),
                              ("blackLift", blackLift), ("style", style)] { result[key] = value }
         return Self(effect: result)
+    }
+}
+
+/// A complete, serializable film-control snapshot. The style index selects a
+/// fixed parametric response; there is no external LUT or proprietary profile.
+struct FilmEmulationSettings: Codable, Sendable, Equatable {
+    var amount = 75.0, filmStrength = 80.0, exposure = 0.0, contrast = 0.0
+    var saturation = 0.0, highlightRollOff = 0.0, shadowDensity = 0.0
+    var colorResponse = 75.0, style = 0.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount=effect["amount"];filmStrength=effect["filmStrength"]
+        exposure=effect["exposure"];contrast=effect["contrast"]
+        saturation=effect["saturation"];highlightRollOff=effect["highlightRollOff"]
+        shadowDensity=effect["shadowDensity"];colorResponse=effect["colorResponse"]
+        style=effect["style"]
+    }
+    var validated: Self {
+        var result=CreativeEffect(.filmEmulation)
+        for (key,value) in [("amount",amount),("filmStrength",filmStrength),
+                            ("exposure",exposure),("contrast",contrast),
+                            ("saturation",saturation),("highlightRollOff",highlightRollOff),
+                            ("shadowDensity",shadowDensity),("colorResponse",colorResponse),
+                            ("style",style)] {result[key]=value}
+        return Self(effect:result)
     }
 }
 
@@ -521,6 +557,16 @@ struct CreativeFXPreset: Identifiable {
                 values("Strong Cross", ["style": 6, "amount": 90, "styleStrength": 100, "contrast": 40,
                                        "saturation": 12, "shadowHue": 190, "shadowStrength": 65,
                                        "highlightHue": 25, "highlightStrength": 55, "blackLift": 7])
+            ]
+        case .filmEmulation:
+            return [
+                values("Neutral Negative", ["style":0,"amount":75,"filmStrength":78,"colorResponse":55]),
+                values("Warm Portrait", ["style":1,"amount":75,"filmStrength":82,"colorResponse":72]),
+                values("Vivid Chrome", ["style":2,"amount":80,"filmStrength":90,"colorResponse":85]),
+                values("Muted Cinema", ["style":3,"amount":78,"filmStrength":84,"colorResponse":70]),
+                values("Faded Negative", ["style":4,"amount":77,"filmStrength":90,"colorResponse":68]),
+                values("Vintage Color", ["style":5,"amount":82,"filmStrength":88,"colorResponse":88]),
+                values("Dense Slide", ["style":6,"amount":85,"filmStrength":95,"colorResponse":82])
             ]
         }
     }

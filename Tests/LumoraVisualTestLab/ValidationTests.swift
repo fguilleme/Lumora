@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+@testable import LumoraCore
 
 @Test func visualCreativeValidation() async throws {
     let env=ProcessInfo.processInfo.environment
@@ -187,4 +188,29 @@ import Foundation
         }
     }
     print("Cross Processing report: \(root.appendingPathComponent("CrossProcessingValidationReport.md").path)")
+}
+
+@Test func filmEmulationValidation() async throws {
+    let repo=URL(fileURLWithPath:#filePath).deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent()
+    let root=ProcessInfo.processInfo.environment["LUMORA_VISUAL_OUTPUT"].map{URL(fileURLWithPath:$0)}
+        ?? repo.appendingPathComponent("TestArtifacts")
+    let lab=try LumoraVisualTestLab(root:root,full:true)
+    try await lab.runFilmEmulation()
+    for c in lab.cases where c.name.hasPrefix("FE_") {
+        for check in c.checks where check.hard {
+            #expect(check.status != "FAIL","\(c.name): \(check.name). Report: \(root.path)")
+        }
+    }
+    print("Film Emulation report: \(root.appendingPathComponent("FilmEmulationValidationReport.md").path)")
+}
+
+@Test func filmEmulationKernelSmoke() throws {
+    let gpu=try LabGPU()
+    let input=SyntheticCharts.gray(0.4,size:32)
+    let effect=CreativeFXPreset.all(for:.filmEmulation).first{$0.title=="Warm Portrait"}!.makeEffect()
+    let output=try CreativeStackRenderer.apply(input,stack:.init(effects:[effect]),masks:[])
+    let measured=gpu.compare(input,output)
+    #expect(measured.nonFinite==0)
+    #expect(measured.mae>1e-6)
 }
