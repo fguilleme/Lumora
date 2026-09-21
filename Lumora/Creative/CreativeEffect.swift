@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -44,6 +44,14 @@ enum CreativeEffectCatalog {
             .init("blackDensity", "Densité des noirs", 0...100, 50),
             .init("highlightRollOff", "Compression des lumières", 0...100, 55),
             .init("shadowProtection", "Protéger les ombres", 0...100, 40)
+        ]),
+        .proContrast: .init(title: "Pro Contrast", category: "Film", symbol: "slider.horizontal.3", parameters: [
+            .init("amount", "Quantité", 0...100, 60),
+            .init("correctColorCast", "Corriger la dominante", 0...100, 25),
+            .init("correctContrast", "Corriger le contraste", 0...100, 60),
+            .init("dynamicContrast", "Contraste dynamique", 0...100, 35),
+            .init("shadowProtection", "Protéger les ombres", 0...100, 65),
+            .init("highlightProtection", "Protéger les hautes lumières", 0...100, 70)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
@@ -100,6 +108,27 @@ struct BleachBypassSettings: Codable, Sendable, Equatable {
         for (key, value) in [("amount", amount), ("bleach", bleach), ("contrast", contrast),
                              ("saturation", saturation), ("blackDensity", blackDensity),
                              ("highlightRollOff", highlightRollOff), ("shadowProtection", shadowProtection)] {
+            effect[key] = value
+        }
+        return Self(effect: effect)
+    }
+}
+
+/// Global scene-aware correction; analysis is shared across slider changes.
+struct ProContrastSettings: Codable, Sendable, Equatable {
+    var amount = 60.0, correctColorCast = 25.0, correctContrast = 60.0
+    var dynamicContrast = 35.0, shadowProtection = 65.0, highlightProtection = 70.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; correctColorCast = effect["correctColorCast"]
+        correctContrast = effect["correctContrast"]; dynamicContrast = effect["dynamicContrast"]
+        shadowProtection = effect["shadowProtection"]; highlightProtection = effect["highlightProtection"]
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.proContrast)
+        for (key, value) in [("amount", amount), ("correctColorCast", correctColorCast),
+                             ("correctContrast", correctContrast), ("dynamicContrast", dynamicContrast),
+                             ("shadowProtection", shadowProtection), ("highlightProtection", highlightProtection)] {
             effect[key] = value
         }
         return Self(effect: effect)
@@ -419,6 +448,23 @@ struct CreativeFXPreset: Identifiable {
                                      "blackDensity": 65, "highlightRollOff": 78, "shadowProtection": 45]),
                 values("Extreme Bypass", ["amount": 95, "bleach": 95, "contrast": 95,
                                           "blackDensity": 90, "highlightRollOff": 85, "shadowProtection": 15])
+            ]
+        case .proContrast:
+            return [
+                values("Subtle Correction", ["amount": 35, "correctColorCast": 20,
+                                             "correctContrast": 35, "dynamicContrast": 15]),
+                values("Natural Contrast", ["amount": 60, "correctColorCast": 25,
+                                            "correctContrast": 60, "dynamicContrast": 35]),
+                values("Flat Recovery", ["amount": 75, "correctColorCast": 20,
+                                        "correctContrast": 90, "dynamicContrast": 65]),
+                values("Punch", ["amount": 85, "correctColorCast": 10,
+                                "correctContrast": 85, "dynamicContrast": 80,
+                                "shadowProtection": 40, "highlightProtection": 45]),
+                values("Color Neutralize", ["amount": 65, "correctColorCast": 95,
+                                           "correctContrast": 25, "dynamicContrast": 10]),
+                values("Strong Correction", ["amount": 95, "correctColorCast": 50,
+                                            "correctContrast": 95, "dynamicContrast": 80,
+                                            "shadowProtection": 45, "highlightProtection": 50])
             ]
         }
     }

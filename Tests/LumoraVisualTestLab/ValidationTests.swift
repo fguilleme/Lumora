@@ -158,3 +158,18 @@ import Foundation
     }
     print("Bleach Bypass report: \(root.appendingPathComponent("BleachBypassValidationReport.md").path)")
 }
+
+@Test func proContrastValidation() async throws {
+    let repo=URL(fileURLWithPath:#filePath).deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent()
+    let root=ProcessInfo.processInfo.environment["LUMORA_VISUAL_OUTPUT"].map{URL(fileURLWithPath:$0)}
+        ?? repo.appendingPathComponent("TestArtifacts")
+    let lab=try LumoraVisualTestLab(root:root,full:true)
+    try await lab.runProContrast()
+    for c in lab.cases where c.name.hasPrefix("PC_") {
+        for check in c.checks where check.hard {
+            #expect(check.status != "FAIL","\(c.name): \(check.name). Report: \(root.path)")
+        }
+    }
+    print("Pro Contrast report: \(root.appendingPathComponent("ProContrastValidationReport.md").path)")
+}
