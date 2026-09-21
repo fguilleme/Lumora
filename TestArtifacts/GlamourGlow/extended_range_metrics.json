@@ -1,0 +1,206 @@
+[
+  {
+    "color" : "Blue",
+    "gateWeight" : 0,
+    "haloEnergyPerSourceY" : 0,
+    "haloIntegratedLuminance" : 0,
+    "haloIntegratedRGBEnergy" : [
+      0,
+      0,
+      0
+    ],
+    "haloMeanLuminance" : 0,
+    "haloPeakLuminance" : 0,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : true,
+    "level" : "RGB peak 1",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0,
+      0,
+      1
+    ],
+    "sourceLinearLuminance" : 0.0722,
+    "sourcePerceptualLightness" : 0.26870057685088805,
+    "sourceRGB" : [
+      0,
+      0,
+      1
+    ]
+  },
+  {
+    "chromaticityError" : 0,
+    "color" : "Blue",
+    "gateWeight" : 0.0485925925925926,
+    "haloChromaticity" : [
+      0,
+      0,
+      1
+    ],
+    "haloEnergyPerSourceY" : 3.8888881145233,
+    "haloIntegratedLuminance" : 0.5615554437371645,
+    "haloIntegratedRGBEnergy" : [
+      0,
+      0,
+      7.777776229046588
+    ],
+    "haloMeanLuminance" : 3.922572252983826e-05,
+    "haloPeakLuminance" : 0.0005784733599051833,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : false,
+    "level" : "RGB peak 2",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0,
+      0,
+      1
+    ],
+    "sourceLinearLuminance" : 0.1444,
+    "sourcePerceptualLightness" : 0.38,
+    "sourceRGB" : [
+      0,
+      0,
+      2
+    ]
+  },
+  {
+    "chromaticityError" : 0,
+    "color" : "Blue",
+    "gateWeight" : 0.47468014254209373,
+    "haloChromaticity" : [
+      0,
+      0,
+      1
+    ],
+    "haloEnergyPerSourceY" : 37.990377925834174,
+    "haloIntegratedLuminance" : 10.97162114498091,
+    "haloIntegratedRGBEnergy" : [
+      0,
+      0,
+      151.96151170333678
+    ],
+    "haloMeanLuminance" : 0.0007663887360282837,
+    "haloPeakLuminance" : 0.011303002890944481,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : false,
+    "level" : "RGB peak 4",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0,
+      0,
+      1
+    ],
+    "sourceLinearLuminance" : 0.2888,
+    "sourcePerceptualLightness" : 0.5374011537017761,
+    "sourceRGB" : [
+      0,
+      0,
+      4
+    ]
+  },
+  {
+    "chromaticityError" : 0,
+    "color" : "White",
+    "gateWeight" : 1,
+    "haloChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "haloEnergyPerSourceY" : 80.03490504139836,
+    "haloIntegratedLuminance" : 80.03490504139836,
+    "haloIntegratedRGBEnergy" : [
+      80.03490504139849,
+      80.03490504139849,
+      80.03490504139849
+    ],
+    "haloMeanLuminance" : 0.005590591299343277,
+    "haloPeakLuminance" : 0.08246134221553802,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : false,
+    "level" : "RGB peak 1",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "sourceLinearLuminance" : 1,
+    "sourcePerceptualLightness" : 1,
+    "sourceRGB" : [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "chromaticityError" : 0,
+    "color" : "White",
+    "gateWeight" : 1,
+    "haloChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "haloEnergyPerSourceY" : 80.03490504139836,
+    "haloIntegratedLuminance" : 160.06981008279672,
+    "haloIntegratedRGBEnergy" : [
+      160.06981008279698,
+      160.06981008279698,
+      160.06981008279698
+    ],
+    "haloMeanLuminance" : 0.011181182598686555,
+    "haloPeakLuminance" : 0.16492268443107605,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : false,
+    "level" : "RGB peak 2",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "sourceLinearLuminance" : 2,
+    "sourcePerceptualLightness" : 1.4142135623730951,
+    "sourceRGB" : [
+      2,
+      2,
+      2
+    ]
+  },
+  {
+    "chromaticityError" : 0,
+    "color" : "White",
+    "gateWeight" : 1,
+    "haloChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "haloEnergyPerSourceY" : 80.03490504139836,
+    "haloIntegratedLuminance" : 320.13962016559344,
+    "haloIntegratedRGBEnergy" : [
+      320.13962016559395,
+      320.13962016559395,
+      320.13962016559395
+    ],
+    "haloMeanLuminance" : 0.02236236519737311,
+    "haloPeakLuminance" : 0.3298453688621521,
+    "haloRingPixelCount" : 14316,
+    "haloTooWeakForChromaticityMeasurement" : false,
+    "level" : "RGB peak 4",
+    "nonFinitePixels" : 0,
+    "sourceChromaticity" : [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "sourceLinearLuminance" : 4,
+    "sourcePerceptualLightness" : 2,
+    "sourceRGB" : [
+      4,
+      4,
+      4
+    ]
+  }
+]

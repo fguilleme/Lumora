@@ -128,3 +128,18 @@ import Foundation
     }
     print("Glamour Glow report: \(root.appendingPathComponent("GlamourGlowValidationReport.md").path)")
 }
+
+@Test func glamourGlowColorDiagnostic() throws {
+    let repo = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent()
+    let root = ProcessInfo.processInfo.environment["LUMORA_VISUAL_OUTPUT"].map { URL(fileURLWithPath: $0) }
+        ?? repo.appendingPathComponent("TestArtifacts")
+    let lab = try LumoraVisualTestLab(root: root, full: false)
+    try lab.runGlamourGlowColorDiagnostic()
+    for c in lab.cases where c.name.hasPrefix("GG_equal_") {
+        for check in c.checks where check.hard {
+            #expect(check.status != "FAIL", "\(c.name): \(check.name). Report: \(root.path)")
+        }
+    }
+    print("Glamour Glow color report: \(root.appendingPathComponent("GlamourGlowColorDiagnosticReport.md").path)")
+}
