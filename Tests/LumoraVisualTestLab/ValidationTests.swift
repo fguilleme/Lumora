@@ -96,3 +96,19 @@ import Foundation
     }
     print("Tonal Contrast report: \(root.appendingPathComponent("TonalContrastValidationReport.md").path)")
 }
+
+@Test func detailExtractorValidation() async throws {
+    let repo = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+        .deletingLastPathComponent().deletingLastPathComponent()
+    let full = ProcessInfo.processInfo.environment["LUMORA_VISUAL_FULL"] == "1"
+    let root = ProcessInfo.processInfo.environment["LUMORA_VISUAL_OUTPUT"].map { URL(fileURLWithPath: $0) }
+        ?? repo.appendingPathComponent(full ? "TestArtifacts" : "TestArtifacts/Quick")
+    let lab = try LumoraVisualTestLab(root: root, full: full)
+    try await lab.runDetailExtractor()
+    for c in lab.cases where c.name.hasPrefix("DE_") {
+        for check in c.checks where check.hard {
+            #expect(check.status != "FAIL", "\(c.name): \(check.name). Report: \(root.path)")
+        }
+    }
+    print("Detail Extractor report: \(root.appendingPathComponent("DetailExtractorValidationReport.md").path)")
+}

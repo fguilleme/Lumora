@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast
+    case highKey, lowKey, grain, tonalContrast, detailExtractor
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -38,6 +38,14 @@ enum CreativeEffectCatalog {
             .init("protectHighlights", "Protéger les hautes lumières", 0...100, 50),
             .init("protectShadows", "Protéger les ombres", 0...100, 55)
         ]),
+        .detailExtractor: .init(title: "Detail Extractor", category: "Detail", symbol: "viewfinder", parameters: [
+            .init("amount", "Quantité", -100...100, 45),
+            .init("fine", "Détails fins", 0...100, 40),
+            .init("medium", "Détails moyens", 0...100, 60),
+            .init("large", "Grands détails", 0...100, 20),
+            .init("protectShadows", "Protéger les ombres", 0...100, 70),
+            .init("protectHighlights", "Protéger les hautes lumières", 0...100, 65)
+        ]),
         .grain: .init(title: "Grain", category: "Film", symbol: "camera.filters", parameters: [
             .init("amount", "Quantité", 0...100, 35), .init("size", "Taille", 1...100, 35),
             .init("hardness", "Dureté", 0...100, 45), .init("irregularity", "Irrégularité", 0...100, 50),
@@ -54,6 +62,46 @@ enum CreativeEffectCatalog {
          .init("saturation", "Saturation", -100...100),
          .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
          .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+    }
+}
+
+/// Amount -100...100 (zero is exact identity); band and protection controls
+/// 0...100. A negative amount selectively softens existing spatial detail.
+struct DetailExtractorSettings: Codable, Sendable, Equatable {
+    var amount = 45.0, fine = 40.0, medium = 60.0, large = 20.0
+    var protectShadows = 70.0, protectHighlights = 65.0
+    init() {}
+    init(effect: CreativeEffect) {
+        amount = effect["amount"]; fine = effect["fine"]; medium = effect["medium"]; large = effect["large"]
+        protectShadows = effect["protectShadows"]; protectHighlights = effect["protectHighlights"]
+    }
+    var validated: Self {
+        var effect = CreativeEffect(.detailExtractor)
+        for (key, value) in [("amount", amount), ("fine", fine), ("medium", medium),
+                             ("large", large), ("protectShadows", protectShadows),
+                             ("protectHighlights", protectHighlights)] { effect[key] = value }
+        return Self(effect: effect)
+    }
+}
+
+enum DetailExtractorProfile: String, CaseIterable, Identifiable {
+    case subtleDetail = "Subtle Detail", fineTexture = "Fine Texture"
+    case naturalDetail = "Natural Detail", architecture = "Architecture"
+    case landscapeDetail = "Landscape Detail", extremeDetail = "Extreme Detail"
+    var id: String { rawValue }
+    func applying(to effect: CreativeEffect) -> CreativeEffect {
+        var result = effect
+        let values: [String: Double]
+        switch self {
+        case .subtleDetail: values = ["amount": 25, "fine": 30, "medium": 35, "large": 10]
+        case .fineTexture: values = ["amount": 55, "fine": 85, "medium": 20, "large": 0]
+        case .naturalDetail: values = ["amount": 50, "fine": 40, "medium": 65, "large": 20]
+        case .architecture: values = ["amount": 65, "fine": 40, "medium": 75, "large": 50]
+        case .landscapeDetail: values = ["amount": 65, "fine": 35, "medium": 75, "large": 40]
+        case .extremeDetail: values = ["amount": 95, "fine": 90, "medium": 95, "large": 75]
+        }
+        for (key, value) in values { result[key] = value }
+        return result
     }
 }
 
@@ -205,5 +253,77 @@ enum FilmGrainProfile: String, CaseIterable, Identifiable {
         value["shadowAmount"] = 65 + index * 10; value["midtoneAmount"] = 100
         value["highlightAmount"] = 25 + index * 8
         return value
+    }
+}
+
+/// Built-in Creative presets are complete parameter snapshots. Applying one to an
+/// existing effect keeps its identity, mask, opacity and position in the stack.
+struct CreativeFXPreset: Identifiable {
+    let kind: CreativeEffectKind
+    let title: String
+    let parameters: [String: Double]
+    let monochromatic: Bool
+    var id: String { "\(kind.rawValue):\(title)" }
+
+    func applying(to effect: CreativeEffect) -> CreativeEffect {
+        guard effect.kind == kind else { return effect }
+        var result = effect
+        result.parameters = parameters
+        result.monochromatic = monochromatic
+        return result.validated
+    }
+
+    func makeEffect(maskID: UUID? = nil) -> CreativeEffect {
+        applying(to: CreativeEffect(kind, maskID: maskID))
+    }
+
+    func matches(_ effect: CreativeEffect) -> Bool {
+        guard effect.kind == kind else { return false }
+        let candidate = effect.validated
+        return candidate.parameters == parameters && candidate.monochromatic == monochromatic
+    }
+
+    static func all(for kind: CreativeEffectKind) -> [Self] {
+        func snapshot(_ title: String, _ configure: (CreativeEffect) -> CreativeEffect) -> Self {
+            let effect = configure(CreativeEffect(kind)).validated
+            return Self(kind: kind, title: title, parameters: effect.parameters,
+                        monochromatic: effect.monochromatic)
+        }
+        func values(_ title: String, _ settings: [String: Double]) -> Self {
+            snapshot(title) { initial in
+                var effect = initial
+                for (key, value) in settings { effect[key] = value }
+                return effect
+            }
+        }
+        switch kind {
+        case .highKey:
+            return [
+                values("High Key doux", ["amount": 30, "dynamic": 0]),
+                values("High Key dynamique", ["amount": 55, "dynamic": 65]),
+                values("Lumières protégées", ["amount": 70, "dynamic": 50, "lightProtection": 100]),
+                values("High Key lumineux", ["amount": 55, "dynamic": 45, "glow": 30])
+            ]
+        case .lowKey:
+            return [
+                values("Low Key doux", ["amount": 30, "dynamic": 0]),
+                values("Low Key dynamique", ["amount": 55, "dynamic": 65]),
+                values("Noirs profonds", ["amount": 75, "dynamic": 30, "darkProtection": 30]),
+                values("Ombres protégées", ["amount": 70, "dynamic": 60, "darkProtection": 100]),
+                values("Low Key lumineux", ["amount": 55, "dynamic": 45, "glow": 25])
+            ]
+        case .grain:
+            return FilmGrainProfile.allCases.map { profile in
+                snapshot(profile.rawValue) { profile.applying(to: $0) }
+            }
+        case .tonalContrast:
+            return TonalContrastProfile.allCases.map { profile in
+                snapshot(profile.rawValue) { profile.applying(to: $0) }
+            }
+        case .detailExtractor:
+            return DetailExtractorProfile.allCases.map { profile in
+                snapshot(profile.rawValue) { profile.applying(to: $0) }
+            }
+        }
     }
 }

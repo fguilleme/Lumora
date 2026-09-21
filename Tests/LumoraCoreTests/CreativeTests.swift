@@ -38,6 +38,32 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
     #expect(complete.creative.effects[0].maskID == complete.masks[0].id)
 }
 
+@Test func creativeBuiltInPresetsCoverEveryEffectAndPreserveStackContext() {
+    for kind in CreativeEffectKind.allCases {
+        let presets = CreativeFXPreset.all(for: kind)
+        #expect(!presets.isEmpty)
+        #expect(Set(presets.map(\.id)).count == presets.count)
+        let maskID = UUID()
+        var current = CreativeEffect(kind, maskID: maskID)
+        current.opacity = 42
+        current.enabled = false
+        for spec in kind.descriptor.parameters { current[spec.id] = spec.range.upperBound }
+        let applied = presets[0].applying(to: current)
+        #expect(applied.id == current.id)
+        #expect(applied.maskID == maskID)
+        #expect(applied.opacity == 42)
+        #expect(!applied.enabled)
+        #expect(presets[0].matches(applied))
+        #expect(presets[0].makeEffect(maskID: maskID).maskID == maskID)
+        let other = CreativeEffect(kind == .highKey ? .lowKey : .highKey)
+        #expect(presets[0].applying(to: other) == other)
+    }
+    let glow = CreativeFXPreset.all(for: .highKey).last!
+    let ordinary = CreativeFXPreset.all(for: .highKey).first!
+    #expect(glow.makeEffect()["glow"] > 0)
+    #expect(ordinary.applying(to: glow.makeEffect())["glow"] == 0)
+}
+
 @Test func tonalContrastPersistencePresetHistoryAndValidation() throws {
     var effect = TonalContrastProfile.naturalTexture.applying(to: CreativeEffect(.tonalContrast))
     effect["shadows"] = -35
@@ -59,6 +85,27 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
     #expect(preset.applying(to: original).creative.effects.first?.kind == .tonalContrast)
     effect["radius"] = .infinity
     #expect(effect["radius"] == 45)
+}
+
+@Test func detailExtractorIdentityPersistenceAndStackIntegration() throws {
+    var effect = DetailExtractorProfile.naturalDetail.applying(to: CreativeEffect(.detailExtractor))
+    let input = patch(size: 128)
+    effect["amount"] = 0
+    #expect(try pixels(CreativeStackRenderer.apply(input, stack: .init(effects: [effect]), masks: [])) == pixels(input))
+    effect["amount"] = 70
+    let output = try pixels(CreativeStackRenderer.apply(input, stack: .init(effects: [effect]), masks: []))
+    #expect(output.allSatisfy { $0.isFinite })
+    var state = EditState(); state.creative.effects = [effect]
+    let roundTrip = try JSONDecoder().decode(EditState.self, from: JSONEncoder().encode(state))
+    #expect(roundTrip == state.validated)
+    let settings = DetailExtractorSettings(effect: effect)
+    #expect(try JSONDecoder().decode(DetailExtractorSettings.self, from: JSONEncoder().encode(settings)) == settings)
+    var history = HistoryManager(); history.begin("Detail Extractor", state: EditState()); history.commit(state)
+    #expect(history.undo() == EditState()); #expect(history.redo() == state)
+    let preset = Preset(name: "Détails", sections: [.creative], values: state)
+    #expect(preset.applying(to: EditState()).creative.effects.first?.kind == .detailExtractor)
+    effect["fine"] = .infinity
+    #expect(effect["fine"] == 40)
 }
 @Test func creativeKeyDirectionProtectionAndIdentity() throws {
     for kind in [CreativeEffectKind.highKey, .lowKey] {

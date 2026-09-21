@@ -32,6 +32,22 @@ struct CreativeEffectsView: View {
                         #endif
                     } label: { Label("Ajouter", systemImage: "plus.circle") }
                     .accessibilityIdentifier("creative-add")
+                    Menu {
+                        ForEach(CreativeEffectKind.allCases) { kind in
+                            Section(kind.descriptor.title) {
+                                ForEach(CreativeFXPreset.all(for: kind)) { preset in
+                                    Button(preset.title) {
+                                        let effect = preset.makeEffect(maskID: session.selectedMaskID)
+                                        session.changeCreative("Ajouter le preset \(preset.title)") { $0.effects.append(effect) }
+                                        selected = effect.id
+                                    }
+                                    .disabled(session.state.creative.effects.count >= 32)
+                                    .accessibilityIdentifier("creative-preset-add-\(preset.id)")
+                                }
+                            }
+                        }
+                    } label: { Label("Presets", systemImage: "sparkles") }
+                    .accessibilityIdentifier("creative-presets")
                     Spacer()
                     Text("FX").font(.caption).foregroundStyle(.secondary)
                     Toggle("FX", isOn: Binding(get: { !session.bypassCreative }, set: { session.setCreativeBypass(!$0) }))
@@ -90,28 +106,35 @@ struct CreativeEffectsView: View {
                     }.font(.caption).dimsDuringAdjustment()
 
                     slider("opacity", "Opacité", 0...100, effect.opacity, 100) { value in update { $0.opacity = value } }
+                    Menu {
+                        ForEach(CreativeFXPreset.all(for: effect.kind)) { preset in
+                            Button(preset.title) { update { $0 = preset.applying(to: $0) } }
+                                .accessibilityIdentifier("creative-preset-apply-\(preset.id)")
+                        }
+                    } label: {
+                        Label(CreativeFXPreset.all(for: effect.kind).first(where: { $0.matches(effect) })?.title
+                              ?? "Preset personnalisé", systemImage: "square.stack.3d.up")
+                    }
+                    .accessibilityLabel("Preset \(effect.kind.descriptor.title)")
+                    .dimsDuringAdjustment()
                     if effect.kind == .grain {
                         Picker("Mode", selection: $advanced) {
                             Text("Simple").tag(false); Text("Avancé").tag(true)
                         }.pickerStyle(.segmented).dimsDuringAdjustment()
-                        Menu("Profil de grain") {
-                            ForEach(FilmGrainProfile.allCases) { profile in
-                                Button(profile.rawValue) { update { $0 = profile.applying(to: $0) } }
-                            }
-                        }.dimsDuringAdjustment()
                     }
                     if effect.kind == .tonalContrast {
-                        Menu("Style Lumora") {
-                            ForEach(TonalContrastProfile.allCases) { profile in
-                                Button(profile.rawValue) { update { $0 = profile.applying(to: $0) } }
-                            }
-                        }.dimsDuringAdjustment()
+                        Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
+                            .font(.caption).dimsDuringAdjustment()
+                    }
+                    if effect.kind == .detailExtractor {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
                         if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
-                        if effect.kind == .tonalContrast && !advanced { return !spec.id.hasPrefix("protect") }
+                        if (effect.kind == .tonalContrast || effect.kind == .detailExtractor) && !advanced {
+                            return !spec.id.hasPrefix("protect")
+                        }
                         return true
                     }) { spec in
                         slider(spec.id, spec.title, spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
@@ -122,7 +145,7 @@ struct CreativeEffectsView: View {
                         Button("Nouvelle structure") { update { $0.seed = $0.seed &+ 1 } }.dimsDuringAdjustment()
                     }
                 } else {
-                    Text("Empilez High Key, Low Key, Tonal Contrast et Grain. Chaque effet peut cibler un masque existant.")
+                    Text("Empilez High Key, Low Key, Tonal Contrast, Detail Extractor et Grain. Chaque effet peut cibler un masque existant.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)

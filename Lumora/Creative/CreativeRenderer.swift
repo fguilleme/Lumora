@@ -10,7 +10,8 @@ protocol CreativeEffectRendering: Sendable {
 enum CreativeStackRenderer {
     static let renderers: [CreativeEffectKind: any CreativeEffectRendering] = [
         .highKey: KeyEffectRenderer(high: true), .lowKey: KeyEffectRenderer(high: false),
-        .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer()
+        .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer(),
+        .detailExtractor: DetailExtractorRenderer()
     ]
     static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
         var image = input
@@ -180,6 +181,82 @@ struct TonalContrastRenderer: CreativeEffectRendering {
             CIVector(x: s.shadows / 100, y: s.midtones / 100, z: s.highlights / 100, w: s.globalAmount / 100 * 1.5),
             CIVector(x: s.saturation / 100, y: s.protectShadows / 100, z: s.protectHighlights / 100)])
         else { throw PhotoError.renderFailed }
+        return output
+    }
+}
+
+/// Local-variance adaptive smoothing, distinct from Tonal Contrast's Gaussian
+/// pyramid and tone-zone gain. Each GPU blur carries both E[Y] and E[Y²], so
+/// three scales need three blurs rather than six. No CPU image readback occurs.
+struct DetailExtractorRenderer: CreativeEffectRendering {
+    private static let moments = CreativeMetal.compile("""
+    [[ stitchable ]] float4 detailMoments(coreimage::sample_t pixel) {
+        float4 c = unpremultiply(pixel);
+        float y = max(0.0, dot(c.rgb, float3(0.2126, 0.7152, 0.0722)));
+        return premultiply(float4(y, y*y, 0.0, c.a));
+    }
+    """)
+    private static let reconstruct = CreativeMetal.compile("""
+    float adaptiveBase(float y, float4 m, float epsilon) {
+        float mu = m.r;
+        float variance = max(0.0, m.g - mu*mu);
+        float followEdge = variance / (variance + epsilon);
+        return mu + followEdge * (y - mu);
+    }
+    float retainedDetail(float band, float threshold) {
+        float magnitude = abs(band);
+        return band * magnitude / (magnitude + threshold);
+    }
+    [[ stitchable ]] float4 detailExtract(coreimage::sample_t pixel,
+            coreimage::sample_t small, coreimage::sample_t medium,
+            coreimage::sample_t large, float4 controls, float2 protection) {
+        float4 c = unpremultiply(pixel);
+        float y = max(0.0, dot(c.rgb, float3(0.2126, 0.7152, 0.0722)));
+        float4 m1 = unpremultiply(small);
+        float4 m2 = unpremultiply(medium);
+        float4 m3 = unpremultiply(large);
+        float b1 = adaptiveBase(y, m1, 0.004);
+        float b2 = adaptiveBase(y, m2, 0.005);
+        float b3 = adaptiveBase(y, m3, 0.008);
+        // Fine structure receives the strongest noise shrinkage. The automatic
+        // threshold rises smoothly near black; it is not a user-facing control.
+        float dark = 1.0 - smoothstep(0.01, 0.18, y);
+        float fine = retainedDetail(y - b1, 0.003 + 0.005*dark);
+        float mid = retainedDetail(b1 - b2, 0.004 + 0.002*dark);
+        float coarse = retainedDetail(b2 - b3, 0.007);
+        float edge = abs(m1.r - m3.r);
+        float broadEdgeGate = 1.0 / (1.0 + pow(edge / 0.16, 2.0));
+        float shadowGuard = mix(1.0, smoothstep(0.012, 0.20, y), protection.x);
+        float highlightGuard = mix(1.0, 1.0-smoothstep(0.78, 1.08, y), protection.y);
+        float signedAmount = controls.x * (controls.x < 0.0 ? 0.7 : 1.0);
+        float delta = signedAmount * shadowGuard * highlightGuard *
+            (1.20*controls.y*fine + 0.95*controls.z*mid +
+             0.50*controls.w*coarse*broadEdgeGate);
+        delta = clamp(delta, -min(0.16, y*0.58), min(0.16, max(0.0, 1.0-y)*0.58));
+        float nextY = max(0.0, y + delta);
+        c.rgb = max(float3(0.0), c.rgb * (nextY / max(y, 0.00001)));
+        return premultiply(c);
+    }
+    """)
+
+    func apply(_ image: CIImage, effect: CreativeEffect) throws -> CIImage {
+        let s = DetailExtractorSettings(effect: effect).validated
+        guard s.amount != 0, s.fine > 0 || s.medium > 0 || s.large > 0 else { return image }
+        guard let source = Self.moments?.apply(extent: image.extent, arguments: [image]) else { throw PhotoError.renderFailed }
+        let scale = max(image.extent.width, image.extent.height) / 3000
+        func moments(at photographicRadius: Double) -> CIImage {
+            source.clampedToExtent().applyingFilter("CIGaussianBlur", parameters: [
+                kCIInputRadiusKey: photographicRadius * scale
+            ]).cropped(to: image.extent)
+        }
+        // Three deliberately separated photographic ranges, independent of the
+        // input framebuffer: fine fibres, mid-size texture, broader structure.
+        let small = moments(at: 1.6), medium = moments(at: 5.5), large = moments(at: 18)
+        guard let output = Self.reconstruct?.apply(extent: image.extent, arguments: [
+            image, small, medium, large,
+            CIVector(x: s.amount / 100, y: s.fine / 100, z: s.medium / 100, w: s.large / 100),
+            CIVector(x: s.protectShadows / 100, y: s.protectHighlights / 100)
+        ]) else { throw PhotoError.renderFailed }
         return output
     }
 }
