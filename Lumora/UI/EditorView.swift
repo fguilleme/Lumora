@@ -177,21 +177,33 @@ struct EditorView: View {
             Text("LUMORA").font(.system(.headline, design: .rounded)).tracking(3)
             Spacer()
             if session.result != nil {
-                Button(action: session.undo) { Image(systemName: "arrow.uturn.backward").frame(width: 44, height: 44) }
-                    .disabled(!session.history.canUndo).accessibilityLabel("Annuler")
-                Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
-                    .disabled(!session.history.canRedo).accessibilityLabel("Rétablir")
-                Menu {
-                    Button("Bibliothèque", systemImage: "photo.stack") { showLibrary = true }
-                    Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
-                    Button("Exporter", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
-                    Button("Fichiers", systemImage: "folder") { showFiles = true }
-                    Button("Réinitialiser les réglages", systemImage: "arrow.counterclockwise", action: session.resetAll)
-                    #if DEBUG
-                    Toggle("Mesures de rendu", isOn: $showMetrics)
-                    #endif
-                } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
-                .accessibilityLabel("Importer et options")
+                HStack(spacing: 0) {
+                    Button { showPhotos = true } label: {
+                        Image(systemName: "photo.on.rectangle").frame(width: 44, height: 44)
+                    }
+                    .accessibilityLabel("Importer depuis Photos")
+                    .accessibilityIdentifier("header-photos")
+                    Button { showLibrary = true } label: {
+                        Image(systemName: "photo.stack").frame(width: 44, height: 44)
+                    }
+                    .accessibilityLabel("Ouvrir la bibliothèque")
+                    .accessibilityIdentifier("header-library")
+                    Button(action: session.undo) { Image(systemName: "arrow.uturn.backward").frame(width: 44, height: 44) }
+                        .disabled(!session.history.canUndo).accessibilityLabel("Annuler")
+                    Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
+                        .disabled(!session.history.canRedo).accessibilityLabel("Rétablir")
+                    Menu {
+                        Button("Bibliothèque", systemImage: "photo.stack") { showLibrary = true }
+                        Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
+                        Button("Exporter", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
+                        Button("Fichiers", systemImage: "folder") { showFiles = true }
+                        Button("Réinitialiser les réglages", systemImage: "arrow.counterclockwise", action: session.resetAll)
+                        #if DEBUG
+                        Toggle("Mesures de rendu", isOn: $showMetrics)
+                        #endif
+                    } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
+                    .accessibilityLabel("Importer et options")
+                }
             }
         }.padding(.horizontal)
     }
