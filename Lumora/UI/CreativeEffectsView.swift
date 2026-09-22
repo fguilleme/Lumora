@@ -137,9 +137,29 @@ struct CreativeEffectsView: View {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
-                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation {
+                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation || effect.kind == .silverBW {
                         Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
+                    }
+                    if effect.kind == .silverBW {
+                        Picker("Film Response", selection: Binding<Int>(get: { Int(effect["filmResponse"].rounded()) }, set: { value in
+                            update { $0["filmResponse"] = Double(value) }
+                        })) {
+                            ForEach(SilverFilmResponse.allCases, id: \.rawValue) { response in
+                                Text(response.title).tag(response.rawValue)
+                            }
+                        }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-film-response")
+                        Menu("Filtre coloré") {
+                            Button("Aucun") { update { $0["filterStrength"] = 0 } }
+                            ForEach(["Jaune", "Orange", "Rouge", "Vert", "Bleu"].indices, id: \.self) { index in
+                                Button(["Jaune", "Orange", "Rouge", "Vert", "Bleu"][index]) {
+                                    update {
+                                        $0["filterHue"] = [60,30,0,120,240][index]
+                                        if $0["filterStrength"] == 0 { $0["filterStrength"] = 50 }
+                                    }
+                                }
+                            }
+                        }.dimsDuringAdjustment()
                     }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
                         if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
@@ -159,6 +179,10 @@ struct CreativeEffectsView: View {
                             if spec.id == "style" { return false }
                             if !advanced { return !["shadowHue", "shadowStrength", "highlightHue",
                                                    "highlightStrength", "blackLift"].contains(spec.id) }
+                        }
+                        if effect.kind == .silverBW {
+                            if spec.id == "filmResponse" { return false }
+                            if !advanced { return !["dynamicBrightness", "softContrast", "blacks", "whites"].contains(spec.id) }
                         }
                         if effect.kind == .filmEmulation {
                             if spec.id == "style" { return false }

@@ -1,0 +1,13 @@
+{
+  "baseCommit": "c4972f1a4de0a240e485ea8eabbefad4d59ac26f",
+  "files": {
+    "Lumora/Creative/CreativeEffect.swift": "f4a6a58725b0c1e7f9c5e5c8459e1b114e6f979007a2332976b52ee7a517c090",
+    "Lumora/Creative/CreativeRenderer.swift": "cb74c46452bd6273c535d18b320f5f1efe901eb9be19b9412281a21c8266335e",
+    "Lumora/Creative/SilverBWRenderer.swift": "e1e0a850d6105184bcfb3269d659f6dda4ddfe3cbd6b33b175acbbedca9f069f",
+    "Lumora/UI/CreativeEffectsView.swift": "60ea5bac470d11d532a24ebc9fefc19aa1e15aa00c523a4bfa3c67473605418f",
+    "Tests/LumoraVisualTestLab/SilverBW.swift": "68d35bf32e6959237407919d0d7f263b4d333044d94b367ca680a544980c5b08",
+    "Tests/LumoraVisualTestLab/SilverBWIntegration.swift": "c65c563397452475d05cce7a7358edbd76a6a4d0f83b5ed9ef9b4cb000a920d8",
+    "Tests/LumoraVisualTestLab/SilverBWPhotos.swift": "1542e5292e58667742fa727046c38b5a1ec8712ddb82aac83687dd38d14be7ce",
+    "Tests/LumoraVisualTestLab/SilverBWReport.swift": "b93ed0087f1155ef25b2fb0ec8eed3f3289b42bb8aa3e02b0e18fa5f376b5239"
+  }
+}

@@ -1,0 +1,170 @@
+[
+  {
+    "enabled" : true,
+    "id" : "0DF4C53F-464C-4907-AE3F-FC2F38EBDDD0",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 0,
+      "brightness" : 0,
+      "contrast" : 0,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 0,
+      "filterHue" : 60,
+      "filterStrength" : 0,
+      "softContrast" : 0,
+      "structure" : 0,
+      "whites" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "A53C24C5-FA94-4E73-A55C-2F6F4168B664",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 0,
+      "brightness" : 8,
+      "contrast" : 0,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 2,
+      "filterHue" : 35,
+      "filterStrength" : 12,
+      "softContrast" : 28,
+      "structure" : 8,
+      "whites" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "5DDB8ECC-232E-4C79-AA49-10A302E23C44",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 25,
+      "brightness" : 0,
+      "contrast" : 28,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 1,
+      "filterHue" : 45,
+      "filterStrength" : 28,
+      "softContrast" : 0,
+      "structure" : 20,
+      "whites" : -18
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "D3F49AAC-00E2-4DEF-984A-310F3F5F30F4",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 0,
+      "brightness" : 0,
+      "contrast" : 12,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 3,
+      "filterHue" : 60,
+      "filterStrength" : 18,
+      "softContrast" : 0,
+      "structure" : 18,
+      "whites" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "2451CC7A-3934-4F78-9F14-CFEB1EF85235",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 0,
+      "brightness" : 0,
+      "contrast" : 18,
+      "dynamicBrightness" : 12,
+      "filmResponse" : 6,
+      "filterHue" : 60,
+      "filterStrength" : 0,
+      "softContrast" : 0,
+      "structure" : 80,
+      "whites" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "243ECD75-6829-4A1A-9121-BC3906633D02",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 42,
+      "brightness" : -12,
+      "contrast" : 0,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 4,
+      "filterHue" : 0,
+      "filterStrength" : 42,
+      "softContrast" : 0,
+      "structure" : 35,
+      "whites" : -20
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "ED788FE9-F308-48F5-AE04-A83CA915AEFA",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : -20,
+      "brightness" : 7,
+      "contrast" : -18,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 5,
+      "filterHue" : 60,
+      "filterStrength" : 0,
+      "softContrast" : 55,
+      "structure" : 0,
+      "whites" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "DEBB00AB-9087-4C08-BA4B-0ECB8B19179F",
+    "kind" : "silverBW",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "blacks" : 38,
+      "brightness" : 0,
+      "contrast" : 48,
+      "dynamicBrightness" : 0,
+      "filmResponse" : 6,
+      "filterHue" : 120,
+      "filterStrength" : 20,
+      "softContrast" : 0,
+      "structure" : 65,
+      "whites" : 0
+    },
+    "seed" : 137
+  }
+]

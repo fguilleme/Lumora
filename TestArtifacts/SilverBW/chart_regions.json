@@ -1,0 +1,162 @@
+[
+  {
+    "height" : 172,
+    "name" : "neutral ramp",
+    "ramp" : true,
+    "width" : 224,
+    "x" : 16,
+    "y" : 836
+  },
+  {
+    "height" : 172,
+    "name" : "red",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 272,
+    "y" : 836
+  },
+  {
+    "height" : 172,
+    "name" : "orange",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 528,
+    "y" : 836
+  },
+  {
+    "height" : 172,
+    "name" : "yellow",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 784,
+    "y" : 836
+  },
+  {
+    "height" : 172,
+    "name" : "green",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 16,
+    "y" : 632
+  },
+  {
+    "height" : 172,
+    "name" : "cyan",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 272,
+    "y" : 632
+  },
+  {
+    "height" : 172,
+    "name" : "blue",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 528,
+    "y" : 632
+  },
+  {
+    "height" : 172,
+    "name" : "magenta",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 784,
+    "y" : 632
+  },
+  {
+    "height" : 172,
+    "name" : "light skin",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 16,
+    "y" : 428
+  },
+  {
+    "height" : 172,
+    "name" : "dark skin",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 272,
+    "y" : 428
+  },
+  {
+    "height" : 172,
+    "name" : "foliage green",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 528,
+    "y" : 428
+  },
+  {
+    "height" : 172,
+    "name" : "blue sky",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 784,
+    "y" : 428
+  },
+  {
+    "height" : 172,
+    "name" : "red fabric",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 16,
+    "y" : 224
+  },
+  {
+    "height" : 172,
+    "name" : "white cloth",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 272,
+    "y" : 224
+  },
+  {
+    "height" : 172,
+    "name" : "dark texture",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 528,
+    "y" : 224
+  },
+  {
+    "height" : 172,
+    "name" : "midtone texture",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 784,
+    "y" : 224
+  },
+  {
+    "height" : 172,
+    "name" : "highlight texture",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 16,
+    "y" : 20
+  },
+  {
+    "height" : 172,
+    "name" : "HDR ramp",
+    "ramp" : true,
+    "width" : 224,
+    "x" : 272,
+    "y" : 20
+  },
+  {
+    "height" : 172,
+    "name" : "near black",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 528,
+    "y" : 20
+  },
+  {
+    "height" : 172,
+    "name" : "specular",
+    "ramp" : false,
+    "width" : 224,
+    "x" : 784,
+    "y" : 20
+  }
+]

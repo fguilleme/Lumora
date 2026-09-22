@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -75,6 +75,19 @@ enum CreativeEffectCatalog {
             .init("shadowDensity", "Densité des ombres", -100...100, 0),
             .init("colorResponse", "Réponse couleur", 0...100, 75),
             .init("style", "Type interne", 0...6, 0)
+        ]),
+        .silverBW: .init(title: "Silver B&W", category: "Film", symbol: "circle.lefthalf.filled", parameters: [
+            .init("amount", "Quantité", 0...100, 100),
+            .init("brightness", "Luminosité", -100...100),
+            .init("contrast", "Contraste", -100...100),
+            .init("structure", "Structure", 0...100),
+            .init("filmResponse", "Réponse film", 0...6),
+            .init("filterHue", "Couleur du filtre", 0...360, 60),
+            .init("filterStrength", "Force du filtre", 0...100),
+            .init("dynamicBrightness", "Luminosité dynamique", -100...100),
+            .init("softContrast", "Contraste doux", -100...100),
+            .init("blacks", "Densité des noirs", -100...100),
+            .init("whites", "Présence des blancs", -100...100)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
@@ -557,6 +570,17 @@ struct CreativeFXPreset: Identifiable {
                 values("Strong Cross", ["style": 6, "amount": 90, "styleStrength": 100, "contrast": 40,
                                        "saturation": 12, "shadowHue": 190, "shadowStrength": 65,
                                        "highlightHue": 25, "highlightStrength": 55, "blackLift": 7])
+            ]
+        case .silverBW:
+            return [
+                values("Neutral Silver", [:]),
+                values("Soft Portrait", ["filmResponse":2,"brightness":8,"softContrast":28,"structure":8,"filterHue":35,"filterStrength":12]),
+                values("Fine Art", ["filmResponse":1,"contrast":28,"blacks":25,"whites":-18,"structure":20,"filterHue":45,"filterStrength":28]),
+                values("Classic Film", ["filmResponse":3,"contrast":12,"structure":18,"filterHue":60,"filterStrength":18]),
+                values("High Structure", ["filmResponse":6,"structure":80,"contrast":18,"dynamicBrightness":12]),
+                values("Dark Drama", ["filmResponse":4,"brightness":-12,"blacks":42,"whites":-20,"filterHue":0,"filterStrength":42,"structure":35]),
+                values("Soft Silver", ["filmResponse":5,"softContrast":55,"contrast":-18,"blacks":-20,"brightness":7]),
+                values("Hard Documentary", ["filmResponse":6,"contrast":48,"blacks":38,"structure":65,"filterHue":120,"filterStrength":20])
             ]
         case .filmEmulation:
             return [
