@@ -369,3 +369,5 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 - `Tests/LumoraVisualTestLab/Auto*.swift` : campagne Auto, corpus, conversions, cache, diagnostics et comparaison aux renderers avant Auto.
 
 Voir [Auto](AutoCorrection.md).
+
+- `Tests/LumoraVisualTestLab/AutoWBMapping.swift` : caractérisation du renderer Color, mapping WB, invariants et comparaison avant/après ; observations scalaires pré-correction dans `Fixtures/AutoWB`.

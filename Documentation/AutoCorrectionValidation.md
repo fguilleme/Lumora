@@ -1,6 +1,10 @@
 # Auto — première campagne de validation
 
-## Résultat
+## Mise à jour WB
+
+Le bilan ci-dessous décrit la **première campagne, avant correction WB**. Une correction localisée et explicitement autorisée a depuis résolu les quatre WARN WB : [mesures, mapping et régression](AutoWBMapping.md). Bilan courant consolidé : **782 PASS, 3 WARN, 0 FAIL**. Les valeurs initiales ci-dessous sont conservées comme historique ; l’analyse et les autres heuristiques n’ont pas changé.
+
+## Résultat initial
 
 669 PASS, 7 quality WARN, 0 FAIL. Les contrôles ne remplacent pas l’inspection photographique. Les premières heuristiques sont gelées ; aucun Golden Master Auto n’a été créé.
 

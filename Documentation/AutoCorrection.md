@@ -32,8 +32,8 @@ Un seul cache d’analyse/proposition est détenu par l’acteur RenderEngine. S
 
 Le Visual Test Lab produit [AutoCorrectionValidationReport.md](../TestArtifacts/AutoCorrectionValidationReport.md), les métriques et les planches sous `TestArtifacts/Auto/`. Commencer l’inspection par [la planche des huit photos](../TestArtifacts/Auto/real_photos_contact_sheet.png), puis les planches nuit, high-key, contre-jour, WB et équivalence Lumière/Courbe. Les WARN photographiques restent soumis à validation humaine. Aucun Golden Master Auto n’est créé.
 
-## État de la première validation
+## État de validation
 
-**669 PASS, 7 WARN, aucun FAIL technique.** La première proposition reste à valider photographiquement. En particulier, sur les quatre mires à dominante connue, la balance des blancs automatique **accentue actuellement la dominante** au lieu de la réduire. Ce défaut reste documenté et non retouché après les mesures, conformément au gel des heuristiques. Auto Couleur ne doit donc pas être considéré comme une balance des blancs validée.
+La première campagne comportait **669 PASS, 7 WARN, aucun FAIL technique**. Les quatre WARN de balance des blancs sur les dominantes connues ont ensuite été corrigés, sur demande explicite, par une adaptation localisée entre intention et curseurs Temperature/Tint. L’analyse, la confiance et les heuristiques photographiques sont inchangées.
 
-Les autres WARN concernent une mire sous-exposée riche en patches HDR et deux conversions approximatives Courbe → Lumière. Voir [le bilan versionné](AutoCorrectionValidation.md) pour les résultats et les commandes de validation.
+Le bilan consolidé est **782 PASS, 3 WARN, 0 FAIL** ; la campagne ciblée WB compte **128 PASS**. Les WARN restants concernent une mire sous-exposée riche en patches HDR et deux conversions approximatives Courbe → Lumière. L’historique initial est conservé. Voir [la correction WB et ses mesures](AutoWBMapping.md) et [le bilan initial versionné](AutoCorrectionValidation.md).
