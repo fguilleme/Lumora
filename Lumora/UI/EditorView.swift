@@ -17,6 +17,11 @@ struct EditorView: View {
     @State private var presetController = PresetController()
     @State private var focusedAdjustmentID: String?
     @State private var selectedCreativeEffectID: UUID?
+    @State private var curveChannel: CurveChannel = .rgb
+    @State private var curveEditMode = false
+    @State private var curveEyedropper = false
+    @State private var curveSample: CurveSample?
+    @State private var curveSamplingBuffer: CurveSamplingBuffer?
     @Environment(\.scenePhase) private var scenePhase
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
@@ -52,7 +57,13 @@ struct EditorView: View {
                 HistogramView(histogram: result.histogram)
                     .frame(height: 52).padding(.vertical, 4)
                     .dimsDuringAdjustment()
-                PhotoCanvas(result: result, showingOriginal: $session.showingOriginal,
+                PhotoCanvas(result: result,
+                            curveSampling: panel == .curve && curveEditMode && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
+                            curveSampleLocation: curveSample?.location,
+                            onCurveSample: { location in
+                                if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
+                            },
+                            showingOriginal: $session.showingOriginal,
                             dlcSettings: activeDLCSettings,
                             onDLCBegin: { session.beginInteraction("Déplacer le centre") },
                             onDLCChange: { point in
@@ -160,7 +171,22 @@ struct EditorView: View {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
         .onAppear { session.setMaskEditingPreview(panel == .masks) }
-        .onChange(of: panel) { _, newPanel in session.setMaskEditingPreview(newPanel == .masks) }
+        .onChange(of: panel) { _, newPanel in
+            session.setMaskEditingPreview(newPanel == .masks)
+            if newPanel != .curve { curveEditMode = false; curveEyedropper = false
+                curveSample = nil; curveSamplingBuffer = nil }
+        }
+        .onChange(of: session.document?.id) { _, _ in
+            curveEditMode = false; curveEyedropper = false
+            curveSample = nil; curveSamplingBuffer = nil
+        }
+        .onChange(of: session.selectedMaskID) { _, selectedMaskID in
+            if selectedMaskID != nil {
+                curveEyedropper = false
+                curveSample = nil
+                curveSamplingBuffer = nil
+            }
+        }
         .onDisappear { session.setMaskEditingPreview(false) }
         .onChange(of: scenePhase) { _, phase in if phase != .active { session.flush() } }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in session.memoryWarning() }
@@ -284,9 +310,21 @@ struct EditorView: View {
             ScrollView {
                 AutoCorrectionControls(session: session, module: .curves).padding(.horizontal)
                 ToneCurveEditor(curves: session.activeState.curves, histogram: result.histogram,
+                                channel: $curveChannel, editMode: $curveEditMode,
+                                eyedropper: $curveEyedropper, sample: curveSample,
+                                eyedropperAvailable: session.selectedMaskID == nil,
+                                onClearSample: { curveSample = nil },
                                 onBegin: { session.beginInteraction($0) },
                                 onChange: session.setCurve, onEnd: session.finishInteraction)
+                    .task(id: curveEyedropper ? session.generation : -1) {
+                        guard curveEditMode, curveEyedropper, session.selectedMaskID == nil else {
+                            curveSamplingBuffer = nil; curveSample = nil; return
+                        }
+                        curveSamplingBuffer = try? CurveSamplingBuffer.prepare(
+                            original: result.original, state: session.state)
+                    }
             }
+            .accessibilityIdentifier("curve-controls-scroll")
         case .colorTools:
             ColorToolsView(mixer: session.activeState.colorMixer,
                            grading: session.activeState.colorGrading,

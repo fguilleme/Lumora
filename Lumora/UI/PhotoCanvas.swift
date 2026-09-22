@@ -3,6 +3,9 @@ import CoreImage
 
 struct PhotoCanvas: View {
     let result: RenderResult
+    var curveSampling = false
+    var curveSampleLocation: MaskPoint? = nil
+    var onCurveSample: (MaskPoint) -> Void = { _ in }
     @Binding var showingOriginal: Bool
     let dlcSettings: DarkenLightenCenterSettings?
     let onDLCBegin: () -> Void
@@ -81,9 +84,9 @@ struct PhotoCanvas: View {
                         }
                 )
                 .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
-                    if zoom > 1 && !isPainting && !dlcDragging { state = value.translation }
+                    if zoom > 1 && !isPainting && !dlcDragging && !curveSampling { state = value.translation }
                 }.onEnded { value in
-                    if zoom > 1 && !isPainting && !dlcDragging {
+                    if zoom > 1 && !isPainting && !dlcDragging && !curveSampling {
                         offset = bounded(CGSize(width: offset.width + value.translation.width,
                                                 height: offset.height + value.translation.height), size: geometry.size)
                     }
@@ -145,6 +148,33 @@ struct PhotoCanvas: View {
                             .accessibilityHint(brushMode == .paint ? "Faites glisser pour peindre" : "Faites glisser pour effacer")
                     }
                 }
+                .overlay {
+                    if curveSampling && !showingOriginal {
+                        Color.clear.contentShape(Rectangle())
+                            .gesture(DragGesture(minimumDistance: 0).onChanged { value in
+                                if let point = normalized(value.location, viewSize: geometry.size,
+                                    imageSize: CGSize(width: result.image.width, height: result.image.height),
+                                    displayScale: displayScale, displayOffset: displayOffset) {
+                                    onCurveSample(point)
+                                }
+                            })
+                            .overlay {
+                                if let curveSampleLocation {
+                                    let rect = sampledImageRect(viewSize: geometry.size,
+                                        imageSize: CGSize(width: result.image.width, height: result.image.height),
+                                        displayScale: displayScale, displayOffset: displayOffset)
+                                    Circle().stroke(.mint, lineWidth: 2).frame(width: 22, height: 22)
+                                        .position(x: rect.minX + rect.width * curveSampleLocation.x,
+                                                  y: rect.minY + rect.height * curveSampleLocation.y)
+                                        .allowsHitTesting(false)
+                                }
+                            }
+                            .accessibilityIdentifier("curve-photo-sampling")
+                            .accessibilityLabel("Échantillonner la photographie")
+                            .accessibilityElement(children: .ignore)
+                    }
+                }
+                .accessibilityElement(children: .contain)
                 .accessibilityLabel("Photographie, \(showingOriginal || pressing ? "original" : "développement")")
                 .accessibilityValue("Zoom \(Int((zoom * 100).rounded())) %")
                 .accessibilityIdentifier("photo-canvas")
@@ -222,6 +252,14 @@ struct PhotoCanvas: View {
     private func bounded(_ value: CGSize, size: CGSize) -> CGSize {
         let x = size.width * (zoom - 1) / 2, y = size.height * (zoom - 1) / 2
         return CGSize(width: min(x, max(-x, value.width)), height: min(y, max(-y, value.height)))
+    }
+    private func sampledImageRect(viewSize: CGSize, imageSize: CGSize,
+                                  displayScale: CGFloat, displayOffset: CGSize) -> CGRect {
+        let scale = min(viewSize.width / imageSize.width, viewSize.height / imageSize.height)
+        let fitted = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+        return CGRect(x: viewSize.width / 2 - fitted.width * displayScale / 2 + displayOffset.width,
+                      y: viewSize.height / 2 - fitted.height * displayScale / 2 + displayOffset.height,
+                      width: fitted.width * displayScale, height: fitted.height * displayScale)
     }
     private func normalized(_ location: CGPoint, viewSize: CGSize, imageSize: CGSize,
                             displayScale: CGFloat, displayOffset: CGSize) -> MaskPoint? {
