@@ -1,5 +1,8 @@
 # Bibliothèque locale
 
+La bibliothèque est accessible directement depuis l’icône `photo.stack` dans la barre supérieure de l’éditeur, à côté de l’accès Photos. Les entrées du menu restent disponibles.
+
+
 Lumora reconstruit la liste de ses documents à partir des dossiers déjà présents dans Application Support. Chaque entrée conserve l’original privé immuable et son sidecar `edits.json` ; aucun catalogue central des photos n’est nécessaire. Les sidecars illisibles, incompatibles ou privés de leur original sont ignorés dans la liste sans empêcher l’ouverture des autres documents.
 
 La feuille **Bibliothèque** affiche les développements avec une miniature ImageIO orientée, le nom de l’original, la date d’import et l’indication **Ouvert**. Une recherche insensible à la casse filtre les noms de fichiers. Le menu de tri propose **Plus récentes**, **Plus anciennes** et **Nom** ; les identifiants des documents départagent les valeurs égales pour garder un ordre stable. Tirer la liste vers le bas reconstruit l’index depuis le disque. Choisir une ligne rend d’abord un aperçu haute qualité ; le document courant n’est remplacé que si ce rendu réussit.
