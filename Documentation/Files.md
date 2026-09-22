@@ -350,3 +350,11 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 - `Tests/LumoraVisualTestLab/DarkenLightenCenter*.swift` : oracle géométrique, intégration, performance, corpus, non-régression et rapport.
 - `LumoraUITests/DarkenLightenCenterUITests.swift` : manipulation du centre, historique, zoom/pan et portée de l’overlay.
 - `TestArtifacts/DarkenLightenCenterValidationReport.md` : rapport de campagne ; planches photographiques locales sous `TestArtifacts/DarkenLightenCenter/RealPhotos`.
+
+## Gestes de masque et informations contextuelles
+
+- `EditorSession.setMaskEditingPreview` : suspension du développement pendant l’édition de la matte, reprise du dernier état en quittant Masques.
+- `PhotoCanvas` : navigation portée par la photo, poignées indépendantes sous zoom, overlay identifié directement par son état plutôt que par sérialisation JSON.
+- `EditorView` : ligne d’informations conditionnelle, nom sans extension, format et dimensions indépendants (y compris RAW).
+- `CreativeEffectsView` : actions directes de 44 points à droite du titre.
+- `EditorInteractionFixesUITests` : déplacement des poignées sous zoom, absence de développement pendant le pinceau, navigation sans trait, informations contextuelles et actions Creative.

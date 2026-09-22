@@ -19,3 +19,15 @@ Le pinceau propose les modes **Peindre** et **Effacer**. Chaque trait est stock�
 Les mattes Vision ne proposent pas encore de pinceau d’affinage directement attaché à leur composante. On peut néanmoins ajouter une composante Pinceau en ajout ou en soustraction dans le même calque.
 
 ![Poignées radiales et commandes de composante](AdjustmentLayers-Simulator.png)
+
+## Navigation et réactivité pendant l’édition
+
+Les poignées des dégradés suivent le zoom et le déplacement de la photo. Les glisser ne déplace plus simultanément le canvas : le geste de navigation est porté par l’image, indépendamment des poignées.
+
+Le pinceau propose **Peindre / Effacer / Déplacer**. Utiliser Déplacer pour naviguer dans une image agrandie sans ajouter de points au masque ni d’opération d’historique, puis revenir à Peindre ou Effacer. Le cercle indique toujours le diamètre du pinceau dans l’image affichée.
+
+Dans l’onglet Masques, la photographie développée reste fixe pendant que la matte rouge est mise à jour. Les modifications, Undo/Redo et sauvegardes restent actifs ; le développement complet est différé et recalculé une fois avec le dernier état à la sortie de l’onglet. L’export utilise toujours l’état courant. L’overlay ne sérialise plus l’intégralité des points en JSON sur le thread UI à chaque mouvement ; ses tâches périmées sont annulées et il n’est construit que lorsqu’il est affiché.
+
+Validation du 22 septembre 2026 : build iOS Simulator réussi, 97 tests Core réussis. Les parcours UI ciblés couvrent déplacement de masque sous zoom, absence de développement pendant le trait, reprise en quittant Masques, navigation sans édition, Undo/Redo, appui long sur masque/recadrage et poignée DLC. Aucune mesure de FPS sur iPhone physique n’est revendiquée.
+
+![Mode Déplacer du pinceau](BrushNavigation-Simulator.png)

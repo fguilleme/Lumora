@@ -4,7 +4,7 @@
 
 ## Pile et masques
 
-Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner, réinitialiser et supprimer un effet. Chaque instance conserve ses réglages, son opacité et son éventuel masque. L’ordre de la pile est l’ordre du traitement : déplacer un effet peut changer le résultat. Le bypass Creative sert à comparer l’aperçu et n’est pas exporté.
+Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner, réinitialiser et supprimer un effet. Les six actions de l’effet sélectionné sont directement accessibles à droite de son nom, sur deux rangées d’icônes avec une cible tactile de 44 points : œil, duplication, suppression, ordre précédent/suivant et réinitialisation. Le menu « … » est supprimé. Chaque instance conserve ses réglages, son opacité et son éventuel masque. L’ordre de la pile est l’ordre du traitement : déplacer un effet peut changer le résultat. Le bypass Creative sert à comparer l’aperçu et n’est pas exporté.
 
 Les effets utilisent les masques existants, y compris leurs composantes ajoutées/soustraites et leur inversion. Un masque absent, masqué ou d’opacité nulle suspend l’effet qui le référence. Les changements passent par Undo/Redo et sont enregistrés dans le document.
 
@@ -71,3 +71,7 @@ La poignée, le contour et la limite de feather apparaissent pour l’instance s
 Looks : **Subtle Focus, Portrait Focus, Dark Surround, Light Center, Wide Focus, Narrow Focus, Off-Center Drama, Reverse Focus**. Ils ne détectent pas automatiquement le sujet. Repositionner le centre selon la composition produit un réglage Custom. Une correction forte peut écrêter les blancs à l’export SDR ; le moteur ne compense pas cette exposition par une protection cachée.
 
 Les masques limitent l’effet via la même composition que les autres Creative FX. Plusieurs instances sont possibles. Le repère suit l’image développée après géométrie : recadrer le document peut donc déplacer le centre par rapport au contenu d’origine. Voir le [rapport et les planches décentrées](../TestArtifacts/DarkenLightenCenterValidationReport.md) avant toute approbation photographique.
+
+Les tests UI des actions directes, duplication/Undo/suppression et inspecteur 100 % passent sur iPhone 18 Pro simulé (iOS 27). La ligne nom/calque/format/résolution est masquée dans Creative.
+
+![Actions directes Creative](CreativeActions-Simulator.png)

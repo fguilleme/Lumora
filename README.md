@@ -19,7 +19,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 ## Utilisation
 
 - Importer depuis Photos ou Fichiers. Le sélecteur Photos donne uniquement accès au fichier choisi, sans autorisation globale de photothèque.
-- Ajuster Lumière / Couleur. La zone d’aperçu conserve la même hauteur dans tous les outils et les contrôles défilent dans un panneau compact.
+- Ajuster Lumière / Couleur. Les contrôles défilent dans un panneau compact. La ligne d’informations est réservée aux panneaux de développement ; elle affiche le nom sans extension, le calque actif, le format et la résolution. Elle est masquée dans Creative, Optique, Géométrie, Masques et Presets, libérant cet espace pour l’aperçu.
 - Pendant le déplacement d’un curseur, l’interface secondaire s’efface sur le fond noir pour laisser l’image et le réglage actif au premier plan.
 - Toucher une valeur numérique pour activer/désactiver le réglage fin. Double-toucher le curseur, ou utiliser sa flèche, pour le réinitialiser.
 - Annuler/rétablir avec les boutons supérieurs. Un déplacement continu du curseur crée une opération d’historique.
@@ -35,7 +35,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 - Ouvrir **Détail** pour la netteté avec masquage et les réductions de bruit de luminance et de couleur.
 - Ouvrir **Optique** pour le profil constructeur RAW, la distorsion, l’aberration chromatique et le vignetage optique.
 - Ouvrir **Géométrie** pour tourner, redresser l’horizon et corriger les perspectives verticale et horizontale manuellement ou automatiquement, ajuster aspect/échelle/décalage, puis recadrer avec une grille de tiers.
-- Ouvrir **Masques** pour gérer la pile de modifications. **Photo entière** est le premier calque ; chaque masque ajouté devient un calque sélectionnable, renommable, masquable, réordonnable et doté de sa propre opacité. Le nom du calque affiché à côté du fichier ouvre aussi un sélecteur rapide accessible depuis les autres panneaux. Les poignées blanches et jaunes déplacent et redimensionnent directement les gradients sur la photo. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent sur le calque sélectionné.
+- Ouvrir **Masques** pour gérer la pile de modifications. **Photo entière** est le premier calque ; chaque masque ajouté devient un calque sélectionnable, renommable, masquable, réordonnable et doté de sa propre opacité. Le nom du calque affiché à côté du fichier ouvre aussi un sélecteur rapide accessible depuis les autres panneaux. Les poignées blanches et jaunes déplacent et redimensionnent directement les gradients sur la photo, même après zoom. Le pinceau distingue Peindre, Effacer et Déplacer ; dans Masques, seule la matte rouge est actualisée, puis le développement reprend à la sortie du panneau. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail agissent sur le calque sélectionné.
 - Ouvrir **Presets** pour enregistrer des groupes de réglages, les appliquer avec Undo/Redo et les importer ou exporter au format JSON.
 - Choisir **Exporter** dans le menu supérieur : format, dimensions, profil couleur et métadonnées, puis **Créer le fichier** et **Partager ou enregistrer…**.
 - Toucher l’histogramme pour alterner RVB/luminance. Les triangles indiquent un écrêtage observé sur l’aperçu.
@@ -71,6 +71,8 @@ Import Photos/Fichiers, bibliothèque locale avec miniatures/recherche/tri/favor
 Film Emulation propose sept types originaux. Silver B&W propose sept réponses spectrales et huit looks ; Silver Toning propose neuf toners et onze looks avec contributions argent/papier. Le Grain du panneau Effets et Film Grain partagent un moteur ; les activer ensemble additionne leurs contributions.
 
 ## Validation et documentation
+
+Les contrôles d’interface couvrent également les poignées de masque sous zoom, la navigation séparée du pinceau, le rendu différé dans Masques, les informations contextuelles et les actions Creative directes. Les tests de rendu des effets restent indépendants de ces changements d’éditeur.
 
 Dernière campagne fonctionnelle, commit `514b724` : build iOS Simulator et test UI réussis, **97 tests Core réussis**, **77 presets antérieurs bit-identiques**. Darken / Lighten Center : **831 contrôles PASS**, dont **751 hard invariants**, **13 WARN de clipping SDR**, **aucun FAIL**. Le banc commun compte 58 cas PASS et neuf WARN historiques. Les mesures GPU sur M2 Pro sont de 0,18 / 0,73 / 2,91 ms à 1024 / 2048 / 4096 ; elles ne certifient pas les performances d’un iPhone. Les corrections techniques et la revalidation sont consignées dans le rapport.
 
