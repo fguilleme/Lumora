@@ -27,7 +27,7 @@ L’overlay rouge et les poignées du masque sélectionné sont affichés dans l
 
 ## Réglages du calque et pipeline
 
-Le premier calque, **Photo entière**, contient le développement global. Chaque masque suivant porte son propre jeu Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail. Les panneaux habituels ciblent le calque sélectionné ; les curseurs affichés dans le panneau Masques restent des raccourcis. Lumora développe l’image à chaque niveau visible, module sa matte avec l’opacité du calque, puis la mélange avec l’image entrante via `CIBlendWithMask`.
+Le premier calque, **Photo entière**, contient le développement global. Chaque masque suivant porte son propre jeu Lumière, Couleur, Courbes, Mélangeur, Grading, Effets et Détail. Les panneaux habituels ciblent le calque sélectionné ; les réglages de développement se font exclusivement dans ces panneaux. La section « Raccourcis du calque » et ses curseurs ont été retirés du panneau Masques, qui conserve les contrôles du masque et de son opacité. Lumora développe l’image à chaque niveau visible, module sa matte avec l’opacité du calque, puis la mélange avec l’image entrante via `CIBlendWithMask`.
 
 Le nom du calque actif, placé à côté du nom du fichier sous l’aperçu, est un menu. Il permet de passer directement de **Photo entière** à n’importe quel masque sans ouvrir le panneau Masques ; une coche indique la sélection et une icône signale les calques masqués. Choisir un masque depuis Optique ou Géométrie ouvre Lumière, car ces deux réglages restent attachés au document entier.
 
