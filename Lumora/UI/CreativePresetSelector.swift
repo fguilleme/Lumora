@@ -2,23 +2,34 @@ import SwiftUI
 
 /// Text-only Creative styles. The selection is derived from effect parameters,
 /// so edits and Undo/Redo cannot leave a stale highlighted preset.
-struct CreativePresetSelector: View {
+struct CreativePresetSelector<HeaderActions: View>: View {
     let presets: [CreativeFXPreset]
     let selectedID: String?
     let onSelect: (CreativeFXPreset) -> Void
+    private let headerActions: HeaderActions
     @State private var selectionFeedback = 0
+
+    init(presets: [CreativeFXPreset], selectedID: String?,
+         onSelect: @escaping (CreativeFXPreset) -> Void,
+         @ViewBuilder headerActions: () -> HeaderActions = { EmptyView() }) {
+        self.presets = presets
+        self.selectedID = selectedID
+        self.onSelect = onSelect
+        self.headerActions = headerActions()
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 8) {
                 Text("Styles").font(.subheadline.weight(.semibold))
                 Spacer(minLength: 4)
-                if selectedID == nil {
-                    Label("Personnalisé", systemImage: "slider.horizontal.3")
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .accessibilityIdentifier("creative-preset-custom")
-                }
+                headerActions
+            }
+            if selectedID == nil {
+                Label("Personnalisé", systemImage: "slider.horizontal.3")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("creative-preset-custom")
             }
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {

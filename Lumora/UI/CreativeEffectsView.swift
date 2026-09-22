@@ -83,34 +83,29 @@ struct CreativeEffectsView: View {
                             }
                         }
                     }
-                    if let effect {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 0) {
-                                effectAction(effect.enabled ? "Désactiver l’effet" : "Activer l’effet", effect.enabled ? "eye" : "eye.slash", "toggle") { update { $0.enabled.toggle() } }
-                                effectAction("Dupliquer", "plus.square.on.square", "duplicate") {
-                                    session.changeCreative("Dupliquer un effet") { $0.duplicate(effect.id) }
-                                }
-                                effectAction("Supprimer", "trash", "delete") {
-                                    session.changeCreative("Supprimer un effet") { $0.effects.removeAll { $0.id == effect.id } }
-                                    selected = session.state.creative.effects.last?.id
-                                }
-                            }
-                            HStack(spacing: 0) {
-                                effectAction("Appliquer plus tôt", "arrow.up", "earlier") {
-                                    session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: -1) }
-                                }.disabled(session.state.creative.effects.first?.id == effect.id)
-                                effectAction("Appliquer plus tard", "arrow.down", "later") {
-                                    session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: 1) }
-                                }.disabled(session.state.creative.effects.last?.id == effect.id)
-                                effectAction("Réinitialiser", "arrow.counterclockwise", "reset") { update { $0.reset() } }
-                            }
-                        }
-                    }
                 }.dimsDuringAdjustment()
                 if let effect {
                     CreativePresetSelector(presets: CreativeFXPreset.all(for: effect.kind),
                                            selectedID: CreativeFXPreset.matching(effect)?.id) { preset in
                         update { $0 = preset.applying(to: $0) }
+                    } headerActions: {
+                        HStack(spacing: 0) {
+                            effectAction(effect.enabled ? "Désactiver l’effet" : "Activer l’effet", effect.enabled ? "eye" : "eye.slash", "toggle") { update { $0.enabled.toggle() } }
+                            effectAction("Dupliquer", "plus.square.on.square", "duplicate") {
+                                session.changeCreative("Dupliquer un effet") { $0.duplicate(effect.id) }
+                            }
+                            effectAction("Supprimer", "trash", "delete") {
+                                session.changeCreative("Supprimer un effet") { $0.effects.removeAll { $0.id == effect.id } }
+                                selected = session.state.creative.effects.last?.id
+                            }
+                            effectAction("Appliquer plus tôt", "arrow.up", "earlier") {
+                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: -1) }
+                            }.disabled(session.state.creative.effects.first?.id == effect.id)
+                            effectAction("Appliquer plus tard", "arrow.down", "later") {
+                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: 1) }
+                            }.disabled(session.state.creative.effects.last?.id == effect.id)
+                            effectAction("Réinitialiser", "arrow.counterclockwise", "reset") { update { $0.reset() } }
+                        }
                     }
                     .dimsDuringAdjustment()
                     HStack {
@@ -272,7 +267,7 @@ struct CreativeEffectsView: View {
     private func effectAction(_ title: String, _ symbol: String, _ id: String,
                               action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image(systemName: symbol).font(.system(size: 20))
+            Image(systemName: symbol).font(.system(size: 16))
                 .frame(width: 44, height: 44).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityLabel(title)
             .accessibilityIdentifier("creative-action-" + id)
