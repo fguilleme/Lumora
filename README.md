@@ -25,7 +25,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 - Annuler/rétablir avec les boutons supérieurs. Un déplacement continu du curseur crée une opération d’historique.
 - Maintenir la photographie pour voir l’original ; relâcher pour revenir.
 - Pincer pour zoomer, déplacer lorsque l’image est agrandie, puis double-toucher pour rétablir le cadrage initial.
-- Ouvrir **Courbes** pour modifier RVB/Rouge/Vert/Bleu : toucher pour ajouter un point, glisser pour déplacer, ou utiliser les contrôles Entrée/Sortie.
+- Ouvrir **Courbes** pour modifier RVB/Rouge/Vert/Bleu. Le graphe est d’abord en consultation : on peut faire défiler le panneau sans changer la courbe. **Modifier** active l’édition ; toucher le graphe ajoute un point, glisser un point le déplace, et les contrôles Entrée/Sortie permettent un réglage précis. La **pipette** situe une tonalité de la photo sur la courbe ; le bouton **+** crée ensuite un point si souhaité. **Terminé** rend le défilement passif.
 - Ouvrir **Colorimétrie**, puis le sous-onglet **Mélangeur**, pour régler Teinte/Saturation/Luminance sur huit plages de couleur.
 - Dans **Colorimétrie**, ouvrir **Grading**, choisir Ombres, Tons moyens ou Hautes lumières, puis utiliser la roue chromatique unique ainsi que les réglages de mélange et de balance.
 - **Presets Color Grading** : 16 réglages photographiques éditables, Neutral/Personnalisé, familles Portrait/Cinematic/Atmosphere/Special. [Guide et validation](Documentation/ColorGradingPresets.md).

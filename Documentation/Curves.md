@@ -4,13 +4,17 @@
 
 Le nouvel outil **Courbes** propose RVB, Rouge, Vert et Bleu. L’histogramme du canal sélectionné apparaît derrière la courbe.
 
-- Toucher le graphique ajoute un point ; glisser un point existant le déplace.
+- Le graphique démarre en **consultation** : un défilement commencé sur la courbe ne change aucun point. **Modifier** active le mode édition ; **Terminé** revient à la consultation et désactive la pipette.
+- En édition, un vrai toucher sur le graphique ajoute un point. Glisser depuis une zone vide fait défiler le panneau ; glisser un point existant le déplace. Les points visibles gardent une cible tactile de 44 pt.
 - Les points restent ordonnés horizontalement. Les deux extrémités gardent leur abscisse 0 et 1, mais leur valeur de sortie est modifiable.
 - Le bouton **+** ajoute un point au milieu du plus grand intervalle, sur la courbe existante.
 - Les flèches sélectionnent le point précédent/suivant. **Entrée / Sortie** permettent aussi un réglage précis et accessible sans manipulation du graphique.
 - La corbeille supprime le point sélectionné, sauf les extrémités.
 - La flèche de réinitialisation remet uniquement le canal actif à l’identité.
+- La **pipette** échantillonne la photo par zone de 3 × 3 pixels dans une preview de 512 px au maximum. Elle affiche une position et une valeur temporaires sur la courbe sans créer de point ni d’entrée Undo. **+** crée volontairement un point à cette tonalité. Le canal RVB utilise la tonalité pondérée du moteur ; Rouge, Vert et Bleu lisent chacun leur canal. La pipette est indisponible sur un calque masqué pour éviter une mesure incohérente avec l’entrée locale de la courbe.
 - Chaque geste constitue une commande Undo/Redo. Les courbes sont sauvegardées avec le développement et restaurées au lancement.
+
+La consultation, l’édition et la pipette sont des états d’interface temporaires ; les courbes restent les seules données persistées. Voir le [rapport de validation des interactions](../Docs/CurvesInteractionValidationReport.md) et les captures dans `TestArtifacts/CurvesInteraction/`.
 
 ## Modèle et interpolation
 
