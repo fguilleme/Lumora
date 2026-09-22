@@ -88,6 +88,31 @@ final class EditorInteractionFixesUITests: XCTestCase {
         XCTAssertTrue(modes.waitForExistence(timeout: 5))
     }
 
+    @MainActor func testMaskVisibilityTogglesOverlayOnly() throws {
+        let app = try open()
+        panel("Masques", app)
+        let controls = app.scrollViews["masks-controls"]
+        controls.buttons["Radial"].tap()
+        let visibility = app.buttons["layer-visibility"]
+        XCTAssertTrue(visibility.waitForExistence(timeout: 5))
+        XCTAssertTrue(visibility.label.contains("Visible"))
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        let filled = canvas.screenshot().pngRepresentation
+        visibility.tap()
+        XCTAssertTrue(visibility.label.contains("Contour"))
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "mask-handle-center").firstMatch.exists)
+        // Allow the asynchronous composed-matte visualization to finish.
+        RunLoop.current.run(until: Date().addingTimeInterval(1))
+        XCTAssertNotEqual(canvas.screenshot().pngRepresentation, filled)
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "Mask contour only"; shot.lifetime = .keepAlways; add(shot)
+        visibility.tap()
+        XCTAssertTrue(visibility.label.contains("Visible"))
+        // Display toggles must not create document history entries.
+        app.buttons["Annuler"].tap()
+        XCTAssertTrue(controls.buttons["Radial"].waitForExistence(timeout: 5))
+    }
+
     @MainActor func testInformationAndDirectCreativeActions() throws {
         let app = try open()
         let info = app.descendants(matching: .any).matching(identifier: "photo-information").firstMatch

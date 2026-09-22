@@ -11,6 +11,7 @@ struct PhotoCanvas: View {
     let activeMask: LocalMask?
     let activeComponentID: UUID?
     let showsMaskOverlay: Bool
+    var maskOutlineOnly = false
     let allowsMaskEditing: Bool
     let brushMode: BrushMode
     let onBrushBegin: () -> Void
@@ -95,7 +96,7 @@ struct PhotoCanvas: View {
                 }
                 .overlay {
                     if let activeMask, showsMaskOverlay {
-                        MaskOverlay(mask: activeMask,
+                        MaskOverlay(mask: activeMask, outlineOnly: maskOutlineOnly,
                                     imageSize: CGSize(width: result.image.width, height: result.image.height),
                                     displayScale: displayScale,
                                     displayOffset: displayOffset)
@@ -566,6 +567,7 @@ private struct GeometryGrid: View {
 
 private struct MaskOverlay: View {
     let mask: LocalMask
+    let outlineOnly: Bool
     let imageSize: CGSize
     let displayScale: CGFloat
     let displayOffset: CGSize
@@ -573,6 +575,7 @@ private struct MaskOverlay: View {
 
     private struct RenderKey: Equatable {
         let mask: LocalMask
+        let outlineOnly: Bool
         let imageSize: CGSize
     }
 
@@ -590,14 +593,14 @@ private struct MaskOverlay: View {
             }
         }
         .clipped()
-        .task(id: RenderKey(mask: mask, imageSize: imageSize)) {
-            let rendered = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize)
+        .task(id: RenderKey(mask: mask, outlineOnly: outlineOnly, imageSize: imageSize)) {
+            let rendered = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize, outlineOnly: outlineOnly)
             guard !Task.isCancelled else { return }
             overlay = rendered
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Superposition rouge du masque")
-        .accessibilityIdentifier("mask-red-overlay")
+        .accessibilityLabel(outlineOnly ? "Contour du masque" : "Superposition rouge du masque")
+        .accessibilityIdentifier(outlineOnly ? "mask-outline-overlay" : "mask-red-overlay")
     }
 }
 
@@ -605,13 +608,34 @@ private actor MaskOverlayRenderer {
     static let shared = MaskOverlayRenderer()
     private let context = CIContext(options: [.cacheIntermediates: false])
 
-    func render(_ mask: LocalMask, imageSize: CGSize) -> CGImage? {
+    func render(_ mask: LocalMask, imageSize: CGSize, outlineOnly: Bool) -> CGImage? {
         guard !Task.isCancelled, imageSize.width > 0, imageSize.height > 0 else { return nil }
         let reduction = min(1, 1_024 / max(imageSize.width, imageSize.height))
         let extent = CGRect(x: 0, y: 0,
                             width: max(1, (imageSize.width * reduction).rounded()),
                             height: max(1, (imageSize.height * reduction).rounded()))
-        guard let image = try? MaskRenderer.makeRedOverlay(mask, extent: extent) else { return nil }
+        let image: CIImage
+        if outlineOnly {
+            // Outline the composed footprint at 5% coverage, independently of layer opacity.
+            // This display-only matte includes subtraction and inversion, including brush/Vision masks.
+            var footprint = mask
+            footprint.opacity = 100
+            guard let matte = try? MaskRenderer.makeMask(footprint, extent: extent) else { return nil }
+            let silhouette = matte.applyingFilter("CIColorThreshold", parameters: ["inputThreshold": 0.05])
+            let outer = silhouette.applyingFilter("CIMorphologyMaximum", parameters: ["inputRadius": 1.5])
+            let inner = silhouette.applyingFilter("CIMorphologyMinimum", parameters: ["inputRadius": 1.5])
+            let edge = outer.applyingFilter("CIDifferenceBlendMode", parameters: [kCIInputBackgroundImageKey: inner])
+            image = edge.applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: 0, w: 0),
+                "inputAVector": CIVector(x: 0.9, y: 0, z: 0, w: 0),
+                "inputBiasVector": CIVector(x: 1, y: 1, z: 1, w: 0)
+            ]).cropped(to: extent)
+        } else {
+            guard let red = try? MaskRenderer.makeRedOverlay(mask, extent: extent) else { return nil }
+            image = red
+        }
         guard !Task.isCancelled else { return nil }
         return context.createCGImage(image, from: extent)
     }

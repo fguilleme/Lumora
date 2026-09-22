@@ -983,7 +983,7 @@ final class EditorUITests: XCTestCase {
         XCTAssertNotEqual(layerOpacityValue, "100")
         let visibility = app.buttons["layer-visibility"]
         visibility.tap()
-        XCTAssertTrue(visibility.label.contains("Masqué"))
+        XCTAssertTrue(visibility.label.contains("Contour"))
         visibility.tap()
         XCTAssertTrue(visibility.label.contains("Visible"))
         app.buttons["layer-rename"].tap()

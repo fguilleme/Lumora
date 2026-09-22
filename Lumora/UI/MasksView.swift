@@ -18,6 +18,7 @@ struct MasksView: View {
     let isGenerating: Bool
     let onDelete: () -> Void
     let onRename: (String) -> Void
+    let overlayVisible: Bool
     let onToggleVisibility: () -> Void
     let onOpacity: (Double) -> Void
     let onMove: (Int) -> Void
@@ -127,11 +128,12 @@ struct MasksView: View {
             Button {
                 onToggleVisibility()
             } label: {
-                Label(mask.isVisible ? "Visible" : "Masqué",
-                      systemImage: mask.isVisible ? "eye" : "eye.slash")
+                Label(overlayVisible ? "Visible" : "Contour",
+                      systemImage: overlayVisible ? "eye" : "eye.slash")
             }
             .buttonStyle(.bordered)
             .accessibilityIdentifier("layer-visibility")
+            .accessibilityHint("Afficher le remplissage rouge ou seulement le contour du masque")
             Button {
                 renameName = mask.name
                 showingRename = true

@@ -11,6 +11,7 @@ struct EditorView: View {
     @State private var photoLoading = false
     @State private var panel: Panel = .light
     @State private var showMetrics = false
+    @State private var maskOverlayVisible = true
     @State private var exportRequest: ExportRequest?
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
@@ -67,6 +68,7 @@ struct EditorView: View {
                             activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
                             showsMaskOverlay: panel == .masks && !isAdjustingSelectedMask,
+                            maskOutlineOnly: !maskOverlayVisible,
                             allowsMaskEditing: panel == .masks,
                             brushMode: session.brushMode,
                             onBrushBegin: session.beginBrushStroke,
@@ -318,7 +320,8 @@ struct EditorView: View {
                       isGenerating: session.isGeneratingMask,
                       onDelete: session.deleteSelectedMask,
                       onRename: session.renameSelectedLayer,
-                      onToggleVisibility: session.toggleSelectedLayerVisibility,
+                      overlayVisible: maskOverlayVisible,
+                      onToggleVisibility: { maskOverlayVisible.toggle() },
                       onOpacity: session.setSelectedLayerOpacity,
                       onMove: session.moveSelectedLayer,
                       onInvert: session.toggleMaskInversion,
