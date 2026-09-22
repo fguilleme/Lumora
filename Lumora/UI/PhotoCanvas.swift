@@ -4,6 +4,10 @@ import CoreImage
 struct PhotoCanvas: View {
     let result: RenderResult
     @Binding var showingOriginal: Bool
+    let dlcSettings: DarkenLightenCenterSettings?
+    let onDLCBegin: () -> Void
+    let onDLCChange: (CGPoint) -> Void
+    let onDLCEnd: () -> Void
     let activeMask: LocalMask?
     let activeComponentID: UUID?
     let showsMaskOverlay: Bool
@@ -25,6 +29,7 @@ struct PhotoCanvas: View {
     @GestureState private var magnification: CGFloat = 1
     @GestureState private var translation = CGSize.zero
     @GestureState private var pressing = false
+    @State private var dlcDragging = false
     @State private var brushActive = false
     @State private var brushLocation: CGPoint?
 
@@ -160,6 +165,14 @@ struct PhotoCanvas: View {
                 .accessibilityIdentifier("photo-canvas")
                 .accessibilityAction(named: "Comparer à l’original") { showingOriginal.toggle() }
                 .accessibilityAction(named: "Réinitialiser le zoom") { restoreZoom() }
+                // Sibling of the accessible image: its handle remains a separate element.
+                if let dlcSettings, !showingOriginal && !pressing {
+                    DLCCenterOverlay(settings: dlcSettings,
+                        imageSize: CGSize(width: result.image.width, height: result.image.height),
+                        zoom: displayScale, pan: displayOffset,
+                        onBegin: { dlcDragging = true; onDLCBegin() }, onChange: onDLCChange,
+                        onEnd: { onDLCEnd(); dlcDragging = false })
+                }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .contentShape(Rectangle())
@@ -169,9 +182,9 @@ struct PhotoCanvas: View {
                     offset = bounded(offset, size: geometry.size)
                 })
             .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
-                if zoom > 1 && !isPainting { state = value.translation }
+                if zoom > 1 && !isPainting && !dlcDragging { state = value.translation }
             }.onEnded { value in
-                if zoom > 1 && !isPainting {
+                if zoom > 1 && !isPainting && !dlcDragging {
                     offset = bounded(CGSize(width: offset.width + value.translation.width,
                                             height: offset.height + value.translation.height), size: geometry.size)
                 }

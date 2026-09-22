@@ -1,0 +1,182 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Lumora.xcodeproj -scheme Lumora -destination "platform=iOS Simulator,id=E5D27AB6-47F8-4AFF-9433-8B23E031BBD0" -derivedDataPath /private/tmp/lumora-dlc-derived -resultBundlePath /private/tmp/lumora-dlc-ui2.xcresult -collect-test-diagnostics never "-only-testing:LumoraUITests/DarkenLightenCenterUITests/testCenterDragUndoZoomPanAndOverlayScope" CODE_SIGNING_ALLOWED=NO test-without-building
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Writing result bundle at path:
+	/private/tmp/lumora-dlc-ui2.xcresult
+
+2026-09-22 15:15:17.074778+0200 LumoraUITests-Runner[39816:10078453] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-22 15:15:20.322.
+Test Suite 'LumoraUITests.xctest' started at 2026-09-22 15:15:20.324.
+Test Suite 'DarkenLightenCenterUITests' started at 2026-09-22 15:15:20.325.
+Test Case '-[LumoraUITests.DarkenLightenCenterUITests testCenterDragUndoZoomPanAndOverlayScope]' started.
+    t =     0.02s Start Test at 2026-09-22 15:15:20.339
+    t =     0.08s Set Up
+    t =     0.09s Open devplaceholder.VH8K68YM.Lumora
+    t =     0.10s     Launch devplaceholder.VH8K68YM.Lumora
+    t =     0.10s         Terminate devplaceholder.VH8K68YM.Lumora:39548
+objc[39816]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.BzIwlB/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10600c398) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.BzIwlB/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1061a0310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-09-22 15:15:21.717 xcodebuild[39812:10078193] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 15:15:21.717 xcodebuild[39812:10078193] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.02s         Setting up automation session
+    t =     5.27s         Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     7.20s Waiting 5.0s for "photo-canvas" Any to exist
+    t =     8.28s     Checking `Expect predicate `existsNoRetry == 1` for object "photo-canvas" Any`
+    t =     8.28s         Checking existence of `"photo-canvas" Any`
+    t =     8.38s Tap "Importer et options" Button
+    t =     8.38s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     8.38s     Find the "Importer et options" Button
+    t =     8.47s     Check for interrupting elements affecting "Importer et options" Button
+    t =     8.53s     Synthesize event
+    t =     8.90s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     9.03s Tap "Réinitialiser les réglages" Button
+    t =     9.03s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    10.29s     Find the "Réinitialiser les réglages" Button
+    t =    10.34s     Check for interrupting elements affecting "arrow.counterclockwise" Button
+    t =    10.37s     Synthesize event
+    t =    10.67s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.13s Tap "Creative" Button
+    t =    12.13s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.13s     Find the "Creative" Button
+    t =    12.16s     Check for interrupting elements affecting "Creative" Button
+    t =    12.19s     Synthesize event
+    t =    12.48s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.49s Tap "creative-add" Button
+    t =    12.49s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.49s     Find the "creative-add" Button
+    t =    12.52s     Check for interrupting elements affecting "creative-add" Button
+    t =    12.54s     Synthesize event
+    t =    12.84s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    14.12s Waiting 5.0s for Button (First Match) to exist
+    t =    15.20s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    15.20s         Checking existence of `Button (First Match)`
+    t =    15.26s Tap Button (First Match)
+    t =    15.26s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    15.26s     Find the Button (First Match)
+    t =    15.32s     Check for interrupting elements affecting "Darken / Lighten Center" Button
+    t =    15.36s     Synthesize event
+    t =    15.65s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    17.28s Waiting 5.0s for "creative-dlc-center-handle" Any to exist
+    t =    18.36s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    18.36s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    18.38s Find the "creative-dlc-center-handle" Any
+    t =    18.40s Find the "creative-dlc-center-handle" Other
+    t =    18.42s Press "creative-dlc-center-handle" Other[0.50, 0.50] for 0.1 seconds, then drag to "creative-dlc-center-handle" Other[0.50, 0.50] -> (45.0, -35.0) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =    18.42s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    18.42s     Find the "creative-dlc-center-handle" Other
+    t =    18.44s     Check for interrupting elements affecting "creative-dlc-center-handle" Other
+    t =    18.48s     Synthesize event
+    t =    18.48s         Find the "creative-dlc-center-handle" Other
+    t =    18.50s         Find the "creative-dlc-center-handle" Other
+    t =    18.52s         Find the "creative-dlc-center-handle" Other
+    t =    18.54s         Find the "creative-dlc-center-handle" Other
+    t =    18.55s         Find the "creative-dlc-center-handle" Other
+    t =    19.02s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.03s Find the "creative-dlc-center-handle" Other
+    t =    19.04s Tap "Annuler" Button
+    t =    19.04s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.05s     Find the "Annuler" Button
+    t =    19.10s     Check for interrupting elements affecting "arrow.uturn.backward" Button
+    t =    19.13s     Synthesize event
+    t =    19.43s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.43s Find the "creative-dlc-center-handle" Other
+    t =    19.45s Tap "Rétablir" Button
+    t =    19.45s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.45s     Find the "Rétablir" Button
+    t =    19.50s     Check for interrupting elements affecting "arrow.uturn.forward" Button
+    t =    19.54s     Synthesize event
+    t =    19.83s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.84s Find the "creative-dlc-center-handle" Other
+    t =    19.85s Pinch with scale 2, velocity 1 in "photo-canvas" Any
+    t =    19.85s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    19.86s     Find the "photo-canvas" Any
+    t =    19.87s     Check for interrupting elements affecting "photo-canvas" Image
+    t =    19.91s     Synthesize event
+    t =    19.93s         Pinching with rect {{50, 166}, {302, 338}}
+    t =    22.28s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    22.29s Press "photo-canvas" Image[0.80, 0.75] for 0.1 seconds, then drag to "photo-canvas" Image[0.80, 0.75] -> (-30.0, 20.0) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds
+    t =    22.29s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    22.29s     Find the "photo-canvas" Image
+    t =    22.38s     Check for interrupting elements affecting "photo-canvas" Image
+    t =    22.49s     Synthesize event
+    t =    22.49s         Find the "photo-canvas" Image
+    t =    22.50s         Find the "photo-canvas" Image
+    t =    22.52s         Find the "photo-canvas" Image
+    t =    22.54s         Find the "photo-canvas" Image
+    t =    22.56s         Find the "photo-canvas" Image
+    t =    22.96s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    22.97s Find the "creative-dlc-center-handle" Other
+    t =    23.00s Find the Target Application 'devplaceholder.VH8K68YM.Lumora'
+    t =    23.56s Added attachment named 'DLC center after zoom and pan'
+    t =    23.56s Setting device orientation to Landscape Left
+    t =    23.57s     Device orientation changed to Landscape Left
+    t =    23.87s     Interface orientation changed to Landscape Right
+    t =    23.87s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    24.16s Waiting 5.0s for "creative-dlc-center-handle" Other to exist
+    t =    25.25s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Other`
+    t =    25.26s         Checking existence of `"creative-dlc-center-handle" Other`
+    t =    25.29s Find the "creative-dlc-center-handle" Other
+    t =    25.31s Setting device orientation to Portrait
+    t =    25.32s     Device orientation changed to Portrait
+    t =    25.36s     Interface orientation changed to Portrait
+    t =    25.36s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    25.36s Find the "Lumière" Button
+    t =    25.43s Swipe right "tools-toolbar" ScrollView
+    t =    25.43s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    25.70s     Find the "tools-toolbar" ScrollView
+    t =    25.75s     Check for interrupting elements affecting "tools-toolbar" ScrollView
+    t =    25.79s     Synthesize event
+    t =    26.23s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    26.71s Find the "Lumière" Button
+    t =    26.80s Find the "Lumière" Button
+    t =    26.86s Find the "Lumière" Button
+    t =    26.92s Find the "Lumière" Button
+    t =    26.98s Find the "Lumière" Button
+    t =    27.03s Find the "Lumière" Button
+    t =    27.09s Find the "Lumière" Button
+    t =    27.14s Tap "Lumière" Button
+    t =    27.14s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    27.14s     Find the "Lumière" Button
+    t =    27.19s     Check for interrupting elements affecting "Lumière" Button
+    t =    27.23s     Synthesize event
+    t =    27.53s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    27.53s Checking existence of `"creative-dlc-center-handle" Other`
+    t =    27.65s Find the "Creative" Button
+    t =    27.69s Find the "Creative" Button
+    t =    27.73s Find the "Creative" Button
+    t =    27.77s Find the "Creative" Button
+    t =    27.80s Find the "Creative" Button
+    t =    27.84s Find the "Creative" Button
+    t =    27.88s Find the "Creative" Button
+    t =    27.92s Find the "Creative" Button
+    t =    27.95s Tap "Creative" Button
+    t =    27.95s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    27.96s     Find the "Creative" Button
+    t =    27.99s     Check for interrupting elements affecting "Creative" Button
+    t =    28.01s     Synthesize event
+    t =    28.31s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    28.31s Waiting 5.0s for "creative-dlc-center-handle" Other to exist
+    t =    29.39s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Other`
+    t =    29.39s         Checking existence of `"creative-dlc-center-handle" Other`
+    t =    29.43s Find the "creative-dlc-center-handle" Other
+    t =    29.46s Tear Down
+Test Case '-[LumoraUITests.DarkenLightenCenterUITests testCenterDragUndoZoomPanAndOverlayScope]' passed (29.811 seconds).
+Test Suite 'DarkenLightenCenterUITests' passed at 2026-09-22 15:15:50.151.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.811 (29.826) seconds
+Test Suite 'LumoraUITests.xctest' passed at 2026-09-22 15:15:50.155.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.811 (29.831) seconds
+Test Suite 'Selected tests' passed at 2026-09-22 15:15:50.156.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.811 (29.834) seconds
+2026-09-22 15:15:50.497 xcodebuild[39812:10078193] [MT] IDETestOperationsObserverDebug: 36.812 elapsed -- Testing started completed.
+2026-09-22 15:15:50.497 xcodebuild[39812:10078193] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-22 15:15:50.497 xcodebuild[39812:10078193] [MT] IDETestOperationsObserverDebug: 36.812 sec, +36.812 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/lumora-dlc-ui2.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

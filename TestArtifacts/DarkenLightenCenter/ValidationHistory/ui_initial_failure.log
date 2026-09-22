@@ -1,0 +1,102 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Lumora.xcodeproj -scheme Lumora -destination "platform=iOS Simulator,id=E5D27AB6-47F8-4AFF-9433-8B23E031BBD0" -derivedDataPath /private/tmp/lumora-dlc-derived -resultBundlePath /private/tmp/lumora-dlc-ui.xcresult "-only-testing:LumoraUITests/DarkenLightenCenterUITests/testCenterDragUndoZoomPanAndOverlayScope" CODE_SIGNING_ALLOWED=NO test-without-building
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Writing result bundle at path:
+	/private/tmp/lumora-dlc-ui.xcresult
+
+2026-09-22 15:11:05.036190+0200 LumoraUITests-Runner[39280:10071295] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-22 15:11:08.593.
+Test Suite 'LumoraUITests.xctest' started at 2026-09-22 15:11:08.595.
+Test Suite 'DarkenLightenCenterUITests' started at 2026-09-22 15:11:08.596.
+Test Case '-[LumoraUITests.DarkenLightenCenterUITests testCenterDragUndoZoomPanAndOverlayScope]' started.
+    t =     0.01s Start Test at 2026-09-22 15:11:08.610
+    t =     0.15s Set Up
+    t =     0.15s Open devplaceholder.VH8K68YM.Lumora
+    t =     0.15s     Launch devplaceholder.VH8K68YM.Lumora
+2026-09-22 15:11:08.971 xcodebuild[39241:10070597] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-09-22 15:11:08.971 xcodebuild[39241:10070597] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[39280]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.BzIwlB/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x101c28398) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.BzIwlB/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105ae8310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.86s         Setting up automation session
+    t =     4.91s         Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     7.15s Waiting 5.0s for "photo-canvas" Any to exist
+    t =     8.23s     Checking `Expect predicate `existsNoRetry == 1` for object "photo-canvas" Any`
+    t =     8.23s         Checking existence of `"photo-canvas" Any`
+    t =     8.32s Tap "Importer et options" Button
+    t =     8.32s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     8.33s     Find the "Importer et options" Button
+    t =     8.42s     Check for interrupting elements affecting "Importer et options" Button
+    t =     8.48s     Synthesize event
+    t =     8.97s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =     9.08s Tap "Réinitialiser les réglages" Button
+    t =     9.08s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    10.34s     Find the "Réinitialiser les réglages" Button
+    t =    10.39s     Check for interrupting elements affecting "arrow.counterclockwise" Button
+    t =    10.42s     Synthesize event
+    t =    10.72s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.17s Tap "Creative" Button
+    t =    12.17s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.17s     Find the "Creative" Button
+    t =    12.21s     Check for interrupting elements affecting "Creative" Button
+    t =    12.23s     Synthesize event
+    t =    12.53s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.54s Tap "creative-add" Button
+    t =    12.54s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    12.54s     Find the "creative-add" Button
+    t =    12.57s     Check for interrupting elements affecting "creative-add" Button
+    t =    12.60s     Synthesize event
+    t =    12.89s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    14.15s Waiting 5.0s for Button (First Match) to exist
+    t =    15.23s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    15.23s         Checking existence of `Button (First Match)`
+    t =    15.30s Tap Button (First Match)
+    t =    15.30s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    15.31s     Find the Button (First Match)
+    t =    15.36s     Check for interrupting elements affecting "Darken / Lighten Center" Button
+    t =    15.40s     Synthesize event
+    t =    15.69s     Wait for devplaceholder.VH8K68YM.Lumora to idle
+    t =    17.32s Waiting 5.0s for "creative-dlc-center-handle" Any to exist
+    t =    18.39s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    18.39s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    18.58s         Capturing element debug description
+    t =    19.33s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    19.33s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    19.51s         Capturing element debug description
+    t =    20.37s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    20.37s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    20.55s         Capturing element debug description
+    t =    21.40s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    21.40s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    21.58s         Capturing element debug description
+    t =    22.33s     Checking `Expect predicate `existsNoRetry == 1` for object "creative-dlc-center-handle" Any`
+    t =    22.33s         Checking existence of `"creative-dlc-center-handle" Any`
+    t =    22.50s         Capturing element debug description
+    t =    22.50s     Checking existence of `"creative-dlc-center-handle" Any`
+    t =    22.67s Collecting debug information to assist test failure triage
+    t =    22.67s     Requesting snapshot of accessibility hierarchy for app with pid 39309
+/Volumes/XTRA/Dev/Lumora/LumoraUITests/DarkenLightenCenterUITests.swift:20: error: -[LumoraUITests.DarkenLightenCenterUITests testCenterDragUndoZoomPanAndOverlayScope] : XCTAssertTrue failed
+    t =    23.01s Tear Down
+Test Case '-[LumoraUITests.DarkenLightenCenterUITests testCenterDragUndoZoomPanAndOverlayScope]' failed (23.267 seconds).
+Test Suite 'DarkenLightenCenterUITests' failed at 2026-09-22 15:11:31.877.
+	 Executed 1 test, with 1 failure (0 unexpected) in 23.267 (23.282) seconds
+Test Suite 'LumoraUITests.xctest' failed at 2026-09-22 15:11:31.881.
+	 Executed 1 test, with 1 failure (0 unexpected) in 23.267 (23.286) seconds
+Test Suite 'Selected tests' failed at 2026-09-22 15:11:31.881.
+	 Executed 1 test, with 1 failure (0 unexpected) in 23.267 (23.288) seconds
+2026-09-22 15:21:32.332 xcodebuild[39241:10070674]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-09-22 15:21:32.376 xcodebuild[39241:10070597] [MT] IDETestOperationsObserverDebug: 644.863 elapsed -- Testing started completed.
+2026-09-22 15:21:32.376 xcodebuild[39241:10070597] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-22 15:21:32.376 xcodebuild[39241:10070597] [MT] IDETestOperationsObserverDebug: 644.864 sec, +644.864 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/lumora-dlc-ui.xcresult
+
+Failing tests:
+	DarkenLightenCenterUITests.testCenterDragUndoZoomPanAndOverlayScope()
+
+** TEST EXECUTE FAILED **
+
+Testing started

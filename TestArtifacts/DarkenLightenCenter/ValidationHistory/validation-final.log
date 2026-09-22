@@ -1,0 +1,23 @@
+Building for debugging...
+[2 / 5] LumoraVisualTestLab-product
+[7 / 10] LumoraVisualTestLab-product
+[14 / 16] LumoraVisualTestLab-product
+Build complete! (2,33 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test darkenLightenCenterValidation() started.
+◇ Test dlcReadbackDiagnostics() started.
+[VisualLab] DLC: geometric oracle, aspect/rotation/extent, signed HDR and identities
+✔ Test dlcReadbackDiagnostics() passed after 0.065 seconds.
+[VisualLab] DLC: isolated GPU command timing, CPU graph preparation, resolution and memory
+[VisualLab] DLC photograph 1/8: 01_portrait_light_skin.png
+[VisualLab] DLC photograph 2/8: 02_portrait_dark_skin.png
+[VisualLab] DLC photograph 3/8: 03_landscape_clouds.png
+[VisualLab] DLC photograph 4/8: 04_backlight.png
+[VisualLab] DLC photograph 5/8: 05_night.png
+[VisualLab] DLC photograph 6/8: 06_indoor_high_contrast.png
+[VisualLab] DLC photograph 7/8: 07_white_subject.png
+[VisualLab] DLC photograph 8/8: 08_fine_texture.png
+✔ Test darkenLightenCenterValidation() passed after 464.543 seconds.
+✔ Test run with 2 tests in 0 suites passed after 464.543 seconds.

@@ -1,0 +1,14 @@
+Building for debugging...
+[1 / 4] LumoraCoreTests-product
+Build complete! (0,38 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test darkenLightenCenterValidation() started.
+[VisualLab] DLC: geometric oracle, aspect/rotation/extent, signed HDR and identities
+2026-09-22 15:07:05.334 swiftpm-testing-helper[38714:10064287] Creative Metal compilation failed: Error Domain=CIKernel Code=14 "(null)" UserInfo={CINonLocalizedDescriptionKey=Cannot find a valid Metal function in the source, NSUnderlyingError=0x902904c90 {Error Domain=CIKernel Code=4 "(null)" UserInfo={CINonLocalizedDescriptionKey=If specified, destination must be the last parameter of a CIKernel function.}}}
+✘ Test darkenLightenCenterValidation() recorded an issue at DarkenLightenCenter.swift:20:2: Caught error: .renderFailed
+✘ Test darkenLightenCenterValidation() failed after 0.784 seconds with 1 issue.
+✘ Test run with 1 test in 0 suites failed after 0.785 seconds with 1 issue.
+Note: Some test targets reported failures:
+  - LumoraVisualTestLab (Swift Testing)

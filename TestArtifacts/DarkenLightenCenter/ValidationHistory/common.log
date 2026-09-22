@@ -1,0 +1,51 @@
+Another instance of SwiftPM (PID: 40440) is already running using '/private/tmp/lumora-dlc-build', waiting until that process has finished execution...Building for debugging...
+[2 / 5] LumoraVisualTestLab-product
+[4 / 7] LumoraVisualTestLab-product
+[10 / 12] LumoraVisualTestLab-product
+Build complete! (1,86 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test darkenLightenCenterExistingEffectsRegression() started.
+◇ Test fftAndCorrelationRecoverKnownSine() started.
+◇ Test chartCoordinatesAndMeasurementsAreIndependent() started.
+◇ Test visualCreativeValidation() started.
+[VisualLab] Master charts and High/Low Key
+✔ Test chartCoordinatesAndMeasurementsAreIndependent() passed after 0.097 seconds.
+[VisualLab] HK01_standard
+✔ Test darkenLightenCenterExistingEffectsRegression() passed after 0.258 seconds.
+✔ Test fftAndCorrelationRecoverKnownSine() passed after 0.495 seconds.
+[VisualLab] HK02_dynamic
+[VisualLab] HK03_strong_dynamic
+[VisualLab] HK04_protected
+[VisualLab] HK05_glow
+[VisualLab] LK01_standard
+[VisualLab] LK02_dynamic
+[VisualLab] LK03_strong_dynamic
+[VisualLab] LK04_protected
+[VisualLab] LK05_glow
+[VisualLab] Low Key isolated Dynamic sweep
+[VisualLab] Grain parameter matrix
+[VisualLab] Grain fine
+[VisualLab] Grain medium
+[VisualLab] Grain large
+[VisualLab] Grain soft
+[VisualLab] Grain hardness_medium
+[VisualLab] Grain hard
+[VisualLab] Grain monochromatic
+[VisualLab] Grain clumping_zero
+[VisualLab] Grain clumping_medium
+[VisualLab] Grain clumping_strong
+[VisualLab] Grain softness_zero
+[VisualLab] Grain softness_strong
+[VisualLab] Grain response_shadow
+[VisualLab] Grain response_midtone
+[VisualLab] Grain response_highlight
+[VisualLab] Grain chromatic
+[VisualLab] Edges, textures, masks and effect ordering
+[VisualLab] Synthetic scenes and optional photographs
+[VisualLab] Resolution and performance
+[VisualLab] Production preview/HQ/export
+Visual validation report: /Volumes/XTRA/Dev/Lumora/TestArtifacts/DarkenLightenCenter/Common/CreativeFXValidationReport.md
+✔ Test visualCreativeValidation() passed after 119.026 seconds.
+✔ Test run with 4 tests in 0 suites passed after 119.033 seconds.

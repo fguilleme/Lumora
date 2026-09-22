@@ -15,6 +15,7 @@ struct EditorView: View {
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
     @State private var focusedAdjustmentID: String?
+    @State private var selectedCreativeEffectID: UUID?
     @Environment(\.scenePhase) private var scenePhase
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
@@ -36,6 +37,13 @@ struct EditorView: View {
         }
     }
 
+    private var activeDLCSettings: DarkenLightenCenterSettings? {
+        guard panel == .creative, !session.bypassCreative,
+              let effect = session.state.creative.effects.first(where: { $0.id == selectedCreativeEffectID }),
+              effect.kind == .darkenLightenCenter, effect.enabled, effect.opacity > 0 else { return nil }
+        return DarkenLightenCenterSettings(effect: effect)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
@@ -44,6 +52,18 @@ struct EditorView: View {
                     .frame(height: 52).padding(.vertical, 4)
                     .dimsDuringAdjustment()
                 PhotoCanvas(result: result, showingOriginal: $session.showingOriginal,
+                            dlcSettings: activeDLCSettings,
+                            onDLCBegin: { session.beginInteraction("Déplacer le centre") },
+                            onDLCChange: { point in
+                                guard let id = selectedCreativeEffectID else { return }
+                                session.changeCreative("Déplacer le centre") { stack in
+                                    if let i = stack.effects.firstIndex(where: { $0.id == id }) {
+                                        stack.effects[i]["centerX"] = point.x
+                                        stack.effects[i]["centerY"] = point.y
+                                    }
+                                }
+                            },
+                            onDLCEnd: session.finishInteraction,
                             activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
                             showsMaskOverlay: panel == .masks && !isAdjustingSelectedMask,
@@ -236,7 +256,7 @@ struct EditorView: View {
                            onGradingChange: session.setGrading,
                            onEnd: session.finishInteraction)
         case .creative:
-            CreativeEffectsView(session: session)
+            CreativeEffectsView(session: session, selected: $selectedCreativeEffectID)
         case .effects:
             effectsControls
         case .detail:

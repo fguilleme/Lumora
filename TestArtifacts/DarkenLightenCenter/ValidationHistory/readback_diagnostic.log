@@ -1,0 +1,23 @@
+Building for debugging...
+[1 / 4]
+[2 / 5] LumoraVisualTestLab-product
+[4 / 7] LumoraVisualTestLab-product
+[9 / 11] LumoraVisualTestLab-product
+Build complete! (1,66 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test dlcReadbackDiagnostics() started.
+READ 50 0.09491776 oracleY 0.09491775604803791 oracleFlipped 0.09
+READ 180 0.36 oracleY 0.36 oracleFlipped 0.19664200728774364
+READ 219 0.36 oracleY 0.36 oracleFlipped 0.32807036524968675
+READ 293 0.32555038 oracleY 0.3255504070273698 oracleFlipped 0.36
+READ 350 0.14321002 oracleY 0.14321007001716918 oracleFlipped 0.35525612080681845
+READ 450 0.089999996 oracleY 0.09 oracleFlipped 0.10289727734458283
+EXTENTS (137.0, -91.0, 512.0, 512.0) (0.0, 0.0, 512.0, 512.0)
+SHIFT 137.0 1.6391277313232422e-07 1.6391277313232422e-07
+EXTENTS (137.0, -92.0, 513.0, 513.0) (-1.0, -1.0, 514.0, 514.0)
+SHIFT 137.25 0.0019778311252593994 0.0019778311252593994
+UPPER HALF READ FIRST/LAST 1.0 0.0
+✔ Test dlcReadbackDiagnostics() passed after 3.646 seconds.
+✔ Test run with 1 test in 0 suites passed after 3.646 seconds.

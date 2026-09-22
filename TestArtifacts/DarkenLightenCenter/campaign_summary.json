@@ -1,0 +1,31 @@
+{
+  "controls": {
+    "PASS": 831,
+    "WARN": 13
+  },
+  "hardInvariants": 751,
+  "coreTests": 97,
+  "priorPresetsBitIdentical": 77,
+  "uiTest": "PASS",
+  "performance": {
+    "1024-CPU-graph-medianMS": 0.044041662476956844,
+    "1024-GPU-medianMS": 0.1802083570510149,
+    "1024-resolutionMaxError": 0,
+    "1024-wall-medianMS": 0.7331667002290487,
+    "2048-CPU-graph-medianMS": 0.0370832858607173,
+    "2048-GPU-medianMS": 0.7324999896809459,
+    "2048-resolutionMaxError": 2.4139881134033203e-06,
+    "2048-wall-medianMS": 2.087624976411462,
+    "4096-CPU-graph-medianMS": 0.036958372220396996,
+    "4096-GPU-medianMS": 2.9084166744723916,
+    "4096-resolutionMaxError": 3.635883331298828e-06,
+    "4096-wall-medianMS": 5.0446667009964585,
+    "RSS-batch0": 542523392,
+    "RSS-batch1": 272678912,
+    "RSS-batch2": 272695296,
+    "RSS-batch3": 272695296,
+    "instances1-materializationMedianMS": 7.22591660451144,
+    "instances2-materializationMedianMS": 7.401625043712556,
+    "instances4-materializationMedianMS": 7.189250085502863
+  }
+}

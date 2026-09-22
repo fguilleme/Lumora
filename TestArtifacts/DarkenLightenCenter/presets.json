@@ -1,0 +1,154 @@
+[
+  {
+    "enabled" : true,
+    "id" : "D44B4E8A-6014-4CDE-A173-FB52A19E5D24",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.18,
+      "centerEV" : 0.12,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 100,
+      "rotation" : 0,
+      "shape" : 0,
+      "size" : 70
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "0C546008-5288-4895-8D3D-99BF2F3AEFC2",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.45,
+      "centerEV" : 0.3,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 85,
+      "rotation" : 0,
+      "shape" : -30,
+      "size" : 48
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "16DFB1D7-2733-4BA1-B5AF-FB9BE7F973DB",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.85,
+      "centerEV" : 0,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 90,
+      "rotation" : 0,
+      "shape" : 0,
+      "size" : 60
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "25BEE2E2-4249-4209-8BC9-80E4ADE585C3",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : 0,
+      "centerEV" : 0.55,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 90,
+      "rotation" : 0,
+      "shape" : 0,
+      "size" : 48
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "19143902-5580-4653-8392-424B6EC22E85",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.3,
+      "centerEV" : 0.18,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 100,
+      "rotation" : 0,
+      "shape" : 45,
+      "size" : 75
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "9478A67E-E543-49FB-A7A7-D1C0DC686462",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.55,
+      "centerEV" : 0.45,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 90,
+      "rotation" : 0,
+      "shape" : -25,
+      "size" : 30
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "1D4F374E-6246-4B54-986C-4BD462536A9F",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : -0.8,
+      "centerEV" : 0.4,
+      "centerX" : 0.32,
+      "centerY" : 0.38,
+      "feather" : 90,
+      "rotation" : -20,
+      "shape" : -20,
+      "size" : 55
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "B6E670A0-14C1-41B9-AB7A-2EF766999443",
+    "kind" : "darkenLightenCenter",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "borderEV" : 0.25,
+      "centerEV" : -0.4,
+      "centerX" : 0.5,
+      "centerY" : 0.5,
+      "feather" : 90,
+      "rotation" : 0,
+      "shape" : 0,
+      "size" : 55
+    },
+    "seed" : 137
+  }
+]

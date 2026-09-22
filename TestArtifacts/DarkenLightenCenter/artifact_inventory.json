@@ -1,0 +1,90 @@
+{
+  "amount_response.png": [
+    "TestArtifacts/DarkenLightenCenter/amount_response.png"
+  ],
+  "backlight_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/04_backlight/backlight_focus_comparison.png"
+  ],
+  "center_border_independence.png": [
+    "TestArtifacts/DarkenLightenCenter/center_border_independence.png"
+  ],
+  "center_equals_border.png": [
+    "TestArtifacts/DarkenLightenCenter/center_equals_border.png"
+  ],
+  "center_positions.png": [
+    "TestArtifacts/DarkenLightenCenter/center_positions.png"
+  ],
+  "circle_aspect_ratio.png": [
+    "TestArtifacts/DarkenLightenCenter/circle_aspect_ratio.png"
+  ],
+  "compositional_examples.png": [
+    "TestArtifacts/DarkenLightenCenter/compositional_examples.png"
+  ],
+  "contact_sheet.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/02_portrait_dark_skin/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/07_white_subject/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/06_indoor_high_contrast/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/04_backlight/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/01_portrait_light_skin/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/08_fine_texture/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/03_landscape_clouds/contact_sheet.png",
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/05_night/contact_sheet.png"
+  ],
+  "edge_center_positions.png": [
+    "TestArtifacts/DarkenLightenCenter/edge_center_positions.png"
+  ],
+  "ellipse_shapes.png": [
+    "TestArtifacts/DarkenLightenCenter/ellipse_shapes.png"
+  ],
+  "ev_field_isolines.png": [
+    "TestArtifacts/DarkenLightenCenter/ev_field_isolines.png"
+  ],
+  "ev_field_map.png": [
+    "TestArtifacts/DarkenLightenCenter/ev_field_map.png"
+  ],
+  "extreme_field_diagnostic.png": [
+    "TestArtifacts/DarkenLightenCenter/extreme_field_diagnostic.png"
+  ],
+  "feather_response.png": [
+    "TestArtifacts/DarkenLightenCenter/feather_response.png"
+  ],
+  "fine_texture_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/08_fine_texture/fine_texture_focus_comparison.png"
+  ],
+  "indoor_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/06_indoor_high_contrast/indoor_focus_comparison.png"
+  ],
+  "landscape_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/03_landscape_clouds/landscape_focus_comparison.png"
+  ],
+  "landscape_sky_transition.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/03_landscape_clouds/landscape_sky_transition.png"
+  ],
+  "night_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/05_night/night_focus_comparison.png"
+  ],
+  "not_just_a_vignette.png": [
+    "TestArtifacts/DarkenLightenCenter/not_just_a_vignette.png"
+  ],
+  "off_center_real_photos.png": [
+    "TestArtifacts/DarkenLightenCenter/off_center_real_photos.png"
+  ],
+  "portrait_dark_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/02_portrait_dark_skin/portrait_dark_focus_comparison.png"
+  ],
+  "portrait_light_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/01_portrait_light_skin/portrait_light_focus_comparison.png"
+  ],
+  "radial_profiles.png": [
+    "TestArtifacts/DarkenLightenCenter/radial_profiles.png"
+  ],
+  "rotation.png": [
+    "TestArtifacts/DarkenLightenCenter/rotation.png"
+  ],
+  "subtle_field_difference.png": [
+    "TestArtifacts/DarkenLightenCenter/subtle_field_difference.png"
+  ],
+  "white_subject_focus_comparison.png": [
+    "TestArtifacts/DarkenLightenCenter/RealPhotos/07_white_subject/white_subject_focus_comparison.png"
+  ]
+}

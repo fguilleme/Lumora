@@ -1,0 +1,17 @@
+{
+  "Lumora/Creative/CreativeEffect.swift": "553979cd18b13d537cf9add473e931d9ecc0be88056cd7916aa3c2fb2ced7791",
+  "Lumora/Creative/CreativeRenderer.swift": "65a13aadd2d3a9dd1b7a957898ef48e698d489890b746891d6468a2c8c220f4a",
+  "Lumora/Creative/DarkenLightenCenterRenderer.swift": "7804c2116958958bce1034020c775bbb15bd09ae29a01e830a0d0081a0580c78",
+  "Lumora/UI/CreativeEffectsView.swift": "a8bb105b964aa08800f5ff78a2a5f5ff34796cc9de2056505a9c13034672bb78",
+  "Lumora/UI/EditorView.swift": "940e478f7acbc16df942a1d51acf28e9d6ee817cb9e2268ed12ab273b2118d02",
+  "Lumora/UI/PhotoCanvas.swift": "168e526437217bf46528713ef395a61993456e72986851a9d18ef78f381806c7",
+  "Lumora/UI/DLCCenterOverlay.swift": "55e75e9fd67eb47b11617fb3d73277ec31661b5092017004c72001976958028c",
+  "LumoraUITests/DarkenLightenCenterUITests.swift": "9c72f1e29e3aab734e12cbd980c469738db99dcf63b7924dacbb1358323abdbc",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterRegression.swift": "a5289b798a5eb9f074189360718402e1caba55ef90e5c21c98de95c185719452",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterReport.swift": "0ef7e76331b9c7cf9bf2001f1bf18fe522fa4a07c710580af4c9f4f03ad272d6",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenter.swift": "4c23f0e9b1b85377258547d8ee79f518f1439c1f4e05fd67f8c578c7bd94d126",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterIntegration.swift": "e92cfde45abb1fe8e8dff10a6a8dd9ac213737c0ed2570e04978b62e8aec802e",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterPhotos.swift": "abe890c363784c0d677ac6f3a2099eaa57b8442d00ede2705492d2c82f24f074",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterPerformance.swift": "1f9e2c557cf8ce3ba1bc653c281497fffa60e31b2595de8e88c4a4a02cc515fa",
+  "Tests/LumoraVisualTestLab/DarkenLightenCenterDiagnostics.swift": "3a82b4f1230be8f450d30eabee2c9487a4b4050473075efa923d68d3c98ee886"
+}

@@ -3,7 +3,7 @@ import SwiftUI
 struct CreativeEffectsView: View {
     @Bindable var session: EditorSession
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @State private var selected: UUID?
+    @Binding var selected: UUID?
     @State private var advanced = false
     @State private var showsTile = false
     @State private var presetFeedback = 0
@@ -170,7 +170,14 @@ struct CreativeEffectsView: View {
                             }
                         }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-toner")
                     }
+                    if effect.kind == .darkenLightenCenter {
+                        Text("Déplacez la poignée sur la photo pour placer le centre.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Button(advanced ? "Masquer la position précise" : "Position précise X / Y") { advanced.toggle() }
+                            .buttonStyle(.bordered).accessibilityIdentifier("creative-dlc-position")
+                    }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
+                        if effect.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(spec.id) { return advanced }
                         if effect.kind == .silverToning {
                             if spec.id == "toner" { return false }
                             let split = Int(effect["toner"].rounded()) == SilverToner.split.rawValue
@@ -259,7 +266,10 @@ struct CreativeEffectsView: View {
     }
     private func slider(_ id: String, _ title: String, _ range: ClosedRange<Double>, _ value: Double,
                         _ reset: Double, change: @escaping (Double) -> Void) -> some View {
-        AdjustmentSlider(title: title, range: range, accessibilityID: "creative-\(id)", value: value,
+        let preciseCenter = effect?.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(id)
+        let preciseEV = effect?.kind == .darkenLightenCenter && ["centerEV", "borderEV"].contains(id)
+        return AdjustmentSlider(title: title, range: range, step: preciseCenter ? 0.001 : preciseEV ? 0.01 : 1,
+            precision: preciseCenter ? 3 : preciseEV ? 2 : 0, accessibilityID: "creative-\(id)", value: value,
             onBegin: { session.beginInteraction("Creative · \(title)") }, onChange: change,
             onEnd: session.finishInteraction, onReset: { session.finishInteraction(); change(reset) })
     }

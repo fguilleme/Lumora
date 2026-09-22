@@ -1,0 +1,200 @@
+Another instance of SwiftPM (PID: 38790) is already running using '/private/tmp/lumora-dlc-build', waiting until that process has finished execution...Building for debugging...
+Build complete! (0,37 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test creativeKeyDirectionProtectionAndIdentity() started.
+◇ Test rendererRejectsInvalidInputAndHonorsCancellation() started.
+◇ Test developedImageReportsMetadataWithoutPretendingToHaveProfile() started.
+◇ Test gradingGamutCompressionIsBounded() started.
+◇ Test redMaskOverlaySupportsBrushLinearAndGeneratedMasks() started.
+◇ Test exportMatchesPreviewAdjustments() started.
+◇ Test realRendererExposureCacheHistogramAndOriginal() started.
+◇ Test mixerTransitionsAreSmoothAndCyclic() started.
+◇ Test rendererGradingTintsNeutralRampAndRestoresIdentity() started.
+◇ Test perspectiveAffineControlsKeepOutputCovered() started.
+◇ Test presetValidationAndSerializationAreStable() started.
+◇ Test creativeGrainDeterminismSeedAndTileCoordinates() started.
+◇ Test neutralGradingIsIdentityAndTintPreservesLuma() started.
+◇ Test detailSettingsValidateMigrateSerializeAndHistory() started.
+◇ Test historyGroupsGestureAndInvalidatesRedo() started.
+◇ Test redMaskOverlayUsesExactMatteAlphaAndFeathering() started.
+◇ Test geometrySettingsMigrateValidateSerializeAndHistory() started.
+◇ Test curveSerializationAndLegacyMigration() started.
+◇ Test straightenFillsEveryOutputCorner() started.
+◇ Test geometryRotationAndAspectProduceExpectedExtent() started.
+◇ Test gradingMigrationValidationAndHistory() started.
+◇ Test layerManagementMigratesPersistsAndControlsRendering() started.
+◇ Test wheelCoordinatesRoundTripAndClamp() started.
+◇ Test glamourGlowIdentityPresetsAndPersistence() started.
+◇ Test colorNoiseReductionSuppressesChromaAndPreservesLuma() started.
+◇ Test exportAppliesOrientationOnceAndWritesChosenProfile() started.
+◇ Test libraryQuerySearchesSortsAndFavoriteMarkerPersists() started.
+◇ Test detailExtractorIdentityPersistenceAndStackIntegration() started.
+◇ Test masksMigrateValidateSerializeAndParticipateInHistory() started.
+◇ Test curvesDoNotOvershootAndHaveContinuousTangents() started.
+◇ Test eyeMaskCreatesTwoSeparateFeatheredRegions() started.
+◇ Test presetCanExplicitlyReplaceGeometryAndMasks() started.
+◇ Test rendererMixerDesaturatesOnlyTargetedColor() started.
+◇ Test opticsSettingsMigrateValidateSerializeAndHistory() started.
+◇ Test noOpAndBoundedHistory() started.
+◇ Test extremeMixerOutputStaysFiniteAndInGamut() started.
+◇ Test libraryTagsSupportMultipleAssignmentsFilteringAndSafeDeletion() started.
+◇ Test perspectiveChangesPixelsAndKeepsFiniteExtent() started.
+◇ Test orientationIsAppliedOnce() started.
+◇ Test mixerSerializationMigrationAndRangeValidation() started.
+◇ Test libraryFoldersPersistAssignFilterAndDeleteWithoutDeletingPhotos() started.
+◇ Test grainChangesUniformImageWithoutChangingExtent() started.
+◇ Test lensVignetteCorrectionBrightensCornersMoreThanCenter() started.
+◇ Test automaticStraightenConvertsAndClampsHorizonAngle() started.
+◇ Test creativeStackOrderBypassAndExistingMask() started.
+◇ Test mixerCentersTargetOnlyTheSelectedBand() started.
+◇ Test skinMaskCalibratesFromFaceAndSelectsMatchingRegion() started.
+◇ Test rendererAppliesRGBAndChannelCurves() started.
+◇ Test tonalContrastPersistencePresetHistoryAndValidation() started.
+◇ Test geometryChangesPreviewAndFullResolutionExportDimensions() started.
+◇ Test persistenceKeepsOriginalAndRejectsStaleWrites() started.
+◇ Test creativeBuiltInPresetsCoverEveryEffectAndPreserveStackContext() started.
+◇ Test effectsIdentityAndTextureClarityUseDistinctScales() started.
+◇ Test radialMaskHasSoftCenterAndSupportsInversion() started.
+◇ Test dehazeChangesHazyToneAndVignetteTargetsEdges() started.
+◇ Test exportReallyUsesFullResolutionAndPreservesOriginal() started.
+◇ Test lookupMatchesCurveAndChannelIsolation() started.
+◇ Test vibrancePreservesNeutralsAndProtectsSaturatedColors() started.
+◇ Test nativeCreativeTileMatchesFullGraphAndHonorsBounds() started.
+◇ Test gradingTargetsShadowsAndLuminanceIndependently() started.
+◇ Test exportAllAvailableFormatsEncodeAndDecode() started.
+◇ Test documentStoreListsLoadsSortsAndDeletesLibrary() started.
+◇ Test creativePersistenceHistoryAndStack() started.
+◇ Test historyGroupsCurveGestureAndRestoresAllChannels() started.
+◇ Test sharpeningChangesEdgesAndMaskingProtectsFlatAreas() started.
+◇ Test creativeGrainPhotographicScaleEnergyAndChroma() started.
+◇ Test exportMetadataOptionsActuallyRemoveGPSAndCameraTags() started.
+◇ Test presetStoreCreatesRenamesImportsAndDeletes() started.
+◇ Test glamourGlowPresetCustomUndoRedoKeepsMaskAndStack() started.
+◇ Test exportCancellationNeverLeavesPartialOrFinalFile() started.
+◇ Test skyMaskSelectsConnectedBlueUpperRegion() started.
+◇ Test automaticPerspectiveConvertsWeightsClampsAndRejectsWeakGeometry() started.
+◇ Test gradingWeightsAreNormalizedAndTargetTonality() started.
+◇ Test effectsSettingsValidateMigrateSerializeAndHistory() started.
+◇ Test mixerHistoryGroupsChangesAndRestoresOtherAdjustments() started.
+◇ Test brushAndLinearMasksUseNormalizedCoordinates() started.
+◇ Test exportDimensionCalculationNeverUpsamples() started.
+◇ Test luminanceNoiseReductionReducesFineLumaVariance() started.
+◇ Test maskedLayerCarriesFullDevelopmentAndMigratesLegacyValues() started.
+◇ Test brushEraserRemovesPaintAndRoundTrips() started.
+◇ Test corruptCurveCoordinatesAreNormalized() started.
+◇ Test skinSectorGetsLessVibranceThanEquivalentBlue() started.
+◇ Test manualDistortionAndChromaticCorrectionChangePixelsAndKeepExtent() started.
+◇ Test directGeometryHandlesMapToPerspectiveAndCropControls() started.
+◇ Test localExposureOnlyChangesMaskedRegionAndKeepsExtent() started.
+◇ Test curveIdentityAndKnots() started.
+◇ Test subtractComponentCutsARealHole() started.
+◇ Test creativePresetSelectionCustomUndoRedoAndMask() started.
+◇ Test neutralResponseAndTargetedTonalMasks() started.
+◇ Test libraryBatchOperationsApplyToEverySelectedDocument() started.
+◇ Test hslRoundTripsRGBAndPreservesNeutralAxis() started.
+◇ Test editStateRoundTripAndValidation() started.
+◇ Test curvePointEditingEnforcesBounds() started.
+◇ Test creativeKeyRampIsContinuousAndOrdered() started.
+◇ Test presetAppliesOnlySelectedSections() started.
+◇ Test hslControlsHaveIndependentNumericalEffects() started.
+◇ Test generatedMaskSerializesScalesAndAppliesLocally() started.
+✔ Test gradingGamutCompressionIsBounded() passed after 0.501 seconds.
+✔ Test mixerTransitionsAreSmoothAndCyclic() passed after 0.529 seconds.
+✔ Test presetValidationAndSerializationAreStable() passed after 0.540 seconds.
+✔ Test historyGroupsGestureAndInvalidatesRedo() passed after 0.564 seconds.
+✔ Test detailSettingsValidateMigrateSerializeAndHistory() passed after 0.564 seconds.
+✔ Test geometrySettingsMigrateValidateSerializeAndHistory() passed after 0.564 seconds.
+✔ Test neutralGradingIsIdentityAndTintPreservesLuma() passed after 0.564 seconds.
+✔ Test curveSerializationAndLegacyMigration() passed after 0.564 seconds.
+✔ Test geometryRotationAndAspectProduceExpectedExtent() passed after 0.564 seconds.
+✔ Test gradingMigrationValidationAndHistory() passed after 0.564 seconds.
+✔ Test redMaskOverlayUsesExactMatteAlphaAndFeathering() passed after 0.564 seconds.
+✔ Test perspectiveAffineControlsKeepOutputCovered() passed after 0.564 seconds.
+✔ Test straightenFillsEveryOutputCorner() passed after 0.564 seconds.
+✔ Test developedImageReportsMetadataWithoutPretendingToHaveProfile() passed after 0.565 seconds.
+✔ Test wheelCoordinatesRoundTripAndClamp() passed after 0.564 seconds.
+✔ Test redMaskOverlaySupportsBrushLinearAndGeneratedMasks() passed after 0.565 seconds.
+✔ Test libraryQuerySearchesSortsAndFavoriteMarkerPersists() passed after 0.564 seconds.
+✔ Test layerManagementMigratesPersistsAndControlsRendering() passed after 0.565 seconds.
+✔ Test masksMigrateValidateSerializeAndParticipateInHistory() passed after 0.565 seconds.
+✔ Test curvesDoNotOvershootAndHaveContinuousTangents() passed after 0.565 seconds.
+✔ Test exportAppliesOrientationOnceAndWritesChosenProfile() passed after 0.565 seconds.
+✔ Test presetCanExplicitlyReplaceGeometryAndMasks() passed after 0.565 seconds.
+✔ Test eyeMaskCreatesTwoSeparateFeatheredRegions() passed after 0.565 seconds.
+✔ Test opticsSettingsMigrateValidateSerializeAndHistory() passed after 0.565 seconds.
+✔ Test noOpAndBoundedHistory() passed after 0.565 seconds.
+✔ Test extremeMixerOutputStaysFiniteAndInGamut() passed after 0.565 seconds.
+✔ Test glamourGlowIdentityPresetsAndPersistence() passed after 0.565 seconds.
+✔ Test detailExtractorIdentityPersistenceAndStackIntegration() passed after 0.565 seconds.
+✔ Test perspectiveChangesPixelsAndKeepsFiniteExtent() passed after 0.565 seconds.
+✔ Test mixerSerializationMigrationAndRangeValidation() passed after 0.565 seconds.
+✔ Test libraryTagsSupportMultipleAssignmentsFilteringAndSafeDeletion() passed after 0.565 seconds.
+✔ Test orientationIsAppliedOnce() passed after 0.565 seconds.
+✔ Test libraryFoldersPersistAssignFilterAndDeleteWithoutDeletingPhotos() passed after 0.565 seconds.
+✔ Test automaticStraightenConvertsAndClampsHorizonAngle() passed after 0.565 seconds.
+✔ Test grainChangesUniformImageWithoutChangingExtent() passed after 0.565 seconds.
+✔ Test mixerCentersTargetOnlyTheSelectedBand() passed after 0.565 seconds.
+✔ Test colorNoiseReductionSuppressesChromaAndPreservesLuma() passed after 0.565 seconds.
+✔ Test lensVignetteCorrectionBrightensCornersMoreThanCenter() passed after 0.565 seconds.
+✔ Test tonalContrastPersistencePresetHistoryAndValidation() passed after 0.565 seconds.
+✔ Test skinMaskCalibratesFromFaceAndSelectsMatchingRegion() passed after 0.565 seconds.
+✔ Test persistenceKeepsOriginalAndRejectsStaleWrites() passed after 0.565 seconds.
+✔ Test creativeBuiltInPresetsCoverEveryEffectAndPreserveStackContext() passed after 0.565 seconds.
+✔ Test geometryChangesPreviewAndFullResolutionExportDimensions() passed after 0.566 seconds.
+✔ Test radialMaskHasSoftCenterAndSupportsInversion() passed after 0.565 seconds.
+✔ Test realRendererExposureCacheHistogramAndOriginal() passed after 0.566 seconds.
+✔ Test exportMatchesPreviewAdjustments() passed after 0.566 seconds.
+✔ Test lookupMatchesCurveAndChannelIsolation() passed after 0.565 seconds.
+✔ Test vibrancePreservesNeutralsAndProtectsSaturatedColors() passed after 0.565 seconds.
+✔ Test creativeStackOrderBypassAndExistingMask() passed after 0.566 seconds.
+✔ Test gradingTargetsShadowsAndLuminanceIndependently() passed after 0.565 seconds.
+✔ Test rendererGradingTintsNeutralRampAndRestoresIdentity() passed after 0.566 seconds.
+✔ Test dehazeChangesHazyToneAndVignetteTargetsEdges() passed after 0.566 seconds.
+✔ Test documentStoreListsLoadsSortsAndDeletesLibrary() passed after 0.566 seconds.
+✔ Test historyGroupsCurveGestureAndRestoresAllChannels() passed after 0.566 seconds.
+✔ Test creativePersistenceHistoryAndStack() passed after 0.566 seconds.
+✔ Test creativeKeyDirectionProtectionAndIdentity() passed after 0.567 seconds.
+✔ Test exportMetadataOptionsActuallyRemoveGPSAndCameraTags() passed after 0.566 seconds.
+✔ Test effectsIdentityAndTextureClarityUseDistinctScales() passed after 0.566 seconds.
+✔ Test glamourGlowPresetCustomUndoRedoKeepsMaskAndStack() passed after 0.566 seconds.
+✔ Test presetStoreCreatesRenamesImportsAndDeletes() passed after 0.566 seconds.
+✔ Test automaticPerspectiveConvertsWeightsClampsAndRejectsWeakGeometry() passed after 0.569 seconds.
+✔ Test nativeCreativeTileMatchesFullGraphAndHonorsBounds() passed after 0.570 seconds.
+✔ Test effectsSettingsValidateMigrateSerializeAndHistory() passed after 0.565 seconds.
+✔ Test mixerHistoryGroupsChangesAndRestoresOtherAdjustments() passed after 0.565 seconds.
+✔ Test skyMaskSelectsConnectedBlueUpperRegion() passed after 0.569 seconds.
+✔ Test exportDimensionCalculationNeverUpsamples() passed after 0.565 seconds.
+✔ Test brushAndLinearMasksUseNormalizedCoordinates() passed after 0.565 seconds.
+✔ Test rendererMixerDesaturatesOnlyTargetedColor() passed after 0.570 seconds.
+✔ Test brushEraserRemovesPaintAndRoundTrips() passed after 0.565 seconds.
+✔ Test corruptCurveCoordinatesAreNormalized() passed after 0.565 seconds.
+✔ Test skinSectorGetsLessVibranceThanEquivalentBlue() passed after 0.565 seconds.
+✔ Test gradingWeightsAreNormalizedAndTargetTonality() passed after 0.565 seconds.
+✔ Test directGeometryHandlesMapToPerspectiveAndCropControls() passed after 0.565 seconds.
+✔ Test localExposureOnlyChangesMaskedRegionAndKeepsExtent() passed after 0.563 seconds.
+✔ Test creativeGrainDeterminismSeedAndTileCoordinates() passed after 0.570 seconds.
+✔ Test subtractComponentCutsARealHole() passed after 0.563 seconds.
+✔ Test curveIdentityAndKnots() passed after 0.563 seconds.
+✔ Test creativePresetSelectionCustomUndoRedoAndMask() passed after 0.562 seconds.
+✔ Test neutralResponseAndTargetedTonalMasks() passed after 0.563 seconds.
+✔ Test hslRoundTripsRGBAndPreservesNeutralAxis() passed after 0.563 seconds.
+✔ Test editStateRoundTripAndValidation() passed after 0.563 seconds.
+✔ Test curvePointEditingEnforcesBounds() passed after 0.563 seconds.
+✔ Test libraryBatchOperationsApplyToEverySelectedDocument() passed after 0.563 seconds.
+✔ Test presetAppliesOnlySelectedSections() passed after 0.563 seconds.
+✔ Test hslControlsHaveIndependentNumericalEffects() passed after 0.563 seconds.
+✔ Test creativeGrainPhotographicScaleEnergyAndChroma() passed after 0.570 seconds.
+✔ Test creativeKeyRampIsContinuousAndOrdered() passed after 0.564 seconds.
+✔ Test rendererRejectsInvalidInputAndHonorsCancellation() passed after 0.573 seconds.
+✔ Test generatedMaskSerializesScalesAndAppliesLocally() passed after 0.566 seconds.
+✔ Test exportReallyUsesFullResolutionAndPreservesOriginal() passed after 0.582 seconds.
+✔ Test exportCancellationNeverLeavesPartialOrFinalFile() passed after 0.582 seconds.
+✔ Test manualDistortionAndChromaticCorrectionChangePixelsAndKeepExtent() passed after 0.585 seconds.
+✔ Test exportAllAvailableFormatsEncodeAndDecode() passed after 0.609 seconds.
+✔ Test sharpeningChangesEdgesAndMaskingProtectsFlatAreas() passed after 0.617 seconds.
+✔ Test luminanceNoiseReductionReducesFineLumaVariance() passed after 0.640 seconds.
+✔ Test maskedLayerCarriesFullDevelopmentAndMigratesLegacyValues() passed after 0.653 seconds.
+✔ Test rendererAppliesRGBAndChannelCurves() passed after 0.679 seconds.
+✔ Test run with 97 tests in 0 suites passed after 0.680 seconds.

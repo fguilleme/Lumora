@@ -14,7 +14,8 @@ enum CreativeStackRenderer {
         .detailExtractor: DetailExtractorRenderer(), .glamourGlow: GlamourGlowRenderer(),
         .bleachBypass: BleachBypassRenderer(), .proContrast: ProContrastRenderer(),
         .crossProcessing: CrossProcessingRenderer(), .filmEmulation: FilmEmulationRenderer(),
-        .silverBW: SilverBWRenderer(), .silverToning: SilverToningRenderer()
+        .silverBW: SilverBWRenderer(), .silverToning: SilverToningRenderer(),
+        .darkenLightenCenter: DarkenLightenCenterRenderer()
     ]
     static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
         var image = input

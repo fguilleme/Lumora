@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW, silverToning
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW, silverToning, darkenLightenCenter
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -75,6 +75,17 @@ enum CreativeEffectCatalog {
             .init("shadowDensity", "Densité des ombres", -100...100, 0),
             .init("colorResponse", "Réponse couleur", 0...100, 75),
             .init("style", "Type interne", 0...6, 0)
+        ]),
+        .darkenLightenCenter: .init(title: "Darken / Lighten Center", category: "Key", symbol: "scope", parameters: [
+            .init("amount", "Quantité", 0...100, 100),
+            .init("centerEV", "Centre (EV)", -2...2),
+            .init("borderEV", "Extérieur (EV)", -2...2),
+            .init("size", "Taille", 5...150, 45),
+            .init("shape", "Forme (haut / large)", -100...100),
+            .init("feather", "Contour progressif", 0...100, 75),
+            .init("rotation", "Rotation (°)", -180...180),
+            .init("centerX", "Centre X", 0...1, 0.5),
+            .init("centerY", "Centre Y", 0...1, 0.5)
         ]),
         .silverToning: .init(title: "Silver Toning", category: "Film", symbol: "drop.halffull", parameters: [
             .init("amount", "Quantité", 0...100, 100),
@@ -582,6 +593,17 @@ struct CreativeFXPreset: Identifiable {
                 values("Strong Cross", ["style": 6, "amount": 90, "styleStrength": 100, "contrast": 40,
                                        "saturation": 12, "shadowHue": 190, "shadowStrength": 65,
                                        "highlightHue": 25, "highlightStrength": 55, "blackLift": 7])
+            ]
+        case .darkenLightenCenter:
+            return [
+                values("Subtle Focus", ["centerEV":0.12,"borderEV":-0.18,"size":70,"feather":100]),
+                values("Portrait Focus", ["centerEV":0.30,"borderEV":-0.45,"size":48,"shape":-30,"feather":85]),
+                values("Dark Surround", ["centerEV":0,"borderEV":-0.85,"size":60,"feather":90]),
+                values("Light Center", ["centerEV":0.55,"borderEV":0,"size":48,"feather":90]),
+                values("Wide Focus", ["centerEV":0.18,"borderEV":-0.30,"size":75,"shape":45,"feather":100]),
+                values("Narrow Focus", ["centerEV":0.45,"borderEV":-0.55,"size":30,"shape":-25,"feather":90]),
+                values("Off-Center Drama", ["centerX":0.32,"centerY":0.38,"centerEV":0.40,"borderEV":-0.80,"size":55,"shape":-20,"rotation":-20,"feather":90]),
+                values("Reverse Focus", ["centerEV":-0.40,"borderEV":0.25,"size":55,"feather":90])
             ]
         case .silverToning:
             return [
