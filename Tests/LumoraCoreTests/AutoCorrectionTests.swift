@@ -7,6 +7,33 @@ private func autoPixels(_ colors: [[Float]]) -> [Float] { colors.flatMap { $0 + 
 private func autoRamp(_ gain: Float = 1) -> [Float] {
     (0..<4096).flatMap { i -> [Float] in let x=Float(i)/4095*gain;return [x,x,x,1] }
 }
+private func autoQuantilePixels(p50:Double,p95:Double,p99:Double)->[Float] {
+    let knots:[(Double,Double)]=[(0,0),(0.04,0),(0.5,p50),(0.95,p95),(0.99,p99),(1,p99)]
+    return (0..<2048).flatMap { index -> [Float] in
+        let probability=Double(index)/2047
+        let upper=(1..<knots.count).first{probability<=knots[$0].0} ?? knots.count-1
+        let a=knots[upper-1],b=knots[upper],t=(probability-a.0)/max(1e-9,b.0-a.0)
+        let value=Float(a.1+(b.1-a.1)*t)
+        return [value,value,value,1]
+    }
+}
+@Test func autoDarkForegroundBroadHighlightsDoNotLiftNightOrSilhouette() {
+    let portrait=AutoCorrectionIntent(analysis:ImageAnalysis.measure(autoQuantilePixels(p50:0.004,p95:0.96,p99:0.99)))
+    let night=AutoCorrectionIntent(analysis:ImageAnalysis.measure(autoQuantilePixels(p50:0.016,p95:0.27,p99:0.95)))
+    let silhouette=AutoCorrectionIntent(analysis:ImageAnalysis.measure(autoQuantilePixels(p50:0.009,p95:0.46,p99:0.78)))
+    #expect(portrait.scene == .backlit && portrait.exposureShiftEV > 0.2 && portrait.shadowLift > 10)
+    #expect(night.scene == .lowKey && night.exposureShiftEV == 0 && night.shadowLift == 3)
+    #expect(silhouette.scene == .lowKey && silhouette.exposureShiftEV == 0 && silhouette.shadowLift == 3)
+    var previous:AutoCorrectionIntent?
+    for delta in [-0.002,-0.001,0,0.001,0.002] {
+        let current=AutoCorrectionIntent(analysis:ImageAnalysis.measure(autoQuantilePixels(p50:0.06+delta,p95:0.82+delta,p99:0.98)))
+        if let previous {
+            #expect(abs(current.exposureShiftEV-previous.exposureShiftEV)<=0.06)
+            #expect(abs(current.shadowLift-previous.shadowLift)<=8)
+        }
+        previous=current
+    }
+}
 @Test func autoRobustStatisticsPreserveHDR() {
     let a=ImageAnalysis.measure(autoRamp(8))
     #expect(abs(a.luminance.median-4)<1e-6)

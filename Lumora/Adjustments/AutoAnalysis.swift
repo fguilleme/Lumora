@@ -81,11 +81,22 @@ struct AutoCorrectionIntent: Codable, Sendable, Equatable {
     let correctionConfidence: Double
     let wbConfidence: Double
 
-    /// Initial photographic heuristics. Freeze before the first corpus campaign.
+    /// Shared, deterministic scene intent from global extended-linear statistics.
     init(analysis a: ImageAnalysis) {
         let p = a.luminance.percentiles, median = p[3], upper = p[4]
+        // A dark foreground plus a broad, near-diffuse-white upper tail is different
+        // from a night scene with isolated lamps. P95 deliberately ignores the
+        // brightest 5%; P99 and endpoint occupancy would overreact to small lights.
+        // The 0.01 linear floor keeps the EV separation finite near black.
+        let upperSeparationEV = log2((max(0, upper) + 0.01) / (max(0, median) + 0.01))
+        let darkForeground = 1 - TonalResponse.smoothstep(0.045, 0.10, median)
+        let broadHighlights = TonalResponse.smoothstep(0.68, 0.90, upper)
+        let tonalSeparation = TonalResponse.smoothstep(3.0, 4.5, upperSeparationEV)
+        let backlitEvidence = darkForeground * broadHighlights * tonalSeparation
+        let lowKeyDistribution = median < 0.06 && upper > median * 8
         if upper-p[2] < 0.005 { scene = .uniform }
-        else if median < 0.06 && upper > median*8 { scene = .lowKey }
+        else if lowKeyDistribution && backlitEvidence >= 0.5 { scene = .backlit }
+        else if lowKeyDistribution { scene = .lowKey }
         else if median > 0.48 { scene = .highKey }
         else if median < 0.12 && upper > 0.65 { scene = .backlit }
         else if a.dynamicRangeEV < 2.2 { scene = .flat }
@@ -95,8 +106,15 @@ struct AutoCorrectionIntent: Codable, Sendable, Equatable {
             if upper < 0.35 { ev = min(1.5,log2(0.45/max(0.015,upper))*0.65) }
             else if median > 0.32 && upper > 1.2 { ev = max(-1.5,-log2(upper/0.95)*0.65) }
         }
+        // Carry the evidence into controls continuously across the scene-label
+        // boundary. A half-stop maximum lift is deliberately global and bounded.
+        ev = max(ev, 0.5 * backlitEvidence)
         exposureShiftEV = (ev*100).rounded()/100
-        shadowLift = scene == .backlit ? 16 : scene == .lowKey ? 3 : scene == .normal && p[2]<0.012 && median>0.045 ? 8 : 0
+        let establishedBacklit = TonalResponse.smoothstep(0.055, 0.10, median)
+            * TonalResponse.smoothstep(0.65, 0.85, upper)
+        let darkSceneShadows = 3 + 13 * max(backlitEvidence, establishedBacklit)
+        shadowLift = lowKeyDistribution || (scene == .backlit && median < 0.12)
+            ? darkSceneShadows : scene == .normal && p[2]<0.012 && median>0.045 ? 8 : 0
         highlightCompression = scene != .uniform && upper > 0.85 ? -12 : 0
         blackPointIntent = scene == .flat && p[2]>0.035 ? -8 : 0
         whitePointIntent = scene == .flat && upper<0.65 ? 6 : 0
