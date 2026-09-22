@@ -37,7 +37,7 @@ struct PhotoCanvas: View {
         activeMask?.components.first { $0.id == activeComponentID }
     }
     private var isPainting: Bool {
-        guard allowsMaskEditing else { return false }
+        guard allowsMaskEditing, brushMode != .pan else { return false }
         guard let component = activeComponent else { return false }
         if case .brush = component.shape { return true }
         return false
@@ -79,6 +79,14 @@ struct PhotoCanvas: View {
                             if case .second(true, _) = value { state = true }
                         }
                 )
+                .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
+                    if zoom > 1 && !isPainting && !dlcDragging { state = value.translation }
+                }.onEnded { value in
+                    if zoom > 1 && !isPainting && !dlcDragging {
+                        offset = bounded(CGSize(width: offset.width + value.translation.width,
+                                                height: offset.height + value.translation.height), size: geometry.size)
+                    }
+                })
                 .overlay(alignment: .topLeading) {
                     if showingOriginal || pressing {
                         Text("ORIGINAL").font(.caption.bold()).padding(8)
@@ -86,7 +94,7 @@ struct PhotoCanvas: View {
                     }
                 }
                 .overlay {
-                    if let activeMask {
+                    if let activeMask, showsMaskOverlay {
                         MaskOverlay(mask: activeMask,
                                     imageSize: CGSize(width: result.image.width, height: result.image.height),
                                     displayScale: displayScale,
@@ -94,19 +102,6 @@ struct PhotoCanvas: View {
                             .opacity(showsMaskOverlay && !showingOriginal && !pressing ? 1 : 0)
                             .accessibilityHidden(!showsMaskOverlay || showingOriginal || pressing)
                             .allowsHitTesting(false)
-                    }
-                }
-                .overlay {
-                    if let component = activeComponent, hasTransformHandles,
-                       !showingOriginal && !pressing {
-                        MaskHandlesOverlay(component: component,
-                                           imageSize: CGSize(width: result.image.width,
-                                                             height: result.image.height),
-                                           displayScale: displayScale,
-                                           displayOffset: displayOffset,
-                                           onBegin: onMaskTransformBegin,
-                                           onChange: onMaskShapeChange,
-                                           onEnd: onMaskTransformEnd)
                     }
                 }
                 .overlay {
@@ -165,6 +160,17 @@ struct PhotoCanvas: View {
                 .accessibilityIdentifier("photo-canvas")
                 .accessibilityAction(named: "Comparer à l’original") { showingOriginal.toggle() }
                 .accessibilityAction(named: "Réinitialiser le zoom") { restoreZoom() }
+                if let component = activeComponent, hasTransformHandles,
+                   !showingOriginal && !pressing {
+                    MaskHandlesOverlay(component: component,
+                                       imageSize: CGSize(width: result.image.width,
+                                                         height: result.image.height),
+                                       displayScale: displayScale,
+                                       displayOffset: displayOffset,
+                                       onBegin: onMaskTransformBegin,
+                                       onChange: onMaskShapeChange,
+                                       onEnd: onMaskTransformEnd)
+                }
                 // Sibling of the accessible image: its handle remains a separate element.
                 if let dlcSettings, !showingOriginal && !pressing {
                     DLCCenterOverlay(settings: dlcSettings,
@@ -181,15 +187,7 @@ struct PhotoCanvas: View {
                     zoom = min(6, max(1, zoom * value.magnification))
                     offset = bounded(offset, size: geometry.size)
                 })
-            .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
-                if zoom > 1 && !isPainting && !dlcDragging { state = value.translation }
-            }.onEnded { value in
-                if zoom > 1 && !isPainting && !dlcDragging {
-                    offset = bounded(CGSize(width: offset.width + value.translation.width,
-                                            height: offset.height + value.translation.height), size: geometry.size)
-                }
-            })
-            .simultaneousGesture(TapGesture(count: 2).onEnded { restoreZoom() })
+            .simultaneousGesture(TapGesture(count: 2).onEnded { if !isPainting { restoreZoom() } })
         }
         .onChange(of: isPainting) { _, painting in if painting { showingOriginal = false } }
         .onChange(of: hasTransformHandles) { _, editing in
@@ -557,14 +555,8 @@ private struct MaskOverlay: View {
     @State private var overlay: CGImage?
 
     private struct RenderKey: Equatable {
-        let mask: Data
+        let mask: LocalMask
         let imageSize: CGSize
-    }
-
-    private var revision: Data {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
-        return (try? encoder.encode(mask.validated)) ?? Data()
     }
 
     var body: some View {
@@ -581,7 +573,7 @@ private struct MaskOverlay: View {
             }
         }
         .clipped()
-        .task(id: RenderKey(mask: revision, imageSize: imageSize)) {
+        .task(id: RenderKey(mask: mask, imageSize: imageSize)) {
             let rendered = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize)
             guard !Task.isCancelled else { return }
             overlay = rendered

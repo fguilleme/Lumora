@@ -238,7 +238,7 @@ struct MasksView: View {
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("brush-mode")
-            Label("Peignez directement sur la photographie.", systemImage: "paintbrush.pointed")
+            Label(brushMode == .pan ? "Déplacez l’image zoomée sans peindre." : "Peignez sur la photo. Pour naviguer, choisissez Déplacer.", systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
                 .font(.caption).foregroundStyle(.secondary)
             parameter(.size, brush.size); parameter(.feather, brush.feather)
             parameter(.flow, brush.flow); parameter(.opacity, brush.opacity)

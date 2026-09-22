@@ -27,6 +27,8 @@ final class EditorSession {
     @ObservationIgnored private let store = DocumentStore()
     @ObservationIgnored private let maskGenerator = MaskGenerator()
     @ObservationIgnored private let geometryAnalyzer = GeometryAnalyzer()
+    @ObservationIgnored private var maskEditingPreview = false
+    @ObservationIgnored private var deferredMaskRender = false
     @ObservationIgnored private var renderTask: Task<Void, Never>?
     @ObservationIgnored private var sourceURL: URL?
     @ObservationIgnored private var revision = 0
@@ -592,6 +594,7 @@ final class EditorSession {
         if !interacting { history.commit(state); persist() }
     }
     func beginBrushStroke() {
+        guard brushMode != .pan else { return }
         guard let (maskIndex, componentIndex) = selectedComponentIndex,
               case .brush(var brush) = state.masks[maskIndex].components[componentIndex].shape else { return }
         history.begin(brushMode == .paint ? "Peindre le masque" : "Effacer le masque", state: state)
@@ -693,7 +696,22 @@ final class EditorSession {
         selectFirstMaskIfNeeded(); brushMode = .paint; showingOriginal = false; isRendering = false
         try await store.select(saved)
     }
+    /// Matte editing updates only the overlay. Develop once with the latest state
+    /// when returning to a photographic adjustment panel.
+    func setMaskEditingPreview(_ active: Bool) {
+        guard maskEditingPreview != active else { return }
+        finishInteraction()
+        maskEditingPreview = active
+        if active {
+            deferredMaskRender = deferredMaskRender || isRendering
+            renderTask?.cancel(); generation += 1; isRendering = false
+        } else if deferredMaskRender {
+            deferredMaskRender = false
+            requestRender(.high)
+        }
+    }
     private func requestRender(_ quality: PreviewQuality) {
+        if maskEditingPreview { deferredMaskRender = true; return }
         guard let sourceURL else { return }
         generation += 1
         let token = generation, snapshot = state, bypass = bypassCreative

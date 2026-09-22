@@ -83,17 +83,21 @@ struct EditorView: View {
                     .id(session.document?.id)
                     .frame(maxHeight: .infinity)
                     .background(.black)
-                HStack {
-                    Text(session.document?.originalName ?? "Photographie").lineLimit(1)
-                    Text("·")
-                    activeLayerMenu
-                    Spacer()
-                    if session.isRendering { ProgressView().controlSize(.mini) }
-                    Text(result.isRAW ? "RAW" : "\(result.sourceWidth) × \(result.sourceHeight)")
+                if ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel) {
+                    HStack(spacing: 6) {
+                        Text(URL(fileURLWithPath: session.document?.originalName ?? "Photographie").deletingPathExtension().lastPathComponent)
+                            .lineLimit(1).truncationMode(.middle)
+                        activeLayerMenu
+                        Spacer(minLength: 0)
+                        if session.isRendering { ProgressView().controlSize(.mini) }
+                        Text(sourceFormat(result)).fixedSize()
+                        Text("\(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
+                    }
+                    .font(.caption2).foregroundStyle(.secondary)
+                    .padding(.horizontal).frame(height: 28)
+                    .accessibilityIdentifier("photo-information")
+                    .dimsDuringAdjustment()
                 }
-                .font(.caption2).foregroundStyle(.secondary)
-                .padding(.horizontal).frame(height: 28)
-                .dimsDuringAdjustment()
                 editorControls(result)
                     .frame(height: 252)
                     .background(.black)
@@ -153,8 +157,17 @@ struct EditorView: View {
         .alert("Impossible de terminer", isPresented: Binding(get: { session.error != nil }, set: { if !$0 { session.error = nil } })) {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
+        .onAppear { session.setMaskEditingPreview(panel == .masks) }
+        .onChange(of: panel) { _, newPanel in session.setMaskEditingPreview(newPanel == .masks) }
+        .onDisappear { session.setMaskEditingPreview(false) }
         .onChange(of: scenePhase) { _, phase in if phase != .active { session.flush() } }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in session.memoryWarning() }
+    }
+
+    private func sourceFormat(_ result: RenderResult) -> String {
+        if result.isRAW { return "RAW" }
+        let ext = URL(fileURLWithPath: session.document?.originalName ?? "").pathExtension.uppercased()
+        return ext == "JPEG" ? "JPG" : ext.isEmpty ? "IMAGE" : ext
     }
 
     private var header: some View {

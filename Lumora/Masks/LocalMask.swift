@@ -69,9 +69,9 @@ struct BrushMask: Codable, Sendable, Equatable {
 }
 
 enum BrushMode: String, CaseIterable, Sendable {
-    case paint, erase
+    case paint, erase, pan
 
-    var title: String { self == .paint ? "Peindre" : "Effacer" }
+    var title: String { switch self { case .paint: "Peindre"; case .erase: "Effacer"; case .pan: "Déplacer" } }
 }
 
 struct LinearGradientMask: Codable, Sendable, Equatable {

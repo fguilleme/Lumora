@@ -67,18 +67,43 @@ struct CreativeEffectsView: View {
                     }
                         .accessibilityLabel("Détail Creative à résolution native")
                 }.dimsDuringAdjustment()
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(session.state.creative.effects) { fx in
-                            Button {
-                                session.finishInteraction(); selected = fx.id
-                                if let mask = fx.maskID, session.state.masks.contains(where: { $0.id == mask }) { session.selectMask(mask) }
-                                else { session.selectBaseLayer() }
-                            } label: {
-                                Label(fx.kind.descriptor.title, systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
+                HStack(spacing: 8) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(session.state.creative.effects) { fx in
+                                Button {
+                                    session.finishInteraction(); selected = fx.id
+                                    if let mask = fx.maskID, session.state.masks.contains(where: { $0.id == mask }) { session.selectMask(mask) }
+                                    else { session.selectBaseLayer() }
+                                } label: {
+                                    Label(fx.kind.descriptor.title, systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
+                                }
+                                .buttonStyle(.bordered).tint(fx.id == selected ? .mint : .secondary)
+                                .accessibilityIdentifier("creative-effect-\(fx.id)")
                             }
-                            .buttonStyle(.bordered).tint(fx.id == selected ? .mint : .secondary)
-                            .accessibilityIdentifier("creative-effect-\(fx.id)")
+                        }
+                    }
+                    if let effect {
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                effectAction(effect.enabled ? "Désactiver l’effet" : "Activer l’effet", effect.enabled ? "eye" : "eye.slash", "toggle") { update { $0.enabled.toggle() } }
+                                effectAction("Dupliquer", "plus.square.on.square", "duplicate") {
+                                    session.changeCreative("Dupliquer un effet") { $0.duplicate(effect.id) }
+                                }
+                                effectAction("Supprimer", "trash", "delete") {
+                                    session.changeCreative("Supprimer un effet") { $0.effects.removeAll { $0.id == effect.id } }
+                                    selected = session.state.creative.effects.last?.id
+                                }
+                            }
+                            HStack(spacing: 0) {
+                                effectAction("Appliquer plus tôt", "arrow.up", "earlier") {
+                                    session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: -1) }
+                                }.disabled(session.state.creative.effects.first?.id == effect.id)
+                                effectAction("Appliquer plus tard", "arrow.down", "later") {
+                                    session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: 1) }
+                                }.disabled(session.state.creative.effects.last?.id == effect.id)
+                                effectAction("Réinitialiser", "arrow.counterclockwise", "reset") { update { $0.reset() } }
+                            }
                         }
                     }
                 }.dimsDuringAdjustment()
@@ -89,9 +114,6 @@ struct CreativeEffectsView: View {
                     }
                     .dimsDuringAdjustment()
                     HStack {
-                        Button { update { $0.enabled.toggle() } } label: {
-                            Image(systemName: effect.enabled ? "eye" : "eye.slash").frame(width: 30, height: 30)
-                        }.accessibilityLabel(effect.enabled ? "Désactiver l’effet" : "Activer l’effet")
                         Picker("Zone", selection: Binding<UUID?>(get: { effect.maskID }, set: { id in
                             update { $0.maskID = id }
                             if let id { session.selectMask(id) } else { session.selectBaseLayer() }
@@ -103,23 +125,6 @@ struct CreativeEffectsView: View {
                             }
                         }.font(.caption).dimsDuringAdjustment()
                         Spacer(minLength: 0)
-                        Menu {
-                            Button("Dupliquer", systemImage: "plus.square.on.square") {
-                                session.changeCreative("Dupliquer un effet") { $0.duplicate(effect.id) }
-                            }
-                            Button("Appliquer plus tôt", systemImage: "arrow.up") {
-                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: -1) }
-                            }
-                            Button("Appliquer plus tard", systemImage: "arrow.down") {
-                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: 1) }
-                            }
-                            Button("Réinitialiser", systemImage: "arrow.counterclockwise") { update { $0.reset() } }
-                            Button("Supprimer", systemImage: "trash", role: .destructive) {
-                                session.changeCreative("Supprimer un effet") { $0.effects.removeAll { $0.id == effect.id } }
-                                selected = session.state.creative.effects.last?.id
-                            }
-                        } label: { Image(systemName: "ellipsis.circle").frame(width: 32, height: 30) }
-                        .accessibilityLabel("Options de l’effet")
                     }.font(.caption).dimsDuringAdjustment()
 
                     Text("Réglages").font(.subheadline.weight(.semibold)).dimsDuringAdjustment()
@@ -263,6 +268,14 @@ struct CreativeEffectsView: View {
             selected = effect.id
         }
         presetFeedback += 1
+    }
+    private func effectAction(_ title: String, _ symbol: String, _ id: String,
+                              action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol).font(.system(size: 20))
+                .frame(width: 44, height: 44).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityLabel(title)
+            .accessibilityIdentifier("creative-action-" + id)
     }
     private func slider(_ id: String, _ title: String, _ range: ClosedRange<Double>, _ value: Double,
                         _ reset: Double, change: @escaping (Double) -> Void) -> some View {

@@ -307,15 +307,13 @@ final class EditorUITests: XCTestCase {
         XCTAssertTrue(lowKeyItems.firstMatch.waitForExistence(timeout: 3))
         try XCTUnwrap(lowKeyItems.allElementsBoundByIndex.last).tap()
         XCTAssertEqual(effects.count, initialCount + 1)
-        XCTAssertEqual(canvas.frame.height, height, accuracy: 1)
+        XCTAssertEqual(canvas.frame.height, height + 28, accuracy: 1)
         let amount = app.sliders["creative-amount"]
         XCTAssertTrue(amount.exists)
         XCTAssertTrue(app.scrollViews["tools-toolbar"].isHittable)
-        let options = app.buttons["Options de l’effet"]
-        if !options.isHittable { controls.swipeUp() }
-        XCTAssertTrue(options.isHittable)
-        options.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        app.buttons["Dupliquer"].tap()
+        let duplicate = app.buttons["creative-action-duplicate"]
+        for _ in 0..<4 where !duplicate.isHittable { controls.swipeDown() }
+        duplicate.tap()
         XCTAssertEqual(effects.count, initialCount + 2)
         app.buttons["Annuler"].tap()
         XCTAssertEqual(effects.count, initialCount + 1)
@@ -333,8 +331,7 @@ final class EditorUITests: XCTestCase {
         add(attachment)
         // Accessibility slider adjustment can emit several discrete edits. Remove only
         // this test's new effect; duplication undo was asserted separately above.
-        app.buttons["Options de l’effet"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        app.buttons["Supprimer"].tap()
+        app.buttons["creative-action-delete"].tap()
         XCTAssertEqual(effects.count, initialCount)
     }
 
