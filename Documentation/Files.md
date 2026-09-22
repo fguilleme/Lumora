@@ -371,3 +371,12 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 Voir [Auto](AutoCorrection.md).
 
 - `Tests/LumoraVisualTestLab/AutoWBMapping.swift` : caractérisation du renderer Color, mapping WB, invariants et comparaison avant/après ; observations scalaires pré-correction dans `Fixtures/AutoWB`.
+
+- `Lumora/Adjustments/ColorGradingPreset.swift` : 16 définitions fixes, IDs, noms localisés et reconnaissance exacte.
+- `Lumora/UI/GradingPresetSelector.swift` : capsules groupées, Neutral accessible et état sélectionné.
+- `Tests/LumoraCoreTests/ColorGradingPresetTests.swift` : switching, Custom, historique et documents.
+- `Tests/LumoraVisualTestLab/GradingPresets.swift`, `GradingPresetPhotos.swift`, `GradingPresetIntegration.swift`, `GradingPresetReport.swift` : campagne synthétique/photographique, métriques et rapport.
+- `Tests/LumoraVisualTestLab/GradingManualRegression.swift` : comparaison temporaire du Grading manuel au renderer préexistant.
+- `LumoraUITests/GradingPresetUITests.swift` : sélection, historique, persistence, défilement et grand écran.
+
+- `Tests/LumoraVisualTestLab/GradingPresetMemory.swift` : suivi RSS sur 512 sélections et consolidation sans effacement du premier run.

@@ -28,6 +28,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 - Ouvrir **Courbes** pour modifier RVB/Rouge/Vert/Bleu : toucher pour ajouter un point, glisser pour déplacer, ou utiliser les contrôles Entrée/Sortie.
 - Ouvrir **Colorimétrie**, puis le sous-onglet **Mélangeur**, pour régler Teinte/Saturation/Luminance sur huit plages de couleur.
 - Dans **Colorimétrie**, ouvrir **Grading**, choisir Ombres, Tons moyens ou Hautes lumières, puis utiliser la roue chromatique unique ainsi que les réglages de mélange et de balance.
+- **Presets Color Grading** : 16 réglages photographiques éditables, Neutral/Personnalisé, familles Portrait/Cinematic/Atmosphere/Special. [Guide et validation](Documentation/ColorGradingPresets.md).
 - Ouvrir **Effets** pour régler séparément Texture, Clarté, Correction du voile, Vignette et Grain.
 - Ouvrir **Creative** pour ajouter un effet, choisir un look, régler ses paramètres, lui affecter un masque et modifier l’ordre de la pile. Une modification de preset affiche **Custom** ; Undo/Redo s’applique à toute la pile. L’inspecteur **100 %** permet d’examiner une région à la résolution source.
 - Dans **Darken / Lighten Center**, déplacer la poignée sur le sujet puis régler séparément Center et Border en EV. Size, Shape, Feather et Rotation définissent une zone elliptique ; les coordonnées fines sont accessibles via **Position précise X / Y**.
@@ -74,9 +75,11 @@ Film Emulation propose sept types originaux. Silver B&W propose sept réponses s
 
 ## Validation et documentation
 
+Color Grading Presets : **16 presets**, **876 PASS / 29 WARN / 0 FAIL**, 106 tests Core, tests UI iPhone/iPad et 126 comparaisons de rendu manuel/Creative FX réussis. Les WARN restent à inspecter ; aucun tuning automatique. [Bilan et limites](Documentation/ColorGradingPresetsValidation.md).
+
 Les contrôles d’interface couvrent également les poignées de masque sous zoom, la navigation séparée du pinceau, le rendu différé dans Masques, les informations contextuelles et les actions Creative directes. Les tests de rendu des effets restent indépendants de ces changements d’éditeur.
 
-Dernière campagne fonctionnelle, commit `514b724` : build iOS Simulator et test UI réussis, **97 tests Core réussis**, **77 presets antérieurs bit-identiques**. Darken / Lighten Center : **831 contrôles PASS**, dont **751 hard invariants**, **13 WARN de clipping SDR**, **aucun FAIL**. Le banc commun compte 58 cas PASS et neuf WARN historiques. Les mesures GPU sur M2 Pro sont de 0,18 / 0,73 / 2,91 ms à 1024 / 2048 / 4096 ; elles ne certifient pas les performances d’un iPhone. Les corrections techniques et la revalidation sont consignées dans le rapport.
+Campagne Creative précédente, commit `514b724` : build iOS Simulator et test UI réussis, **97 tests Core réussis**, **77 presets antérieurs bit-identiques**. Darken / Lighten Center : **831 contrôles PASS**, dont **751 hard invariants**, **13 WARN de clipping SDR**, **aucun FAIL**. Le banc commun compte 58 cas PASS et neuf WARN historiques. Les mesures GPU sur M2 Pro sont de 0,18 / 0,73 / 2,91 ms à 1024 / 2048 / 4096 ; elles ne certifient pas les performances d’un iPhone. Les corrections techniques et la revalidation sont consignées dans le rapport.
 
 - [Rapport Darken / Lighten Center](TestArtifacts/DarkenLightenCenterValidationReport.md) : géométrie, positionnement, exposition, huit photos et interaction directe.
 - [Rapport Silver Toning](TestArtifacts/SilverToningValidationReport.md) : résultats, tableaux par photo, performances et liens « Priority Visual Inspection ».

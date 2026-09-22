@@ -13,6 +13,10 @@ Faire défiler le panneau pour accéder aux paramètres globaux :
 
 Un geste continu produit une seule commande Undo/Redo. Le reset de la roue préserve les autres roues, la balance, le mélange et tous les autres outils. Les paramètres sont sauvegardés avec le développement.
 
+## Presets photographiques
+
+Le module propose désormais 16 points de départ entièrement éditables. Voir [ColorGradingPresets.md](ColorGradingPresets.md) pour les familles, Neutral/Personnalisé, la persistence et les limites mesurées.
+
 ## Traitement
 
 Le grading intervient **après le mélangeur HSL**, dans la LUT perceptuelle sRGB existante. La luminance pondérée détermine trois poids smoothstep dont la somme vaut un. Les changements de balance déplacent cette répartition et le mélange élargit les transitions.
