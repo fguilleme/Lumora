@@ -1,0 +1,222 @@
+[
+  {
+    "enabled" : true,
+    "id" : "34899169-33F5-4B05-8EDE-522A2FD793D1",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 0,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 50,
+      "toner" : 0
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "8AEADD69-B714-45BA-BA76-014608B16C1C",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 0,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 28,
+      "toner" : 1
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "8837DA53-337D-411B-A9FC-361FF58407D4",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 20,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 0,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 90,
+      "toner" : 1
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "C004F8C9-640B-40DA-985B-F9B0E6A320EF",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 40,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 75,
+      "toner" : 2
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "A88B061F-6662-4A2D-8221-8EEDCB3A927B",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 20,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 25,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 32,
+      "toner" : 2
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "4185889D-C260-4A65-8DA2-1A4EB085E99B",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 10,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 12,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 78,
+      "toner" : 3
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "59D07C1C-BAFD-4EBB-B6D7-DA41377BA833",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : -15,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 80,
+      "toner" : 4
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "75DBFAA4-9803-41EF-8029-7D74CB633FE8",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 8,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 45,
+      "toner" : 5
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "FA629464-19E2-4468-867C-76FE28AC68F2",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 20,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 65,
+      "toner" : 7
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "C13C82F4-A6B9-41DD-9B79-5977B053D704",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : -8,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 65,
+      "toner" : 6
+    },
+    "seed" : 137
+  },
+  {
+    "enabled" : true,
+    "id" : "6F41A650-76E0-404C-A991-44AEC4842A06",
+    "kind" : "silverToning",
+    "monochromatic" : true,
+    "opacity" : 100,
+    "parameters" : {
+      "amount" : 100,
+      "balance" : 0,
+      "highlightHue" : 40,
+      "highlightStrength" : 100,
+      "paperTone" : 15,
+      "shadowHue" : 220,
+      "shadowStrength" : 100,
+      "silverTone" : 100,
+      "strength" : 65,
+      "toner" : 8
+    },
+    "seed" : 137
+  }
+]

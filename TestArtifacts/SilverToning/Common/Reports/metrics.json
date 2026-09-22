@@ -1,0 +1,4465 @@
+[
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "HighKey\/01_standard.png",
+      "HighKey\/01_standard_difference_x4.png",
+      "HighKey\/01_standard_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 5.029296875,
+      "blackClippingPercent" : 4.248046875,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "maxAdjacentRampStep" : 0.0030500441789626936,
+      "maxColorPatchChromaticityDrift" : 2.7548213821226852e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.5405318419256002,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 9.943008422851562,
+      "ramp-highlights-relativeChange" : 0.008217922856085335,
+      "ramp-midtones-relativeChange" : 0.22198825422080568,
+      "ramp-shadows-relativeChange" : 0.30334159861999904,
+      "whiteClippingPercent" : 10.797500610351562
+    },
+    "name" : "HK01_standard",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Relative change = (mean output − mean input)\/mean input. Historical shadow [0,.1] and high-end [.9,1] ramps; for Low Key this is specular\/high-end response, not a general highlights contract. WARN retained for historical comparison.",
+        "hard" : false,
+        "name" : "Dynamic relative response",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "HighKey\/02_dynamic.png",
+      "HighKey\/02_dynamic_difference_x4.png",
+      "HighKey\/02_dynamic_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 5.029296875,
+      "blackClippingPercent" : 4.248046875,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "maxAdjacentRampStep" : 0.004655194468796253,
+      "maxColorPatchChromaticityDrift" : 2.3218030276161983e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.5400184798429506,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 9.943008422851562,
+      "ramp-highlights-relativeChange" : 0.004401384465823996,
+      "ramp-midtones-relativeChange" : 0.18759673121241485,
+      "ramp-shadows-relativeChange" : 0.6391047947760287,
+      "whiteClippingPercent" : 10.797500610351562
+    },
+    "name" : "HK02_dynamic",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Relative change = (mean output − mean input)\/mean input. Historical shadow [0,.1] and high-end [.9,1] ramps; for Low Key this is specular\/high-end response, not a general highlights contract. WARN retained for historical comparison.",
+        "hard" : false,
+        "name" : "Dynamic relative response",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "HighKey\/03_strong_dynamic.png",
+      "HighKey\/03_strong_dynamic_difference_x4.png",
+      "HighKey\/03_strong_dynamic_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 8.8134765625,
+      "blackClippingPercent" : 4.248046875,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "maxAdjacentRampStep" : 0.010255652479827404,
+      "maxColorPatchChromaticityDrift" : 2.4755285987776432e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.5829558481050068,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 13.727188110351562,
+      "ramp-highlights-relativeChange" : 0.002426667855024353,
+      "ramp-midtones-relativeChange" : 0.2881503259932295,
+      "ramp-shadows-relativeChange" : 1.6338875634794232,
+      "whiteClippingPercent" : 14.581680297851562
+    },
+    "name" : "HK03_strong_dynamic",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compare gray .98 for High Key and .02 for Low Key at identical Amount\/Dynamic; protected patch should move less even when no pixels clip.",
+        "hard" : false,
+        "name" : "Protection preserves near-endpoint detail",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compare identical settings except protection=0. Equality may be inconclusive when neither output clips.",
+        "hard" : false,
+        "name" : "Protection clipping comparison",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "HighKey\/04_protected.png",
+      "HighKey\/04_protected_difference_x4.png",
+      "HighKey\/04_protected_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 7.5439453125,
+      "blackClippingPercent" : 4.248046875,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "maxAdjacentRampStep" : 0.006813791580498218,
+      "maxColorPatchChromaticityDrift" : 2.8745867630686206e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.5823112035394709,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 12.457656860351562,
+      "protectedNearEndpointChange" : 7.635354995727539e-05,
+      "ramp-highlights-relativeChange" : 0.0022081338680008953,
+      "ramp-midtones-relativeChange" : 0.33767411045470885,
+      "ramp-shadows-relativeChange" : 1.1503885984502824,
+      "unprotectedBlackClippingPixels" : 11136,
+      "unprotectedNearEndpointChange" : 0.008098185062408447,
+      "unprotectedWhiteClippingPixels" : 34897,
+      "whiteClippingPercent" : 13.312149047851562
+    },
+    "name" : "HK04_protected",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "HighKey\/05_glow.png",
+      "HighKey\/05_glow_difference_x4.png",
+      "HighKey\/05_glow_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 5.029296875,
+      "blackClippingPercent" : 4.034423828125,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "maxAdjacentRampStep" : 0.004655194468796253,
+      "maxColorPatchChromaticityDrift" : 0.09728176386756138,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.5418973137168307,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 9.943008422851562,
+      "ramp-highlights-relativeChange" : 0.007808855865300518,
+      "ramp-midtones-relativeChange" : 0.19215716701618754,
+      "ramp-shadows-relativeChange" : 0.6616359518222426,
+      "whiteClippingPercent" : 10.797500610351562
+    },
+    "name" : "HK05_glow",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Expected = untouched analytic chart, not an effect render.",
+        "hard" : true,
+        "name" : "Amount zero identity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "identityMaxError" : 0
+    },
+    "name" : "HK00_identity",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/01_standard.png",
+      "LowKey\/01_standard_difference_x4.png",
+      "LowKey\/01_standard_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 0,
+      "blackClippingPercent" : 4.248046875,
+      "bright-tones-absoluteChange" : -0.06187908151956989,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.7130719925474933,
+      "bright-tones-relativeChange" : -0.07984901704157772,
+      "bright-tones-sampleCount" : 127,
+      "deep-shadows-absoluteChange" : -0.015193464982215889,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.03470868728786277,
+      "deep-shadows-relativeChange" : -0.30446512406892506,
+      "deep-shadows-sampleCount" : 52,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "legacy-specular-high-end-response-relativeChange" : -0.008217897979973333,
+      "maxAdjacentRampStep" : 0.0027660131454467773,
+      "maxColorPatchChromaticityDrift" : 2.3308122765186567e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.4303135920598629,
+      "midtones-absoluteChange" : -0.10762941113064411,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.36790874941721974,
+      "midtones-relativeChange" : -0.22633180690829333,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 4.9137115478515625,
+      "ramp-midtones-relativeChange" : -0.2219882411822957,
+      "ramp-shadows-relativeChange" : -0.30334158008563283,
+      "shadows-absoluteChange" : -0.07060172120291813,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.12998536459225066,
+      "shadows-relativeChange" : -0.3519754072054952,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.003400864509435775,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9721372929903177,
+      "specular-whites-relativeChange" : -0.003486141965120041,
+      "specular-whites-sampleCount" : 26,
+      "whiteClippingPercent" : 5.7682037353515625
+    },
+    "name" : "LK01_standard",
+    "notes" : [
+      "Historical ramp metrics retained: shadows [0,.10], midtones [.40,.60], specular\/high-end response [.90,1]. The latter is not a general highlights measure. New photographic zones are reported separately; [.90,.95] is an intentionally unclassified transition.",
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Relative change = (mean output − mean input)\/mean input. Historical shadow [0,.1] and high-end [.9,1] ramps; for Low Key this is specular\/high-end response, not a general highlights contract. WARN retained for historical comparison.",
+        "hard" : false,
+        "name" : "Historical specular\/high-end vs deep-shadow relative response",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/02_dynamic.png",
+      "LowKey\/02_dynamic_difference_x4.png",
+      "LowKey\/02_dynamic_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 0,
+      "blackClippingPercent" : 4.248046875,
+      "bright-tones-absoluteChange" : -0.07847868269822733,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.6964723913688359,
+      "bright-tones-relativeChange" : -0.10126920953391168,
+      "bright-tones-sampleCount" : 127,
+      "deep-shadows-absoluteChange" : -0.00816874944184047,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04173340282823819,
+      "deep-shadows-relativeChange" : -0.16369533317180096,
+      "deep-shadows-sampleCount" : 52,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "legacy-specular-high-end-response-relativeChange" : -0.020012162430856194,
+      "maxAdjacentRampStep" : 0.005063772201538086,
+      "maxColorPatchChromaticityDrift" : 1.5326051594488632e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.4374552389472661,
+      "midtones-absoluteChange" : -0.0906154491714925,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.38492271137637135,
+      "midtones-relativeChange" : -0.1905534753869072,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 4.9137115478515625,
+      "ramp-midtones-relativeChange" : -0.19040303107658643,
+      "ramp-shadows-relativeChange" : -0.16301069874926086,
+      "shadows-absoluteChange" : -0.04388560661498239,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.1567014791801864,
+      "shadows-relativeChange" : -0.21878580288960653,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.011469889145631074,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9640682683541224,
+      "specular-whites-relativeChange" : -0.011757499240242658,
+      "specular-whites-sampleCount" : 26,
+      "whiteClippingPercent" : 5.7682037353515625
+    },
+    "name" : "LK02_dynamic",
+    "notes" : [
+      "Historical ramp metrics retained: shadows [0,.10], midtones [.40,.60], specular\/high-end response [.90,1]. The latter is not a general highlights measure. New photographic zones are reported separately; [.90,.95] is an intentionally unclassified transition.",
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Relative change = (mean output − mean input)\/mean input. Historical shadow [0,.1] and high-end [.9,1] ramps; for Low Key this is specular\/high-end response, not a general highlights contract. WARN retained for historical comparison.",
+        "hard" : false,
+        "name" : "Historical specular\/high-end vs deep-shadow relative response",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/03_strong_dynamic.png",
+      "LowKey\/03_strong_dynamic_difference_x4.png",
+      "LowKey\/03_strong_dynamic_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 0,
+      "blackClippingPercent" : 4.248046875,
+      "bright-tones-absoluteChange" : -0.1651650378553886,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.6097860362116746,
+      "bright-tones-relativeChange" : -0.21312963280194827,
+      "bright-tones-sampleCount" : 127,
+      "deep-shadows-absoluteChange" : -0.0045881579795744865,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04531399429050417,
+      "deep-shadows-relativeChange" : -0.091943088040424,
+      "deep-shadows-sampleCount" : 52,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "legacy-specular-high-end-response-relativeChange" : -0.0530056337190909,
+      "maxAdjacentRampStep" : 0.01164323091506958,
+      "maxColorPatchChromaticityDrift" : 1.981487801616666e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.4093652343945863,
+      "midtones-absoluteChange" : -0.1386077084354848,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.33693045211237904,
+      "midtones-relativeChange" : -0.2914754691312174,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 4.9137115478515625,
+      "ramp-midtones-relativeChange" : -0.2972427387266214,
+      "ramp-shadows-relativeChange" : -0.09134279017680433,
+      "shadows-absoluteChange" : -0.04052288983674612,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.16006419595842267,
+      "shadows-relativeChange" : -0.2020214296254666,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.032265179432355406,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9432729780673981,
+      "specular-whites-relativeChange" : -0.03307423618882233,
+      "specular-whites-sampleCount" : 26,
+      "whiteClippingPercent" : 5.7682037353515625
+    },
+    "name" : "LK03_strong_dynamic",
+    "notes" : [
+      "Historical ramp metrics retained: shadows [0,.10], midtones [.40,.60], specular\/high-end response [.90,1]. The latter is not a general highlights measure. New photographic zones are reported separately; [.90,.95] is an intentionally unclassified transition.",
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Max RGB\/sum(RGB) component drift below .001 on controlled color patches; independent of brightness scaling.",
+        "hard" : false,
+        "name" : "Neutral-saturation hue preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compare gray .98 for High Key and .02 for Low Key at identical Amount\/Dynamic; protected patch should move less even when no pixels clip.",
+        "hard" : false,
+        "name" : "Protection preserves near-endpoint detail",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compare identical settings except protection=0. Equality may be inconclusive when neither output clips.",
+        "hard" : false,
+        "name" : "Protection clipping comparison",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Neutral 0 and 1 patches remain exactly 0 and 1 without glow, within 2e-6 linear RGB.",
+        "hard" : true,
+        "name" : "Known black and white endpoints",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/04_protected.png",
+      "LowKey\/04_protected_difference_x4.png",
+      "LowKey\/04_protected_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 0,
+      "blackClippingPercent" : 4.248046875,
+      "bright-tones-absoluteChange" : -0.14126161984571317,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.63368945422135,
+      "bright-tones-relativeChange" : -0.18228456553308628,
+      "bright-tones-sampleCount" : 127,
+      "deep-shadows-absoluteChange" : -0.011766856975065403,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.038135295295013256,
+      "deep-shadows-relativeChange" : -0.23579858662971562,
+      "deep-shadows-sampleCount" : 52,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "legacy-specular-high-end-response-relativeChange" : -0.03602189141970503,
+      "maxAdjacentRampStep" : 0.007549166679382324,
+      "maxColorPatchChromaticityDrift" : 1.6861114504607144e-08,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.3996419953844173,
+      "midtones-absoluteChange" : -0.16310780765957006,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.3124303528882938,
+      "midtones-relativeChange" : -0.34299625391084243,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 4.9137115478515625,
+      "protectedNearEndpointChange" : -0.0005998797714710236,
+      "ramp-midtones-relativeChange" : -0.3427254453906293,
+      "ramp-shadows-relativeChange" : -0.23389498653904509,
+      "shadows-absoluteChange" : -0.07896033491866263,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.12162675087650617,
+      "shadows-relativeChange" : -0.3936461542658516,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.02064579954514134,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9548923579546121,
+      "specular-whites-relativeChange" : -0.02116349769244834,
+      "specular-whites-sampleCount" : 26,
+      "unprotectedBlackClippingPixels" : 11136,
+      "unprotectedNearEndpointChange" : -0.00809837132692337,
+      "unprotectedWhiteClippingPixels" : 15121,
+      "whiteClippingPercent" : 5.7682037353515625
+    },
+    "name" : "LK04_protected",
+    "notes" : [
+      "Historical ramp metrics retained: shadows [0,.10], midtones [.40,.60], specular\/high-end response [.90,1]. The latter is not a general highlights measure. New photographic zones are reported separately; [.90,.95] is an intentionally unclassified transition.",
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "NaN\/Inf pixel count must be zero, including alpha.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "WARN when >1% of pixels newly reach a channel value of 1. This flags output gamut pressure even when luminance remains below white; existing HDR pixels are subtracted.",
+        "hard" : false,
+        "name" : "Additional SDR channel clipping",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "High Key lifts; Low Key darkens. Includes the fixed HDR source regions.",
+        "hard" : false,
+        "name" : "Mean tonal direction",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Derivative reversals below -1e-6; tolerate at most 0.1% of ramp steps (minimum one).",
+        "hard" : false,
+        "name" : "Ramp monotonicity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/05_glow.png",
+      "LowKey\/05_glow_difference_x4.png",
+      "LowKey\/05_glow_transfer_curve.png"
+    ],
+    "metrics" : {
+      "additionalChannelClippingPercent" : 0,
+      "blackClippingPercent" : 4.034423828125,
+      "bright-tones-absoluteChange" : -0.07562666943692786,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.6993244046301353,
+      "bright-tones-relativeChange" : -0.09758896008754125,
+      "bright-tones-sampleCount" : 127,
+      "deep-shadows-absoluteChange" : -0.00816874944184047,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04173340282823819,
+      "deep-shadows-relativeChange" : -0.16369533317180096,
+      "deep-shadows-sampleCount" : 52,
+      "flatRampSteps" : 0,
+      "inputBlackClippingPercent" : 4.248046875,
+      "inputWhiteClippingPercent" : 5.7682037353515625,
+      "legacy-specular-high-end-response-relativeChange" : -0.0150277687126435,
+      "maxAdjacentRampStep" : 0.004665732383728027,
+      "maxColorPatchChromaticityDrift" : 0.1390900772119642,
+      "meanInput" : 0.4854227115431502,
+      "meanOutput" : 0.4388149689257067,
+      "midtones-absoluteChange" : -0.0906154491714925,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.38492271137637135,
+      "midtones-relativeChange" : -0.1905534753869072,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "outsideSDRPercent" : 4.9137115478515625,
+      "ramp-midtones-relativeChange" : -0.18390622584977154,
+      "ramp-shadows-relativeChange" : -0.14817237980461329,
+      "shadows-absoluteChange" : -0.04388560661498239,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.1567014791801864,
+      "shadows-relativeChange" : -0.21878580288960653,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.008710973537885192,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9668271839618683,
+      "specular-whites-relativeChange" : -0.008929403192398851,
+      "specular-whites-sampleCount" : 26,
+      "whiteClippingPercent" : 5.7682037353515625
+    },
+    "name" : "LK05_glow",
+    "notes" : [
+      "Historical ramp metrics retained: shadows [0,.10], midtones [.40,.60], specular\/high-end response [.90,1]. The latter is not a general highlights measure. New photographic zones are reported separately; [.90,.95] is an intentionally unclassified transition.",
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Expected = untouched analytic chart, not an effect render.",
+        "hard" : true,
+        "name" : "Amount zero identity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "identityMaxError" : 0
+    },
+    "name" : "LK00_identity",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Amount=.60; opacity=1; shadows=.65; lights=.70; contrast\/saturation\/glow=0; every other field identical.",
+        "hard" : true,
+        "name" : "Only Dynamic varies",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "All RGBA samples must be finite.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Every adjacent output sample must be nondecreasing, with 1e-6 linear GPU tolerance; no inversion count allowance.",
+        "hard" : true,
+        "name" : "Monotone curve \/ no tonal inversions",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Output <= input + 1e-6 over the entire neutral ramp.",
+        "hard" : true,
+        "name" : "Low Key does not brighten",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "At fixed lightProtection=.70, [.95,1] may darken less proportionally than [.65,.90]. This does not establish the causal effect of the protection parameter.",
+        "hard" : false,
+        "name" : "Separate specular preservation",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/LK_DynamicSweep_000.png"
+    ],
+    "metrics" : {
+      "amount" : 0.6,
+      "bright-tones-absoluteChange" : -0.07425489763575277,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.7006961764313104,
+      "bright-tones-relativeChange" : -0.0958188202076443,
+      "bright-tones-sampleCount" : 127,
+      "darkeningCentroid" : 0.47921577109383623,
+      "deep-shadows-absoluteChange" : -0.018232159045650266,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.03166999322442839,
+      "deep-shadows-relativeChange" : -0.365358170264377,
+      "deep-shadows-sampleCount" : 52,
+      "dynamic" : 0,
+      "midtones-absoluteChange" : -0.12915529843482226,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.3463828621130416,
+      "midtones-relativeChange" : -0.2715981789684837,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "shadows-absoluteChange" : -0.08472206823381724,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.11586501756135155,
+      "shadows-relativeChange" : -0.4223705025573376,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.004081045205776457,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.971457112293977,
+      "specular-whites-relativeChange" : -0.004183378348045282,
+      "specular-whites-sampleCount" : 26
+    },
+    "name" : "LK_DynamicSweep_000",
+    "notes" : [
+      "Dynamic=0 is the reference; progression checks start at Dynamic=.25.",
+      "Zones use input linear luminance. AbsoluteChange = mean(output-input), signed linear units. RelativeChange = absoluteChange\/mean(input), not mean pixel-wise ratios. [.90,.95] is intentionally excluded from named zones, but included in monotonicity, finiteness, centroid and curves. Near-black relative curve denominator is floored at 1e-6."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Amount=.60; opacity=1; shadows=.65; lights=.70; contrast\/saturation\/glow=0; every other field identical.",
+        "hard" : true,
+        "name" : "Only Dynamic varies",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "All RGBA samples must be finite.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Every adjacent output sample must be nondecreasing, with 1e-6 linear GPU tolerance; no inversion count allowance.",
+        "hard" : true,
+        "name" : "Monotone curve \/ no tonal inversions",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Output <= input + 1e-6 over the entire neutral ramp.",
+        "hard" : true,
+        "name" : "Low Key does not brighten",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "At fixed lightProtection=.70, [.95,1] may darken less proportionally than [.65,.90]. This does not establish the causal effect of the protection parameter.",
+        "hard" : false,
+        "name" : "Separate specular preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Loss-weighted input-luminance centroid over the FULL [0,1] ramp must move right; includes [.90,.95].",
+        "hard" : false,
+        "name" : "Darkening moves toward brighter luminance",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/LK_DynamicSweep_025.png"
+    ],
+    "metrics" : {
+      "amount" : 0.6,
+      "bright-tones-absoluteChange" : -0.08421466435034441,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.6907364097167188,
+      "bright-tones-relativeChange" : -0.10867094345501428,
+      "bright-tones-sampleCount" : 127,
+      "darkeningCentroid" : 0.5089609428156479,
+      "deep-shadows-absoluteChange" : -0.01401732918860104,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.03588482308147762,
+      "deep-shadows-relativeChange" : -0.28089628504872793,
+      "deep-shadows-sampleCount" : 52,
+      "dynamic" : 0.25,
+      "midtones-absoluteChange" : -0.1189469226412267,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.35659123790663716,
+      "midtones-relativeChange" : -0.25013118296161313,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "shadows-absoluteChange" : -0.06869239937148844,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.13189468642368035,
+      "shadows-relativeChange" : -0.34245673942157107,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.008922450817548278,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9666157066822052,
+      "specular-whites-relativeChange" : -0.009146183313235015,
+      "specular-whites-sampleCount" : 26
+    },
+    "name" : "LK_DynamicSweep_025",
+    "notes" : [
+      "Zones use input linear luminance. AbsoluteChange = mean(output-input), signed linear units. RelativeChange = absoluteChange\/mean(input), not mean pixel-wise ratios. [.90,.95] is intentionally excluded from named zones, but included in monotonicity, finiteness, centroid and curves. Near-black relative curve denominator is floored at 1e-6."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Amount=.60; opacity=1; shadows=.65; lights=.70; contrast\/saturation\/glow=0; every other field identical.",
+        "hard" : true,
+        "name" : "Only Dynamic varies",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "All RGBA samples must be finite.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Every adjacent output sample must be nondecreasing, with 1e-6 linear GPU tolerance; no inversion count allowance.",
+        "hard" : true,
+        "name" : "Monotone curve \/ no tonal inversions",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Output <= input + 1e-6 over the entire neutral ramp.",
+        "hard" : true,
+        "name" : "Low Key does not brighten",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "At fixed lightProtection=.70, [.95,1] may darken less proportionally than [.65,.90]. This does not establish the causal effect of the protection parameter.",
+        "hard" : false,
+        "name" : "Separate specular preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Loss-weighted input-luminance centroid over the FULL [0,1] ramp must move right; includes [.90,.95].",
+        "hard" : false,
+        "name" : "Darkening moves toward brighter luminance",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/LK_DynamicSweep_050.png"
+    ],
+    "metrics" : {
+      "amount" : 0.6,
+      "bright-tones-absoluteChange" : -0.09417441980106622,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.680776654265997,
+      "bright-tones-relativeChange" : -0.12152305216744108,
+      "bright-tones-sampleCount" : 127,
+      "darkeningCentroid" : 0.5419046537465598,
+      "deep-shadows-absoluteChange" : -0.009802499591247536,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04009965267883112,
+      "deep-shadows-relativeChange" : -0.19643440503717746,
+      "deep-shadows-sampleCount" : 52,
+      "dynamic" : 0.5,
+      "midtones-absoluteChange" : -0.10873854609841077,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.3667996144494531,
+      "midtones-relativeChange" : -0.22866418537922156,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "shadows-absoluteChange" : -0.052662731020473974,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.14792435477469482,
+      "shadows-relativeChange" : -0.2625429788348935,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.013763865599265457,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.961774291900488,
+      "specular-whites-relativeChange" : -0.014108997678308585,
+      "specular-whites-sampleCount" : 26
+    },
+    "name" : "LK_DynamicSweep_050",
+    "notes" : [
+      "Zones use input linear luminance. AbsoluteChange = mean(output-input), signed linear units. RelativeChange = absoluteChange\/mean(input), not mean pixel-wise ratios. [.90,.95] is intentionally excluded from named zones, but included in monotonicity, finiteness, centroid and curves. Near-black relative curve denominator is floored at 1e-6."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Amount=.60; opacity=1; shadows=.65; lights=.70; contrast\/saturation\/glow=0; every other field identical.",
+        "hard" : true,
+        "name" : "Only Dynamic varies",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "All RGBA samples must be finite.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Every adjacent output sample must be nondecreasing, with 1e-6 linear GPU tolerance; no inversion count allowance.",
+        "hard" : true,
+        "name" : "Monotone curve \/ no tonal inversions",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Output <= input + 1e-6 over the entire neutral ramp.",
+        "hard" : true,
+        "name" : "Low Key does not brighten",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "At fixed lightProtection=.70, [.95,1] may darken less proportionally than [.65,.90]. This does not establish the causal effect of the protection parameter.",
+        "hard" : false,
+        "name" : "Separate specular preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Loss-weighted input-luminance centroid over the FULL [0,1] ramp must move right; includes [.90,.95].",
+        "hard" : false,
+        "name" : "Darkening moves toward brighter luminance",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/LK_DynamicSweep_075.png"
+    ],
+    "metrics" : {
+      "amount" : 0.6,
+      "bright-tones-absoluteChange" : -0.10413418229170668,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.6708168917753565,
+      "bright-tones-relativeChange" : -0.13437516996420737,
+      "bright-tones-sampleCount" : 127,
+      "darkeningCentroid" : 0.5785921537983011,
+      "deep-shadows-absoluteChange" : -0.005587669801361002,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04431448246871766,
+      "deep-shadows-relativeChange" : -0.11197252116741606,
+      "deep-shadows-sampleCount" : 52,
+      "dynamic" : 0.75,
+      "midtones-absoluteChange" : -0.0985301695555948,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.37700799099226906,
+      "midtones-relativeChange" : -0.20719718779682988,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "shadows-absoluteChange" : -0.036633062377279896,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.1639540234178889,
+      "shadows-relativeChange" : -0.18262921679159375,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.018605271211037278,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9569328862887162,
+      "specular-whites-relativeChange" : -0.01907180264349832,
+      "specular-whites-sampleCount" : 26
+    },
+    "name" : "LK_DynamicSweep_075",
+    "notes" : [
+      "Zones use input linear luminance. AbsoluteChange = mean(output-input), signed linear units. RelativeChange = absoluteChange\/mean(input), not mean pixel-wise ratios. [.90,.95] is intentionally excluded from named zones, but included in monotonicity, finiteness, centroid and curves. Near-black relative curve denominator is floored at 1e-6."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Amount=.60; opacity=1; shadows=.65; lights=.70; contrast\/saturation\/glow=0; every other field identical.",
+        "hard" : true,
+        "name" : "Only Dynamic varies",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "All RGBA samples must be finite.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Every adjacent output sample must be nondecreasing, with 1e-6 linear GPU tolerance; no inversion count allowance.",
+        "hard" : true,
+        "name" : "Monotone curve \/ no tonal inversions",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Output <= input + 1e-6 over the entire neutral ramp.",
+        "hard" : true,
+        "name" : "Low Key does not brighten",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "At fixed lightProtection=.70, [.95,1] may darken less proportionally than [.65,.90]. This does not establish the causal effect of the protection parameter.",
+        "hard" : false,
+        "name" : "Separate specular preservation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: deep-shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step at identical Amount; reduction must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Decreasing shadow action: shadows-relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: absoluteChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compared with the preceding Dynamic step; increase must exceed 1e-6.",
+        "hard" : false,
+        "name" : "Increasing bright-tone action: relativeChange",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Loss-weighted input-luminance centroid over the FULL [0,1] ramp must move right; includes [.90,.95].",
+        "hard" : false,
+        "name" : "Darkening moves toward brighter luminance",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "LowKey\/LK_DynamicSweep_100.png",
+      "LowKey\/dynamic_luminance_absolute.png",
+      "LowKey\/dynamic_luminance_relative.png",
+      "LowKey\/dynamic_transfer.png",
+      "LowKey\/dynamic_contact_sheet.png"
+    ],
+    "metrics" : {
+      "amount" : 0.6,
+      "bright-tones-absoluteChange" : -0.11409393398780521,
+      "bright-tones-meanInput" : 0.7749510740670632,
+      "bright-tones-meanOutput" : 0.660857140079258,
+      "bright-tones-relativeChange" : -0.1472272738316531,
+      "bright-tones-sampleCount" : 127,
+      "darkeningCentroid" : 0.6197000547261489,
+      "deep-shadows-absoluteChange" : -0.001372840577879779,
+      "deep-shadows-meanInput" : 0.04990215227007866,
+      "deep-shadows-meanOutput" : 0.04852931169219888,
+      "deep-shadows-relativeChange" : -0.027510648647972934,
+      "deep-shadows-sampleCount" : 52,
+      "dynamic" : 1,
+      "midtones-absoluteChange" : -0.0883217931792723,
+      "midtones-meanInput" : 0.47553816054786385,
+      "midtones-meanOutput" : 0.38721636736859155,
+      "midtones-relativeChange" : -0.18573019056455414,
+      "midtones-sampleCount" : 179,
+      "monotonicityViolations" : 0,
+      "nonFinitePixels" : 0,
+      "shadows-absoluteChange" : -0.02060339373408579,
+      "shadows-meanInput" : 0.2005870857951688,
+      "shadows-meanOutput" : 0.179983692061083,
+      "shadows-relativeChange" : -0.10271545474829381,
+      "shadows-sampleCount" : 102,
+      "specular-whites-absoluteChange" : -0.023446685992754346,
+      "specular-whites-meanInput" : 0.9755381574997535,
+      "specular-whites-meanOutput" : 0.9520914715069991,
+      "specular-whites-relativeChange" : -0.024034617008571776,
+      "specular-whites-sampleCount" : 26
+    },
+    "name" : "LK_DynamicSweep_100",
+    "notes" : [
+      "Zones use input linear luminance. AbsoluteChange = mean(output-input), signed linear units. RelativeChange = absoluteChange\/mean(input), not mean pixel-wise ratios. [.90,.95] is intentionally excluded from named zones, but included in monotonicity, finiteness, centroid and curves. Near-black relative curve denominator is floored at 1e-6."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/fine.png",
+      "Grain\/fine_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 4.062890681580903e-09,
+      "edgeP95" : 0.005560874938964844,
+      "edgeRMS" : 0.0028301921998800045,
+      "highFrequencyEnergyFraction" : 0.6984660227778178,
+      "meanResidual" : -2.6994513822898857e-05,
+      "peakFrequencyCyclesPerPixel" : 0.4453125,
+      "residualSD" : 0.0014503620709269958,
+      "residualVariance" : 2.103550136783644e-06,
+      "spectralCentroidCyclesPerPixel" : 0.31627087625833805,
+      "uniform-0.05-residualSD" : 0.0005211893928819608,
+      "uniform-0.15-residualSD" : 0.0013909152140832038,
+      "uniform-0.3-residualSD" : 0.002104440079473979,
+      "uniform-0.5-residualSD" : 0.0017526151966019813,
+      "uniform-0.7-residualSD" : 0.0009643459867706655,
+      "uniform-0.85-residualSD" : 0.00047530164396284867,
+      "uniform-0.95-residualSD" : 0.00016907325862469612
+    },
+    "name" : "Grain_fine",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Two executions, same source\/settings\/seed; tolerance 1e-6.",
+        "hard" : true,
+        "name" : "Same-seed determinism",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Different seeds must change spatial content.",
+        "hard" : true,
+        "name" : "Different seed changes pattern",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Residual SD ratio in [0.8,1.2], allowing finite sample variation.",
+        "hard" : false,
+        "name" : "Seed distribution similarity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/medium.png",
+      "Grain\/medium_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 1.6809662571262896e-08,
+      "differentSeedRMSE" : 0.004187844056331572,
+      "edgeP95" : 0.009989351034164429,
+      "edgeRMS" : 0.005112204239584788,
+      "highFrequencyEnergyFraction" : 0.49161950373059105,
+      "meanResidual" : -4.92991805528476e-06,
+      "peakFrequencyCyclesPerPixel" : 0.16796875,
+      "repeatMaxError" : 0,
+      "residualSD" : 0.0029704218623593987,
+      "residualVariance" : 8.82340604038268e-06,
+      "seedSDRatio" : 0.998319692188233,
+      "spectralCentroidCyclesPerPixel" : 0.25723078747021033,
+      "uniform-0.05-residualSD" : 0.0010568056318111302,
+      "uniform-0.15-residualSD" : 0.002842935201477616,
+      "uniform-0.3-residualSD" : 0.004315312763664761,
+      "uniform-0.5-residualSD" : 0.0035556652593128893,
+      "uniform-0.7-residualSD" : 0.0019796446810963686,
+      "uniform-0.85-residualSD" : 0.0009832303483130046,
+      "uniform-0.95-residualSD" : 0.0003457022852173698
+    },
+    "name" : "Grain_medium",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/large.png",
+      "Grain\/large_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 4.782575560241098e-08,
+      "edgeP95" : 0.01752504706382757,
+      "edgeRMS" : 0.008912741648870475,
+      "highFrequencyEnergyFraction" : 0.5515324726043604,
+      "meanResidual" : 2.68091341023353e-06,
+      "peakFrequencyCyclesPerPixel" : 0.07421875,
+      "residualSD" : 0.004984937128388982,
+      "residualVariance" : 2.4849598173990984e-05,
+      "spectralCentroidCyclesPerPixel" : 0.26875354318405675,
+      "uniform-0.05-residualSD" : 0.0017640053565381693,
+      "uniform-0.15-residualSD" : 0.004760724604024697,
+      "uniform-0.3-residualSD" : 0.007181638339062226,
+      "uniform-0.5-residualSD" : 0.005969614917189125,
+      "uniform-0.7-residualSD" : 0.0033610364072611315,
+      "uniform-0.85-residualSD" : 0.0016424071397718788,
+      "uniform-0.95-residualSD" : 0.0005867882489035313
+    },
+    "name" : "Grain_large",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/soft.png",
+      "Grain\/soft_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 4.9771922547186706e-09,
+      "edgeP95" : 0.005327433347702082,
+      "edgeRMS" : 0.002746393320537617,
+      "highFrequencyEnergyFraction" : 0.5089179575330364,
+      "meanResidual" : -2.419985823727832e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.001602317914977066,
+      "residualVariance" : 2.5674227006564517e-06,
+      "spectralCentroidCyclesPerPixel" : 0.25914223394383823,
+      "uniform-0.05-residualSD" : 0.0005709484061677984,
+      "uniform-0.15-residualSD" : 0.0015344351859803342,
+      "uniform-0.3-residualSD" : 0.002330832566292343,
+      "uniform-0.5-residualSD" : 0.0019235897520828071,
+      "uniform-0.7-residualSD" : 0.001069216485366105,
+      "uniform-0.85-residualSD" : 0.0005277908687564056,
+      "uniform-0.95-residualSD" : 0.00018845837831247417
+    },
+    "name" : "Grain_soft",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/hardness_medium.png",
+      "Grain\/hardness_medium_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 1.5421284828457535e-08,
+      "edgeP95" : 0.009397119283676092,
+      "edgeRMS" : 0.004844309457600456,
+      "highFrequencyEnergyFraction" : 0.5088347514066737,
+      "meanResidual" : -1.4264506175462e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.002826228215362921,
+      "residualVariance" : 7.987565925313481e-06,
+      "spectralCentroidCyclesPerPixel" : 0.25910934962626603,
+      "uniform-0.05-residualSD" : 0.001006961679921629,
+      "uniform-0.15-residualSD" : 0.0027053617171927326,
+      "uniform-0.3-residualSD" : 0.004110165969106516,
+      "uniform-0.5-residualSD" : 0.0033939427223548912,
+      "uniform-0.7-residualSD" : 0.0018859202520963051,
+      "uniform-0.85-residualSD" : 0.0009304192346456298,
+      "uniform-0.95-residualSD" : 0.0003326028503629031
+    },
+    "name" : "Grain_hardness_medium",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/hard.png",
+      "Grain\/hard_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 2.79723759423529e-08,
+      "edgeP95" : 0.012685120105743464,
+      "edgeRMS" : 0.006531219064797602,
+      "highFrequencyEnergyFraction" : 0.5093933165105302,
+      "meanResidual" : -4.257191122144215e-06,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.003808113785624832,
+      "residualVariance" : 1.4501730604265889e-05,
+      "spectralCentroidCyclesPerPixel" : 0.2592714068181959,
+      "uniform-0.05-residualSD" : 0.0013567331984732178,
+      "uniform-0.15-residualSD" : 0.0036442263677893792,
+      "uniform-0.3-residualSD" : 0.005536698007390461,
+      "uniform-0.5-residualSD" : 0.004574196603963161,
+      "uniform-0.7-residualSD" : 0.0025409950374255044,
+      "uniform-0.85-residualSD" : 0.001253207200340175,
+      "uniform-0.95-residualSD" : 0.00044830765967362985
+    },
+    "name" : "Grain_hard",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/monochromatic.png",
+      "Grain\/monochromatic_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 1.424765989240434e-08,
+      "edgeP95" : 0.009029328823089655,
+      "edgeRMS" : 0.004655767138662973,
+      "highFrequencyEnergyFraction" : 0.5088067604379691,
+      "meanResidual" : -1.5272096397611937e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.0027163226583832357,
+      "residualVariance" : 7.3784087844461696e-06,
+      "spectralCentroidCyclesPerPixel" : 0.2591016031285626,
+      "uniform-0.05-residualSD" : 0.0009678108062653865,
+      "uniform-0.15-residualSD" : 0.002600248457614896,
+      "uniform-0.3-residualSD" : 0.003950437329662761,
+      "uniform-0.5-residualSD" : 0.003261873310851795,
+      "uniform-0.7-residualSD" : 0.001812588410352428,
+      "uniform-0.85-residualSD" : 0.0008942785117864163,
+      "uniform-0.95-residualSD" : 0.0003196541196319307
+    },
+    "name" : "Grain_monochromatic",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/clumping_zero.png",
+      "Grain\/clumping_zero_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 1.0974769863506115e-08,
+      "edgeP95" : 0.00946265459060669,
+      "edgeRMS" : 0.004900467932298992,
+      "highFrequencyEnergyFraction" : 0.7549169940828966,
+      "meanResidual" : -3.427333762206733e-05,
+      "peakFrequencyCyclesPerPixel" : 0.46484375,
+      "residualSD" : 0.0023831459460718213,
+      "residualVariance" : 5.679384600278556e-06,
+      "spectralCentroidCyclesPerPixel" : 0.33328199625572563,
+      "uniform-0.05-residualSD" : 0.0008474791381410533,
+      "uniform-0.15-residualSD" : 0.0022860012716221356,
+      "uniform-0.3-residualSD" : 0.0034624156206883683,
+      "uniform-0.5-residualSD" : 0.002865519879614112,
+      "uniform-0.7-residualSD" : 0.0015890283731077879,
+      "uniform-0.85-residualSD" : 0.0007824334909923897,
+      "uniform-0.95-residualSD" : 0.00028045727771054826
+    },
+    "name" : "Grain_clumping_zero",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/clumping_medium.png",
+      "Grain\/clumping_medium_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 2.388177687013815e-08,
+      "edgeP95" : 0.010458052158355713,
+      "edgeRMS" : 0.005230799187516272,
+      "highFrequencyEnergyFraction" : 0.38977724646405915,
+      "meanResidual" : -1.6772092949101172e-07,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.00351894874278583,
+      "residualVariance" : 1.2383000254353974e-05,
+      "spectralCentroidCyclesPerPixel" : 0.22377799188041414,
+      "uniform-0.05-residualSD" : 0.0012549114011003327,
+      "uniform-0.15-residualSD" : 0.0033598521613051957,
+      "uniform-0.3-residualSD" : 0.005105478081665061,
+      "uniform-0.5-residualSD" : 0.004240399923899151,
+      "uniform-0.7-residualSD" : 0.0023433544461748932,
+      "uniform-0.85-residualSD" : 0.00115729001191817,
+      "uniform-0.95-residualSD" : 0.0004144506884981555
+    },
+    "name" : "Grain_clumping_medium",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/clumping_strong.png",
+      "Grain\/clumping_strong_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 6.510915699305296e-08,
+      "edgeP95" : 0.016575515270233154,
+      "edgeRMS" : 0.0077889011556697375,
+      "highFrequencyEnergyFraction" : 0.32685409309898417,
+      "meanResidual" : 4.107095214744157e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.005816100575760982,
+      "residualVariance" : 3.382702590736723e-05,
+      "spectralCentroidCyclesPerPixel" : 0.20536346186032187,
+      "uniform-0.05-residualSD" : 0.002075287952957005,
+      "uniform-0.15-residualSD" : 0.00554397556146688,
+      "uniform-0.3-residualSD" : 0.008415935721189859,
+      "uniform-0.5-residualSD" : 0.007035638379047379,
+      "uniform-0.7-residualSD" : 0.00386379349766447,
+      "uniform-0.85-residualSD" : 0.0019092308414187231,
+      "uniform-0.95-residualSD" : 0.0006853020139179137
+    },
+    "name" : "Grain_clumping_strong",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/softness_zero.png",
+      "Grain\/softness_zero_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 3.559727499780991e-08,
+      "edgeP95" : 0.01577028632163996,
+      "edgeRMS" : 0.008190507056391919,
+      "highFrequencyEnergyFraction" : 0.6368255277966415,
+      "meanResidual" : -8.929445087997519e-06,
+      "peakFrequencyCyclesPerPixel" : 0.46875,
+      "residualSD" : 0.004296952618448323,
+      "residualVariance" : 1.84638018051899e-05,
+      "spectralCentroidCyclesPerPixel" : 0.2973504794749155,
+      "uniform-0.05-residualSD" : 0.0015294769490542875,
+      "uniform-0.15-residualSD" : 0.004120854404478384,
+      "uniform-0.3-residualSD" : 0.006253966527532597,
+      "uniform-0.5-residualSD" : 0.00515400546899061,
+      "uniform-0.7-residualSD" : 0.002869614628864858,
+      "uniform-0.85-residualSD" : 0.0014140902115787313,
+      "uniform-0.95-residualSD" : 0.0005055473213858189
+    },
+    "name" : "Grain_softness_zero",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/softness_strong.png",
+      "Grain\/softness_strong_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 2.916637684878805e-09,
+      "edgeP95" : 0.003581613302230835,
+      "edgeRMS" : 0.0017850756849284465,
+      "highFrequencyEnergyFraction" : 0.3773291748738093,
+      "meanResidual" : -2.37029629890825e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.001224428235193138,
+      "residualVariance" : 1.4992245031381827e-06,
+      "spectralCentroidCyclesPerPixel" : 0.22012037009152624,
+      "uniform-0.05-residualSD" : 0.0004366566988724371,
+      "uniform-0.15-residualSD" : 0.0011688009566078628,
+      "uniform-0.3-residualSD" : 0.00177564647251753,
+      "uniform-0.5-residualSD" : 0.001476565824614224,
+      "uniform-0.7-residualSD" : 0.0008148949691905738,
+      "uniform-0.85-residualSD" : 0.0004026800288441752,
+      "uniform-0.95-residualSD" : 0.00014423924709220366
+    },
+    "name" : "Grain_softness_strong",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/response_shadow.png",
+      "Grain\/response_shadow_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 0,
+      "edgeP95" : 0,
+      "edgeRMS" : 0,
+      "highFrequencyEnergyFraction" : 0,
+      "meanResidual" : -5.358904428561959e-06,
+      "peakFrequencyCyclesPerPixel" : 0.00390625,
+      "residualSD" : 0.0006804568646153368,
+      "residualVariance" : 4.630215446021347e-07,
+      "spectralCentroidCyclesPerPixel" : 0,
+      "uniform-0.05-residualSD" : 0.0017688516149377675,
+      "uniform-0.15-residualSD" : 0.0010464345630982843,
+      "uniform-0.3-residualSD" : 0,
+      "uniform-0.5-residualSD" : 0,
+      "uniform-0.7-residualSD" : 0,
+      "uniform-0.85-residualSD" : 0,
+      "uniform-0.95-residualSD" : 0
+    },
+    "name" : "Grain_response_shadow",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/response_midtone.png",
+      "Grain\/response_midtone_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 5.5355092566150394e-08,
+      "edgeP95" : 0.017795830965042114,
+      "edgeRMS" : 0.009178455705327963,
+      "highFrequencyEnergyFraction" : 0.5088488408997142,
+      "meanResidual" : -5.9338516729169144e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.004727117530169739,
+      "residualVariance" : 2.2345640144038052e-05,
+      "spectralCentroidCyclesPerPixel" : 0.2591058794595932,
+      "uniform-0.05-residualSD" : 0.000520695037208695,
+      "uniform-0.15-residualSD" : 0.004363135122192197,
+      "uniform-0.3-residualSD" : 0.007787716785081416,
+      "uniform-0.5-residualSD" : 0.004817250558335902,
+      "uniform-0.7-residualSD" : 0.0010688423852527895,
+      "uniform-0.85-residualSD" : 4.379182842255392e-05,
+      "uniform-0.95-residualSD" : 0
+    },
+    "name" : "Grain_response_midtone",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/response_highlight.png",
+      "Grain\/response_highlight_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 7.421019663956084e-11,
+      "edgeP95" : 0.0005761981010436457,
+      "edgeRMS" : 0.0002970677394760148,
+      "highFrequencyEnergyFraction" : 0.5087691803624973,
+      "meanResidual" : -1.0355411700991854e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.0027370237312472692,
+      "residualVariance" : 7.491298905410723e-06,
+      "spectralCentroidCyclesPerPixel" : 0.2590985568748811,
+      "uniform-0.05-residualSD" : 0,
+      "uniform-0.15-residualSD" : 0,
+      "uniform-0.3-residualSD" : 0.0002520696067985516,
+      "uniform-0.5-residualSD" : 0.0037923577593691874,
+      "uniform-0.7-residualSD" : 0.005680493952944087,
+      "uniform-0.85-residualSD" : 0.0038771789716854983,
+      "uniform-0.95-residualSD" : 0.001420695902724783
+    },
+    "name" : "Grain_response_highlight",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No non-finite pixels.",
+        "hard" : true,
+        "name" : "Finite output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.7",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.05",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.95",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.15",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.5",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.3",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Heuristic tolerance: .001 linear + 1% of input patch luminance; not an aesthetic score.",
+        "hard" : false,
+        "name" : "Mean residual uniform-0.85",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Grain\/chromatic.png",
+      "Grain\/chromatic_difference_x16.png"
+    ],
+    "metrics" : {
+      "chromaVariance" : 1.4612174270701663e-07,
+      "edgeP95" : 0.009029556900262914,
+      "edgeRMS" : 0.004655768064308062,
+      "highFrequencyEnergyFraction" : 0.5088060044883864,
+      "meanResidual" : -1.5249657590433172e-05,
+      "peakFrequencyCyclesPerPixel" : 0.22265625,
+      "residualSD" : 0.00271632347707764,
+      "residualVariance" : 7.37841323212316e-06,
+      "spectralCentroidCyclesPerPixel" : 0.2591014815661547,
+      "uniform-0.05-residualSD" : 0.0009678103709514117,
+      "uniform-0.15-residualSD" : 0.002600249282509342,
+      "uniform-0.3-residualSD" : 0.0039504374262605635,
+      "uniform-0.5-residualSD" : 0.0032618800263681585,
+      "uniform-0.7-residualSD" : 0.001812588208329605,
+      "uniform-0.85-residualSD" : 0.0008942793564643891,
+      "uniform-0.95-residualSD" : 0.00031965449564140276
+    },
+    "name" : "Grain_chromatic",
+    "notes" : [
+      "WARN: no reviewed golden configured"
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Compare normalized radial energy centroids at fixed source dimensions and seed.",
+        "hard" : false,
+        "name" : "Size moves energy to lower frequencies",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "Adjacent residual correlation > .1; distinguishes from independent white noise, not proof of photographic quality.",
+        "hard" : false,
+        "name" : "Spatial correlation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Report high-frequency fraction and edge RMS\/P95 separately.",
+        "hard" : false,
+        "name" : "Hardness changes edge distribution",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Centroid shift > .001 cycles\/pixel; a pure amplitude change would not change normalized spectrum.",
+        "hard" : false,
+        "name" : "Clumping changes normalized structure",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Centroid shift > .001 cycles\/pixel; alert if this acts mostly as Amount.",
+        "hard" : false,
+        "name" : "Softness changes normalized structure",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Isolated shadow response, others zero.",
+        "hard" : false,
+        "name" : "Shadow response selectivity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Response weights operate in sqrt-linear lightness; representative midtone is linear .3.",
+        "hard" : false,
+        "name" : "Midtone response selectivity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Isolated highlight response, others zero.",
+        "hard" : false,
+        "name" : "Highlight response selectivity",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Chroma proxy = residual R−G variance on neutral patch.",
+        "hard" : false,
+        "name" : "Color grain has measurable chroma",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Pairwise residual RGB correlation > .5; not independent RGB noise.",
+        "hard" : false,
+        "name" : "Color channels remain correlated",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Expected is the original source, not another renderer output.",
+        "hard" : true,
+        "name" : "Amount zero identity",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "zeroAmountMaxError" : 0
+    },
+    "name" : "Grain_properties",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Outside [0,1] overshoot > .002 is suspicious on this neutral edge. This does not score intentional glow spread.",
+        "hard" : false,
+        "name" : "Hard-edge overshoot",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.06794201590309967,
+      "hardEdgeRangeOvershoot" : -0,
+      "maximum" : 1,
+      "minimum" : 0
+    },
+    "name" : "Edges_HighKey",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Outside [0,1] overshoot > .002 is suspicious on this neutral edge. This does not score intentional glow spread.",
+        "hard" : false,
+        "name" : "Hard-edge overshoot",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.07003026780826206,
+      "hardEdgeRangeOvershoot" : -0,
+      "maximum" : 1,
+      "minimum" : 0
+    },
+    "name" : "Edges_HighKeyGlow",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Outside [0,1] overshoot > .002 is suspicious on this neutral edge. This does not score intentional glow spread.",
+        "hard" : false,
+        "name" : "Hard-edge overshoot",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.051846430826117285,
+      "hardEdgeRangeOvershoot" : -0,
+      "maximum" : 1,
+      "minimum" : 0
+    },
+    "name" : "Edges_LowKey",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Outside [0,1] overshoot > .002 is suspicious on this neutral edge. This does not score intentional glow spread.",
+        "hard" : false,
+        "name" : "Hard-edge overshoot",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.05074370812610335,
+      "hardEdgeRangeOvershoot" : -0,
+      "maximum" : 1,
+      "minimum" : 0
+    },
+    "name" : "Edges_LowKeyGlow",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Outside [0,1] overshoot > .002 is suspicious on this neutral edge. This does not score intentional glow spread.",
+        "hard" : false,
+        "name" : "Hard-edge overshoot",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.0010718238049847173,
+      "hardEdgeRangeOvershoot" : -0,
+      "maximum" : 1,
+      "minimum" : 0
+    },
+    "name" : "Edges_Grain",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.09919713087936088,
+      "maximum" : 0.6811822652816772,
+      "minimum" : 0.4041084945201874
+    },
+    "name" : "Textures_HighKey",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.09919713087936088,
+      "maximum" : 0.6811822652816772,
+      "minimum" : 0.4041084945201874
+    },
+    "name" : "Textures_HighKeyGlow",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.07966408618335663,
+      "maximum" : 0.494771122932434,
+      "minimum" : 0.2358076423406601
+    },
+    "name" : "Textures_LowKey",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.07966408618335663,
+      "maximum" : 0.494771122932434,
+      "minimum" : 0.2358076423406601
+    },
+    "name" : "Textures_LowKeyGlow",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "No NaN\/Inf on edges or fine patterns.",
+        "hard" : true,
+        "name" : "Finite structure output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "MAEFromInput" : 0.0017497304629614518,
+      "maximum" : 0.6040636301040649,
+      "minimum" : 0.2937653958797455
+    },
+    "name" : "Textures_Grain",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Known geometric center is inside the existing radial mask.",
+        "hard" : true,
+        "name" : "Inside changes",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Expected outside is the unmodified analytic quadrant source, independently of MaskRenderer.",
+        "hard" : true,
+        "name" : "Outside unchanged",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "insideRMSE" : 0.08595003187656297,
+      "outsideMaxError" : 0
+    },
+    "name" : "Mask_highKey",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Known geometric center is inside the existing radial mask.",
+        "hard" : true,
+        "name" : "Inside changes",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Expected outside is the unmodified analytic quadrant source, independently of MaskRenderer.",
+        "hard" : true,
+        "name" : "Outside unchanged",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "insideRMSE" : 0.0014954554228047204,
+      "outsideMaxError" : 0
+    },
+    "name" : "Mask_grain",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Compares two permitted orders, not an expected image.",
+        "hard" : true,
+        "name" : "Order affects output",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "orderMaxError" : 0.003237009048461914,
+      "orderRMSE" : 0.0008527048137135528
+    },
+    "name" : "EffectStack_order",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Heuristic: residual SD must not jump by > .01 linear across adjacent 1\/64 luminance samples. Inspect the full curve for subtler changes.",
+        "hard" : false,
+        "name" : "Continuous response envelope",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "maximumSDJumpPer1over64Luminance" : 0.0009845238279324968
+    },
+    "name" : "Grain_continuity_shadowAmount",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Heuristic: residual SD must not jump by > .01 linear across adjacent 1\/64 luminance samples. Inspect the full curve for subtler changes.",
+        "hard" : false,
+        "name" : "Continuous response envelope",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "maximumSDJumpPer1over64Luminance" : 0.0008212196699669402
+    },
+    "name" : "Grain_continuity_midtoneAmount",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Heuristic: residual SD must not jump by > .01 linear across adjacent 1\/64 luminance samples. Inspect the full curve for subtler changes.",
+        "hard" : false,
+        "name" : "Continuous response envelope",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "maximumSDJumpPer1over64Luminance" : 0.0005624913262208463
+    },
+    "name" : "Grain_continuity_highlightAmount",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Scenes\/portrait.png",
+      "Scenes\/portrait_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.011274505850509745,
+      "crossProcessing-centerMeanChange" : -0.0005187916725055958,
+      "detailExtractor-centerMeanChange" : 6.225387102743943e-05,
+      "filmEmulation-centerMeanChange" : -0.0007933417362409348,
+      "glamourGlow-centerMeanChange" : 0.05299981219088325,
+      "grain-centerMeanChange" : 5.5450992783561865e-06,
+      "highKey-centerMeanChange" : 0.09091688544087216,
+      "lowKey-centerMeanChange" : -0.06382493480542596,
+      "proContrast-centerMeanChange" : 0.011684218408488621,
+      "silverBW-centerMeanChange" : 0.03353129973568066,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 0.00011728183537991306
+    },
+    "name" : "Scenes_portrait",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Scenes\/landscape.png",
+      "Scenes\/landscape_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.010231720686906748,
+      "crossProcessing-centerMeanChange" : -0.001089344293843079,
+      "detailExtractor-centerMeanChange" : 8.025378861734926e-06,
+      "filmEmulation-centerMeanChange" : -0.000958268100292357,
+      "glamourGlow-centerMeanChange" : 0.03446032725557246,
+      "grain-centerMeanChange" : 1.2647931052345888e-06,
+      "highKey-centerMeanChange" : 0.0888220650260619,
+      "lowKey-centerMeanChange" : -0.05056174966006484,
+      "proContrast-centerMeanChange" : -0.003443528111598326,
+      "silverBW-centerMeanChange" : -0.002105040083284149,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 1.1588867542819953e-05
+    },
+    "name" : "Scenes_landscape",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Scenes\/night.png",
+      "Scenes\/night_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.0011561859527547433,
+      "crossProcessing-centerMeanChange" : -0.00033046177714712204,
+      "detailExtractor-centerMeanChange" : -1.3311583592412014e-06,
+      "filmEmulation-centerMeanChange" : -0.0002149233055349475,
+      "glamourGlow-centerMeanChange" : 0.0020687079490096156,
+      "grain-centerMeanChange" : -6.1831968089621835e-06,
+      "highKey-centerMeanChange" : 0.010481730892673773,
+      "lowKey-centerMeanChange" : -0.0029918522379905354,
+      "proContrast-centerMeanChange" : 0.00011891723243480365,
+      "silverBW-centerMeanChange" : 0.00025885442897268483,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -3.4813693719776926e-06
+    },
+    "name" : "Scenes_night",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Scenes\/still-life.png",
+      "Scenes\/still-life_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.012549464799298098,
+      "crossProcessing-centerMeanChange" : -0.0010881067952418673,
+      "detailExtractor-centerMeanChange" : 5.321670666574935e-05,
+      "filmEmulation-centerMeanChange" : -0.0001364436333898562,
+      "glamourGlow-centerMeanChange" : 0.013251272945551137,
+      "grain-centerMeanChange" : -2.578398135018125e-06,
+      "highKey-centerMeanChange" : 0.09049927736394515,
+      "lowKey-centerMeanChange" : -0.04301671362890994,
+      "proContrast-centerMeanChange" : -0.0005994114054780284,
+      "silverBW-centerMeanChange" : 0.01928510350814414,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 7.992280986835392e-05
+    },
+    "name" : "Scenes_still-life",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-0.png",
+      "Photographs\/photo-0_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.011109573563529427,
+      "crossProcessing-centerMeanChange" : -0.0010249926875564083,
+      "detailExtractor-centerMeanChange" : 0.000287443399188139,
+      "filmEmulation-centerMeanChange" : -0.0006014429737145406,
+      "glamourGlow-centerMeanChange" : 0.03217667252393051,
+      "grain-centerMeanChange" : 1.1123880596006738e-05,
+      "highKey-centerMeanChange" : 0.08798201361190358,
+      "lowKey-centerMeanChange" : -0.05095686244294855,
+      "proContrast-centerMeanChange" : 0.0002573552820035716,
+      "silverBW-centerMeanChange" : 0.019100102859570506,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -0.0001017920735545267
+    },
+    "name" : "Photographs_photo-0",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-1.png",
+      "Photographs\/photo-1_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.00599061604570869,
+      "crossProcessing-centerMeanChange" : -0.000819244670798384,
+      "detailExtractor-centerMeanChange" : 7.885041630925754e-05,
+      "filmEmulation-centerMeanChange" : -9.269462183739321e-06,
+      "glamourGlow-centerMeanChange" : 0.003384028253485908,
+      "grain-centerMeanChange" : -1.219440562011726e-05,
+      "highKey-centerMeanChange" : 0.04627684012172953,
+      "lowKey-centerMeanChange" : -0.018251707399795702,
+      "proContrast-centerMeanChange" : -0.00024696926012253857,
+      "silverBW-centerMeanChange" : 0.007476532745467058,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 6.91698203503657e-05
+    },
+    "name" : "Photographs_photo-1",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-2.png",
+      "Photographs\/photo-2_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.009917909131453134,
+      "crossProcessing-centerMeanChange" : -0.0003722006726494889,
+      "detailExtractor-centerMeanChange" : 3.5848901770697664e-07,
+      "filmEmulation-centerMeanChange" : -0.0017923837957048824,
+      "glamourGlow-centerMeanChange" : 0.06525522191535832,
+      "grain-centerMeanChange" : 8.261001403818616e-05,
+      "highKey-centerMeanChange" : 0.09169434291852475,
+      "lowKey-centerMeanChange" : -0.06795689623004741,
+      "proContrast-centerMeanChange" : 0.005321611866607931,
+      "silverBW-centerMeanChange" : 0.016113878717783213,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -0.00037206720062396965
+    },
+    "name" : "Photographs_photo-2",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-3.png",
+      "Photographs\/photo-3_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.0031346835334982275,
+      "crossProcessing-centerMeanChange" : -0.0004793069942460919,
+      "detailExtractor-centerMeanChange" : -2.1873190443541097e-05,
+      "filmEmulation-centerMeanChange" : -0.003385630566634957,
+      "glamourGlow-centerMeanChange" : 0.02112396739856283,
+      "grain-centerMeanChange" : 7.3980067872117535e-06,
+      "highKey-centerMeanChange" : 0.03547669965777547,
+      "lowKey-centerMeanChange" : -0.020809658548637824,
+      "proContrast-centerMeanChange" : 1.7720368283256648e-09,
+      "silverBW-centerMeanChange" : 0.02523866585856485,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -0.00021798909217504554
+    },
+    "name" : "Photographs_photo-3",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-4.png",
+      "Photographs\/photo-4_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.00155291769075529,
+      "crossProcessing-centerMeanChange" : -0.0002909809545196373,
+      "detailExtractor-centerMeanChange" : 0.00017996707404932484,
+      "filmEmulation-centerMeanChange" : -0.00021030888154013763,
+      "glamourGlow-centerMeanChange" : 0.002283240717921865,
+      "grain-centerMeanChange" : -4.450927644930701e-07,
+      "highKey-centerMeanChange" : 0.013975397029743795,
+      "lowKey-centerMeanChange" : -0.004696994575599377,
+      "proContrast-centerMeanChange" : 0.00016578651967173884,
+      "silverBW-centerMeanChange" : 0.003041710249483349,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -4.494382331119286e-05
+    },
+    "name" : "Photographs_photo-4",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-5.png",
+      "Photographs\/photo-5_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.0008685370673636082,
+      "crossProcessing-centerMeanChange" : -0.0002701327084001193,
+      "detailExtractor-centerMeanChange" : 1.3795705426349287e-05,
+      "filmEmulation-centerMeanChange" : -2.55058058769134e-05,
+      "glamourGlow-centerMeanChange" : 1.6140587673261306e-05,
+      "grain-centerMeanChange" : 3.862357922975063e-06,
+      "highKey-centerMeanChange" : 0.0074431161397292035,
+      "lowKey-centerMeanChange" : -0.0011413616920274024,
+      "proContrast-centerMeanChange" : -0.0002489352085554898,
+      "silverBW-centerMeanChange" : -0.0009676996717863937,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 7.20807953899833e-06
+    },
+    "name" : "Photographs_photo-5",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-6.png",
+      "Photographs\/photo-6_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.006680215532491592,
+      "crossProcessing-centerMeanChange" : 0.0010806435819565225,
+      "detailExtractor-centerMeanChange" : 2.2137934588071858e-05,
+      "filmEmulation-centerMeanChange" : -0.0032580972006786986,
+      "glamourGlow-centerMeanChange" : 0.10620879127932975,
+      "grain-centerMeanChange" : 8.977983205108907e-05,
+      "highKey-centerMeanChange" : 0.08646534007076105,
+      "lowKey-centerMeanChange" : -0.08384881113570883,
+      "proContrast-centerMeanChange" : -0.00036110549179876953,
+      "silverBW-centerMeanChange" : 0.03496375093341539,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : -0.00028255503771768475
+    },
+    "name" : "Photographs_photo-6",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite highKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite lowKey",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite grain",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite tonalContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite detailExtractor",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite glamourGlow",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite bleachBypass",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite proContrast",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite crossProcessing",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite filmEmulation",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverBW",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Central native crop checked numerically; scene quality remains a visual judgment.",
+        "hard" : true,
+        "name" : "Finite silverToning",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Photographs\/photo-7.png",
+      "Photographs\/photo-7_100percent.png"
+    ],
+    "metrics" : {
+      "bleachBypass-centerMeanChange" : -0.00963664391978855,
+      "crossProcessing-centerMeanChange" : -0.0008833893614440783,
+      "detailExtractor-centerMeanChange" : 0.00042492242933235113,
+      "filmEmulation-centerMeanChange" : -0.0010357642950285337,
+      "glamourGlow-centerMeanChange" : 0.035816395107638156,
+      "grain-centerMeanChange" : 6.516474157310417e-05,
+      "highKey-centerMeanChange" : 0.08328672891378949,
+      "lowKey-centerMeanChange" : -0.05063285520268779,
+      "proContrast-centerMeanChange" : 0.006511692723305888,
+      "silverBW-centerMeanChange" : 0.030534603454880772,
+      "silverToning-centerMeanChange" : 0,
+      "tonalContrast-centerMeanChange" : 4.217776032424024e-05
+    },
+    "name" : "Photographs_photo-7",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "height" : 256,
+      "millisecondsIncludingReadback" : 1.784792,
+      "readbackBytes" : 1048576,
+      "width" : 256
+    },
+    "name" : "Performance_256",
+    "notes" : [
+      "Metal CIContext: Apple M2 Pro. Wall time includes allocation\/readback, not isolated GPU kernel time. No machine-dependent speed assertion."
+    ]
+  },
+  {
+    "checks" : [
+
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "height" : 512,
+      "millisecondsIncludingReadback" : 3.03575,
+      "readbackBytes" : 4194304,
+      "width" : 512
+    },
+    "name" : "Performance_512",
+    "notes" : [
+      "Metal CIContext: Apple M2 Pro. Wall time includes allocation\/readback, not isolated GPU kernel time. No machine-dependent speed assertion."
+    ]
+  },
+  {
+    "checks" : [
+
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "height" : 1024,
+      "millisecondsIncludingReadback" : 12.400792,
+      "readbackBytes" : 16777216,
+      "width" : 1024
+    },
+    "name" : "Performance_1024",
+    "notes" : [
+      "Metal CIContext: Apple M2 Pro. Wall time includes allocation\/readback, not isolated GPU kernel time. No machine-dependent speed assertion."
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Compare equal photographic fields after Lanczos normalization, not fixed-size native crops. .75 is a diagnostic threshold allowing preview frequency attenuation.",
+        "hard" : false,
+        "name" : "Pattern correlation 512",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "SD ratio [0.65,1.5] flags substantial perceived-strength disagreement, independently of spatial alignment.",
+        "hard" : false,
+        "name" : "Normalized grain strength 512",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Compare equal photographic fields after Lanczos normalization, not fixed-size native crops. .75 is a diagnostic threshold allowing preview frequency attenuation.",
+        "hard" : false,
+        "name" : "Pattern correlation 1024",
+        "status" : "WARN"
+      },
+      {
+        "detail" : "SD ratio [0.65,1.5] flags substantial perceived-strength disagreement, independently of spatial alignment.",
+        "hard" : false,
+        "name" : "Normalized grain strength 1024",
+        "status" : "WARN"
+      }
+    ],
+    "images" : [
+      "Grain\/resolution_comparison.png"
+    ],
+    "metrics" : {
+      "1024-grainSDRatio" : 1.5653132949406319,
+      "1024-normalizedRMSE" : 0.004480300989351383,
+      "1024-normalizedSSIM" : 0.9796027617398706,
+      "1024-patternCorrelation" : 0.6642578633967083,
+      "512-grainSDRatio" : 1.3130590542675522,
+      "512-normalizedRMSE" : 0.0037546643450573672,
+      "512-normalizedSSIM" : 0.985441208217725,
+      "512-patternCorrelation" : 0.6710436951172424
+    },
+    "name" : "Grain_resolution_consistency",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Equal-field crops normalized to interactive preview dimensions; SSIM>.95 and correlation>.7 are quality heuristics, not byte-equality assertions.",
+        "hard" : false,
+        "name" : "preview perceptual agreement",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Equal-field crops normalized to interactive preview dimensions; SSIM>.95 and correlation>.7 are quality heuristics, not byte-equality assertions.",
+        "hard" : false,
+        "name" : "hq perceptual agreement",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+      "Pipeline\/comparison.png",
+      "Pipeline\/native_crops.png"
+    ],
+    "metrics" : {
+      "export-milliseconds" : 38.256834,
+      "export-width" : 1024,
+      "hq-exportCorrelation" : 0.999986018294275,
+      "hq-exportRMSE" : 5.803500611701196e-05,
+      "hq-exportSSIM" : 0.9999970351879397,
+      "hq-milliseconds" : 24.211916,
+      "hq-width" : 1024,
+      "preview-exportCorrelation" : 0.962120686728622,
+      "preview-exportRMSE" : 0.003052166848970789,
+      "preview-exportSSIM" : 0.9917045200771111,
+      "preview-milliseconds" : 54.492209,
+      "preview-width" : 960
+    },
+    "name" : "Real_preview_HQ_export",
+    "notes" : [
+      "preview execution path: GPU",
+      "hq execution path: GPU"
+    ]
+  }
+]

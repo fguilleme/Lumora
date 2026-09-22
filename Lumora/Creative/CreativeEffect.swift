@@ -11,7 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW
+    case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW, silverToning
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
 }
@@ -75,6 +75,18 @@ enum CreativeEffectCatalog {
             .init("shadowDensity", "Densité des ombres", -100...100, 0),
             .init("colorResponse", "Réponse couleur", 0...100, 75),
             .init("style", "Type interne", 0...6, 0)
+        ]),
+        .silverToning: .init(title: "Silver Toning", category: "Film", symbol: "drop.halffull", parameters: [
+            .init("amount", "Quantité", 0...100, 100),
+            .init("toner", "Toner", 0...8),
+            .init("strength", "Intensité", 0...100, 50),
+            .init("balance", "Balance", -100...100),
+            .init("shadowStrength", "Force des ombres", 0...100, 100),
+            .init("highlightStrength", "Force des lumières", 0...100, 100),
+            .init("paperTone", "Papier (froid / chaud)", -100...100),
+            .init("silverTone", "Virage de l’argent", 0...100, 100),
+            .init("shadowHue", "Teinte des ombres", 0...360, 220),
+            .init("highlightHue", "Teinte des lumières", 0...360, 40)
         ]),
         .silverBW: .init(title: "Silver B&W", category: "Film", symbol: "circle.lefthalf.filled", parameters: [
             .init("amount", "Quantité", 0...100, 100),
@@ -570,6 +582,20 @@ struct CreativeFXPreset: Identifiable {
                 values("Strong Cross", ["style": 6, "amount": 90, "styleStrength": 100, "contrast": 40,
                                        "saturation": 12, "shadowHue": 190, "shadowStrength": 65,
                                        "highlightHue": 25, "highlightStrength": 55, "blackLift": 7])
+            ]
+        case .silverToning:
+            return [
+                values("Neutral Print", [:]),
+                values("Subtle Selenium", ["toner":1,"strength":28]),
+                values("Deep Selenium", ["toner":1,"strength":90,"balance":20]),
+                values("Classic Sepia", ["toner":2,"strength":75,"paperTone":40]),
+                values("Soft Sepia", ["toner":2,"strength":32,"paperTone":25,"balance":20]),
+                values("Copper Print", ["toner":3,"strength":78,"balance":10,"paperTone":12]),
+                values("Cool Gold", ["toner":4,"strength":80,"paperTone":-15]),
+                values("Platinum Print", ["toner":5,"strength":45,"paperTone":8]),
+                values("Warm Silver", ["toner":7,"strength":65,"paperTone":20]),
+                values("Cool Silver", ["toner":6,"strength":65,"paperTone":-8]),
+                values("Split Warm/Cool", ["toner":8,"strength":65,"shadowHue":220,"highlightHue":40,"paperTone":15])
             ]
         case .silverBW:
             return [

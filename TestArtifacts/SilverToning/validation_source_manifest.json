@@ -1,0 +1,14 @@
+{
+  "baseCommit": "8e2ad94768565acd4254455dce5fffc0f51f0a1c",
+  "sha256": {
+    "Lumora/Creative/CreativeEffect.swift": "7f664bfc08341d463a0816c57839411937e0fc4b2b2b2d8ef1e6348077164a42",
+    "Lumora/Creative/CreativeRenderer.swift": "147c50102909f7da9b466ec9922ba6e8a52ef09b79ff0207cdb6524e139b1492",
+    "Lumora/Creative/SilverToningRenderer.swift": "ebef94b3d388b9a35c3e0bd19172246e89f7fd9a9afba8bb6d59da021142ae62",
+    "Lumora/UI/CreativeEffectsView.swift": "ff63548b4614f02b92ab4ec2a95e354f44b91883b048a879bade8d672ff5f507",
+    "Tests/LumoraVisualTestLab/SilverToningReport.swift": "550ce47a953eb81abaea82b7ea370dc991eea5444c53c99419c3cb36a4f727dd",
+    "Tests/LumoraVisualTestLab/SilverToningRegression.swift": "f620e2435a19a5a5be9790fd35e89fe0a5bc194b88067af9dea94ca261d6de62",
+    "Tests/LumoraVisualTestLab/SilverToning.swift": "162857cdd9f5e6c333295d46c8730a7bf1d1eeef1286207b177bb453ef0b32c5",
+    "Tests/LumoraVisualTestLab/SilverToningPhotos.swift": "39d5e68363eef58564b319565f5a30e76c8b10c535451e8e2df34489eb153d3b",
+    "Tests/LumoraVisualTestLab/SilverToningIntegration.swift": "a591a94697bf8d20ac4c3cb6816592823d5225e806e5f4954480644991444b92"
+  }
+}

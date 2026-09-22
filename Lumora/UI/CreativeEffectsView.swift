@@ -137,7 +137,7 @@ struct CreativeEffectsView: View {
                         Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
-                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation || effect.kind == .silverBW {
+                    if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation || effect.kind == .silverBW || effect.kind == .silverToning {
                         Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
@@ -161,7 +161,25 @@ struct CreativeEffectsView: View {
                             }
                         }.dimsDuringAdjustment()
                     }
+                    if effect.kind == .silverToning {
+                        Picker("Toner", selection: Binding<Int>(get: { Int(effect["toner"].rounded()) }, set: { value in
+                            update { $0["toner"] = Double(value) }
+                        })) {
+                            ForEach(SilverToner.allCases, id: \.rawValue) { toner in
+                                Text(toner.title).tag(toner.rawValue)
+                            }
+                        }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-toner")
+                    }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
+                        if effect.kind == .silverToning {
+                            if spec.id == "toner" { return false }
+                            let split = Int(effect["toner"].rounded()) == SilverToner.split.rawValue
+                            if ["shadowHue", "highlightHue"].contains(spec.id) { return split }
+                            if !advanced {
+                                return ["amount", "strength", "balance"].contains(spec.id)
+                                    || (split && ["shadowStrength", "highlightStrength"].contains(spec.id))
+                            }
+                        }
                         if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
                         if (effect.kind == .tonalContrast || effect.kind == .detailExtractor) && !advanced {
                             return !spec.id.hasPrefix("protect")

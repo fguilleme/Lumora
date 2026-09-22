@@ -1,0 +1,19 @@
+{
+  "name": "ST_photographic_review",
+  "checks": [
+    {
+      "name": "Deep Selenium on portraits",
+      "status": "WARN",
+      "hard": false,
+      "detail": "Dominante mauve perceptible sur les carnations avec Deep Selenium dans les deux contact sheets. À valider visuellement ; aucune correction effectuée."
+    }
+  ],
+  "metrics": {},
+  "notes": [
+    "Inspection des planches originales via view_image ; appréciation photographique préliminaire, pas approbation humaine."
+  ],
+  "images": [
+    "SilverToning/RealPhotos/01_portrait_light_skin/SilverToning_contact_sheet.png",
+    "SilverToning/RealPhotos/02_portrait_dark_skin/SilverToning_contact_sheet.png"
+  ]
+}
