@@ -24,7 +24,7 @@ Les mattes Vision ne proposent pas encore de pinceau d’affinage directement at
 
 Les poignées des dégradés suivent le zoom et le déplacement de la photo. Les glisser ne déplace plus simultanément le canvas : le geste de navigation est porté par l’image, indépendamment des poignées.
 
-Le pinceau propose **Peindre / Effacer / Déplacer**. Utiliser Déplacer pour naviguer dans une image agrandie sans ajouter de points au masque ni d’opération d’historique, puis revenir à Peindre ou Effacer. Le cercle indique toujours le diamètre du pinceau dans l’image affichée.
+Le pinceau propose **Peindre / Effacer / Déplacer**. Utiliser Déplacer pour naviguer dans une image agrandie sans ajouter de points au masque ni d’opération d’historique, puis revenir à Peindre ou Effacer. Le cercle indique toujours le diamètre du pinceau dans l’image affichée. Un double toucher réinitialise le zoom et le déplacement dans les trois modes, sans déposer de points ni ajouter d’opération Undo/Redo. Dans Peindre et Effacer, ce geste est exclusif du tracé.
 
 Dans l’onglet Masques, la photographie développée reste fixe pendant que la matte rouge est mise à jour. Les modifications, Undo/Redo et sauvegardes restent actifs ; le développement complet est différé et recalculé une fois avec le dernier état à la sortie de l’onglet. L’export utilise toujours l’état courant. L’overlay ne sérialise plus l’intégralité des points en JSON sur le thread UI à chaque mouvement ; ses tâches périmées sont annulées et il n’est construit que lorsqu’il est affiché.
 
