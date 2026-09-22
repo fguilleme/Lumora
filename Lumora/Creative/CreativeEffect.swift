@@ -566,7 +566,8 @@ struct CreativeFXPreset: Identifiable {
                 values("Muted Cinema", ["style":3,"amount":78,"filmStrength":84,"colorResponse":70]),
                 values("Faded Negative", ["style":4,"amount":77,"filmStrength":90,"colorResponse":68]),
                 values("Vintage Color", ["style":5,"amount":82,"filmStrength":88,"colorResponse":88]),
-                values("Dense Slide", ["style":6,"amount":85,"filmStrength":95,"colorResponse":82])
+                values("Dense Slide", ["style":6,"amount":85,"filmStrength":95,"colorResponse":82,
+                                       "shadowDensity":-80,"contrast":-10,"highlightRollOff":85,"saturation":-12])
             ]
         }
     }
