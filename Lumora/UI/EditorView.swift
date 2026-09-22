@@ -208,17 +208,28 @@ struct EditorView: View {
         }.padding(.horizontal)
     }
     private var importButtons: some View {
-        HStack {
-            Button { showLibrary = true } label: {
-                Label("Bibliothèque", systemImage: "photo.stack").padding(6)
-            }
-            .buttonStyle(.bordered)
-            .accessibilityIdentifier("library-open")
-            Button { showPhotos = true } label: {
-                Label("Photos", systemImage: "photo.on.rectangle").padding(6)
-            }.buttonStyle(.borderedProminent)
-            Button { showFiles = true } label: { Label("Fichiers", systemImage: "folder").padding(6) }.buttonStyle(.bordered)
+        HStack(spacing: 8) {
+            welcomeImportButton("Bibliothèque", symbol: "photo.stack") { showLibrary = true }
+                .accessibilityIdentifier("library-open")
+            welcomeImportButton("Photos", symbol: "photo.on.rectangle", prominent: true) { showPhotos = true }
+            welcomeImportButton("Fichiers", symbol: "folder") { showFiles = true }
         }
+        .padding(.horizontal, 16)
+    }
+
+    private func welcomeImportButton(_ title: LocalizedStringKey, symbol: String,
+                                     prominent: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: symbol)
+                Text(title).lineLimit(1).minimumScaleFactor(0.8)
+            }
+            .font(.caption)
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Capsule())
+        }
+        .buttonStyle(WelcomeImportButtonStyle(prominent: prominent))
     }
 
     private var activeLayerMenu: some View {
@@ -419,4 +430,15 @@ struct EditorView: View {
             .font(.system(.caption2, design: .monospaced)).foregroundStyle(.secondary).padding(8)
     }
     #endif
+}
+
+private struct WelcomeImportButtonStyle: ButtonStyle {
+    let prominent: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(prominent ? Color.black : Color.mint)
+            .background(Capsule().fill(Color.mint.opacity(prominent ? 1 : 0.16)))
+            .opacity(configuration.isPressed ? 0.65 : 1)
+    }
 }
