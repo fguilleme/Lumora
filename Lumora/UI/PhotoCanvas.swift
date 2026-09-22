@@ -124,19 +124,8 @@ struct PhotoCanvas: View {
                 .overlay {
                     if isPainting && !showingOriginal {
                         Color.clear.contentShape(Rectangle())
-                            .gesture(DragGesture(minimumDistance: 0)
-                                .onChanged { value in
-                                    if !brushActive { brushActive = true; onBrushBegin() }
-                                    brushLocation = value.location
-                                    if let point = normalized(value.location, viewSize: geometry.size,
-                                                              imageSize: CGSize(width: result.image.width,
-                                                                                height: result.image.height),
-                                                              displayScale: displayScale,
-                                                              displayOffset: displayOffset) {
-                                        onBrushPoint(point)
-                                    }
-                                }
-                                .onEnded { _ in brushActive = false; brushLocation = nil; onBrushEnd() })
+                            .gesture(brushGesture(viewSize: geometry.size, displayScale: displayScale,
+                                                  displayOffset: displayOffset))
                             .overlay {
                                 if let brushLocation, let brush = activeBrush,
                                    let diameter = brushDiameter(brush, viewSize: geometry.size,
@@ -197,6 +186,34 @@ struct PhotoCanvas: View {
             if editing { zoom = 1; offset = .zero; showingOriginal = false }
         }
     }
+    private func brushGesture(viewSize: CGSize, displayScale: CGFloat,
+                              displayOffset: CGSize) -> some Gesture {
+        TapGesture(count: 2).map { true }
+        .exclusively(before: DragGesture(minimumDistance: 0))
+        .onChanged { gesture in
+            guard case .second(let value) = gesture else { return }
+            if !brushActive { brushActive = true; onBrushBegin() }
+            brushLocation = value.location
+            if let point = normalized(value.location, viewSize: viewSize,
+                                      imageSize: CGSize(width: result.image.width,
+                                                        height: result.image.height),
+                                      displayScale: displayScale,
+                                      displayOffset: displayOffset) {
+                onBrushPoint(point)
+            }
+        }
+        .onEnded { gesture in
+            switch gesture {
+            case .first:
+                restoreZoom()
+            case .second:
+                if brushActive { onBrushEnd() }
+            }
+            brushActive = false
+            brushLocation = nil
+        }
+    }
+
     private func restoreZoom() {
         zoom = 1
         offset = .zero

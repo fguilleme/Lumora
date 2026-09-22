@@ -61,6 +61,33 @@ final class EditorInteractionFixesUITests: XCTestCase {
         let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Mask brush navigation"; shot.lifetime = .keepAlways; add(shot)
         app.buttons["Importer et options"].tap(); app.buttons["Mesures de rendu"].tap()
     }
+    @MainActor func testBrushDoubleTapResetsZoomWithoutEditingMask() throws {
+        let app = try open()
+        panel("Masques", app)
+        app.scrollViews["masks-controls"].buttons["Pinceau"].tap()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        let modes = app.segmentedControls["brush-mode"]
+        let controls = app.scrollViews["masks-controls"]
+        for _ in 0..<12 where !modes.isHittable {
+            controls.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.85)).press(forDuration: 0.05, thenDragTo: controls.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.2)))
+        }
+        for mode in ["Peindre", "Effacer", "Déplacer"] {
+            modes.buttons[mode].tap()
+            canvas.pinch(withScale: 2, velocity: 1)
+            XCTAssertNotEqual(canvas.value as? String, "Zoom 100 %", mode)
+            canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).doubleTap()
+            XCTAssertEqual(canvas.value as? String, "Zoom 100 %", mode)
+        }
+        // The only edit must still be creation of the brush mask.
+        app.buttons["Annuler"].tap()
+        XCTAssertTrue(controls.buttons["Pinceau"].waitForExistence(timeout: 5))
+        app.buttons["Rétablir"].tap()
+        let restoredMask = controls.buttons["Pinceau 1"]
+        XCTAssertTrue(restoredMask.waitForExistence(timeout: 5))
+        restoredMask.tap()
+        XCTAssertTrue(modes.waitForExistence(timeout: 5))
+    }
+
     @MainActor func testInformationAndDirectCreativeActions() throws {
         let app = try open()
         let info = app.descendants(matching: .any).matching(identifier: "photo-information").firstMatch
