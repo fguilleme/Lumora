@@ -12,7 +12,7 @@ Chaque poignée possède une cible tactile de 44 points et un libellé d’acces
 
 Le radial affiche son contour extérieur ainsi qu'une ellipse orange qui marque la fin de sa zone pleine. Déplacer la poignée orange change directement le contour progressif. Pour le linéaire, cette poignée règle la largeur de transition le long de l'axe du dégradé. Ces gestes réutilisent les bornes de 1 à 100 du curseur et restent disponibles après restauration du document. L’overlay rouge est produit depuis la matte Core Image composée : son alpha varie avec la puissance locale du masque et reproduit donc le contour progressif, le débit et la douceur du pinceau, les soustractions, l’inversion et l’opacité du calque.
 
-Cette visualisation accompagne le calque sélectionné quand on ouvre un autre panneau de développement. Pendant le glissement d’un curseur comme Exposition, elle est masquée pour laisser voir l’effet sans coloration ; elle réapparaît au relâchement. Modifier la géométrie ou le contour progressif du masque la laisse visible.
+Cette visualisation est réservée au panneau Masques. Le bouton **Visible / Contour** alterne remplissage rouge et contour blanc, tout en conservant les poignées. Ce choix d’affichage est indépendant de l’activation du calque : il ne modifie ni la photo, ni l’export, ni Undo/Redo. Le contour est calculé sur la matte composée (pinceau, gradients, détections, soustractions et inversion), à 5 % de couverture avant opacité du calque. Il sert de repère de zone ; il ne représente pas toute la progressivité du masque.
 
 Le pinceau propose les modes **Peindre** et **Effacer**. Chaque trait est stocké dans la composante active en coordonnées normalisées ; les traits d’effacement sont appliqués après les traits peints pour retirer réellement de la matte. Un cercle rouge ou cyan montre la taille de la brosse pendant le geste. Chaque trait forme une seule opération Undo/Redo et les deux types de traits sont restaurés avec le document.
 
@@ -31,3 +31,5 @@ Dans l’onglet Masques, la photographie développée reste fixe pendant que la 
 Validation du 22 septembre 2026 : build iOS Simulator réussi, 97 tests Core réussis. Les parcours UI ciblés couvrent déplacement de masque sous zoom, absence de développement pendant le trait, reprise en quittant Masques, navigation sans édition, Undo/Redo, appui long sur masque/recadrage et poignée DLC. Aucune mesure de FPS sur iPhone physique n’est revendiquée.
 
 ![Mode Déplacer du pinceau](BrushNavigation-Simulator.png)
+
+![Affichage du contour sans remplissage rouge](MaskContour-Simulator.png)

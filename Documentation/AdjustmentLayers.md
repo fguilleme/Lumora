@@ -6,7 +6,7 @@ Lumora présente désormais le développement comme une pile ordonnée. Le premi
 
 La sélection d’un calque reste active lorsque l’utilisateur ouvre Lumière, Couleur, Courbes, Mélangeur, Grading, Effets ou Détail. Les changements sont enregistrés dans ce calque, participent à Undo/Redo et sont recalculés depuis l’original pour l’aperçu comme pour l’export. Le nom du calque actif apparaît sous la photographie.
 
-Chaque calque masqué peut être renommé, temporairement masqué, déplacé vers une application plus tôt ou plus tard et mélangé avec une opacité de 0 à 100 %. Toutes ces opérations sont persistées et participent à Undo/Redo. Dans le sélecteur horizontal, la pile se lit de gauche à droite : un déplacement vers la droite applique le calque plus tard.
+Chaque calque masqué peut être renommé, déplacé vers une application plus tôt ou plus tard et mélangé avec une opacité de 0 à 100 %. Ces opérations sont persistées et participent à Undo/Redo. Le bouton Visible / Contour du panneau Masques contrôle uniquement la visualisation du masque ; ce choix ne modifie pas le calque et ne participe pas à l’historique. Dans le sélecteur horizontal, la pile se lit de gauche à droite : un déplacement vers la droite applique le calque plus tard.
 
 À l’intérieur d’un calque, chaque composante peut passer d’Ajouter à Soustraire, être réordonnée ou supprimée. Le radial sélectionné expose un centre et deux rayons directement sur la photographie ; le linéaire expose son centre et sa direction. Un geste complet forme une seule opération d’historique. Voir [Édition directe](MaskEditing.md).
 
