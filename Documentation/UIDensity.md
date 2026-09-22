@@ -41,3 +41,7 @@ Le build final et les tests UI utilisent `SYMROOT`/`OBJROOT` dans `TestArtifacts
 - `git diff --check` : PASS. Les seuls fichiers applicatifs modifiés sont les deux sélecteurs UI et le nouveau style partagé. Aucun changement des valeurs de presets, des réglages, des algorithmes, des transactions d’historique ou du renderer ; navigation basse conservée.
 
 Logs locaux : `/private/tmp/lumora-density-isolated-build.log`, `lumora-density-core.log`, `lumora-density-compact-2.log`, `lumora-density-ipad-2.log`, `lumora-density-large-final.log`, `lumora-density-regression.log` (parcours Auto réussi), `lumora-density-grading-verified.log` (parcours Grading final réussi).
+
+## Accueil
+
+Bibliothèque, Photos et Fichiers partagent une hauteur de 44 pt et une largeur répartie également. Les libellés restent sur une ligne, avec typographie compacte et adaptation de taille limitée ; Photos conserve son fond accentué. Les trois actions d’import sont inchangées. Build iOS Simulator et `git diff --check` validés.
