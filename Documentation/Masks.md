@@ -23,7 +23,7 @@ La composante sélectionnée peut changer d’opération après sa création, ê
 
 Les mattes utilisent des générateurs et des compositions Core Image, et sont donc évaluées par le contexte Metal lorsqu’il est disponible. L’overlay rouge est dérivé de la matte finale composée plutôt que d’une approximation vectorielle : son opacité est proportionnelle à la puissance locale du masque. Le rouge est donc soutenu dans une zone pleinement affectée, devient progressivement transparent dans les transitions radiales et linéaires, et montre aussi les traits doux, les zones soustraites, l’inversion et l’opacité du calque.
 
-L’overlay du masque sélectionné reste visible dans tous les panneaux qui peuvent modifier ce calque, y compris Lumière, Couleur, Courbes, Colorimétrie, Effets et Détail. Il disparaît temporairement pendant le déplacement d’un curseur photographique afin de juger le résultat réel, puis revient dès que le doigt est relâché. Les réglages de forme, de contour progressif et d’opacité conservent l’overlay à l’écran. Le dessin et les poignées de transformation restent limités au panneau Masques.
+L’overlay rouge et les poignées du masque sélectionné sont affichés dans le panneau **Masques**. Ils ne persistent plus dans les autres panneaux, afin de juger les réglages photographiques sans teinte rouge. Les ajustements continuent de cibler le calque sélectionné, même lorsque sa matte n’est pas affichée. Le panneau Creative peut réutiliser ce masque pour chaque effet de sa pile.
 
 ## Réglages du calque et pipeline
 
@@ -35,7 +35,7 @@ Les masques sont évalués après la géométrie. Ce choix garde un espace de co
 
 ## Validation et limites
 
-Les tests numériques vérifient migration, bornes, sérialisation, historique, coordonnées normalisées du pinceau, effacement réel d’un trait, orientation du linéaire, douceur et inversion du radial, overlay rouge et alpha progressif, soustraction réelle d’une zone, exposition limitée au masque, matte PNG intelligente, détection du ciel et calibration de la peau sur des mires, courbe/effet/détail portés par un calque, visibilité, opacité, ordre persistant, conservation des dimensions et cohérence aperçu/export. La suite du cœur compte **82 tests réussis**.
+Les tests numériques vérifient migration, bornes, sérialisation, historique, coordonnées normalisées du pinceau, effacement réel d’un trait, orientation du linéaire, douceur et inversion du radial, overlay rouge et alpha progressif, soustraction réelle d’une zone, exposition limitée au masque, matte PNG intelligente, détection du ciel et calibration de la peau sur des mires, courbe/effet/détail portés par un calque, visibilité, opacité, ordre persistant, conservation des dimensions et cohérence aperçu/export. Ce bilan initial portait sur 82 tests ; le dernier passage du cœur compte 97 tests réussis (22 septembre 2026), voir [le protocole de validation](../Docs/VISUAL_VALIDATION.md).
 
 Le parcours XCTest dédié passe sur simulateur : création d’un pinceau, renommage, visibilité, opacité, réglage local, trait sur la photographie, déplacement direct d’un radial, zoom ×2 partagé avec ses poignées, contour progressif édité dans l’espace zoomé, changement Ajouter/Soustraire, réordonnancement et suppression/restauration de composantes, restauration après relance et réordonnancement des calques avec Undo/Redo. La compilation iOS réussit sans avertissement Swift ; seul l’avertissement Xcode attendu sur l’absence de dépendance AppIntents demeure.
 

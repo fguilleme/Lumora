@@ -16,7 +16,7 @@ Core Image works in extended linear sRGB through the existing Metal CIContext; t
 
 ## Grain
 
-One cached stitchable Metal kernel, compiled via `CIKernel.kernels(withMetalString:)`, serves old Effects grain, Creative grain and future film/B&W renderers. There are no CPU noise textures or per-frame random seeds. The Metal device must support dynamic libraries; kernel failure propagates as a render error.
+One cached stitchable Metal kernel, compiled via `CIKernel.kernels(withMetalString:)`, serves old Effects grain, Creative grain and explicit Film Grain effects. There are no CPU noise textures or per-frame random seeds. The Metal device must support dynamic libraries; kernel failure propagates as a render error.
 
 Integer cell hashing → interpolated spatial field → coarse domain warp → fine/coarse clustered mixture → smooth hardness shaping → continuous shadow/midtone/highlight response → perceptual lightness modulation. Monochrome uses one shared field; color adds a restrained correlated tint field. A small second-order compensation limits mean energy bias; it is an approximation, not a chemical film model.
 
@@ -38,7 +38,7 @@ Output allocation is bounded, but the image/RAW decoder or neighborhood filters 
 
 DEBUG builds expose Creative FX Lab from the Creative panel: a grayscale ramp and dark/mid/highlight/color patches, imported test image (bounded to 2048px), Original/High Key/Low Key/Grain comparison, pixel inspection and measured render duration. The normal 100% inspector is the native-source path. The lab is excluded from Release.
 
-To add an effect: add a kind and catalog descriptor, implement `CreativeEffectRendering`, then register it in `CreativeStackRenderer.renderers`. The compositor, history, persistence, mask assignment and parameter UI remain unchanged. New specialized editors can replace the descriptor-generated controls. Shared `GlowRenderer` and `FilmGrainEngine` are available to future B&W/film engines; those future effects are intentionally not implemented.
+To add an effect: add a kind and catalog descriptor, implement `CreativeEffectRendering`, then register it in `CreativeStackRenderer.renderers`. The compositor, history, persistence, mask assignment and parameter UI remain unchanged. New specialized editors can replace the descriptor-generated controls. The film and monochrome effects below are implemented. They do not add grain implicitly; users add Film Grain explicitly when needed.
 
 ### Simulator verification
 
@@ -47,3 +47,46 @@ Verified on iPhone 18 Pro / iOS 27 Simulator: High Key visibly changes the photo
 `nativeCreativeTileMatchesFullGraphAndHonorsBounds` exercises the public tile API with High Key and grain, checks the 64px output bound, compares its luminance histogram with the matching full-graph crop, and checks bypass. This passed on Metal. Simulator checks do not establish peak-memory or latency behavior on a physical iPhone with 48MP RAW.
 
 `EditorUITests.testCreativeStackAndNativeInspector` passed on the simulator: fixed preview height, adding an effect, changing Amount, restored toolbar, duplicate/undo, opening/closing native inspection, deleting the added effect. Menu tests distinguish the UIKit menu title from an existing same-named effect, because iOS 27 drops SwiftUI menu-item identifiers. The test removes its effect explicitly: accessibility slider adjustment can emit multiple discrete edits, so cleanup must not assume a fixed number of undo commands.
+
+
+## Current effect catalog — 22 September 2026
+
+| Effect | Main role |
+|---|---|
+| High Key / Low Key | Bright or dark photographic tone shaping |
+| Film Grain | Deterministic photographic grain, shared with legacy Effects grain |
+| Tonal Contrast | Multi-scale tonal/local contrast |
+| Detail Extractor | Controlled detail extraction |
+| Glamour Glow | Highlight diffusion with protections |
+| Bleach Bypass | Bleach-inspired contrast, density and color response |
+| Pro Contrast | Color-cast correction and global/dynamic contrast |
+| Cross Processing | Original color-response styles |
+| Film Emulation | Seven original parametric film responses |
+| Silver B&W | Spectral monochrome conversion, filters, tonal shaping and structure |
+| Silver Toning | Density-dependent print coloration, silver/paper and split controls |
+
+Catalog presets are full parameter snapshots. Editing a value shows Custom; returning exactly to a snapshot restores recognition. No separate history or mask system is introduced. The [user guide](../Documentation/CreativeEffects.md) distinguishes the Effects panel, Creative effects and document presets.
+
+### Film Emulation and Dense Slide
+
+Film Emulation uses an analytic, pointwise Metal response in extended linear RGB, with continuous toe/shoulder, channel response and color crosstalk. Its seven types are Neutral Negative, Warm Portrait, Vivid Chrome, Muted Cinema, Faded Negative, Vintage Color and Dense Slide. No built-in grain, halation or external film LUT is added.
+
+Dense Slide was refined and visually approved separately (`c4972f1`). Only its preset values and a targeted validation test changed; the film renderer and other types stayed unchanged. The original Film Emulation report predates this refinement: read it together with the Dense Slide report when available locally.
+
+### Silver B&W
+
+`SilverBWSettings` and `SilverBWRenderer` implement continuous opponent-color spectral weighting and a continuous photographic hue/strength filter before monochrome tonal shaping. Neutral Silver, Fine Grain Response, Portrait Silver, Classic Panchromatic, High Contrast Film, Soft Orthochromatic and Documentary Silver are original Lumora responses. Fine Grain Response does not generate noise.
+
+Brightness and Dynamic Brightness precede the film/tone curve; Contrast, Soft Contrast, Blacks and Whites shape the response. Structure reuses the unchanged Tonal Contrast renderer with fixed moderate gains, then restores exact channel equality. Amount is the final blend: zero is strict RGB identity, 100 produces neutral monochrome. Eight looks are available. See the [Silver B&W report](../TestArtifacts/SilverBWValidationReport.md) for formulas, HDR/negative continuation and measured invariants.
+
+### Silver Toning
+
+`SilverToningSettings` and `SilverToningRenderer` add a separate, pointwise kernel. For linear luminance Y, positive part p and balance scale s, `D=log2(1+s/(p+epsilon))`; implementation evaluates `t=2^-D` without a logarithm. Smooth shadow/highlight functions mix toner-specific hue directions. Those directions are projected onto the constant-Y plane before addition to the original RGB, preserving existing input color rather than converting it to B&W.
+
+Silver Tone follows the density response; signed Paper Tone adds a weak warm/cool contribution concentrated in low-density whites. Strength scales both. Amount=0, Strength=0 and Neutral bypass processing exactly. The correction tends smoothly to zero at black; negative luminance is unchanged. HDR remains extended inside this effect. Split Silver exposes two hues and independent shadow/highlight strengths with the same continuous Balance coordinate. Nine toners and eleven looks are included, without grain or spatial filtering.
+
+Recommended workflow: Silver B&W → Silver Toning → optional Film Grain. Reversing B&W and Toning removes the latter’s chroma at full B&W Amount; other permutations are intentionally noncommutative. See the [Silver Toning report](../TestArtifacts/SilverToningValidationReport.md) for model constants, descriptive tables and the Deep Selenium portrait quality WARN. Numerical PASS does not constitute visual approval.
+
+### Scope of HDR and performance claims
+
+The kernels support extended linear values, but the upstream perceptual LUT and downstream SDR preview/export remain separate limitations. No end-to-end HDR/EDR claim is made. GPU command timestamps, CPU graph preparation, full materialization/readback and complete preview/export latency are different measurements; compare only like protocols. The latest reports are Mac measurements, not iPhone thermal or 48MP RAW certification.

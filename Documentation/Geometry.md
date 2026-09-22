@@ -16,7 +16,7 @@ La géométrie intervient à la fin du graphe, après les corrections optiques, 
 
 ## Validation et limites
 
-Neuf tests de géométrie vérifient la migration, les valeurs non finies, les bornes, la sérialisation, l’historique, les conversions du redressement et de la perspective automatiques, la pondération des quadrilatères, les coordonnées des poignées directes, l’échange des dimensions à 90°, le ratio carré, la modification réelle des pixels, l’étendue finie, l’opacité des quatre coins et l’égalité des dimensions entre aperçu et export. Le test général d’export applique aussi la perspective. La suite du cœur compte désormais **82 tests réussis**.
+Neuf tests de géométrie vérifient la migration, les valeurs non finies, les bornes, la sérialisation, l’historique, les conversions du redressement et de la perspective automatiques, la pondération des quadrilatères, les coordonnées des poignées directes, l’échange des dimensions à 90°, le ratio carré, la modification réelle des pixels, l’étendue finie, l’opacité des quatre coins et l’égalité des dimensions entre aperçu et export. Le test général d’export applique aussi la perspective. Ce bilan initial portait sur 82 tests ; le dernier passage du cœur compte 97 tests réussis (22 septembre 2026), voir [le protocole de validation](../Docs/VISUAL_VALIDATION.md).
 
 Le parcours XCTest complet applique une rotation, sélectionne le format carré, vérifie le redressement avec Undo/Redo, règle la perspective verticale, l’échelle et le zoom de crop, puis relance l’application afin de confirmer leur persistance. La compilation iOS réussit sans avertissement Swift ; seul l’avertissement Xcode attendu sur l’absence de dépendance AppIntents demeure.
 

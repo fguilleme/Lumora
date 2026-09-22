@@ -1,5 +1,7 @@
 # Diagnostic Creative FX — 21 septembre 2026
 
+> Archive de la campagne du 21 septembre 2026. Les nombres, constats et absences de corpus ci-dessous décrivent cette exécution. Pour les effets ajoutés depuis et le corpus photographique actuel, voir [Visual Validation](VISUAL_VALIDATION.md).
+
 Campagne synthétique 4096², Mac Apple M2 Pro, mesures en RGB linéaire avant conversion d’affichage. Les références actuelles n’ont **pas** été approuvées comme Golden Masters. Les algorithmes High Key, Low Key et Grain sont restés inchangés pendant la construction et l’analyse du banc.
 
 Validation finale : **95 tests réussis** (91 tests du cœur et 4 tests du banc), compilation iOS Simulator Release réussie. **55 scénarios : 48 PASS, 7 WARN, aucun FAIL**. Les WARN sont des alertes de qualité ; ils ne sont pas masqués par les tests des invariants.

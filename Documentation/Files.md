@@ -1,4 +1,25 @@
-# Inventaire de cette étape
+# Inventaire du projet
+
+Les sections numérotées ci-dessous conservent l’historique des premières étapes. La carte actuelle des Creative FX est présentée en tête.
+
+## Creative FX — état au 22 septembre 2026
+
+| Emplacement | Rôle |
+|---|---|
+| `Lumora/Creative/CreativeEffect.swift` | Catalogue des douze effets, paramètres, pile et presets/Custom |
+| `Lumora/Creative/CreativeRenderer.swift` | Registre et compositor commun, masques et opacité |
+| `Lumora/Creative/` | Renderers et modèles, dont Film Grain, Film Emulation, Silver B&W et Silver Toning |
+| `Lumora/UI/CreativeEffectsView.swift` | Gestion de pile, presets et contrôles spécialisés |
+| `Lumora/Rendering/RenderEngine.swift` | Preview, HQ, export et inspection native |
+| `Tests/LumoraVisualTestLab/` | Mires, mesures GPU, corpus, rapports et validation dédiée par effet |
+| `VisualTestAssets/` | Huit originaux photographiques locaux, non embarqués |
+| `TestArtifacts/` | Rapports, métriques et images générées ; certains résultats sont versionnés explicitement |
+| `Docs/CREATIVE_FX.md` | Architecture de la pile et des moteurs |
+| `Docs/VISUAL_VALIDATION.md` | Commandes, prérequis, résultats et règles de validation |
+| `Documentation/CreativeEffects.md` | Guide utilisateur et workflows film/argentique |
+
+Les fichiers `SilverBW*.swift` et `SilverToning*.swift` du Lab séparent validation numérique, intégration, photographies et rapport. `SilverToningStatistics.swift` ajoute les tableaux descriptifs ; `SilverToningRegression.swift` compare les effets antérieurs à une référence temporaire explicitement enregistrée.
+
 
 ## Fichiers créés
 

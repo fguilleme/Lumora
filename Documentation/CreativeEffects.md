@@ -1,0 +1,61 @@
+# Creative FX — guide d’utilisation
+
+État au 22 septembre 2026, après l’ajout de Silver Toning (`260ca83`).
+
+## Pile et masques
+
+Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner, réinitialiser et supprimer un effet. Chaque instance conserve ses réglages, son opacité et son éventuel masque. L’ordre de la pile est l’ordre du traitement : déplacer un effet peut changer le résultat. Le bypass Creative sert à comparer l’aperçu et n’est pas exporté.
+
+Les effets utilisent les masques existants, y compris leurs composantes ajoutées/soustraites et leur inversion. Un masque absent, masqué ou d’opacité nulle suspend l’effet qui le référence. Les changements passent par Undo/Redo et sont enregistrés dans le document.
+
+Choisir un look remplit les réglages de l’effet. Changer une valeur affiche **Custom** ; revenir exactement aux valeurs du look le reconnaît de nouveau. Ces looks intégrés sont distincts des [presets personnels du document](Presets.md).
+
+## Effets disponibles
+
+High Key, Low Key, Film Grain, Tonal Contrast, Detail Extractor, Glamour Glow, Bleach Bypass, Pro Contrast, Cross Processing, Film Emulation, Silver B&W et Silver Toning.
+
+Le panneau **Effets** reste disponible pour Texture, Clarté, Correction du voile, Vignette et la quantité de grain du développement global/local. Son Grain partage le moteur de Film Grain ; activer les deux additionne le grain.
+
+## Film Emulation
+
+Sept réponses originales : Neutral Negative, Warm Portrait, Vivid Chrome, Muted Cinema, Faded Negative, Vintage Color et Dense Slide. Elles proposent des réponses tonales et colorées, sans générer de grain. Dense Slide a fait l’objet d’un raffinement de preset approuvé séparément ; les autres types et le renderer n’ont pas été modifiés par ce raffinement.
+
+## Silver B&W
+
+La couleur d’origine détermine la densité du gris. **Film Response** choisit parmi Neutral Silver, Fine Grain Response, Portrait Silver, Classic Panchromatic, High Contrast Film, Soft Orthochromatic et Documentary Silver. Fine Grain Response décrit une réponse tonale/spectrale et ne produit pas de grain.
+
+Le filtre photographique possède une teinte continue et une force. Les raccourcis jaune, orange, rouge, vert et bleu modifient ces mêmes paramètres. Il change les densités selon les couleurs originales ; il ne teinte pas le résultat monochrome.
+
+Amount, Brightness, Contrast et Structure forment les réglages principaux. Dynamic Brightness, Soft Contrast, Blacks et Whites sont avancés. Amount=0 conserve strictement la couleur d’entrée ; Amount=100 produit un monochrome neutre. Les valeurs intermédiaires conservent une partie de la couleur.
+
+Looks : Neutral Silver, Soft Portrait, Fine Art, Classic Film, High Structure, Dark Drama, Soft Silver et Hard Documentary.
+
+## Silver Toning
+
+Silver Toning colore le tirage en fonction de sa densité. Il accepte aussi une image couleur sans la convertir implicitement en N&B. Le workflow principal est **Silver B&W → Silver Toning**, avec un Film Grain ajouté explicitement si souhaité.
+
+| Contrôle | Comportement |
+|---|---|
+| Amount | Mélange final ; 0 = identité stricte |
+| Toner | Neutral, Selenium, Sepia, Copper, Gold, Platinum, Cool Silver, Warm Silver ou Split Silver |
+| Strength | Intensité de toute la coloration, papier inclus ; 0 = identité |
+| Balance | Négatif : réponse argent concentrée dans les ombres ; positif : étendue vers les lumières |
+| Shadow / Highlight Strength | Intensités séparées avec transitions continues |
+| Silver Tone | Contribution du virage de l’image argentique |
+| Paper Tone | Papier froid si négatif, chaud si positif, neutre à 0 ; surtout visible dans les blancs |
+| Shadow / Highlight Tone | Teintes indépendantes, affichées pour Split Silver |
+
+Neutral retourne l’entrée inchangée. Pour observer uniquement le papier, choisir un autre toner et mettre Silver Tone à 0. Pour observer uniquement l’argent, mettre Paper Tone à 0.
+
+Looks : Neutral Print, Subtle Selenium, Deep Selenium, Classic Sepia, Soft Sepia, Copper Print, Cool Gold, Platinum Print, Warm Silver, Cool Silver et Split Warm/Cool. Platinum et Subtle Selenium restent volontairement discrets.
+
+**Validation visuelle en attente** : Deep Selenium donne une dominante mauve perceptible sur les carnations dans les planches de validation. Ce quality WARN est conservé ; aucun preset n’a été automatiquement corrigé. Le [rapport complet](../TestArtifacts/SilverToningValidationReport.md) distingue les résultats techniques et l’inspection photographique.
+
+## Comparer les ordres et le détail
+
+- Silver B&W → Silver Toning conserve le virage ; Silver Toning → Silver B&W le neutralise lorsque B&W est à Amount=100.
+- Film Emulation → Silver B&W permet à la couleur du film d’influencer la conversion monochrome.
+- Film Grain avant ou après le virage peut changer le résultat. Lumora respecte cet ordre.
+- Le zoom ordinaire agrandit l’aperçu. L’inspecteur explicite **100 %** rend une région à la résolution source ; il permet notamment de regarder le grain et les détails.
+
+Les kernels compatibles HDR ne signifient pas que l’affichage et l’export sont HDR/EDR. Voir [les limites du pipeline](Rendering.md), [l’architecture Creative](../Docs/CREATIVE_FX.md) et [le protocole de validation](../Docs/VISUAL_VALIDATION.md).

@@ -9,16 +9,17 @@
 7. **Ton, courbes et couleur** : CIColorCubeWithColorSpace avec espace sRGB explicite. Des transitions smoothstep sélectionnent les ombres, hautes lumières et extrémités ; le contraste utilise une courbe en S. Les changements tonals déplacent la luminance sans affecter artificiellement chaque canal de manière indépendante. Les courbes PCHIP RVB puis par canal s’appliquent après le ton, via tables précalculées. La saturation est globale ; la vibrance diminue selon la saturation existante et protège progressivement le secteur orangé. C’est une heuristique chromatique, pas un détecteur de peau. Le mélangeur HSL sélectionne ensuite huit plages de teinte avec des transitions circulaires smoothstep ; les gris exacts sont préservés. Le grading intervient ensuite avec trois zones tonales : contrairement au mélangeur HSL, il peut volontairement colorer les gris.
 8. **Effets spatiaux structurels** : Texture à rayon fin, Clarté à rayon intermédiaire et Correction du voile à grand rayon. Voir [le détail des algorithmes](Effects.md).
 9. **Détail** : réduction du bruit coloré, réduction du bruit de luminance puis netteté de luminance avec masque de contours. Voir [le panneau Détail](Detail.md).
-10. **Finition** : Vignette puis Grain ; ce dernier reste ainsi intact après le débruitage.
+10. **Finition du développement** : Vignette. Le grain est différé après la géométrie et les développements locaux.
 11. **Géométrie** : rotation, miroirs, perspective verticale/horizontale, redressement sans coins transparents, aspect, échelle, décalage, ratio et crop normalisé. Voir [Géométrie](Geometry.md).
 12. **Pile de modifications** : développement du calque Photo entière, géométrie commune, puis composition et mélange successifs des calques masqués. Voir [Pile de modifications](AdjustmentLayers.md), [Masques](Masks.md) et [Masques intelligents](SmartMasks.md).
-13. **Sortie écran** : CGImage Display P3 8 bits SDR. L’histogramme provient d’un échantillonnage de 160×160 en sRGB hors MainActor. L’écrêtage affiché décrit cet aperçu SDR, pas le contenu récupérable du capteur RAW.
+13. **Grain et Creative FX** : grain global puis grains locaux via `FilmGrainEngine`, puis `CreativeEffectStack` dans l’ordre choisi. Les effets peuvent cibler les masques existants. Silver B&W convertit la couleur en densité monochrome ; Silver Toning applique ensuite, si présent, un virage dépendant de la densité. Voir [Creative FX](../Docs/CREATIVE_FX.md).
+14. **Sortie écran** : CGImage Display P3 8 bits SDR. L’histogramme provient d’un échantillonnage de 160×160 en sRGB hors MainActor. L’écrêtage affiché décrit cet aperçu SDR, pas le contenu récupérable du capteur RAW.
 
 ## Ordre et compromis
 
 L’exposition avant les opérations perceptuelles évite d’ajouter de la luminosité gamma-encodée. Les masques tonals sont calculés avant saturation/vibrance pour préserver la séparation des intentions. La LUT sRGB borne à [0, 1] : des valeurs hors gamut/HDR sont écrêtées à cette étape, et ne constituent pas une pipeline d’export HDR. Les réglages sont crédibles et différenciés, mais ne prétendent pas reproduire les algorithmes propriétaires d’un autre logiciel.
 
-La réduction avant les réglages privilégie la latence. Les previews HQ restent limitées à 2048 px et le zoom ne déclenche pas encore de rendu tuilé à 100 %. Une image 48 MP n’est jamais demandée pendant le mouvement d’un curseur. Un RAW peut néanmoins occasionner des allocations internes propres au décodeur d’Apple.
+La réduction avant les réglages privilégie la latence. Les previews HQ restent limitées à 2048 px ; le zoom ordinaire agrandit ce cache. L’inspecteur explicite **100 %** matérialise une région du graphe pleine résolution (1024 px par défaut, 2048 px maximum), avec un contexte distinct. Cette allocation de sortie bornée ne garantit pas que le décodeur RAW ou les filtres de voisinage évitent toute allocation pleine image. Une image 48 MP n’est jamais demandée pendant le mouvement d’un curseur. Un RAW peut néanmoins occasionner des allocations internes propres au décodeur d’Apple.
 
 Une annulation coopérative vérifie la tâche avant le décodage, lors de la génération de LUT et autour du rendu GPU. Une soumission Core Image déjà engagée peut finir ; son résultat ne sera pas affiché si la génération a changé. L’actor sérialise l’accès au contexte. Les filtres sont créés pour chaque graph et les caches de sources sont vidés au changement de document et en cas d’alerte mémoire.
 
@@ -28,7 +29,13 @@ Le panneau DEBUG indique la durée du calcul et une estimation des deux bitmaps 
 
 Les tests couvrent sérialisation/validation, regroupement Undo/Redo, branchement de l’historique et sa borne, identité tonale, ciblage ombres/hautes lumières, protection vibrance, conservation des octets originaux, sauvegardes désordonnées, erreurs de décodage, annulation et traitement d’une mire via le véritable contexte Core Image. Les tests RAW sur fichiers de boîtiers et les mesures sur iPhone physique restent à effectuer.
 
-## Résultat vérifié le 20 septembre 2026
+## Validation actuelle — 22 septembre 2026
+
+Le commit fonctionnel `260ca83` compile en Debug iOS Simulator. Les 97 tests LumoraCore passent ; le banc Silver Toning valide 1 201 contrôles automatiques et la comparaison des 66 presets antérieurs est bit-identique au commit `8e2ad94` sur la mire de référence. Le WARN photographique Deep Selenium et les neuf cas WARN du banc commun restent documentés, sans correction automatique. Voir [le rapport Silver Toning](../TestArtifacts/SilverToningValidationReport.md) et [le protocole](../Docs/VISUAL_VALIDATION.md).
+
+Le support HDR des kernels Silver/Film signifie conservation des valeurs étendues dans ces effets ; il ne signifie pas que la LUT amont, l’affichage SDR et les exports actuels constituent une chaîne HDR/EDR complète. Les micro-mesures GPU sur Mac ne remplacent pas une validation sur iPhone.
+
+## Historique vérifié le 20 septembre 2026
 
 - Build Debug iOS Simulator réussi, cible minimale iOS 18.
 - `swift test` : **82 tests réussis**, exécutés sur macOS arm64 avec le véritable moteur Core Image.

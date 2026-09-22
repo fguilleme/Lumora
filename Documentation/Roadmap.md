@@ -2,6 +2,10 @@
 
 Ce document conserve les évolutions volontairement repoussées après la mise en place de l’éditeur, des masques, de la géométrie, de l’export et de la bibliothèque avec opérations groupées. L’ordre ci-dessous privilégie d’abord les flux de travail quotidiens, puis les fonctions qui demandent une évolution du stockage ou du pipeline couleur.
 
+## État de référence — 22 septembre 2026
+
+Les douze Creative FX, leurs looks intégrés, la pile masquable, l’inspecteur 100 %, Silver B&W et Silver Toning sont implémentés. Silver Toning attend encore la validation visuelle humaine ; les WARN restent ouverts. Voir [le guide](CreativeEffects.md) et [le rapport](../TestArtifacts/SilverToningValidationReport.md). Cette feuille de route conserve les travaux différés ; elle ne déclenche aucun nouvel effet ni raffinement automatique.
+
 ## 1. Import et traitement en lot
 
 ### Import en lot
@@ -47,7 +51,7 @@ Ce document conserve les évolutions volontairement repoussées après la mise e
 
 ### Presets
 
-- Ajouter des presets intégrés clairement séparés des presets personnels.
+- Étendre si nécessaire les presets intégrés au document complet ; les looks intégrés par Creative FX existent déjà.
 - Proposer dossiers, aperçu miniature et synchronisation iCloud facultative.
 - Conserver l’import/export JSON et sa validation stricte.
 
@@ -88,7 +92,7 @@ Ce document conserve les évolutions volontairement repoussées après la mise e
 - Profiler mémoire, GPU, caches et export sur des images 48 MP.
 - Tester JPEG, HEIC, PNG et TIFF avec orientations, profils couleur et métadonnées variés.
 - Valider RAW/DNG et profils optiques sur plusieurs boîtiers physiques.
-- Étudier un rendu tuilé à 100 % pour le zoom profond sans décoder inutilement toute l’image pendant un geste.
+- Profiler l’inspecteur 100 % existant sur appareil ; étudier ensuite son intégration au zoom ordinaire. La sortie ROI bornée ne garantit pas une mémoire de décodage constante.
 - Ajouter des tests de charge pour l’import, la synchronisation et l’export en lot.
 
 ## Ordre recommandé
