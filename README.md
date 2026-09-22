@@ -96,3 +96,5 @@ L’import en lot, la synchronisation de bibliothèque et la calibration archite
 Les kernels film/Silver acceptent les valeurs extended linear sRGB ; cela ne constitue pas une chaîne HDR complète. Pas encore de validation RAW multi-boîtiers, de mesure 60 fps sur matériel, de rendu HDR/EDR de bout en bout, de traitement par lots, ni de persistance de l’historique Undo au redémarrage. Une connexion peut être nécessaire pour récupérer un original situé dans iCloud via le sélecteur système ; le développement et sa bibliothèque restent locaux.
 
 Le détail, les critères attendus et l’ordre recommandé sont conservés dans [la feuille de route](Documentation/Roadmap.md).
+
+Les panneaux Auto et Grading utilisent des [contrôles compacts](Documentation/UIDensity.md), avec cibles tactiles de 44 pt.

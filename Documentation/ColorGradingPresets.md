@@ -4,7 +4,7 @@ Les presets remplissent les réglages du Grading existant. Ils ne changent aucun
 
 ## Utilisation
 
-Dans **Colorimétrie → Grading**, sélectionner une capsule de preset. Le bouton **Neutral** reste directement accessible ; les autres capsules défilent horizontalement par famille. Une coche et l’état sélectionné VoiceOver identifient le preset actif. La largeur des boutons dépend de leur libellé, même sur grand écran.
+Dans **Colorimétrie → Grading**, sélectionner une capsule de preset. **Neutral** ouvre la même bande compacte que les autres capsules, qui défilent horizontalement par famille. Une coche et l’état sélectionné VoiceOver identifient le preset actif. La largeur des boutons dépend de leur libellé, même sur grand écran.
 
 La sélection remplace les trois roues, Balance et Mélange en une seule opération Annuler/Rétablir. Les roues et les curseurs restent modifiables. Un changement affiche **Personnalisé** ; revenir exactement aux valeurs d’un preset le reconnaît à nouveau. Neutral rétablit tous les réglages Grading par défaut sans toucher aux autres modules.
 
@@ -52,3 +52,5 @@ swift test --filter colorGradingPresetsValidation
 La campagne nécessite le corpus `VisualTestAssets/`, Core Image/Metal et génère les artefacts dans `TestArtifacts/`, non versionné comme pour les autres campagnes. Les résultats initiaux restent dans `ColorGradingPresets/ValidationHistory/initial_results.json`. Aucun Golden Master n’est créé avant inspection humaine.
 
 Bilan final : **876 PASS / 29 WARN / 0 FAIL**, incluant le suivi mémoire prolongé. Voir [le résumé versionné](ColorGradingPresetsValidation.md) et [les paramètres figés](ColorGradingPresetParameters.md).
+
+Présentation compacte : voir [Densité des panneaux](UIDensity.md).

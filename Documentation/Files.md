@@ -380,3 +380,5 @@ Voir [Auto](AutoCorrection.md).
 - `LumoraUITests/GradingPresetUITests.swift` : sélection, historique, persistence, défilement et grand écran.
 
 - `Tests/LumoraVisualTestLab/GradingPresetMemory.swift` : suivi RSS sur 512 sélections et consolidation sans effacement du premier run.
+
+- `UI/CompactEditorButtonStyle.swift` : surface compacte et cible tactile séparées pour Auto et Grading ; voir [densité UI](UIDensity.md).
