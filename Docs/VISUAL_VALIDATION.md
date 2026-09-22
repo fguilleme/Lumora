@@ -17,6 +17,7 @@ swift test --filter 'visualCreativeValidation|chartCoordinatesAndMeasurementsAre
 swift test --filter filmEmulationValidation
 swift test --filter silverBWValidation
 swift test --filter silverToningValidation
+swift test --filter darkenLightenCenterValidation
 
 # Après silverToningValidation : tableaux descriptifs supplémentaires du rapport
 swift test --filter silverToningDescriptiveTables
@@ -43,7 +44,7 @@ Le script filtre **toute la cible LumoraVisualTestLab** : il ne se limite plus a
 ### Sorties et variables
 
 - `LUMORA_VISUAL_FULL` : taille/mode pour les bancs qui le lisent, notamment le protocole commun.
-- `LUMORA_VISUAL_OUTPUT` : sortie des bancs communs et des effets qui la prennent en charge, dont Silver B&W. **Silver Toning utilise actuellement `TestArtifacts` dans le dépôt**.
+- `LUMORA_VISUAL_OUTPUT` : sortie des bancs communs et des effets qui la prennent en charge, dont Silver B&W. **Silver Toning et Darken / Lighten Center utilisent actuellement `TestArtifacts` dans le dépôt**.
 - `LUMORA_VISUAL_ASSETS` : dossier de photos optionnelles du banc générique ; ne remplace pas le corpus fixe des campagnes Silver.
 - `LUMORA_GOLDEN_DIR` : références déjà approuvées ; séparer campagnes rapide et complète.
 - `LUMORA_RECORD_GOLDENS=YES_I_REVIEWED_THE_OUTPUTS` : enregistrement explicite après revue humaine seulement. Peut remplacer des références. Ne pas définir cette variable pendant une validation initiale.
@@ -62,6 +63,8 @@ Le script filtre **toute la cible LumoraVisualTestLab** : il ne se limite plus a
 | Dense Slide | 88 PASS / 0 WARN / 0 FAIL ; raffinement visuellement approuvé | `TestArtifacts/DenseSlideRefinementReport.md` (local) |
 | Silver B&W | 47 PASS / 0 WARN / 0 FAIL | [Rapport](../TestArtifacts/SilverBWValidationReport.md) |
 | Silver Toning | 33 cas automatiques PASS ; 1 quality WARN visuel ; 0 FAIL | [Rapport](../TestArtifacts/SilverToningValidationReport.md) |
+| Darken / Lighten Center | 831 contrôles PASS / 13 WARN photographiques / 0 FAIL ; 751 hard invariants passent | [Rapport](../TestArtifacts/DarkenLightenCenterValidationReport.md) |
+| Commun, lors de Darken / Lighten Center | 58 PASS / 9 WARN / 0 FAIL | [Rapport commun](../TestArtifacts/DarkenLightenCenter/Common/CreativeFXValidationReport.md) |
 | Commun, lors de Silver Toning | 58 PASS / 9 WARN / 0 FAIL | [Rapport commun](../TestArtifacts/SilverToning/Common/CreativeFXValidationReport.md) |
 
 Silver Toning : 1 201 contrôles automatiques passent, dont 1 129 hard invariants. Le WARN visuel concerne Deep Selenium mauve sur les carnations ; il n’est pas effacé par la préservation technique de luminance. Les neuf cas WARN communs portent sur High Key, Low Key et Film Grain. Le build iOS Simulator, 97 tests Core et la comparaison bit à bit des 66 presets antérieurs passent. Ce bilan décrit les campagnes déjà exécutées, pas un nouveau passage à chaque modification de documentation.
@@ -100,3 +103,15 @@ Aucun Golden Master d’effet actuel n’est livré ou approuvé automatiquement
 Les photos du banc générique sont facultatives ; les huit photos des campagnes Silver sont obligatoires. Elles restent non embarquées et ignorées par Git. Un fichier générique illisible produit WARN ; une entrée requise manquante interrompt la campagne spécialisée. Une campagne sur Mac ne valide ni la mémoire d’un RAW 48 MP sur iPhone, ni les conditions thermiques de cet appareil. Les mesures de halos et de caractère photographique nécessitent une lecture des planches ; le banc ne transforme pas « agréable visuellement » en assertion artificielle.
 
 Les courbes de continuité de réponse tonale utilisent un champ uniforme 512² et une région centrale 64² à luminance variable, afin d’isoler l’enveloppe de réponse du motif aléatoire. Les analyses de spectre et d’autocorrélation utilisent un champ uniforme à la résolution de la campagne et une région centrale 256². Les images d’edges/textures sont exportées séparément de la mire maître pour permettre leur inspection sans réduire leur finesse.
+
+## Campagne Darken / Lighten Center
+
+`darkenLightenCenterValidation` exige les huit photos locales et écrit dans `TestArtifacts`, indépendamment de `LUMORA_VISUAL_OUTPUT`. Il inclut l’oracle géométrique Float64, les profils GPU, les huit orientations EXIF, les masques, le pipeline réel, les timings GPU et les planches photographiques. Commencer l’inspection par `DarkenLightenCenter/off_center_real_photos.png`. Les réglages des photographies sont figés dans `fixed_photo_settings.json` ; ils ne sont pas ajustés automatiquement selon les métriques.
+
+`darkenLightenCenterExistingEffectsRegression` ne fait rien sans `LUMORA_DLC_REGRESSION`. `record` s’exécute dans une copie du commit précédent `5cbf732` avec le seul fichier de test ajouté ; `compare` s’exécute sur le candidat. Il compare les **77 presets antérieurs** avec les buffers temporaires `/private/tmp/lumora-dlc-reference-5cbf732`. Ne jamais enregistrer le candidat comme référence. Ces buffers ne sont pas des Golden Masters.
+
+Le test simulateur `DarkenLightenCenterUITests/testCenterDragUndoZoomPanAndOverlayScope` utilise la photothèque préparée pour les tests UI existants. Il contrôle les coordonnées d’accessibilité du centre après drag, Undo/Redo, zoom/pan, rotation et changement de panneau.
+
+Après le premier banc, seuls les hard fails techniques peuvent être corrigés avec justification et revalidation. Les WARN photographiques restent documentés pour inspection manuelle ; ni presets, ni modèle, ni seuils ne sont optimisés pour les faire disparaître. Le rapport distingue les mesures Mac des limitations de validation sur appareil physique.
+
+Campagne DLC archivée dans `514b724` : 831 contrôles PASS, 13 quality WARN de clipping SDR, 751 hard invariants PASS, 0 FAIL. 97 tests Core, le parcours UI et les 77 comparaisons de presets antérieurs passent. Les fixtures corrigées (ordre du readback, extent fractionnaire arrondi, bord Lanczos et moments) sont expliquées dans le rapport, avec les résultats initiaux conservés séparément. Le renderer, les presets et les seuils n’ont pas été retouchés pour corriger des WARN.

@@ -64,6 +64,7 @@ Verified on iPhone 18 Pro / iOS 27 Simulator: High Key visibly changes the photo
 | Film Emulation | Seven original parametric film responses |
 | Silver B&W | Spectral monochrome conversion, filters, tonal shaping and structure |
 | Silver Toning | Density-dependent print coloration, silver/paper and split controls |
+| Darken / Lighten Center | Independently positioned elliptical center/border exposure, direct center drag |
 
 Catalog presets are full parameter snapshots. Editing a value shows Custom; returning exactly to a snapshot restores recognition. No separate history or mask system is introduced. The [user guide](../Documentation/CreativeEffects.md) distinguishes the Effects panel, Creative effects and document presets.
 
@@ -90,3 +91,13 @@ Recommended workflow: Silver B&W → Silver Toning → optional Film Grain. Reve
 ### Scope of HDR and performance claims
 
 The kernels support extended linear values, but the upstream perceptual LUT and downstream SDR preview/export remain separate limitations. No end-to-end HDR/EDR claim is made. GPU command timestamps, CPU graph preparation, full materialization/readback and complete preview/export latency are different measurements; compare only like protocols. The latest reports are Mac measurements, not iPhone thermal or 48MP RAW certification.
+
+## Darken / Lighten Center
+
+`DarkenLightenCenterSettings` and `DarkenLightenCenterRenderer` add a pointwise exposure field. Normalized center coordinates refer to the oriented, developed image, with a top-left origin. Core Image can outward-round fractional transformed bounds; the actual incoming extent, including that expansion, defines the frame. The Metal destination is translated by the actual CI extent origin and divided by the image short side before inverse rotation. At fixed Size, Shape creates reciprocal ellipse axes `r·2^(shape/100)` and `r/2^(shape/100)`. Circle rotation is canonically zero in the kernel; settings remain intact.
+
+For elliptical radius `d`, transition width `w=.15+.85·feather/100`, `t=clamp((d−1+w)/w,0,1)`, and `M=1−6t⁵+15t⁴−10t³`. Then `EV=border+(center−border)·M` and `RGBout=RGBin·[1+amount·(2^EV−1)]` with amount in [0,1]. Alpha is unchanged. Positive gain preserves signed/HDR samples and RGB ratios without clamping. The C2 transition is analytical; no frame-dependent CPU mask, blur, local readback or cached texture is introduced.
+
+`DLCViewport` shares aspect-fit/zoom/pan geometry with `DLCCenterOverlay`. The overlay lives only in SwiftUI; the editor binds the selected effect UUID and wraps center drags in the existing grouped history interaction. Precise coordinate/EV steps are specific to DLC. Renderer registration and catalog additions leave existing effect algorithms unchanged.
+
+See [validation](../TestArtifacts/DarkenLightenCenterValidationReport.md) for aspect, translated extent, EXIF, crop semantics, image/export alignment, stack and masks. The expected noncommutativity depends on the paired effect; no synthetic requirement forces independent scalar gains to differ by order.

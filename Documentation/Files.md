@@ -6,9 +6,9 @@ Les sections numérotées ci-dessous conservent l’historique des premières é
 
 | Emplacement | Rôle |
 |---|---|
-| `Lumora/Creative/CreativeEffect.swift` | Catalogue des douze effets, paramètres, pile et presets/Custom |
+| `Lumora/Creative/CreativeEffect.swift` | Catalogue des treize effets, paramètres, pile et presets/Custom |
 | `Lumora/Creative/CreativeRenderer.swift` | Registre et compositor commun, masques et opacité |
-| `Lumora/Creative/` | Renderers et modèles, dont Film Grain, Film Emulation, Silver B&W et Silver Toning |
+| `Lumora/Creative/` | Renderers et modèles, dont Film Grain, Film Emulation, Silver B&W, Silver Toning et Darken / Lighten Center |
 | `Lumora/UI/CreativeEffectsView.swift` | Gestion de pile, presets et contrôles spécialisés |
 | `Lumora/Rendering/RenderEngine.swift` | Preview, HQ, export et inspection native |
 | `Tests/LumoraVisualTestLab/` | Mires, mesures GPU, corpus, rapports et validation dédiée par effet |
@@ -342,3 +342,11 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 - `Lumora/Masks/EyeMaskGenerator.swift` : composition de deux ellipses progressives par visage dans une matte huit bits.
 - `Tests/LumoraCoreTests/MaskTests.swift` : séparation des deux yeux, centre opaque, contour progressif et sérialisation.
 - `LumoraUITests/EditorUITests.swift` : présence de Yeux vérifiée dans le menu intelligent.
+
+## Darken / Lighten Center
+
+- `Lumora/Creative/DarkenLightenCenterRenderer.swift` : settings, repère UI pur et champ GPU d’exposition elliptique.
+- `Lumora/UI/DLCCenterOverlay.swift` : poignée de centre, contours et drag normalisé ; intégration via PhotoCanvas et EditorView.
+- `Tests/LumoraVisualTestLab/DarkenLightenCenter*.swift` : oracle géométrique, intégration, performance, corpus, non-régression et rapport.
+- `LumoraUITests/DarkenLightenCenterUITests.swift` : manipulation du centre, historique, zoom/pan et portée de l’overlay.
+- `TestArtifacts/DarkenLightenCenterValidationReport.md` : rapport de campagne ; planches photographiques locales sous `TestArtifacts/DarkenLightenCenter/RealPhotos`.

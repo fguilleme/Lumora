@@ -1,9 +1,9 @@
 # Lumora
 
 Éditeur photo natif SwiftUI, iOS 18+, Swift 6, sans dépendance tierce.
-Lumora propose un développement non destructif, des masques composables, une bibliothèque locale, l’export pleine résolution et une pile de **douze Creative FX**. Les derniers ajouts sont Film Emulation, Silver B&W et Silver Toning.
+Lumora propose un développement non destructif, des masques composables, une bibliothèque locale, l’export pleine résolution et une pile de **treize Creative FX**. Les derniers ajouts sont Silver B&W, Silver Toning et Darken / Lighten Center.
 
-État documenté au **22 septembre 2026** : Silver Toning est implémenté et testé ; son inspection visuelle reste ouverte, avec un quality WARN sur la dominante mauve de Deep Selenium dans les portraits. Aucun Golden Master n’a été créé pour les effets Silver. Les PASS techniques ne constituent pas une approbation esthétique.
+État documenté au **22 septembre 2026** : Darken / Lighten Center est implémenté, avec déplacement direct du centre et huit looks. Son banc compte **831 PASS / 13 WARN photographiques / 0 FAIL** ; les WARN concernent les nouvelles hautes lumières écrêtées en SDR. L’inspection visuelle reste ouverte, comme celle de Silver Toning (Deep Selenium mauve sur les portraits). Aucun Golden Master Silver ou Darken / Lighten Center n’est créé ; un PASS technique ne constitue pas une approbation esthétique.
 
 ## Exécuter
 
@@ -30,6 +30,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 - Dans **Colorimétrie**, ouvrir **Grading**, choisir Ombres, Tons moyens ou Hautes lumières, puis utiliser la roue chromatique unique ainsi que les réglages de mélange et de balance.
 - Ouvrir **Effets** pour régler séparément Texture, Clarté, Correction du voile, Vignette et Grain.
 - Ouvrir **Creative** pour ajouter un effet, choisir un look, régler ses paramètres, lui affecter un masque et modifier l’ordre de la pile. Une modification de preset affiche **Custom** ; Undo/Redo s’applique à toute la pile. L’inspecteur **100 %** permet d’examiner une région à la résolution source.
+- Dans **Darken / Lighten Center**, déplacer la poignée sur le sujet puis régler séparément Center et Border en EV. Size, Shape, Feather et Rotation définissent une zone elliptique ; les coordonnées fines sont accessibles via **Position précise X / Y**.
 - Pour un tirage monochrome, utiliser **Silver B&W → Silver Toning**, puis ajouter **Film Grain** si souhaité. Inverser les effets change le résultat.
 - Ouvrir **Détail** pour la netteté avec masquage et les réductions de bruit de luminance et de couleur.
 - Ouvrir **Optique** pour le profil constructeur RAW, la distorsion, l’aberration chromatique et le vignetage optique.
@@ -61,6 +62,7 @@ Import Photos/Fichiers, bibliothèque locale avec miniatures/recherche/tri/favor
 | Famille | Effets |
 |---|---|
 | Tonalité | High Key, Low Key, Pro Contrast |
+| Exposition spatiale | Darken / Lighten Center |
 | Détail | Tonal Contrast, Detail Extractor |
 | Grain et diffusion | Film Grain, Glamour Glow |
 | Réponses couleur | Bleach Bypass, Cross Processing, Film Emulation |
@@ -70,8 +72,9 @@ Film Emulation propose sept types originaux. Silver B&W propose sept réponses s
 
 ## Validation et documentation
 
-Dernière campagne fonctionnelle, commit `260ca83` : build iOS Simulator réussi, **97 tests Core réussis**, **66 presets antérieurs bit-identiques** sur la mire de non-régression. Silver Toning : **1 201 contrôles automatiques PASS**, **un WARN photographique** documenté, **aucun FAIL**. Le banc commun conserve neuf cas WARN historiques de qualité.
+Dernière campagne fonctionnelle, commit `514b724` : build iOS Simulator et test UI réussis, **97 tests Core réussis**, **77 presets antérieurs bit-identiques**. Darken / Lighten Center : **831 contrôles PASS**, dont **751 hard invariants**, **13 WARN de clipping SDR**, **aucun FAIL**. Le banc commun compte 58 cas PASS et neuf WARN historiques. Les mesures GPU sur M2 Pro sont de 0,18 / 0,73 / 2,91 ms à 1024 / 2048 / 4096 ; elles ne certifient pas les performances d’un iPhone. Les corrections techniques et la revalidation sont consignées dans le rapport.
 
+- [Rapport Darken / Lighten Center](TestArtifacts/DarkenLightenCenterValidationReport.md) : géométrie, positionnement, exposition, huit photos et interaction directe.
 - [Rapport Silver Toning](TestArtifacts/SilverToningValidationReport.md) : résultats, tableaux par photo, performances et liens « Priority Visual Inspection ».
 - [Rapport Silver B&W](TestArtifacts/SilverBWValidationReport.md) : conversion spectrale, filtres, tonalité et structure.
 - [Rapport Film Emulation](TestArtifacts/FilmEmulationValidationReport.md) : campagne initiale ; le raffinement Dense Slide approuvé est décrit dans la documentation Creative.

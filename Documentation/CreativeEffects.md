@@ -1,6 +1,6 @@
 # Creative FX — guide d’utilisation
 
-État au 22 septembre 2026, après l’ajout de Silver Toning (`260ca83`).
+État au 22 septembre 2026, après l’ajout de Darken / Lighten Center.
 
 ## Pile et masques
 
@@ -12,7 +12,7 @@ Choisir un look remplit les réglages de l’effet. Changer une valeur affiche *
 
 ## Effets disponibles
 
-High Key, Low Key, Film Grain, Tonal Contrast, Detail Extractor, Glamour Glow, Bleach Bypass, Pro Contrast, Cross Processing, Film Emulation, Silver B&W et Silver Toning.
+High Key, Low Key, Film Grain, Tonal Contrast, Detail Extractor, Glamour Glow, Bleach Bypass, Pro Contrast, Cross Processing, Film Emulation, Silver B&W, Silver Toning et Darken / Lighten Center.
 
 Le panneau **Effets** reste disponible pour Texture, Clarté, Correction du voile, Vignette et la quantité de grain du développement global/local. Son Grain partage le moteur de Film Grain ; activer les deux additionne le grain.
 
@@ -59,3 +59,15 @@ Looks : Neutral Print, Subtle Selenium, Deep Selenium, Classic Sepia, Soft Sepia
 - Le zoom ordinaire agrandit l’aperçu. L’inspecteur explicite **100 %** rend une région à la résolution source ; il permet notamment de regarder le grain et les détails.
 
 Les kernels compatibles HDR ne signifient pas que l’affichage et l’export sont HDR/EDR. Voir [les limites du pipeline](Rendering.md), [l’architecture Creative](../Docs/CREATIVE_FX.md) et [le protocole de validation](../Docs/VISUAL_VALIDATION.md).
+
+## Darken / Lighten Center
+
+Déplacer la poignée centrale sur la photographie pour diriger l’attention vers une zone précise. **Center** et **Border** règlent indépendamment l’exposition en stops (−2 à +2 EV). Un centre positif avec un bord neutre éclaire le sujet ; un bord négatif assombrit son environnement. Un centre négatif et un bord positif inversent cette intention. Amount mélange le résultat à l’entrée.
+
+**Size** règle le rayon par rapport au petit côté de l’image. **Shape** étire horizontalement ou verticalement une ellipse à aire constante ; zéro donne un cercle. **Rotation** tourne cette ellipse. **Feather** adoucit sa transition, avec une largeur minimale même à zéro pour éviter un bord dur. Si Center et Border ont la même valeur, le résultat est une exposition uniforme.
+
+La poignée, le contour et la limite de feather apparaissent pour l’instance sélectionnée dans Creative. Le zoom et le déplacement de l’aperçu ne changent pas le centre enregistré. Un drag crée une seule opération Undo. **Position précise X / Y** donne accès aux coordonnées normalisées (0 en haut/gauche, 1 en bas/droite), au millième. Les réglages EV ont un pas de 0,01. Les overlays ne sont pas exportés.
+
+Looks : **Subtle Focus, Portrait Focus, Dark Surround, Light Center, Wide Focus, Narrow Focus, Off-Center Drama, Reverse Focus**. Ils ne détectent pas automatiquement le sujet. Repositionner le centre selon la composition produit un réglage Custom. Une correction forte peut écrêter les blancs à l’export SDR ; le moteur ne compense pas cette exposition par une protection cachée.
+
+Les masques limitent l’effet via la même composition que les autres Creative FX. Plusieurs instances sont possibles. Le repère suit l’image développée après géométrie : recadrer le document peut donc déplacer le centre par rapport au contenu d’origine. Voir le [rapport et les planches décentrées](../TestArtifacts/DarkenLightenCenterValidationReport.md) avant toute approbation photographique.
