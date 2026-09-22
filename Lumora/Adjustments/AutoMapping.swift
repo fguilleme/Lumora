@@ -134,3 +134,18 @@ struct AutoProposal: Sendable {
         applying(module,style:style,to:state) == state
     }
 }
+
+/// Map the unchanged, confidence-weighted intent to visible production controls.
+/// Neutral-ramp central differences (Temperature ±4, Tint ±3), in log chromatic axes:
+/// J = [[-.00804569755, -.000426183135], [-.000858241143, .00360074528]].
+/// Positive Temperature cools; positive Tint greens. M = -J⁻¹ diag(J) corrects
+/// both signs and cancels first-order cross-coupling, retaining the existing
+/// diagonal correction strengths rather than fitting a new full-neutralization gain.
+/// Calibration/linearity measurements: Auto/WB/renderer_axis_characterization.md.
+enum AutoWBMapping {
+    static func controls(temperatureIntent: Double, tintIntent: Double) -> (temperature: Double, tint: Double) {
+        let temperature = -0.987531890276 * temperatureIntent + 0.052309875438 * tintIntent
+        let tint = -0.235379187216 * temperatureIntent - 0.987531890276 * tintIntent
+        return (min(16,max(-16,temperature)).rounded(), min(12,max(-12,tint)).rounded())
+    }
+}

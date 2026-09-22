@@ -117,6 +117,7 @@ struct AutoCorrectionIntent: Codable, Sendable, Equatable {
         s.blacks=blackPointIntent;s.whites=whitePointIntent;s.contrast=globalContrastIntent;return s
     }
     var color: EditState {
-        var s=EditState();s.temperature=temperatureIntent;s.tint=tintIntent;s.saturation=saturationIntent;s.vibrance=vibranceIntent;return s
+        let wb=AutoWBMapping.controls(temperatureIntent:temperatureIntent,tintIntent:tintIntent)
+        var s=EditState();s.temperature=wb.temperature;s.tint=wb.tint;s.saturation=saturationIntent;s.vibrance=vibranceIntent;return s
     }
 }

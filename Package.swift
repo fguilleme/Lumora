@@ -12,6 +12,6 @@ let package = Package(
         .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"]),
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
                     exclude: ["LOW_KEY_CONTRACT.md"],
-                    resources: [.copy("Baselines")])
+                    resources: [.copy("Baselines"), .copy("Fixtures")])
     ]
 )

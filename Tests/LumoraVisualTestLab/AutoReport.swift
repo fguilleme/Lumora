@@ -17,7 +17,7 @@ extension AutoValidation {
         for r in records {
             let i=r.intent,a=r.analysis,p=a.luminance.percentiles
             let status=lab.cases.first{$0.name=="Auto photo "+r.name}?.status ?? "WARN"
-            parameters += "| \(r.name) | \(i.scene.rawValue) | \(i.exposureShiftEV) | \(i.highlightCompression) | \(i.shadowLift) | \(i.whitePointIntent) | \(i.blackPointIntent) | \(i.globalContrastIntent) | \(i.temperatureIntent) | \(i.tintIntent) | \(i.saturationIntent) | \(i.vibranceIntent) | \(i.wbConfidence) | \(i.correctionConfidence) | \(status) |\n"
+            parameters += "| \(r.name) | \(i.scene.rawValue) | \(i.exposureShiftEV) | \(i.highlightCompression) | \(i.shadowLift) | \(i.whitePointIntent) | \(i.blackPointIntent) | \(i.globalContrastIntent) | \(i.color.temperature) | \(i.color.tint) | \(i.saturationIntent) | \(i.vibranceIntent) | \(i.wbConfidence) | \(i.correctionConfidence) | \(status) |\n"
             statistics += "| \(r.name) | \(a.luminance.mean) | \(p[0]) | \(p[1]) | \(p[2]) | \(p[3]) | \(p[4]) | \(p[5]) | \(p[6]) | \(a.blackFraction) | \(a.whiteFraction) | \(a.hdrFraction) | \(a.chroma.mean) | \([a.saturation.percentiles[2],a.saturation.median,a.saturation.percentiles[4]]) | \(a.neutralConfidence) |\n"
             fits += "| \(r.name) | \(r.points.count) | \(r.sdr.mae) | \(r.sdr.rmse) | \(r.sdr.p95) | \(r.sdr.maximum) | \(r.hdr.mae) | \(r.hdr.rmse) | \(r.hdr.p95) | \(r.hdr.maximum) | \(r.photoMAE) | \(r.photoMax) | \(r.sdr.classification) |\n"
             diagnostics += "### \(r.name)\n\nObserved: \(a)\n\nIntent: \(i)\n\nCurve points: \(r.points)\n\n"

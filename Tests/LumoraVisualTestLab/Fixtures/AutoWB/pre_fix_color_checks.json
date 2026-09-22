@@ -1,0 +1,281 @@
+[
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "Measured distance to neutral RGB axis; no automatic WB tuning",
+        "hard": false,
+        "name": "Known cast reduced",
+        "status": "WARN"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.999999706552197,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.11238222290558042,
+      "beforeChroma": 0.07260000886162743,
+      "temperature": -14,
+      "tint": 0
+    },
+    "name": "Auto color true_warm_cast",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "Measured distance to neutral RGB axis; no automatic WB tuning",
+        "hard": false,
+        "name": "Known cast reduced",
+        "status": "WARN"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.9999996225761727,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.11437864659819752,
+      "beforeChroma": 0.07260000886162743,
+      "temperature": 14,
+      "tint": 0
+    },
+    "name": "Auto color true_cool_cast",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "Measured distance to neutral RGB axis; no automatic WB tuning",
+        "hard": false,
+        "name": "Known cast reduced",
+        "status": "WARN"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.9999997633734021,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.05556844572129194,
+      "beforeChroma": 0.0396000011896831,
+      "temperature": 0,
+      "tint": 10
+    },
+    "name": "Auto color true_green_cast",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "Measured distance to neutral RGB axis; no automatic WB tuning",
+        "hard": false,
+        "name": "Known cast reduced",
+        "status": "WARN"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.9999996382876359,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.06378081846196437,
+      "beforeChroma": 0.04620001521107042,
+      "temperature": 0,
+      "tint": -12
+    },
+    "name": "Auto color true_magenta_cast",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "Neutral image must not gain a cast",
+        "hard": true,
+        "name": "Neutral stays neutral",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.9999999999999991,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0,
+      "beforeChroma": 0,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color neutral",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "At least 80% of scene chroma retained; no gray-world neutralization",
+        "hard": false,
+        "name": "Intentional color retained",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.2904000006383285,
+      "beforeChroma": 0.2904000006383285,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color warm_scene",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "At least 80% of scene chroma retained; no gray-world neutralization",
+        "hard": false,
+        "name": "Intentional color retained",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.26399999870409374,
+      "beforeChroma": 0.26399999870409374,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color green_scene",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      },
+      {
+        "detail": "At least 80% of scene chroma retained; no gray-world neutralization",
+        "hard": false,
+        "name": "Intentional color retained",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.2904000006383285,
+      "beforeChroma": 0.2904000006383285,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color blue_scene",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.08563487703213468,
+      "beforeChroma": 0.08249999990221113,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color mixed_lighting",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0.9999996327024987,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.052632879589509685,
+      "beforeChroma": 0.03300000767194433,
+      "temperature": -7,
+      "tint": -3
+    },
+    "name": "Auto color low_saturation",
+    "notes": []
+  },
+  {
+    "checks": [
+      {
+        "detail": "Production WB/vibrance renderer",
+        "hard": true,
+        "name": "Finite",
+        "status": "PASS"
+      }
+    ],
+    "images": [],
+    "metrics": {
+      "WBConfidence": 0,
+      "additionalClippedFraction": 0,
+      "afterChroma": 0.3110679504706013,
+      "beforeChroma": 0.32669999974461916,
+      "temperature": 0,
+      "tint": 0
+    },
+    "name": "Auto color high_saturation",
+    "notes": []
+  }
+]

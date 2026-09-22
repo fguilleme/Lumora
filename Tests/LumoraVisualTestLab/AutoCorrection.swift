@@ -156,11 +156,11 @@ final class AutoValidation {
             }
             let a=analysis(input),proposal=AutoProposal(a),out=try await output(input,proposal.intent.color),b=analysis(out)
             var c=LabCase(name:"Auto color "+name)
-            c.metrics=["WBConfidence":proposal.intent.wbConfidence,"temperature":proposal.intent.temperatureIntent,"tint":proposal.intent.tintIntent,
+            c.metrics=["WBConfidence":proposal.intent.wbConfidence,"temperature":proposal.intent.color.temperature,"tint":proposal.intent.color.tint,
                        "beforeChroma":a.chroma.mean,"afterChroma":b.chroma.mean,"additionalClippedFraction":b.whiteFraction-a.whiteFraction]
             c.check("Finite",pixels(out).allSatisfy(\.isFinite),hard:true,"Production WB/vibrance renderer")
             if name=="neutral" {c.check("Neutral stays neutral",proposal.intent.temperatureIntent==0 && proposal.intent.tintIntent==0 && b.chroma.mean<1e-6,hard:true,"Neutral image must not gain a cast")}
-            if name.hasPrefix("true_") {c.check("Known cast reduced",b.chroma.mean<a.chroma.mean,"Measured distance to neutral RGB axis; no automatic WB tuning")}
+            if name.hasPrefix("true_") {c.check("Known cast reduced",b.chroma.mean<a.chroma.mean,hard:true,"High-confidence known neutral cast must be reduced by production Auto Color")}
             if name.hasSuffix("_scene") {c.check("Intentional color retained",b.chroma.mean>0.8*a.chroma.mean,"At least 80% of scene chroma retained; no gray-world neutralization")}
             all += [(name+" Original",input),("Gray World baseline",grayWorld(input)),("Auto Color",out)]
             try lab.artifacts.sheet(Array(all.suffix(3)),"Auto/Synthetic/"+name+".png",cell:256,maxColumns:3)
