@@ -4,11 +4,8 @@ struct HistogramView: View {
     let histogram: Histogram
     @State private var rgb = true
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(spacing: 3) {
-                Image(systemName: histogram.shadows > 0 ? "triangle.fill" : "triangle")
-                Text("Noirs").font(.caption2)
-            }.foregroundStyle(histogram.shadows > 0 ? .mint : .secondary)
+        HStack(spacing: 8) {
+            clippingIndicator(histogram.shadows > 0)
             Canvas { context, size in
                 let channels: [([Int], Color)] = rgb
                     ? [(histogram.red, .red), (histogram.green, .green), (histogram.blue, .blue)]
@@ -28,10 +25,7 @@ struct HistogramView: View {
             }
             .frame(height: 44)
             .accessibilityHidden(true)
-            VStack(spacing: 3) {
-                Image(systemName: histogram.highlights > 0 ? "triangle.fill" : "triangle")
-                Text("Blancs").font(.caption2)
-            }.foregroundStyle(histogram.highlights > 0 ? .mint : .secondary)
+            clippingIndicator(histogram.highlights > 0)
         }
         .padding(.horizontal)
         .contentShape(Rectangle())
@@ -41,5 +35,18 @@ struct HistogramView: View {
         .accessibilityValue("\(histogram.shadows) échantillons noirs bouchés, \(histogram.highlights) échantillons avec un canal écrêté")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { rgb.toggle() }
+    }
+
+    private func clippingIndicator(_ clipped: Bool) -> some View {
+        ZStack {
+            if clipped {
+                Image(systemName: "triangle.fill")
+                    .font(.system(size: 8))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        // Reserve a small slot so changing clipping does not resize the graph.
+        .frame(width: 10, height: 44)
+        .accessibilityHidden(true)
     }
 }
