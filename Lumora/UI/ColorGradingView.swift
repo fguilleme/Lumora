@@ -10,6 +10,9 @@ struct ColorGradingView: View {
 
     var body: some View {
         VStack(spacing: 6) {
+            GradingPresetSelector(grading: grading) { preset in
+                onEnd(); onBegin("Grading · " + preset.title); onChange(preset.settings); onEnd()
+            }
             Picker("Plage tonale", selection: $selected) {
                 ForEach(GradingRange.allCases) { range in
                     Text(range.title).tag(range)
