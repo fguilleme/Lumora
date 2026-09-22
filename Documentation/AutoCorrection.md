@@ -20,11 +20,15 @@ La représentation réduite a un grand côté de 512 pixels, en flottant extende
 
 Les décisions conservatrices préservent les scènes sombres ou claires plutôt que de fixer toute médiane au gris moyen. La balance des blancs s’appuie sur un sous-ensemble peu saturé cohérent, exclut les noirs et hautes lumières, et limite son amplitude selon la confiance. Une image sans candidats neutres fiables peut recevoir une correction nulle. Il n’y a pas de segmentation ni de modèle ML.
 
+Pour départager une scène low-key d’un premier plan sombre devant un fond largement lumineux, Auto combine P50 et P95 avec leur séparation en stops : `log2((max(P95,0)+0,01)/(max(P50,0)+0,01))`. Trois transitions douces sur l’obscurité du premier plan, la présence de hautes valeurs étendues et cette séparation donnent un indice continu de contre-jour. P95 évite de prendre quelques lampes isolées pour un grand fond clair ; l’indice module au plus un demi-stop d’exposition et une ouverture modérée des ombres. Les statistiques globales ne révèlent toujours pas si le premier plan contient le sujet important. La [validation ciblée low-key/contre-jour](../AutoStressCorpus/Results/LowKeyBacklitFix/LowKeyBacklitClassificationFixReport.md) compare notamment un portrait sombre, une silhouette au coucher du soleil et une rue nocturne.
+
 ## Représentations tonales et limites
 
 `AutoCorrectionIntent` définit une intention indépendante du panneau. Sa fonction tonale de référence utilise les primitives Lumière existantes sur l’axe neutre. Le fitting ajoute des points seulement quand ils réduisent une erreur significative, avec l’interpolation PCHIP existante. L’API inverse Courbe → Lumière utilise un ajustement numérique déterministe borné ; elle ne promet pas une conversion exacte et n’est pas exposée comme bouton utilisateur.
 
 Le renderer Lumière applique une variation de luminance, tandis que la courbe RVB transforme les canaux séparément. De plus, les courbes/LUT existantes ont un domaine SDR. Une conversion peut donc diverger sur les couleurs et les hautes lumières HDR. Le rapport mesure séparément les erreurs SDR, HDR et photographiques ; Auto ne modifie aucun renderer pour dissimuler ces limites.
+
+Le corpus de stress a révélé un écart Light→Curve HDR important sur ses images 04 et 06. Le correctif de classification low-key/contre-jour ne touche pas ce problème ; il reste documenté comme limite connue distincte.
 
 ## Cache et validation
 

@@ -1,0 +1,792 @@
+[
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Dark foreground and broad near-white upper tail",
+        "hard" : true,
+        "name" : "01 exits lowKey gate",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Quality: fixed vs previous mean RGB difference > .01 linear",
+        "hard" : false,
+        "name" : "01 visually useful magnitude",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0005948373232899005,
+      "fixedMeanY" : 0.1210091137409544,
+      "fixedVsPreviousRGBMAE" : 0.020319533206484556,
+      "newEV" : 0.5,
+      "newShadows" : 16,
+      "oldCurveRGBMAE" : 0.0002659452359343956,
+      "oldEV" : 0,
+      "oldMeanY" : 0.10063198226275949,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit stress 01_dark_indoor_portrait",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0061812731800686554,
+      "fixedMeanY" : 0.7934260806894078,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 0,
+      "oldCurveRGBMAE" : 0.0061812731800686554,
+      "oldEV" : 0,
+      "oldMeanY" : 0.7934260806894078,
+      "oldShadows" : 0
+    },
+    "name" : "Low-key\/backlit stress 02_overexposed_beach_portrait",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0003255624232351324,
+      "fixedMeanY" : 0.052516470245390134,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 3,
+      "oldCurveRGBMAE" : 0.0003255624232351324,
+      "oldEV" : 0,
+      "oldMeanY" : 0.052516470245390134,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit stress 03_warm_tungsten_interior",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.00811489140443858,
+      "fixedMeanY" : 0.1368893968394578,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 1.39,
+      "newShadows" : 0,
+      "oldCurveRGBMAE" : 0.00811489140443858,
+      "oldEV" : 1.39,
+      "oldMeanY" : 0.1368893968394578,
+      "oldShadows" : 0
+    },
+    "name" : "Low-key\/backlit stress 04_blue_hour_noisy_portrait",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Silhouette\/night guard",
+        "hard" : true,
+        "name" : "05\/08 unchanged controls",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0003726180877827131,
+      "fixedMeanY" : 0.10736967117124349,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 3,
+      "oldCurveRGBMAE" : 0.0003726180877827131,
+      "oldEV" : 0,
+      "oldMeanY" : 0.10736967117124349,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit stress 05_backlit_sunset_silhouette",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.010007733132970284,
+      "fixedMeanY" : 0.11343283977564571,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 1.19,
+      "newShadows" : 0,
+      "oldCurveRGBMAE" : 0.010007733132970284,
+      "oldEV" : 1.19,
+      "oldMeanY" : 0.11343283977564571,
+      "oldShadows" : 0
+    },
+    "name" : "Low-key\/backlit stress 06_green_noisy_kitchen",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0006475620198942694,
+      "fixedMeanY" : 0.13956214128992755,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 8,
+      "oldCurveRGBMAE" : 0.0006475620198942694,
+      "oldEV" : 0,
+      "oldMeanY" : 0.13956214128992755,
+      "oldShadows" : 8
+    },
+    "name" : "Low-key\/backlit stress 07_flat_foggy_landscape",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Silhouette\/night guard",
+        "hard" : true,
+        "name" : "05\/08 unchanged controls",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.00033442485761222906,
+      "fixedMeanY" : 0.05421137889399837,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 3,
+      "oldCurveRGBMAE" : 0.00033442485761222906,
+      "oldEV" : 0,
+      "oldMeanY" : 0.05421137889399837,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit stress 08_high_iso_rainy_night",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.00045144383375807765,
+      "fixedMeanY" : 0.15085768254098864,
+      "fixedVsPreviousRGBMAE" : 3.6610290904544825e-08,
+      "newEV" : 0,
+      "newShadows" : 3.0004339881255047,
+      "oldCurveRGBMAE" : 0.00045141011606454466,
+      "oldEV" : 0,
+      "oldMeanY" : 0.15085765917914037,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit old 02_portrait_dark_skin",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.004243849047125718,
+      "fixedMeanY" : 0.2976337918152035,
+      "fixedVsPreviousRGBMAE" : 0.057404771208120174,
+      "newEV" : 0.44,
+      "newShadows" : 14.541022060458094,
+      "oldCurveRGBMAE" : 0.0026936988603575573,
+      "oldEV" : 0,
+      "oldMeanY" : 0.23927742255962164,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit old 04_backlight",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Existing control corpus",
+        "hard" : true,
+        "name" : "Old night\/high-key unchanged",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.00024316706838010895,
+      "fixedMeanY" : 0.03870084191968887,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 3,
+      "oldCurveRGBMAE" : 0.00024316706838010895,
+      "oldEV" : 0,
+      "oldMeanY" : 0.03870084191968887,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit old 05_night",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.0003120503315405362,
+      "fixedMeanY" : 0.08022367040308392,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 3,
+      "oldCurveRGBMAE" : 0.0003120503315405362,
+      "oldEV" : 0,
+      "oldMeanY" : 0.08022367040308392,
+      "oldShadows" : 3
+    },
+    "name" : "Low-key\/backlit old 06_indoor_high_contrast",
+    "notes" : [
+
+    ]
+  },
+  {
+    "checks" : [
+      {
+        "detail" : "Same oriented\/cropped 512 px input; classification-only production change",
+        "hard" : true,
+        "name" : "Analysis unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No WB\/Color change",
+        "hard" : true,
+        "name" : "Color intent unchanged",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Production development graph",
+        "hard" : true,
+        "name" : "Finite render",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Same input and settings",
+        "hard" : true,
+        "name" : "Deterministic and idempotent",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "No hidden settings",
+        "hard" : true,
+        "name" : "Light controls in UI range",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Base Light settings not an analysis input",
+        "hard" : true,
+        "name" : "Cache reuse",
+        "status" : "PASS"
+      },
+      {
+        "detail" : "Existing control corpus",
+        "hard" : true,
+        "name" : "Old night\/high-key unchanged",
+        "status" : "PASS"
+      }
+    ],
+    "images" : [
+
+    ],
+    "metrics" : {
+      "fixedCurveRGBMAE" : 0.002889722121186463,
+      "fixedMeanY" : 0.47332599735371805,
+      "fixedVsPreviousRGBMAE" : 0,
+      "newEV" : 0,
+      "newShadows" : 0,
+      "oldCurveRGBMAE" : 0.002889722121186463,
+      "oldEV" : 0,
+      "oldMeanY" : 0.47332599735371805,
+      "oldShadows" : 0
+    },
+    "name" : "Low-key\/backlit old 07_white_subject",
+    "notes" : [
+
+    ]
+  }
+]

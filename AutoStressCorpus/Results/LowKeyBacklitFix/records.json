@@ -1,0 +1,1718 @@
+[
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0.5,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : -3,
+      "scene" : "backlit",
+      "shadowLift" : 16,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.06314526296859241,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.10973584127565983,
+      "chroma" : {
+        "mean" : 0.006874879172120975,
+        "percentiles" : [
+          0,
+          0,
+          6.103515625e-05,
+          0.00128173828125,
+          0.03466796875,
+          0.13134765625,
+          0.182373046875
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 19.90335712784141,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.10255954499220124,
+        "percentiles" : [
+          0,
+          0,
+          0.0002536996459960938,
+          0.0037358581542968746,
+          0.9755859375,
+          0.9806352714843749,
+          0.98258916015625
+        ]
+      },
+      "neutralConfidence" : 0.06314526296859241,
+      "neutralRGB" : [
+        0.9976413446697557,
+        0.9988086662519665,
+        1.0366051182377714
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.10207943710064259,
+          "percentiles" : [
+            0,
+            0,
+            0.00030517578125,
+            0.0045166015625,
+            0.97607421875,
+            0.982421875,
+            0.98681640625
+          ]
+        },
+        {
+          "mean" : 0.10256087360493948,
+          "percentiles" : [
+            0,
+            0,
+            0.000244140625,
+            0.00360107421875,
+            0.974609375,
+            0.98095703125,
+            0.98193359375
+          ]
+        },
+        {
+          "mean" : 0.10396010889685399,
+          "percentiles" : [
+            0,
+            0,
+            1.52587890625e-05,
+            0.0027008056640625,
+            0.9755859375,
+            0.98193359375,
+            0.9853515625
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.3216667455678757,
+        "percentiles" : [
+          0,
+          0,
+          0.003279674461543979,
+          0.24632352941176472,
+          0.9230769230769231,
+          1,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.06314526296859241,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0005948373232899005,
+    "fixedLightRGBMAE" : 0.018726709510639577,
+    "fixedMeanY" : 0.1210091137409544,
+    "fixedVsPreviousRGBMAE" : 0.020319533206484556,
+    "fixedVsPreviousRGBMax" : 0.33070600032806396,
+    "name" : "01_dark_indoor_portrait",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.10218952274430727,
+    "previousCurveRGBMAE" : 0.0002659452359343956,
+    "previousLightRGBMAE" : 0.0025069295104389487,
+    "previousMeanY" : 0.10063198226275949,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : 0,
+      "scene" : "highKey",
+      "shadowLift" : 0,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 5,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0,
+      "chroma" : {
+        "mean" : 0.14557849277149548,
+        "percentiles" : [
+          0,
+          0,
+          0.00146484375,
+          0.1201171875,
+          0.40185546875,
+          0.4833984375,
+          0.5608908691406285
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 2.592811712402646,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.8126403333772071,
+        "percentiles" : [
+          0.12240773516845703,
+          0.16464571215820312,
+          0.32163504150390626,
+          0.8727592285156249,
+          0.9906521484374999,
+          0.9932636074218749,
+          0.9969244759765625
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.0698927126923565,
+        0.9838158518146873,
+        0.9712237736320031
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.8092297881929056,
+          "percentiles" : [
+            0.1448475341796875,
+            0.196033935546875,
+            0.374267578125,
+            0.869140625,
+            0.9931640625,
+            0.9970703125,
+            0.9990234375
+          ]
+        },
+        {
+          "mean" : 0.8135276644810204,
+          "percentiles" : [
+            0.11566162109375,
+            0.15673828125,
+            0.309814453125,
+            0.8828125,
+            0.99072265625,
+            0.9931640625,
+            0.9970703125
+          ]
+        },
+        {
+          "mean" : 0.8138932793720727,
+          "percentiles" : [
+            0.11069281005859374,
+            0.13623046875,
+            0.2374267578125,
+            0.9794921875,
+            0.99072265625,
+            0.99365234375,
+            0.99755859375
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.1788131734586411,
+        "percentiles" : [
+          0,
+          0,
+          0.0014677103718199608,
+          0.14468503937007873,
+          0.4861888551283374,
+          0.5737332269128036,
+          0.6381314492635476
+        ]
+      },
+      "whiteFraction" : 0.00029210960410557186
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : 0,
+      "scene" : "highKey",
+      "shadowLift" : 0,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 5,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0061812731800686554,
+    "fixedLightRGBMAE" : 0.01766533857459619,
+    "fixedMeanY" : 0.7934260806894078,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "02_overexposed_beach_portrait",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.8110394543269991,
+    "previousCurveRGBMAE" : 0.0061812731800686554,
+    "previousLightRGBMAE" : 0.01766533857459619,
+    "previousMeanY" : 0.7934260806894078,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : 0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.037619134897360705,
+      "chroma" : {
+        "mean" : 0.09305400084540291,
+        "percentiles" : [
+          0,
+          0.0002288818359375,
+          0.001190185546875,
+          0.0126495361328125,
+          0.5369415283203125,
+          0.9210537719726561,
+          0.9646065368652357
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 12.119545912291514,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.051791608721542065,
+        "percentiles" : [
+          0,
+          0.000143994140625,
+          0.0007267227172851563,
+          0.0075591583251953115,
+          0.26603754699707005,
+          0.6407545129394525,
+          0.8224152543457044
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1,
+        1,
+        1
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.09682926124841237,
+          "percentiles" : [
+            0,
+            0.0001373291015625,
+            0.000823974609375,
+            0.0128631591796875,
+            0.54833984375,
+            0.98681640625,
+            0.994140625
+          ]
+        },
+        {
+          "mean" : 0.04324014104706101,
+          "percentiles" : [
+            0,
+            0.0001068115234375,
+            0.00054931640625,
+            0.006622314453125,
+            0.2076416015625,
+            0.59521484375,
+            0.81689453125
+          ]
+        },
+        {
+          "mean" : 0.0038830873029322916,
+          "percentiles" : [
+            0,
+            0,
+            0,
+            0.000152587890625,
+            0.010772705078125,
+            0.08667541503906229,
+            0.39453125
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.9733318986825922,
+        "percentiles" : [
+          0,
+          0.7976124744376278,
+          0.8888888888888888,
+          0.9925801439504305,
+          1,
+          1,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : 0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0003255624232351324,
+    "fixedLightRGBMAE" : 0.0008647313136356487,
+    "fixedMeanY" : 0.052516470245390134,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "03_warm_tungsten_interior",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.05153885046309188,
+    "previousCurveRGBMAE" : 0.0003255624232351324,
+    "previousLightRGBMAE" : 0.0008647313136356487,
+    "previousMeanY" : 0.052516470245390134,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 1.39,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 0,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.028958944281524925,
+      "chroma" : {
+        "mean" : 0.11085562657051422,
+        "percentiles" : [
+          4.57763671875e-05,
+          0.000244140625,
+          0.0005950927734375,
+          0.0469512939453125,
+          0.280303955078125,
+          0.66412353515625,
+          0.9394288482666018
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 10.309894853625009,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.05245275918608846,
+        "percentiles" : [
+          9.846406555175783e-05,
+          0.0003294028625488281,
+          0.0007311874389648439,
+          0.04262776489257812,
+          0.10249380371093747,
+          0.41813350796508775,
+          0.7910122003906274
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.1111315269518012,
+        0.9550204377545161,
+        1.1330453434283694
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.04007676759423399,
+          "percentiles" : [
+            0.0001220703125,
+            0.00042724609375,
+            0.00091552734375,
+            0.0272216796875,
+            0.08966064453125,
+            0.80615234375,
+            0.9873046875
+          ]
+        },
+        {
+          "mean" : 0.04947241668827023,
+          "percentiles" : [
+            6.103515625e-05,
+            0.000244140625,
+            0.0005950927734375,
+            0.041839599609375,
+            0.0982666015625,
+            0.337890625,
+            0.7936567382812569
+          ]
+        },
+        {
+          "mean" : 0.11841781135877906,
+          "percentiles" : [
+            0.0001373291015625,
+            0.0004730224609375,
+            0.0012664794921875,
+            0.07159423828125,
+            0.3076171875,
+            0.3349609375,
+            0.36216040039062847
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.6593764944077525,
+        "percentiles" : [
+          0.057692307692307696,
+          0.16666666666666666,
+          0.2752808988764045,
+          0.6852184668333736,
+          0.894722313529746,
+          0.9121918188890487,
+          0.9936850965645095
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 1.39,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 0,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.00811489140443858,
+    "fixedLightRGBMAE" : 0.11196030732025783,
+    "fixedMeanY" : 0.1368893968394578,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "04_blue_hour_noisy_portrait",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.052232178542966086,
+    "previousCurveRGBMAE" : 0.00811489140443858,
+    "previousLightRGBMAE" : 0.11196030732025783,
+    "previousMeanY" : 0.1368893968394578,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.004854345581824093,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.05105617668621701,
+      "chroma" : {
+        "mean" : 0.13909305793798565,
+        "percentiles" : [
+          0.00018310546875,
+          0.0003204345703125,
+          0.0006256103515625,
+          0.0131683349609375,
+          0.8671707153320307,
+          0.9605865478515625,
+          0.9767948455810553
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 12.151482735018499,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.10713262135148723,
+        "percentiles" : [
+          5.1904296875e-05,
+          0.0001701690673828125,
+          0.000513526611328125,
+          0.009039187622070313,
+          0.4581135388183586,
+          0.774179048217773,
+          0.9659809428710938
+        ]
+      },
+      "neutralConfidence" : 0.004854345581824093,
+      "neutralRGB" : [
+        1.117714624211074,
+        0.9706303232143741,
+        0.9468123500794121
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.18146424541725092,
+          "percentiles" : [
+            0.0002288818359375,
+            0.00048828125,
+            0.0009918212890625,
+            0.016845703125,
+            0.96533203125,
+            0.9912109375,
+            0.99609375
+          ]
+        },
+        {
+          "mean" : 0.091522576959252,
+          "percentiles" : [
+            0,
+            6.103515625e-05,
+            0.0003814697265625,
+            0.0073089599609375,
+            0.3544921875,
+            0.77880859375,
+            0.96533203125
+          ]
+        },
+        {
+          "mean" : 0.042886090505857274,
+          "percentiles" : [
+            0,
+            0,
+            0.0001983642578125,
+            0.0026702880859375,
+            0.22998046875,
+            0.274658203125,
+            0.9658203125
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.7407271279150328,
+        "percentiles" : [
+          0.0035364093180414555,
+          0.07681297709923664,
+          0.2576506597632662,
+          0.8032762490241998,
+          0.9921031664503586,
+          1,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.004854345581824093,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0003726180877827131,
+    "fixedLightRGBMAE" : 0.0006547808694740279,
+    "fixedMeanY" : 0.10736967117124349,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "05_backlit_sunset_silhouette",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.10676934545247994,
+    "previousCurveRGBMAE" : 0.0003726180877827131,
+    "previousLightRGBMAE" : 0.0006547808694740279,
+    "previousMeanY" : 0.10736967117124349,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 1.19,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 0,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.0004868493401759531,
+      "chroma" : {
+        "mean" : 0.03993752030683053,
+        "percentiles" : [
+          0.00018310546875,
+          0.000457763671875,
+          0.0012664794921875,
+          0.021270751953125,
+          0.09491653442382786,
+          0.5470025634765623,
+          0.5832769165039071
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 7.57869013619614,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.04996999080203854,
+        "percentiles" : [
+          0.0008970700592041015,
+          0.0016277255249023438,
+          0.003715881805419922,
+          0.03670337677001953,
+          0.12664919433593744,
+          0.3111675014648437,
+          0.976960872460938
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.106463805512034,
+        0.9779311266053403,
+        0.8889164505792058
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.05661357742600427,
+          "percentiles" : [
+            0.001129150390625,
+            0.0019683837890625,
+            0.004631805419921892,
+            0.04425048828125,
+            0.12420654296875,
+            0.37042724609374744,
+            0.98583984375
+          ]
+        },
+        {
+          "mean" : 0.048274764741970295,
+          "percentiles" : [
+            0.00079345703125,
+            0.0015106201171875,
+            0.0034637451171875,
+            0.03515625,
+            0.12298583984375,
+            0.30251220703124915,
+            0.9765625
+          ]
+        },
+        {
+          "mean" : 0.04719989609158983,
+          "percentiles" : [
+            0.00091552734375,
+            0.00164794921875,
+            0.0030670166015625,
+            0.0235443115234375,
+            0.1094970703125,
+            0.6298828125,
+            0.970703125
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.48381462625805566,
+        "percentiles" : [
+          0.009476826043737575,
+          0.09005816385822198,
+          0.18507989079597123,
+          0.4744897959183674,
+          0.8153674963895874,
+          0.8932307152943946,
+          0.9149489484688249
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 1.19,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 0,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.010007733132970284,
+    "fixedLightRGBMAE" : 0.06465041113531661,
+    "fixedMeanY" : 0.11343283977564571,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "06_green_noisy_kitchen",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.04971793631142397,
+    "previousCurveRGBMAE" : 0.010007733132970284,
+    "previousLightRGBMAE" : 0.06465041113531661,
+    "previousMeanY" : 0.11343283977564571,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 8,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.0018614827712609971,
+      "chroma" : {
+        "mean" : 0.03427940956658282,
+        "percentiles" : [
+          0.0001373291015625,
+          0.00054931640625,
+          0.0015869140625,
+          0.013916015625,
+          0.1162109375,
+          0.12841796875,
+          0.140625
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 8.145319620618967,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.13634325152336685,
+        "percentiles" : [
+          0.0005938906982421875,
+          0.0020248604125976564,
+          0.005246184997558593,
+          0.06018653259277343,
+          0.50240423828125,
+          0.5732982548828123,
+          0.6691446027343819
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        0.9275416421059913,
+        1.004231505403109,
+        1.1447157314386869
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.12902765522254878,
+          "percentiles" : [
+            0.0007171630859375,
+            0.00238037109375,
+            0.005645751953125,
+            0.060211181640625,
+            0.470947265625,
+            0.544921875,
+            0.64501953125
+          ]
+        },
+        {
+          "mean" : 0.13671602636488303,
+          "percentiles" : [
+            0.00054931640625,
+            0.0019683837890625,
+            0.005218505859375,
+            0.060211181640625,
+            0.50390625,
+            0.57373046875,
+            0.6686567382812569
+          ]
+        },
+        {
+          "mean" : 0.15419210480455078,
+          "percentiles" : [
+            0.00030517578125,
+            0.0010986328125,
+            0.0029449462890625,
+            0.06298828125,
+            0.5849609375,
+            0.6513671875,
+            0.7492231445312569
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.28070008386656126,
+        "percentiles" : [
+          0.010305937229401867,
+          0.03520268211517289,
+          0.07414369381591883,
+          0.22614107883817428,
+          0.7131433606815063,
+          0.8247989922813036,
+          0.9152713397636045
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "normal",
+      "shadowLift" : 8,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0006475620198942694,
+    "fixedLightRGBMAE" : 0.00418456543785476,
+    "fixedMeanY" : 0.13956214128992755,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "07_flat_foggy_landscape",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.1355643865735205,
+    "previousCurveRGBMAE" : 0.0006475620198942694,
+    "previousLightRGBMAE" : 0.00418456543785476,
+    "previousMeanY" : 0.13956214128992755,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 1.2069672478137457e-05,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.010521673387096774,
+      "chroma" : {
+        "mean" : 0.08202084785332778,
+        "percentiles" : [
+          0.000244140625,
+          0.0006561279296875,
+          0.0015411376953125,
+          0.0219268798828125,
+          0.4501953125,
+          0.8032614135742184,
+          0.9066175842285178
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 10.82963212492955,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.05429297902996585,
+        "percentiles" : [
+          0.00014523235473632812,
+          0.00041307040405273433,
+          0.0010999234008789063,
+          0.01634817657470703,
+          0.2689819795227051,
+          0.7517409199218749,
+          0.9698500633789067
+        ]
+      },
+      "neutralConfidence" : 1.2069672478137457e-05,
+      "neutralRGB" : [
+        1.2167662173814429,
+        0.9364720969700101,
+        0.963321040731201
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.0988574381972338,
+          "percentiles" : [
+            0.000396728515625,
+            0.0009765625,
+            0.0021820068359375,
+            0.0287628173828125,
+            0.56298828125,
+            0.9794921875,
+            0.99365234375
+          ]
+        },
+        {
+          "mean" : 0.04481812673579912,
+          "percentiles" : [
+            4.57763671875e-05,
+            0.000244140625,
+            0.00079345703125,
+            0.0126800537109375,
+            0.2052001953125,
+            0.7270947265624983,
+            0.96923828125
+          ]
+        },
+        {
+          "mean" : 0.016924701215934194,
+          "percentiles" : [
+            0,
+            9.1552734375e-05,
+            0.0003204345703125,
+            0.003570556640625,
+            0.035491943359375,
+            0.37331298828124915,
+            0.96826171875
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.8067660608848238,
+        "percentiles" : [
+          0.006064790011941977,
+          0.21598992308495304,
+          0.35443847042122995,
+          0.8727524204702628,
+          0.9770676426733835,
+          0.9951258532862158,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 1.2069672478137457e-05,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.00033442485761222906,
+    "fixedLightRGBMAE" : 0.0010280230044552793,
+    "fixedMeanY" : 0.05421137889399837,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "08_high_iso_rainy_night",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.05314082427450601,
+    "previousCurveRGBMAE" : 0.00033442485761222906,
+    "previousLightRGBMAE" : 0.0010280230044552793,
+    "previousMeanY" : 0.05421137889399837,
+    "source" : "stress"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "lowKey",
+      "shadowLift" : 3.0004339881255047,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.0028695472873900294,
+      "chroma" : {
+        "mean" : 0.0654410715501679,
+        "percentiles" : [
+          1.52587890625e-05,
+          0.000213623046875,
+          0.0005950927734375,
+          0.01690673828125,
+          0.26312255859375,
+          0.3878228759765623,
+          0.5169732666015712
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 9.475155498260715,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.15059375341104703,
+        "percentiles" : [
+          0.0004725278442382812,
+          0.001285384063720703,
+          0.002669949340820313,
+          0.04481295318603516,
+          0.6811525097656239,
+          0.9148269072265625,
+          0.9638829900390625
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.065091181689657,
+        0.9871177315381545,
+        0.9153561231403627
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.18346545309964513,
+          "percentiles" : [
+            0.0004730224609375,
+            0.0013275146484375,
+            0.00274658203125,
+            0.058929443359375,
+            0.7587890625,
+            0.935546875,
+            0.9716796875
+          ]
+        },
+        {
+          "mean" : 0.143689999395102,
+          "percentiles" : [
+            0.0004425048828125,
+            0.0012359619140625,
+            0.0025787353515625,
+            0.0399169921875,
+            0.669921875,
+            0.91259765625,
+            0.962890625
+          ]
+        },
+        {
+          "mean" : 0.12218712624217058,
+          "percentiles" : [
+            0.000518798828125,
+            0.0014190673828125,
+            0.00286865234375,
+            0.031219482421875,
+            0.59912109375,
+            0.888671875,
+            0.955078125
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.359357260042726,
+        "percentiles" : [
+          0.0018020415213128793,
+          0.018663387385274025,
+          0.06417112299465241,
+          0.2967093556845851,
+          0.8162672474772344,
+          0.8665796132932135,
+          0.9486008609256104
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : 0,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.00045144383375807765,
+    "fixedLightRGBMAE" : 0.0016017075765869728,
+    "fixedMeanY" : 0.15085768254098864,
+    "fixedVsPreviousRGBMAE" : 3.6610290904544825e-08,
+    "fixedVsPreviousRGBMax" : 0.000440794974565506,
+    "name" : "02_portrait_dark_skin",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.14951363890315786,
+    "previousCurveRGBMAE" : 0.00045141011606454466,
+    "previousLightRGBMAE" : 0.0016016779875880744,
+    "previousMeanY" : 0.15085765917914037,
+    "source" : "old"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0.44,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : -3,
+      "scene" : "backlit",
+      "shadowLift" : 14.541022060458094,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0,
+      "chroma" : {
+        "mean" : 0.12370396455711634,
+        "percentiles" : [
+          0.00048828125,
+          0.00244140625,
+          0.0057220458984375,
+          0.04736328125,
+          0.545166015625,
+          0.7291342163085934,
+          0.7804454345703142
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 9.067845991230186,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.24837776046185386,
+        "percentiles" : [
+          0.0009349914733886718,
+          0.0018426677246093748,
+          0.003947005310058594,
+          0.04340318908691406,
+          0.9629315624999998,
+          0.9888733398437499,
+          0.9929333200195317
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        0.9825607800213112,
+        0.999256077257001,
+        1.0412535843152229
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.2901705243895131,
+          "percentiles" : [
+            0.0035858154296875,
+            0.0055389404296875,
+            0.008758544921875,
+            0.08319091796875,
+            0.98876953125,
+            0.99267578125,
+            0.99658203125
+          ]
+        },
+        {
+          "mean" : 0.24229122781334037,
+          "percentiles" : [
+            0.0001983642578125,
+            0.0007476806640625,
+            0.0025482177734375,
+            0.034698486328125,
+            0.98095703125,
+            0.9892578125,
+            0.99365234375
+          ]
+        },
+        {
+          "mean" : 0.18560693690504146,
+          "percentiles" : [
+            0,
+            0.00018310546875,
+            0.0006103515625,
+            0.011474609375,
+            0.71728515625,
+            0.98876953125,
+            0.9931640625
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.6489731246378732,
+        "percentiles" : [
+          0.0004928536224741252,
+          0.0029615004935834156,
+          0.06101190476190476,
+          0.7925229901563274,
+          0.9546742209631728,
+          0.9797979797979798,
+          1
+        ]
+      },
+      "whiteFraction" : 2.2910557184750733e-05
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.004243849047125718,
+    "fixedLightRGBMAE" : 0.049366220394277065,
+    "fixedMeanY" : 0.2976337918152035,
+    "fixedVsPreviousRGBMAE" : 0.057404771208120174,
+    "fixedVsPreviousRGBMax" : 0.2932747006416321,
+    "name" : "04_backlight",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.24753938944371695,
+    "previousCurveRGBMAE" : 0.0026936988603575573,
+    "previousLightRGBMAE" : 0.00951375083832587,
+    "previousMeanY" : 0.23927742255962164,
+    "source" : "old"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.04989284939236111,
+      "chroma" : {
+        "mean" : 0.057733174282475375,
+        "percentiles" : [
+          0,
+          2.3084878921508773e-05,
+          0.0004520416259765625,
+          0.01175689697265625,
+          0.28695106506347656,
+          0.7109252929687528,
+          0.914614562988282
+        ]
+      },
+      "count" : 147456,
+      "dynamicRangeEV" : 13.629111332220319,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.03888572129582974,
+        "percentiles" : [
+          0,
+          4.333806037902832e-05,
+          0.0006526053011417388,
+          0.00916962432861328,
+          0.1675086019515991,
+          0.5490865371704111,
+          0.9600167416992234
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.1388416580198766,
+        0.9387644010028646,
+        1.1941741686060285
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.06651810301183206,
+          "percentiles" : [
+            0,
+            8.279085159301758e-05,
+            0.0009503364562988281,
+            0.01342010498046875,
+            0.32666015625,
+            0.9140625,
+            0.98876953125
+          ]
+        },
+        {
+          "mean" : 0.03301254030561217,
+          "percentiles" : [
+            0,
+            1.2132525444030759e-05,
+            0.0005677938461303711,
+            0.0084228515625,
+            0.1328125,
+            0.48994140625001137,
+            0.95947265625
+          ]
+        },
+        {
+          "mean" : 0.015698113143217698,
+          "percentiles" : [
+            0,
+            0,
+            4.254281520843506e-05,
+            0.005184173583984375,
+            0.04547119140625,
+            0.2318115234375,
+            0.9319067382812563
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.7623027684997236,
+        "percentiles" : [
+          0,
+          0.05080736360497237,
+          0.28256159748311105,
+          0.8466739543001011,
+          0.9919331234893558,
+          1,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : 0,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.00024316706838010895,
+    "fixedLightRGBMAE" : 0.0008817307807551042,
+    "fixedMeanY" : 0.03870084191968887,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "05_night",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.03777320577835085,
+    "previousCurveRGBMAE" : 0.00024316706838010895,
+    "previousLightRGBMAE" : 0.0008817307807551042,
+    "previousMeanY" : 0.03870084191968887,
+    "source" : "old"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : 0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0.15436560667155425,
+      "chroma" : {
+        "mean" : 0.031131426522459104,
+        "percentiles" : [
+          0,
+          0,
+          1.52587890625e-05,
+          0.002197265625,
+          0.225341796875,
+          0.44580078125,
+          0.6013377075195425
+        ]
+      },
+      "count" : 174592,
+      "dynamicRangeEV" : 19.702716771375368,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.0804314559671704,
+        "percentiles" : [
+          0,
+          0,
+          4.2172241210937504e-05,
+          0.006397911071777344,
+          0.5937081274414054,
+          0.8533137509765626,
+          0.9141935641601596
+        ]
+      },
+      "neutralConfidence" : 0,
+      "neutralRGB" : [
+        1.0213755388617152,
+        0.9981835909963912,
+        0.9597438578789491
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.09380487883545437,
+          "percentiles" : [
+            0,
+            0,
+            6.103515625e-05,
+            0.00714111328125,
+            0.73291015625,
+            0.88916015625,
+            0.95361328125
+          ]
+        },
+        {
+          "mean" : 0.07800321696091257,
+          "percentiles" : [
+            0,
+            0,
+            1.52587890625e-05,
+            0.0063018798828125,
+            0.57421875,
+            0.85205078125,
+            0.91259765625
+          ]
+        },
+        {
+          "mean" : 0.06510578886854335,
+          "percentiles" : [
+            0,
+            0,
+            0,
+            0.0051116943359375,
+            0.45703125,
+            0.8251953125,
+            0.8903364257812569
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.40456870979271314,
+        "percentiles" : [
+          0,
+          0,
+          0.0125,
+          0.28961968444051717,
+          1,
+          1,
+          1
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : 0,
+      "saturationIntent" : -3,
+      "scene" : "lowKey",
+      "shadowLift" : 3,
+      "temperatureIntent" : -0,
+      "tintIntent" : 0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.0003120503315405362,
+    "fixedLightRGBMAE" : 0.0008239454907874674,
+    "fixedMeanY" : 0.08022367040308392,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "06_indoor_high_contrast",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.07942298080182787,
+    "previousCurveRGBMAE" : 0.0003120503315405362,
+    "previousLightRGBMAE" : 0.0008239454907874674,
+    "previousMeanY" : 0.08022367040308392,
+    "source" : "old"
+  },
+  {
+    "after" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : 0,
+      "scene" : "highKey",
+      "shadowLift" : 0,
+      "temperatureIntent" : -2,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.26837553858887553,
+      "whitePointIntent" : 0
+    },
+    "analysis" : {
+      "blackFraction" : 0,
+      "chroma" : {
+        "mean" : 0.14931667476210148,
+        "percentiles" : [
+          0.00048828125,
+          0.00390625,
+          0.01318359375,
+          0.06396484375,
+          0.5546875,
+          0.5919189453125,
+          0.6113946533203141
+        ]
+      },
+      "count" : 147456,
+      "dynamicRangeEV" : 5.787202820694736,
+      "hdrFraction" : 0,
+      "luminance" : {
+        "mean" : 0.49921681786466876,
+        "percentiles" : [
+          0.0067521307029724115,
+          0.017724926376342775,
+          0.09776946029663085,
+          0.5205497802734376,
+          0.9370780517578126,
+          0.978827314453125,
+          0.991974501953125
+        ]
+      },
+      "neutralConfidence" : 0.26837553858887553,
+      "neutralRGB" : [
+        1.0475213292900771,
+        0.9899168253727644,
+        0.9590507292771959
+      ],
+      "nonFinite" : 0,
+      "rgb" : [
+        {
+          "mean" : 0.49150140696373357,
+          "percentiles" : [
+            0.0050850105285644535,
+            0.0173797607421875,
+            0.07861328125,
+            0.52783203125,
+            0.9501953125,
+            0.98388671875,
+            0.9931640625
+          ]
+        },
+        {
+          "mean" : 0.4977402248316341,
+          "percentiles" : [
+            0.00630950927734375,
+            0.016747283935546874,
+            0.09112548828125,
+            0.51904296875,
+            0.9346923828125,
+            0.978515625,
+            0.9921875
+          ]
+        },
+        {
+          "mean" : 0.5365624646066054,
+          "percentiles" : [
+            0.001205272674560547,
+            0.004007530212402344,
+            0.045257568359375,
+            0.5654296875,
+            0.9228515625,
+            0.974609375,
+            0.9921875
+          ]
+        }
+      ],
+      "saturation" : {
+        "mean" : 0.2965400264574969,
+        "percentiles" : [
+          0.0007124631114404241,
+          0.004974011098164077,
+          0.018058339353833955,
+          0.13194444444444445,
+          0.8234990617180984,
+          0.9173489457736637,
+          0.9909578307843486
+        ]
+      },
+      "whiteFraction" : 0
+    },
+    "before" : {
+      "blackPointIntent" : 0,
+      "correctionConfidence" : 0.8,
+      "exposureShiftEV" : 0,
+      "globalContrastIntent" : 0,
+      "highlightCompression" : -12,
+      "saturationIntent" : 0,
+      "scene" : "highKey",
+      "shadowLift" : 0,
+      "temperatureIntent" : -2,
+      "tintIntent" : -0,
+      "vibranceIntent" : 0,
+      "wbConfidence" : 0.26837553858887553,
+      "whitePointIntent" : 0
+    },
+    "fixedCurveRGBMAE" : 0.002889722121186463,
+    "fixedLightRGBMAE" : 0.025467799383867527,
+    "fixedMeanY" : 0.47332599735371805,
+    "fixedVsPreviousRGBMAE" : 0,
+    "fixedVsPreviousRGBMax" : 0,
+    "name" : "07_white_subject",
+    "nonFinite" : 0,
+    "originalMeanY" : 0.4986611233926004,
+    "previousCurveRGBMAE" : 0.002889722121186463,
+    "previousLightRGBMAE" : 0.025467799383867527,
+    "previousMeanY" : 0.47332599735371805,
+    "source" : "old"
+  }
+]
