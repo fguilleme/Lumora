@@ -36,6 +36,43 @@ final class EditorSession {
     @ObservationIgnored private var interacting = false
     @ObservationIgnored private var didRestore = false
 
+    private(set) var isAnalyzingAuto = false
+    private(set) var autoProposal: AutoProposal?
+    private var autoProposalDocument: UUID?
+    private var autoProposalLayer: UUID?
+    @ObservationIgnored private var autoRequest = 0
+
+    func autoIsApplied(_ module: AutoModule, style: AutoCurveStyle = .balanced) -> Bool {
+        autoProposalDocument == document?.id && autoProposalLayer == selectedMaskID &&
+            autoProposal?.matches(module, style: style, state: activeState) == true
+    }
+
+    func applyAuto(_ module: AutoModule, style: AutoCurveStyle = .balanced) async {
+        finishInteraction()
+        guard let url = sourceURL, let documentID = document?.id else { return }
+        autoRequest += 1
+        let token = autoRequest, snapshot = state, layer = selectedMaskID
+        let context = AutoRequestContext(request: token, renderGeneration: generation,
+            importGeneration: importGeneration, documentID: documentID, sourceURL: url,
+            selectedLayer: layer, state: snapshot)
+        isAnalyzingAuto = true
+        defer { if token == autoRequest { isAnalyzingAuto = false } }
+        do {
+            let analysis = try await engine.autoAnalysis(url: url, state: snapshot, maskID: layer)
+            guard let currentID = document?.id, let currentURL = sourceURL,
+                  context.permits(AutoRequestContext(request: autoRequest, renderGeneration: generation,
+                    importGeneration: importGeneration, documentID: currentID, sourceURL: currentURL,
+                    selectedLayer: selectedMaskID, state: state)), !Task.isCancelled else { return }
+            let applied = analysis.proposal.applying(module, style: style, to: activeState)
+            history.begin("Auto · " + (module == .color ? "Couleur" : module == .curves ? "Courbes" : "Lumière"), state: state)
+            if let index = selectedMaskIndex { state.masks[index].adjustments = LocalAdjustmentState(editState: applied) }
+            else { state = applied }
+            autoProposal = analysis.proposal; autoProposalDocument = documentID; autoProposalLayer = layer
+            history.commit(state); persist(); requestRender(.high)
+        } catch is CancellationError { }
+        catch { if token == autoRequest, document?.id == documentID { self.error = error.localizedDescription } }
+    }
+
     func restore() async {
         guard !didRestore else { return }
         didRestore = true

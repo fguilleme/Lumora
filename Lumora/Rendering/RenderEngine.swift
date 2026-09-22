@@ -33,6 +33,7 @@ actor RenderEngine {
     private var opticsAvailability = OpticsAvailability()
     private var lastLUTState: EditState?
     private var lastLUT: Data?
+    private var autoCache: (AutoAnalysisKey, AutoProposal)?
 
     init() {
         let options: [CIContextOption: Any] = [
@@ -50,6 +51,7 @@ actor RenderEngine {
 
     func clearCaches() {
         sources.removeAll()
+        autoCache = nil
         lastLUT = nil
         lastLUTState = nil
         opticsAvailability = OpticsAvailability()
@@ -79,6 +81,49 @@ actor RenderEngine {
         return RenderResult(image: result, original: original, histogram: histogram, milliseconds: milliseconds,
                             cacheHit: hit, gpu: gpu, sourceWidth: sourceWidth, sourceHeight: sourceHeight,
                             isRAW: raw, optics: opticsAvailability)
+    }
+
+    /// Common pre-development input, viewed through the current crop. No Creative FX.
+    func autoAnalysis(url: URL, state: EditState, maskID: UUID? = nil, maximum: Int = 512) throws -> AutoAnalysisResult {
+        let start = ContinuousClock.now
+        let metadata = try url.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey])
+        let version = "\(metadata.contentModificationDate?.timeIntervalSince1970 ?? 0)-\(metadata.fileSize ?? 0)"
+        let key = AutoAnalysisKey(url: url, version: version, state: state, maskID: maskID, maximum: maximum)
+        if let cached = autoCache, cached.0 == key {
+            return .init(proposal: cached.1, cacheHit: true, milliseconds: autoMilliseconds(start))
+        }
+        try Task.checkCancellation()
+        let input: CIImage
+        let type = UTType(filenameExtension: url.pathExtension)
+        if type?.conforms(to: .rawImage) == true, let raw = CIRAWFilter(imageURL: url) {
+            raw.isLensCorrectionEnabled = state.optics.profileCorrection && raw.isLensCorrectionSupported
+            raw.scaleFactor = Float(min(1, Double(maximum * 2) / max(raw.nativeSize.width, raw.nativeSize.height)))
+            guard let decoded = raw.outputImage else { throw PhotoError.unreadable }
+            input = decoded
+        } else {
+            guard let decoded = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
+            input = decoded
+        }
+        let prepared: CIImage
+        if key.mask != nil { prepared = try adjusted(input, state: key.upstream, bypassCreative: true) }
+        else { prepared = GeometryRenderer.apply(try OpticsRenderer.apply(input, settings: state.optics), settings: state.geometry) }
+        let matte = try key.mask.map { try MaskRenderer.makeMask($0, extent: prepared.extent) }
+        let pixels = AutoAnalysisInput.pixels(prepared, context: context, maximum: maximum, mask: matte)
+        try Task.checkCancellation()
+        let proposal = AutoProposal(ImageAnalysis.measure(pixels))
+        try Task.checkCancellation()
+        autoCache = (key, proposal)
+        return .init(proposal: proposal, cacheHit: false, milliseconds: autoMilliseconds(start))
+    }
+
+    private func autoMilliseconds(_ start: ContinuousClock.Instant) -> Double {
+        let duration = start.duration(to: .now)
+        return Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
+    }
+
+    /// Diagnostics evaluate the unchanged production graph, not a second Auto renderer.
+    func autoDiagnosticDevelopment(_ input: CIImage, state: EditState) throws -> CIImage {
+        try applyDevelopment(input, state: state)
     }
 
     /// Shared adjustment graph for both preview and export. No SwiftUI or bitmap history.

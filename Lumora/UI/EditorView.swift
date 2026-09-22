@@ -271,6 +271,7 @@ struct EditorView: View {
         switch panel {
         case .curve:
             ScrollView {
+                AutoCorrectionControls(session: session, module: .curves).padding(.horizontal)
                 ToneCurveEditor(curves: session.activeState.curves, histogram: result.histogram,
                                 onBegin: { session.beginInteraction($0) },
                                 onChange: session.setCurve, onEnd: session.finishInteraction)
@@ -350,6 +351,7 @@ struct EditorView: View {
     private var controls: some View {
         ScrollView {
             VStack(spacing: 6) {
+                AutoCorrectionControls(session: session, module: panel == .light ? .light : .color)
                 ForEach(panel == .light ? Adjustment.light : Adjustment.color) { adjustment in
                     AdjustmentSlider(adjustment: adjustment, value: session.activeState[adjustment],
                                      onBegin: { session.beginInteraction(adjustment) },
