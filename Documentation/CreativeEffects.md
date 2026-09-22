@@ -4,7 +4,7 @@
 
 ## Pile et masques
 
-Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner, réinitialiser et supprimer un effet. Les six actions de l’effet sélectionné sont directement accessibles à droite de son nom, sur deux rangées d’icônes avec une cible tactile de 44 points : œil, duplication, suppression, ordre précédent/suivant et réinitialisation. Le menu « … » est supprimé. Chaque instance conserve ses réglages, son opacité et son éventuel masque. L’ordre de la pile est l’ordre du traitement : déplacer un effet peut changer le résultat. Le bypass Creative sert à comparer l’aperçu et n’est pas exporté.
+Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner, réinitialiser et supprimer un effet. Les six actions de l’effet sélectionné sont directement accessibles à droite de « Styles », sur une seule rangée d’icônes de 16 points avec une cible tactile de 44 points : œil, duplication, suppression, ordre précédent/suivant et réinitialisation. Le menu « … » est supprimé. Chaque instance conserve ses réglages, son opacité et son éventuel masque. L’ordre de la pile est l’ordre du traitement : déplacer un effet peut changer le résultat. Le bypass Creative sert à comparer l’aperçu et n’est pas exporté.
 
 Les effets utilisent les masques existants, y compris leurs composantes ajoutées/soustraites et leur inversion. Un masque absent, masqué ou d’opacité nulle suspend l’effet qui le référence. Les changements passent par Undo/Redo et sont enregistrés dans le document.
 
