@@ -46,3 +46,7 @@ Modifiés : `EditState`, `EditorSession`, `TonalResponse`, `RenderEngine`, `Edit
 Validation finale : build iOS réussi ; **18 tests du cœur et 1 parcours UI étendu réussis**. Le parcours UI vérifie le déplacement tactile d’un point, Undo/Redo, sa suppression, l’indépendance des canaux, leur persistance au redémarrage et la réinitialisation d’un seul canal. Aucun warning Swift ; avertissement Xcode App Intents non bloquant inchangé.
 
 Résultats de cette session : `/tmp/lumora-curves-tests.log`, `/tmp/lumora-curves-build.log`, `/tmp/lumora-curves-ui.log` et `/tmp/LumoraCurvesUITests.xcresult`.
+
+## Auto
+
+Le panneau propose Auto et les variantes Naturel / Équilibré / Soutenu. Elles partagent l’analyse de Lumière et Couleur et génèrent des points éditables. Auto Courbes remplace explicitement les réglages Lumière et la courbe RVB ; les courbes de canaux restent indépendantes. La conversion est mesurée comme une approximation, notamment en HDR. Voir [Auto — architecture et limites](AutoCorrection.md).

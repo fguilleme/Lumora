@@ -358,3 +358,14 @@ Le modèle d’édition, la session, le moteur, l’écran principal et le parco
 - `EditorView` : ligne d’informations conditionnelle, nom sans extension, format et dimensions indépendants (y compris RAW).
 - `CreativeEffectsView` : icônes directes de 16 points à droite de « Styles », cibles tactiles de 44 points.
 - `EditorInteractionFixesUITests` : déplacement des poignées sous zoom, absence de développement pendant le pinceau, navigation sans trait, informations contextuelles et actions Creative.
+
+## Analyse Auto partagée
+
+- `Adjustments/AutoAnalysis.swift` : statistiques robustes linéaires, candidats neutres, intention photographique commune.
+- `Adjustments/AutoAnalysisInput.swift` : source et clé de cache pertinente, échantillonnage RGBAf réduit.
+- `Adjustments/AutoMapping.swift` : mapping Lumière/Couleur, fonction tonale canonique, fitting PCHIP, approximation inverse et application sans double correction.
+- `Adjustments/AutoRequestContext.swift` : garde d’application des résultats asynchrones.
+- `UI/AutoCorrectionControls.swift` : boutons Auto et variantes de courbe, état Auto/Personnalisé.
+- `Tests/LumoraVisualTestLab/Auto*.swift` : campagne Auto, corpus, conversions, cache, diagnostics et comparaison aux renderers avant Auto.
+
+Voir [Auto](AutoCorrection.md).
