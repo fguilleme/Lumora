@@ -3,6 +3,16 @@ import UIKit
 
 final class EditorUITests: XCTestCase {
     @MainActor
+    private func selectMaskEditingPanel(_ name: String, in app: XCUIApplication) {
+        let toolbar = app.scrollViews["tools-toolbar"]
+        for _ in 0..<4 {
+            if app.buttons[name].isHittable { break }
+            if name == "Lumière" { toolbar.swipeRight() } else { toolbar.swipeLeft() }
+        }
+        app.buttons[name].tap()
+    }
+
+    @MainActor
     func testGlamourGlowStylesUseOneEffectAndUndoRedo() throws {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -368,12 +378,9 @@ final class EditorUITests: XCTestCase {
         app.buttons["quick-layer-mask-0"].tap()
         XCTAssertEqual(activeLayerMenu.value as? String, "Radial 1")
 
-        let masks = app.scrollViews["masks-controls"]
-        let exposure = app.sliders["mask-adjustment-exposure"]
-        for _ in 0..<14 {
-            if exposure.isHittable { break }
-            masks.swipeUpAlongLeadingEdge()
-        }
+        XCTAssertFalse(app.staticTexts["Raccourcis du calque"].exists)
+        selectMaskEditingPanel("Lumière", in: app)
+        let exposure = app.sliders["Exposition"]
         XCTAssertTrue(exposure.isHittable)
         exposure.adjust(toNormalizedSliderPosition: 0.82)
         XCTAssertNotEqual(exposure.value as? String, "0.00")
@@ -999,16 +1006,13 @@ final class EditorUITests: XCTestCase {
         app.buttons["Annuler"].tap()
         app.buttons["Rétablir"].tap()
         brushMode.buttons["Peindre"].tap()
-        let localExposure = app.sliders["mask-adjustment-exposure"]
-        XCTAssertTrue(localExposure.waitForExistence(timeout: 5))
-        for _ in 0..<14 {
-            if localExposure.isHittable { break }
-            app.scrollViews["masks-controls"].swipeUpAlongLeadingEdge()
-        }
+        selectMaskEditingPanel("Lumière", in: app)
+        let localExposure = app.sliders["Exposition"]
         XCTAssertTrue(localExposure.isHittable)
         localExposure.adjust(toNormalizedSliderPosition: 0.85)
         let localExposureValue = localExposure.value as? String
         XCTAssertNotEqual(localExposureValue, "0.00")
+        selectMaskEditingPanel("Masques", in: app)
         XCTAssertTrue(app.scrollViews["tools-toolbar"].isHittable)
         canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.4))
             .press(forDuration: 0.2, thenDragTo: canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.6)))
@@ -1086,13 +1090,9 @@ final class EditorUITests: XCTestCase {
         XCTAssertEqual(app.sliders["layer-opacity"].value as? String, layerOpacityValue)
         XCTAssertEqual(app.sliders["mask-parameter-centerX"].value as? String, movedCenterX)
         XCTAssertEqual(app.sliders["mask-parameter-feather"].value as? String, movedFeather)
-        app.scrollViews["masks-controls"].swipeUp()
-        app.scrollViews["masks-controls"].swipeUp()
-        app.scrollViews["masks-controls"].swipeUp()
-        XCTAssertEqual(app.sliders["mask-adjustment-exposure"].value as? String, localExposureValue)
-        app.scrollViews["masks-controls"].swipeDown()
-        app.scrollViews["masks-controls"].swipeDown()
-        app.scrollViews["masks-controls"].swipeDown()
+        selectMaskEditingPanel("Lumière", in: app)
+        XCTAssertEqual(app.sliders["Exposition"].value as? String, localExposureValue)
+        selectMaskEditingPanel("Masques", in: app)
         app.buttons["mask-new"].tap()
         app.buttons["Linéaire"].tap()
         let moveEarlier = app.buttons["layer-move-earlier"]
@@ -1138,12 +1138,8 @@ final class EditorUITests: XCTestCase {
         }
         XCTAssertTrue(subjectMask.exists, app.debugDescription)
 
-        let masksControls = app.scrollViews["masks-controls"]
-        let localExposure = app.sliders["mask-adjustment-exposure"]
-        for _ in 0..<4 {
-            if localExposure.isHittable { break }
-            masksControls.swipeUpAlongLeadingEdge()
-        }
+        selectMaskEditingPanel("Lumière", in: app)
+        let localExposure = app.sliders["Exposition"]
         XCTAssertTrue(localExposure.isHittable)
         localExposure.adjust(toNormalizedSliderPosition: 0.8)
         let value = localExposure.value as? String
@@ -1159,12 +1155,8 @@ final class EditorUITests: XCTestCase {
         app.buttons["Masques"].tap()
         app.buttons["Sujet"].tap()
         XCTAssertTrue(app.buttons["+ Sujet 1"].waitForExistence(timeout: 5))
-        let restoredControls = app.scrollViews["masks-controls"]
-        let restoredExposure = app.sliders["mask-adjustment-exposure"]
-        for _ in 0..<4 {
-            if restoredExposure.isHittable { break }
-            restoredControls.swipeUpAlongLeadingEdge()
-        }
+        selectMaskEditingPanel("Lumière", in: app)
+        let restoredExposure = app.sliders["Exposition"]
         XCTAssertEqual(restoredExposure.value as? String, value)
     }
 

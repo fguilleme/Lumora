@@ -323,8 +323,6 @@ struct EditorView: View {
                       onMove: session.moveSelectedLayer,
                       onInvert: session.toggleMaskInversion,
                       onBegin: session.beginInteraction,
-                      onAdjustment: session.setLocalAdjustment,
-                      onResetAdjustment: session.resetLocalAdjustment,
                       onParameter: session.setMaskParameter,
                       onEnd: session.finishInteraction)
         case .presets:
@@ -373,7 +371,7 @@ struct EditorView: View {
     private var isAdjustingSelectedMask: Bool {
         guard session.selectedMaskID != nil, let id = focusedAdjustmentID else { return false }
         if Adjustment(rawValue: id) != nil { return true }
-        return id.hasPrefix("creative-") || id.hasPrefix("mask-adjustment-")
+        return id.hasPrefix("creative-")
             || id.hasPrefix("effect-")
             || id.hasPrefix("detail-")
             || id.hasPrefix("mixer-")

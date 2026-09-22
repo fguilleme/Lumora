@@ -23,8 +23,6 @@ struct MasksView: View {
     let onMove: (Int) -> Void
     let onInvert: () -> Void
     let onBegin: (String) -> Void
-    let onAdjustment: (LocalAdjustment, Double) -> Void
-    let onResetAdjustment: (LocalAdjustment) -> Void
     let onParameter: (MaskParameter, Double) -> Void
     let onEnd: () -> Void
     @State private var showingRename = false
@@ -81,20 +79,7 @@ struct MasksView: View {
                             componentControls(component, in: mask)
                             shapeControls(component)
                         }
-                        Divider()
-                        Text("Raccourcis du calque").font(.headline)
-                        Text("Lumière, Couleur, Courbes, Colorimétrie, Effets et Détail agissent aussi sur ce calque tant qu’il reste sélectionné.")
-                            .font(.caption).foregroundStyle(.secondary)
-                        ForEach(LocalAdjustment.allCases) { adjustment in
-                            AdjustmentSlider(title: adjustment.title, range: adjustment.range,
-                                             step: adjustment == .exposure ? 0.01 : 1,
-                                             precision: adjustment == .exposure ? 2 : 0,
-                                             accessibilityID: "mask-adjustment-\(adjustment.rawValue)",
-                                             value: mask.adjustments[adjustment],
-                                             onBegin: { onBegin("Masque · \(adjustment.title)") },
-                                             onChange: { onAdjustment(adjustment, $0) }, onEnd: onEnd,
-                                             onReset: { onResetAdjustment(adjustment) })
-                        }
+
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)
         }
