@@ -17,12 +17,21 @@ final class GradingPresetUITests:XCTestCase {
         }
         openGrading()
         let strip=app.scrollViews["grading-preset-strip"],panel=app.scrollViews["color-tools-controls"]
+        // Scroll from the gutter: a center swipe can begin on the editable wheel.
+        func scrollPanel(up: Bool) {
+            panel.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: up ? 0.8 : 0.2))
+                .press(forDuration: 0.05, thenDragTo: panel.coordinate(
+                    withNormalizedOffset: CGVector(dx: 0.98, dy: up ? 0.2 : 0.8)))
+        }
         func select(_ id:String) {
             let button=app.buttons["grading-preset-"+id]
-            for _ in 0..<5 where !strip.isHittable {panel.swipeDown()}
+            for _ in 0..<5 where !strip.isHittable {scrollPanel(up: false)}
             for _ in 0..<30 where !button.isHittable {
-                if button.frame.midX < strip.frame.midX {strip.swipeRight(velocity:.slow)}
-                else {strip.swipeLeft(velocity:.slow)}
+                let right = button.frame.midX < strip.frame.midX
+                strip.coordinate(withNormalizedOffset: CGVector(dx: right ? 0.35 : 0.65, dy: 0.65))
+                    .press(forDuration: 0.05, thenDragTo: strip.coordinate(
+                        withNormalizedOffset: CGVector(dx: right ? 0.65 : 0.35, dy: 0.65)),
+                           withVelocity: .slow, thenHoldForDuration: 0.2)
             }
             XCTAssertTrue(button.isHittable,id);XCTAssertGreaterThanOrEqual(button.frame.height,44);button.tap()
         }
@@ -32,9 +41,9 @@ final class GradingPresetUITests:XCTestCase {
         app.buttons["Annuler"].tap();XCTAssertEqual(status.label,"Neutral")
         app.buttons["Rétablir"].tap();XCTAssertEqual(status.label,"Soft Portrait")
         let luminance=app.sliders["grading-luminance"]
-        for _ in 0..<4 where !luminance.isHittable {panel.swipeUp()}
+        for _ in 0..<4 where !luminance.isHittable {scrollPanel(up: true)}
         luminance.adjust(toNormalizedSliderPosition:0.65)
-        for _ in 0..<4 where !status.isHittable {panel.swipeDown()}
+        for _ in 0..<4 where !status.isHittable {scrollPanel(up: false)}
         XCTAssertEqual(status.label,"Personnalisé")
         app.buttons["Annuler"].tap();XCTAssertEqual(status.label,"Soft Portrait")
         let ids=["warmPortrait","coolPortrait","cinematic","tealWarm","coolCinema","warmCinema","mutedCinema","goldenHour","blueHour","moody","pastel","autumn","bleachGrade","splitWarmCool","neutral"]

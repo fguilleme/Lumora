@@ -11,15 +11,14 @@ struct AutoCorrectionControls: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Button {
                     Task { await session.applyAuto(module, style: resolvedStyle) }
                 } label: {
                     Label("Auto", systemImage: "wand.and.stars")
-                        .frame(minHeight: 32)
                 }
-                .buttonStyle(.bordered).tint(.mint)
+                .buttonStyle(CompactEditorButtonStyle())
                 .accessibilityIdentifier("auto-" + module.rawValue)
                 .disabled(session.isAnalyzingAuto)
                 if session.isAnalyzingAuto { ProgressView().controlSize(.small).accessibilityLabel("Analyse de la photo") }
@@ -29,7 +28,7 @@ struct AutoCorrectionControls: View {
                     .accessibilityIdentifier("auto-status-" + module.rawValue)
             }
             if module == .curves {
-                HStack(spacing: 6) {
+                HStack(spacing: 0) {
                     ForEach(AutoCurveStyle.allCases) { item in
                         Button {
                             style = item
@@ -38,15 +37,22 @@ struct AutoCorrectionControls: View {
                             HStack(spacing: 3) {
                                 Text(item.title)
                                 if session.autoIsApplied(.curves, style: item) { Image(systemName: "checkmark") }
-                            }.font(.caption).frame(minHeight: 32)
+                            }.frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(.bordered)
-                        .tint(session.autoIsApplied(.curves, style: item) ? .mint : .secondary)
+                        .buttonStyle(CompactEditorButtonStyle(
+                            selected: session.autoIsApplied(.curves, style: item), segment: true))
                         .accessibilityIdentifier("auto-curve-" + item.rawValue)
                         .accessibilityAddTraits(session.autoIsApplied(.curves, style: item) ? .isSelected : [])
                         .disabled(session.isAnalyzingAuto)
                     }
                 }
+                .background {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(Color.primary.opacity(0.06))
+                        .padding(.vertical, 4)
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Style Auto")
             }
             if module != .color {
                 Text("Auto remplace les réglages Lumière et la courbe RVB.")

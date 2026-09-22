@@ -6,15 +6,12 @@ struct GradingPresetSelector: View {
     private var selected: ColorGradingPreset? { ColorGradingPreset.matching(grading) }
     var body: some View {
         VStack(alignment:.leading,spacing:4) {
-            HStack {
-                presetButton(.neutral)
-                Spacer()
-                Text(selected?.title ?? String(localized:"Personnalisé"))
-                    .font(.caption).foregroundStyle(.secondary)
-                    .accessibilityIdentifier("grading-preset-status")
-            }
+            Text(selected?.title ?? String(localized:"Personnalisé"))
+                .font(.caption2).foregroundStyle(.secondary)
+                .accessibilityIdentifier("grading-preset-status")
             ScrollView(.horizontal) {
-                HStack(alignment:.top,spacing:14) {
+                HStack(alignment:.bottom,spacing:12) {
+                    presetButton(.neutral)
                     ForEach(ColorGradingPreset.Family.allCases,id:\.self) { family in
                         VStack(alignment:.leading,spacing:2) {
                             Text(family.title).font(.caption2).foregroundStyle(.secondary)
@@ -32,10 +29,9 @@ struct GradingPresetSelector: View {
             HStack(spacing:4) {
                 if selected==preset {Image(systemName:"checkmark")}
                 Text(preset.title).fixedSize()
-            }.font(.caption).padding(.horizontal,8).frame(minHeight:44)
+            }.fixedSize(horizontal: true, vertical: false)
         }
-        .buttonStyle(.bordered).buttonBorderShape(.capsule)
-        .tint(selected==preset ? .mint:.secondary)
+        .buttonStyle(CompactEditorButtonStyle(selected: selected == preset))
         .accessibilityIdentifier("grading-preset-"+preset.id)
         .accessibilityAddTraits(selected==preset ? .isSelected:[])
     }
