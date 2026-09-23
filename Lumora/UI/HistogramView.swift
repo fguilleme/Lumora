@@ -5,11 +5,19 @@ import SwiftUI
 struct HistogramView: View {
     let histogram: Histogram
     let imageSize: CGSize
+    let diagnosticActivationCount: Int?
+    let onClippingPressChanged: (Bool) -> Void
     @State private var expanded = false
+    @State private var longPressConsumed = false
+    @GestureState private var clippingPressed = false
 
-    init(histogram: Histogram, imageSize: CGSize, initiallyExpanded: Bool = false) {
+    init(histogram: Histogram, imageSize: CGSize, initiallyExpanded: Bool = false,
+         diagnosticActivationCount: Int? = nil,
+         onClippingPressChanged: @escaping (Bool) -> Void = { _ in }) {
         self.histogram = histogram
         self.imageSize = imageSize
+        self.diagnosticActivationCount = diagnosticActivationCount
+        self.onClippingPressChanged = onClippingPressChanged
         _expanded = State(initialValue: initiallyExpanded)
     }
 
@@ -21,6 +29,7 @@ struct HistogramView: View {
             let width = expanded ? expandedWidth : compactWidth
             let height: CGFloat = expanded ? 150 : 62
             Button {
+                guard !longPressConsumed else { return }
                 withAnimation(.easeInOut(duration: 0.18)) { expanded.toggle() }
             } label: {
                 VStack(spacing: 4) {
@@ -45,13 +54,32 @@ struct HistogramView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 10))
             }
             .buttonStyle(.plain)
+            .simultaneousGesture(clippingGesture)
             .accessibilityIdentifier("histogram-overlay")
             .accessibilityLabel(expanded ? "Réduire l’histogramme RVB" : "Agrandir l’histogramme RVB")
-            .accessibilityValue("Noirs proches du bord : \(histogram.shadows) sur \(histogram.samples). Blancs proches du bord : \(histogram.highlights) sur \(histogram.samples). Aperçu SDR, pas écrêtage du fichier original.")
-            .accessibilityHint("Touchez deux fois pour \(expanded ? "réduire" : "agrandir")")
+            .accessibilityValue("Noirs proches du bord : \(histogram.shadowFraction.formatted(.percent.precision(.fractionLength(2)))). Blancs proches du bord : \(histogram.highlightFraction.formatted(.percent.precision(.fractionLength(2)))). Aperçu SDR, pas écrêtage du fichier original." + (diagnosticActivationCount.map { " Activations clipping : \($0)." } ?? ""))
+            .accessibilityHint("Touchez deux fois pour \(expanded ? "réduire" : "agrandir"). Maintenez pour afficher temporairement les zones proches du noir en bleu et du blanc en rouge.")
+            .onChange(of: clippingPressed) { _, active in
+                if active { longPressConsumed = true }
+                onClippingPressChanged(active)
+                if !active {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        longPressConsumed = false
+                    }
+                }
+            }
+            .onDisappear { onClippingPressChanged(false) }
             .position(x: photo.minX + width / 2 + 8,
                       y: photo.minY + height / 2 + 8)
         }
+    }
+
+    private var clippingGesture: some Gesture {
+        LongPressGesture(minimumDuration: 0.35, maximumDistance: 16)
+            .sequenced(before: DragGesture(minimumDistance: 0))
+            .updating($clippingPressed) { value, active, _ in
+                if case .second(true, _) = value { active = true }
+            }
     }
 
     private var histogramGraph: some View {

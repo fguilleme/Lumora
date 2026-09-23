@@ -12,6 +12,11 @@ struct EditorView: View {
     @State private var panel: Panel = .light
     @State private var showMetrics = false
     @State private var maskOverlayVisible = true
+    @State private var clippingPressed = false
+    @State private var clippingOverlay: CGImage?
+    @State private var clippingSource: CGImage?
+    @State private var clippingRequest = 0
+    @State private var clippingActivationCount = 0
     @State private var exportRequest: ExportRequest?
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
@@ -54,7 +59,14 @@ struct EditorView: View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
             if let result = session.result {
-                PhotoCanvas(result: result,
+                PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
+                            onClippingOverlayAppear: {
+                                // Test-only accessibility counter: proves the photo overlay
+                                // appeared during an XCTest press without persisting UI state.
+                                if ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") {
+                                    clippingActivationCount &+= 1
+                                }
+                            },
                             curveSampling: panel == .curve && curveEditMode && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
                             curveSampleLocation: curveSample?.location,
                             onCurveSample: { location in
@@ -95,7 +107,11 @@ struct EditorView: View {
                     .background(.black)
                     .overlay {
                         HistogramView(histogram: result.histogram,
-                                      imageSize: CGSize(width: result.image.width, height: result.image.height))
+                                      imageSize: CGSize(width: result.image.width, height: result.image.height),
+                                      diagnosticActivationCount: ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") ? clippingActivationCount : nil,
+                                      onClippingPressChanged: { active in
+                                          setClippingPress(active, image: result.image)
+                                      })
                             .id(session.document?.id)
                     }
                 if ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel) {
@@ -181,6 +197,11 @@ struct EditorView: View {
         .onChange(of: session.document?.id) { _, _ in
             curveEditMode = false; curveEyedropper = false
             curveSample = nil; curveSamplingBuffer = nil
+            clearClippingOverlay()
+        }
+        .onChange(of: session.result.map { ObjectIdentifier($0.image) }) { _, _ in
+            clippingOverlay = nil; clippingSource = nil; clippingRequest &+= 1
+            if clippingPressed, let image = session.result?.image { setClippingPress(true, image: image) }
         }
         .onChange(of: session.selectedMaskID) { _, selectedMaskID in
             if selectedMaskID != nil {
@@ -198,6 +219,36 @@ struct EditorView: View {
         if result.isRAW { return "RAW" }
         let ext = URL(fileURLWithPath: session.document?.originalName ?? "").pathExtension.uppercased()
         return ext == "JPEG" ? "JPG" : ext.isEmpty ? "IMAGE" : ext
+    }
+
+    private func activeClippingOverlay(for image: CGImage) -> CGImage? {
+        guard clippingPressed, let clippingSource, clippingSource === image else { return nil }
+        return clippingOverlay
+    }
+
+    private func setClippingPress(_ active: Bool, image: CGImage) {
+        clippingPressed = active
+        clippingRequest &+= 1
+        guard active else { return }
+        if let clippingSource, clippingSource === image, clippingOverlay != nil { return }
+        clippingOverlay = nil; clippingSource = nil
+        let request = clippingRequest
+        Task { @MainActor in
+            let mask = await Task.detached(priority: .userInitiated) {
+                HistogramClippingOverlay.make(from: image)
+            }.value
+            guard clippingPressed, clippingRequest == request,
+                  let current = session.result?.image, current === image else { return }
+            clippingSource = image
+            clippingOverlay = mask
+        }
+    }
+
+    private func clearClippingOverlay() {
+        clippingPressed = false
+        clippingOverlay = nil
+        clippingSource = nil
+        clippingRequest &+= 1
     }
 
     private var header: some View {

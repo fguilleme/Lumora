@@ -3,6 +3,8 @@ import CoreImage
 
 struct PhotoCanvas: View {
     let result: RenderResult
+    var clippingOverlay: CGImage? = nil
+    var onClippingOverlayAppear: () -> Void = {}
     var curveSampling = false
     var curveSampleLocation: MaskPoint? = nil
     var onCurveSample: (MaskPoint) -> Void = { _ in }
@@ -69,6 +71,17 @@ struct PhotoCanvas: View {
                 Image(decorative: image, scale: 1)
                 .resizable().aspectRatio(contentMode: .fit)
                 .frame(width: geometry.size.width, height: geometry.size.height)
+                .overlay {
+                    if let clippingOverlay, !showingOriginal && !pressing {
+                        Image(decorative: clippingOverlay, scale: 1)
+                            .resizable().aspectRatio(contentMode: .fit)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .accessibilityLabel("Zones proches du noir et du blanc sur l’aperçu SDR")
+                            .accessibilityIdentifier("clipping-warning-overlay")
+                            .allowsHitTesting(false)
+                            .onAppear(perform: onClippingOverlayAppear)
+                    }
+                }
                 .scaleEffect(displayScale)
                 .offset(displayOffset)
                 .frame(width: geometry.size.width, height: geometry.size.height)

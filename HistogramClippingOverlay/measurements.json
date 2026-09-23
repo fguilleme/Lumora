@@ -1,0 +1,14 @@
+{
+  "activationLongPressThresholdMs" : 350,
+  "activationMask960MedianMs" : 1.6228750000000001,
+  "activationMask2048MedianMs" : 7.0406250000000004,
+  "overlayFrame960MedianMs" : 2.4380419999999998,
+  "plainFrame960MedianMs" : 2.4165410000000001,
+  "platform" : "Apple M2 Pro, macOS; CPU sRGB8 preview diagnostic",
+  "releaseStateUpdate" : "synchronous on gesture release; next SwiftUI frame",
+  "rssAfter35CyclesBytes" : 306872320,
+  "rssBefore35CyclesBytes" : 306872320,
+  "rssDelta35CyclesBytes" : 0,
+  "storedMaskBytes960" : 2457600,
+  "storedMaskBytes2048" : 11182080
+}
