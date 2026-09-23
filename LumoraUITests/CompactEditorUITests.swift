@@ -54,7 +54,12 @@ final class CompactEditorUITests: XCTestCase {
             waitForExpectations(timeout: 30)
         }
         let chart = app.descendants(matching: .any).matching(identifier: "tone-curve-chart").firstMatch
-        XCTAssertTrue(chart.isHittable)
+        let curveScroll = app.scrollViews["curve-controls-scroll"]
+        for _ in 0..<4 where chart.frame.intersection(curveScroll.frame).height < 120 {
+            curveScroll.swipeUp()
+        }
+        XCTAssertTrue(chart.exists)
+        XCTAssertGreaterThanOrEqual(chart.frame.intersection(curveScroll.frame).height, 120)
         capture("Compact Auto Curves")
     }
 }

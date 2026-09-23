@@ -5,6 +5,7 @@ struct PhotoCanvas: View {
     let result: RenderResult
     var clippingOverlay: CGImage? = nil
     var onClippingOverlayAppear: () -> Void = {}
+    var diagnosticGeneration: Int? = nil
     var curveSampling = false
     var curveSampleLocation: MaskPoint? = nil
     var onCurveSample: (MaskPoint) -> Void = { _ in }
@@ -189,7 +190,8 @@ struct PhotoCanvas: View {
                 }
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel("Photographie, \(showingOriginal || pressing ? "original" : "développement")")
-                .accessibilityValue("Zoom \(Int((zoom * 100).rounded())) %")
+                .accessibilityValue("Zoom \(Int((zoom * 100).rounded())) %" +
+                    (diagnosticGeneration.map { " · génération \($0)" } ?? ""))
                 .accessibilityIdentifier("photo-canvas")
                 .accessibilityAction(named: "Comparer à l’original") { showingOriginal.toggle() }
                 .accessibilityAction(named: "Réinitialiser le zoom") { restoreZoom() }

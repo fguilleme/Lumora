@@ -10,10 +10,18 @@ private struct AdjustmentFocusKey: EnvironmentKey {
     static let defaultValue = AdjustmentFocusContext(activeID: nil, setActive: { _ in })
 }
 
+private struct SideControlLayoutKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
 extension EnvironmentValues {
     var adjustmentFocus: AdjustmentFocusContext {
         get { self[AdjustmentFocusKey.self] }
         set { self[AdjustmentFocusKey.self] = newValue }
+    }
+    var usesSideControlLayout: Bool {
+        get { self[SideControlLayoutKey.self] }
+        set { self[SideControlLayoutKey.self] = newValue }
     }
 }
 
@@ -59,6 +67,7 @@ struct AdjustmentSlider: View {
     @State private var fineOrigin = 0.0
     @State private var editing = false
     @Environment(\.adjustmentFocus) private var focus
+    @Environment(\.usesSideControlLayout) private var usesSideControlLayout
 
     private var activeRange: ClosedRange<Double> {
         guard fine else { return range }
@@ -66,13 +75,45 @@ struct AdjustmentSlider: View {
         return max(range.lowerBound, fineOrigin - radius)...min(range.upperBound, fineOrigin + radius)
     }
     var body: some View {
-        HStack(spacing: 8) {
-            Text(title)
-                .font(.caption)
-                .lineLimit(1)
-                .minimumScaleFactor(0.75)
-                .frame(width: 82, alignment: .leading)
-            TouchTrackingSlider(value: value, range: activeRange, step: fine ? step / 10 : step,
+        Group {
+            if usesSideControlLayout {
+                VStack(spacing: 0) {
+                    HStack(spacing: 4) {
+                        titleLabel
+                        Spacer(minLength: 4)
+                        fineButton
+                        resetButton
+                    }
+                    slider
+                }
+            } else {
+                HStack(spacing: 8) {
+                    titleLabel.frame(width: 82, alignment: .leading)
+                    slider
+                    fineButton
+                    resetButton
+                }
+                .frame(minHeight: 42)
+            }
+        }
+        .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0)
+        .allowsHitTesting(focus.activeID == nil || focus.activeID == accessibilityID)
+        .onChange(of: value) { _, next in
+            // Undo/reset can move the value outside the currently magnified interval.
+            if fine && !activeRange.contains(next) { fineOrigin = next }
+        }
+        .onDisappear { finishEditing() }
+    }
+
+    private var titleLabel: some View {
+        Text(title)
+            .font(.caption)
+            .lineLimit(1)
+            .minimumScaleFactor(0.75)
+    }
+
+    private var slider: some View {
+        TouchTrackingSlider(value: value, range: activeRange, step: fine ? step / 10 : step,
                                 title: title, accessibilityID: accessibilityID,
                                 onBegin: beginEditing, onChange: { next in
                 if (value < 0 && next >= 0) || (value > 0 && next <= 0) { zeroFeedback += 1 }
@@ -83,7 +124,10 @@ struct AdjustmentSlider: View {
             }
             .frame(minHeight: 30)
             .sensoryFeedback(.selection, trigger: zeroFeedback)
-            Button {
+    }
+
+    private var fineButton: some View {
+        Button {
                 fine.toggle(); fineOrigin = value
             } label: {
                 Text(value, format: .number.precision(.fractionLength(fine ? precision + 1 : precision)))
@@ -93,22 +137,16 @@ struct AdjustmentSlider: View {
             }
             .accessibilityLabel("\(title), réglage fin")
             .accessibilityValue(fine ? "Activé" : "Désactivé")
-            Button(action: onReset) {
-                Image(systemName: "arrow.counterclockwise").font(.caption).frame(width: 32, height: 40)
-            }
+    }
+
+    private var resetButton: some View {
+        Button(action: onReset) {
+            Image(systemName: "arrow.counterclockwise")
+                .font(.caption)
+                .frame(width: usesSideControlLayout ? 44 : 32, height: 40)
+        }
             .foregroundStyle(.secondary)
             .accessibilityLabel("Réinitialiser \(title)")
-        }
-        .frame(minHeight: 42)
-        .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0)
-        .allowsHitTesting(focus.activeID == nil || focus.activeID == accessibilityID)
-        .onChange(of: value) { _, next in
-            // Undo/reset can move the value outside the currently magnified interval.
-            if fine && !activeRange.contains(next) { fineOrigin = next }
-        }
-        .onDisappear {
-            finishEditing()
-        }
     }
 
     private func finishEditing() {

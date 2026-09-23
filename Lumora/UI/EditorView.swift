@@ -27,7 +27,11 @@ struct EditorView: View {
     @State private var curveEyedropper = false
     @State private var curveSample: CurveSample?
     @State private var curveSamplingBuffer: CurveSamplingBuffer?
+    @AppStorage("editor.controlsSide") private var controlsSideRaw = ControlsSide.leading.rawValue
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.layoutDirection) private var layoutDirection
+    private enum ControlsSide: String { case leading, trailing }
+    private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
         case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets"
@@ -59,6 +63,13 @@ struct EditorView: View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
             if let result = session.result {
+                GeometryReader { available in
+                    let landscape = UIDevice.current.userInterfaceIdiom == .phone
+                        && available.size.width > available.size.height
+                    EditorWorkspaceLayout(landscape: landscape,
+                                          controlsSide: controlsSideRaw,
+                                          direction: layoutDirection,
+                                          portraitControlsHeight: 252 + 56 + (showsPhotoInformation ? 28 : 0)) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
                                 // Test-only accessibility counter: proves the photo overlay
@@ -67,6 +78,7 @@ struct EditorView: View {
                                     clippingActivationCount &+= 1
                                 }
                             },
+                            diagnosticGeneration: ProcessInfo.processInfo.arguments.contains("-ui-testing-landscape") ? session.generation : nil,
                             curveSampling: panel == .curve && curveEditMode && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
                             curveSampleLocation: curveSample?.location,
                             onCurveSample: { location in
@@ -108,32 +120,19 @@ struct EditorView: View {
                     .overlay {
                         HistogramView(histogram: result.histogram,
                                       imageSize: CGSize(width: result.image.width, height: result.image.height),
+                                      compactLandscape: landscape,
                                       diagnosticActivationCount: ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") ? clippingActivationCount : nil,
                                       onClippingPressChanged: { active in
                                           setClippingPress(active, image: result.image)
                                       })
                             .id(session.document?.id)
                     }
-                if ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel) {
-                    HStack(spacing: 6) {
-                        Text(URL(fileURLWithPath: session.document?.originalName ?? "Photographie").deletingPathExtension().lastPathComponent)
-                            .lineLimit(1).truncationMode(.middle)
-                        activeLayerMenu
-                        Spacer(minLength: 0)
-                        if session.isRendering { ProgressView().controlSize(.mini) }
-                        Text(sourceFormat(result)).fixedSize()
-                        Text("\(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
+                editorControlColumn(result, landscape: landscape)
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("editor-controls-column")
                     }
-                    .font(.caption2).foregroundStyle(.secondary)
-                    .padding(.horizontal).frame(height: 28)
-                    .accessibilityIdentifier("photo-information")
-                    .dimsDuringAdjustment()
+                    .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
-                editorControls(result)
-                    .frame(height: 252)
-                    .background(.black)
-                    .clipped()
-                toolBar.dimsDuringAdjustment()
                 #if DEBUG
                 if showMetrics { metrics(result) }
                 #endif
@@ -219,6 +218,63 @@ struct EditorView: View {
         if result.isRAW { return "RAW" }
         let ext = URL(fileURLWithPath: session.document?.originalName ?? "").pathExtension.uppercased()
         return ext == "JPEG" ? "JPG" : ext.isEmpty ? "IMAGE" : ext
+    }
+
+    private var showsPhotoInformation: Bool {
+        ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel)
+    }
+
+    private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
+        VStack(spacing: 0) {
+            if landscape { landscapeToolbar }
+            if showsPhotoInformation { photoInformation(result) }
+            editorControls(result)
+                .environment(\.usesSideControlLayout, landscape)
+                .frame(height: landscape ? nil : 252)
+                .frame(maxHeight: landscape ? .infinity : nil)
+                .background(.black)
+                .clipped()
+            if !landscape { toolBar.dimsDuringAdjustment() }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.black)
+    }
+
+    private func photoInformation(_ result: RenderResult) -> some View {
+        HStack(spacing: 6) {
+            Text(URL(fileURLWithPath: session.document?.originalName ?? "Photographie")
+                .deletingPathExtension().lastPathComponent)
+                .lineLimit(1).truncationMode(.middle)
+            activeLayerMenu
+            Spacer(minLength: 0)
+            if session.isRendering { ProgressView().controlSize(.mini) }
+            Text(sourceFormat(result)).fixedSize()
+            Text("\(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
+        }
+        .font(.caption2).foregroundStyle(.secondary)
+        .padding(.horizontal).frame(height: 28)
+        .accessibilityIdentifier("photo-information")
+        .dimsDuringAdjustment()
+    }
+
+    private var landscapeToolbar: some View {
+        HStack(spacing: 0) {
+            toolBar
+            Button {
+                controlsSideRaw = controlsSide == .leading
+                    ? ControlsSide.trailing.rawValue : ControlsSide.leading.rawValue
+            } label: {
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.system(size: 15, weight: .medium))
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("Changer le côté des contrôles")
+            .accessibilityValue(controlsSide == .leading ? "Début" : "Fin")
+            .accessibilityIdentifier("controls-side-switch")
+            .padding(.trailing, 4)
+        }
+        .frame(height: 56)
+        .dimsDuringAdjustment()
     }
 
     private func activeClippingOverlay(for image: CGImage) -> CGImage? {
@@ -531,5 +587,42 @@ private struct WelcomeImportButtonStyle: ButtonStyle {
             .foregroundStyle(prominent ? Color.black : Color.mint)
             .background(Capsule().fill(Color.mint.opacity(prominent ? 1 : 0.16)))
             .opacity(configuration.isPressed ? 0.65 : 1)
+    }
+}
+
+/// Keeps the canvas in the same SwiftUI identity across rotations and side
+/// switches, preserving its transient zoom and pan state.
+private struct EditorWorkspaceLayout: Layout {
+    let landscape: Bool
+    let controlsSide: String
+    let direction: LayoutDirection
+    let portraitControlsHeight: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        CGSize(width: proposal.width ?? 0, height: proposal.height ?? 0)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize,
+                       subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 2 else { return }
+        if landscape {
+            let controlsWidth = min(340, max(248, bounds.width * 0.35))
+            let photoWidth = max(0, bounds.width - controlsWidth)
+            let leadingIsLeft = direction == .leftToRight
+            let controlsOnLeft = (controlsSide != "trailing") == leadingIsLeft
+            let controlsX = controlsOnLeft ? bounds.minX : bounds.maxX - controlsWidth
+            let photoX = controlsOnLeft ? bounds.minX + controlsWidth : bounds.minX
+            subviews[0].place(at: CGPoint(x: photoX, y: bounds.minY),
+                              proposal: ProposedViewSize(width: photoWidth, height: bounds.height))
+            subviews[1].place(at: CGPoint(x: controlsX, y: bounds.minY),
+                              proposal: ProposedViewSize(width: controlsWidth, height: bounds.height))
+        } else {
+            let controlsHeight = min(bounds.height, portraitControlsHeight)
+            subviews[0].place(at: CGPoint(x: bounds.minX, y: bounds.minY),
+                              proposal: ProposedViewSize(width: bounds.width,
+                                                         height: max(0, bounds.height - controlsHeight)))
+            subviews[1].place(at: CGPoint(x: bounds.minX, y: bounds.maxY - controlsHeight),
+                              proposal: ProposedViewSize(width: bounds.width, height: controlsHeight))
+        }
     }
 }

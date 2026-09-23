@@ -5,17 +5,20 @@ import SwiftUI
 struct HistogramView: View {
     let histogram: Histogram
     let imageSize: CGSize
+    let compactLandscape: Bool
     let diagnosticActivationCount: Int?
     let onClippingPressChanged: (Bool) -> Void
     @State private var expanded = false
     @State private var longPressConsumed = false
     @GestureState private var clippingPressed = false
 
-    init(histogram: Histogram, imageSize: CGSize, initiallyExpanded: Bool = false,
+    init(histogram: Histogram, imageSize: CGSize, compactLandscape: Bool = false,
+         initiallyExpanded: Bool = false,
          diagnosticActivationCount: Int? = nil,
          onClippingPressChanged: @escaping (Bool) -> Void = { _ in }) {
         self.histogram = histogram
         self.imageSize = imageSize
+        self.compactLandscape = compactLandscape
         self.diagnosticActivationCount = diagnosticActivationCount
         self.onClippingPressChanged = onClippingPressChanged
         _expanded = State(initialValue: initiallyExpanded)
@@ -24,8 +27,12 @@ struct HistogramView: View {
     var body: some View {
         GeometryReader { geometry in
             let photo = imageRect(in: geometry.size)
-            let compactWidth = min(220, max(128, photo.width * 0.42))
-            let expandedWidth = max(128, photo.width * 0.84)
+            let compactWidth = compactLandscape
+                ? min(220, max(128, geometry.size.width * 0.36))
+                : min(220, max(128, photo.width * 0.42))
+            let expandedWidth = compactLandscape
+                ? max(128, geometry.size.width * 0.78)
+                : max(128, photo.width * 0.84)
             let width = expanded ? expandedWidth : compactWidth
             let height: CGFloat = expanded ? 150 : 62
             Button {
