@@ -9,9 +9,9 @@ enum GeometryAnalysisError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noHorizon:
-            "Vision n’a trouvé aucun horizon suffisamment fiable dans cette photographie."
+            "Vision found no sufficiently reliable horizon in this photo."
         case .noPerspective:
-            "Vision n’a trouvé aucune structure rectangulaire suffisamment fiable pour corriger la perspective."
+            "Vision found no sufficiently reliable rectangular structure for perspective correction."
         }
     }
 }

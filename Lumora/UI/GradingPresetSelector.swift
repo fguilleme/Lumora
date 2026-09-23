@@ -6,7 +6,7 @@ struct GradingPresetSelector: View {
     private var selected: ColorGradingPreset? { ColorGradingPreset.matching(grading) }
     var body: some View {
         VStack(alignment:.leading,spacing:4) {
-            Text(selected?.title ?? String(localized:"Personnalisé"))
+            Text(selected?.title ?? String(localized:"Custom"))
                 .font(.caption2).foregroundStyle(.secondary)
                 .accessibilityIdentifier("grading-preset-status")
             ScrollView(.horizontal) {

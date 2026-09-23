@@ -28,7 +28,7 @@ struct ToneCurveEditor: View {
     var body: some View {
         VStack(spacing: 6) {
             HStack(spacing: 6) {
-                Picker("Canal de la courbe", selection: $channel) {
+                Picker("Curve channel", selection: $channel) {
                     ForEach(CurveChannel.allCases) { item in Text(item.title).tag(item) }
                 }
                 .pickerStyle(.segmented)
@@ -41,7 +41,7 @@ struct ToneCurveEditor: View {
                     Image(systemName: editMode ? "checkmark" : "pencil")
                 }
                 .buttonStyle(CompactEditorButtonStyle(selected: editMode))
-                .accessibilityLabel(editMode ? "Terminé" : "Modifier")
+                .accessibilityLabel(editMode ? "Done" : "Edit")
                 .accessibilityIdentifier("curve-edit-mode")
             }
             GeometryReader { geometry in
@@ -99,7 +99,7 @@ struct ToneCurveEditor: View {
                                     .onChanged { value in
                                         if dragging == nil {
                                             dragging = index; selected = index
-                                            onBegin("Courbe \(channel.title)")
+                                            onBegin("\(channel.title) curve")
                                         }
                                         var updated = curve
                                         updated.move(index: index,
@@ -110,7 +110,7 @@ struct ToneCurveEditor: View {
                                     .onEnded { _ in finishGesture() })
                                 .accessibilityElement(children: .ignore)
                                 .accessibilityAddTraits(.isButton)
-                                .accessibilityLabel("Point \(index + 1) de la courbe \(channel.title)")
+                                .accessibilityLabel("Point \(index + 1) on the \(channel.title) curve")
                                 .accessibilityIdentifier("curve-point-\(index)")
                         }
                     }
@@ -124,19 +124,19 @@ struct ToneCurveEditor: View {
                                 onClearSample()
                             } label: { Image(systemName: "eyedropper") }
                                 .buttonStyle(CompactEditorButtonStyle(selected: eyedropper))
-                                .accessibilityLabel("Pipette")
+                                .accessibilityLabel("Eyedropper")
                                 .accessibilityIdentifier("curve-eyedropper")
                                 .accessibilityAddTraits(eyedropper ? .isSelected : [])
                                 .disabled(!eyedropperAvailable)
-                                .accessibilityHint(eyedropperAvailable ? "Touchez la photographie pour situer sa tonalité" : "Indisponible sur un calque masqué")
+                                .accessibilityHint(eyedropperAvailable ? "Tap the photo to locate its tone" : "Unavailable on a masked layer")
                             Button(action: addPoint) { Image(systemName: "plus") }
                                 .buttonStyle(CompactEditorButtonStyle())
-                                .accessibilityLabel(sample == nil ? "Ajouter un point" : "Ajouter un point depuis la pipette")
+                                .accessibilityLabel(sample == nil ? "Add point" : "Add point from eyedropper")
                                 .accessibilityIdentifier("curve-add-point")
                                 .disabled(curve.points.count >= ToneCurve.maximumPoints)
                             Button(action: deletePoint) { Image(systemName: "trash") }
                                 .buttonStyle(CompactEditorButtonStyle())
-                                .accessibilityLabel("Supprimer le point")
+                                .accessibilityLabel("Delete point")
                                 .accessibilityIdentifier("curve-delete-point")
                                 .disabled(!canDelete)
                         }
@@ -146,7 +146,7 @@ struct ToneCurveEditor: View {
                 }
                 .overlay(alignment: .topLeading) {
                     if editMode, eyedropper, let sample {
-                        Text("Échantillon \(Int((sample.value(for: channel) * 100).rounded())) %")
+                        Text("Sample \(Int((sample.value(for: channel) * 100).rounded())) %")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.mint)
                             .padding(.horizontal, 8).padding(.vertical, 5)
@@ -165,26 +165,26 @@ struct ToneCurveEditor: View {
                 }, including: editMode ? .all : .none)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("tone-curve-chart")
-                .accessibilityLabel("Courbe \(channel.title)")
-                .accessibilityValue("\(curve.points.count) points. \(editMode ? "Édition" : "Consultation"). " +
+                .accessibilityLabel("\(channel.title) curve")
+                .accessibilityValue("\(curve.points.count) points. \(editMode ? "Editing" : "Viewing"). " +
                     curve.points.map { String(format: "%.4f:%.4f", $0.x, $0.y) }.joined(separator: ","))
             }
             .frame(height: 155).padding(.horizontal, 8).padding(.vertical, 8)
             if editMode {
                 HStack {
                     Button { selected = max(0, selectedIndex - 1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }
-                        .disabled(selectedIndex == 0).accessibilityLabel("Point précédent")
+                        .disabled(selectedIndex == 0).accessibilityLabel("Previous point")
                     Text("Point \(selectedIndex + 1) / \(curve.points.count)").font(.caption.monospacedDigit())
                     Button { selected = min(curve.points.count - 1, selectedIndex + 1) } label: { Image(systemName: "chevron.right").frame(width: 44, height: 44) }
-                        .disabled(selectedIndex == curve.points.count - 1).accessibilityLabel("Point suivant")
+                        .disabled(selectedIndex == curve.points.count - 1).accessibilityLabel("Next point")
                     Spacer(minLength: 0)
                     Button { onChange(channel, ToneCurve()); selected = nil } label: {
                         Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44)
-                    }.accessibilityLabel("Réinitialiser la courbe \(channel.title)")
+                    }.accessibilityLabel("Reset \(channel.title) curve")
                 }
-                coordinateControl("Entrée", horizontal: true)
-                coordinateControl("Sortie", horizontal: false)
-                Text("Touchez la courbe pour ajouter · Glissez un point pour déplacer")
+                coordinateControl("Input", horizontal: true)
+                coordinateControl("Output", horizontal: false)
+                Text("Tap the curve to add · Drag a point to move")
                     .font(.caption2).foregroundStyle(.secondary)
             }
         }
@@ -248,10 +248,10 @@ struct ToneCurveEditor: View {
                              y: horizontal ? point.y : value / 100)
                 onChange(channel, updated)
             }), in: 0...100, step: 0.1, onEditingChanged: { editing in
-                if editing { onBegin("Courbe \(channel.title)") } else { onEnd() }
+                if editing { onBegin("\(channel.title) curve") } else { onEnd() }
             })
             .disabled(horizontal && (selectedIndex == 0 || selectedIndex == curve.points.count - 1))
-            .accessibilityLabel("\(title) du point")
+            .accessibilityLabel("\(title) of point")
             Text((horizontal ? point.x : point.y) * 100, format: .number.precision(.fractionLength(1)))
                 .font(.caption.monospacedDigit()).frame(width: 40, alignment: .trailing)
         }.frame(minHeight: 36)

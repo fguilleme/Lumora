@@ -77,7 +77,7 @@ struct PhotoCanvas: View {
                         Image(decorative: clippingOverlay, scale: 1)
                             .resizable().aspectRatio(contentMode: .fit)
                             .frame(width: geometry.size.width, height: geometry.size.height)
-                            .accessibilityLabel("Zones proches du noir et du blanc sur l’aperçu SDR")
+                            .accessibilityLabel("Near-black and near-white areas in the SDR preview")
                             .accessibilityIdentifier("clipping-warning-overlay")
                             .allowsHitTesting(false)
                             .onAppear(perform: onClippingOverlayAppear)
@@ -158,8 +158,8 @@ struct PhotoCanvas: View {
                                         .accessibilityHidden(true)
                                 }
                             }
-                            .accessibilityLabel("Zone de peinture du masque")
-                            .accessibilityHint(brushMode == .paint ? "Faites glisser pour peindre" : "Faites glisser pour effacer")
+                            .accessibilityLabel("Mask painting area")
+                            .accessibilityHint(brushMode == .paint ? "Drag to paint" : "Drag to erase")
                     }
                 }
                 .overlay {
@@ -184,17 +184,17 @@ struct PhotoCanvas: View {
                                 }
                             }
                             .accessibilityIdentifier("curve-photo-sampling")
-                            .accessibilityLabel("Échantillonner la photographie")
+                            .accessibilityLabel("Sample photo")
                             .accessibilityElement(children: .ignore)
                     }
                 }
                 .accessibilityElement(children: .contain)
-                .accessibilityLabel("Photographie, \(showingOriginal || pressing ? "original" : "développement")")
+                .accessibilityLabel("Photo, \(showingOriginal || pressing ? "original" : "edited")")
                 .accessibilityValue("Zoom \(Int((zoom * 100).rounded())) %" +
-                    (diagnosticGeneration.map { " · génération \($0)" } ?? ""))
+                    (diagnosticGeneration.map { " · generation \($0)" } ?? ""))
                 .accessibilityIdentifier("photo-canvas")
-                .accessibilityAction(named: "Comparer à l’original") { showingOriginal.toggle() }
-                .accessibilityAction(named: "Réinitialiser le zoom") { restoreZoom() }
+                .accessibilityAction(named: "Compare with original") { showingOriginal.toggle() }
+                .accessibilityAction(named: "Reset zoom") { restoreZoom() }
                 if let component = activeComponent, hasTransformHandles,
                    !showingOriginal && !pressing {
                     MaskHandlesOverlay(component: component,
@@ -331,8 +331,8 @@ private struct GeometryHandlesOverlay: View {
 
                 MaskDragHandle(position: cropPosition(in: extent), color: .white,
                                identifier: "geometry-handle-crop-position",
-                               label: "Position du recadrage", coordinateSpace: coordinateSpace,
-                               onBegin: { onBegin("Position du recadrage") }) { location in
+                               label: "Crop position", coordinateSpace: coordinateSpace,
+                               onBegin: { onBegin("Crop position") }) { location in
                     let point = normalized(location, in: extent)
                     let crop = GeometryDirectManipulation.cropPosition(normalizedPoint: point)
                     onChange(.cropX, crop.x)
@@ -341,8 +341,8 @@ private struct GeometryHandlesOverlay: View {
 
                 MaskDragHandle(position: cropZoomPosition(in: extent), color: .cyan,
                                identifier: "geometry-handle-crop-zoom",
-                               label: "Zoom du recadrage", coordinateSpace: coordinateSpace,
-                               onBegin: { onBegin("Zoom du recadrage") }) { location in
+                               label: "Crop zoom", coordinateSpace: coordinateSpace,
+                               onBegin: { onBegin("Crop zoom") }) { location in
                     let point = normalized(location, in: extent)
                     onChange(.cropZoom,
                              GeometryDirectManipulation.cropZoom(normalizedY: Double(point.y)))
@@ -356,8 +356,8 @@ private struct GeometryHandlesOverlay: View {
     private func perspectiveHandle(_ corner: GeometryPerspectiveCorner, position: CGPoint,
                                    extent: CGRect, identifier: String) -> some View {
         MaskDragHandle(position: position, color: .orange, identifier: identifier,
-                       label: "Coin de perspective", coordinateSpace: coordinateSpace,
-                       onBegin: { onBegin("Perspective directe") }) { location in
+                       label: "Perspective corner", coordinateSpace: coordinateSpace,
+                       onBegin: { onBegin("Direct perspective") }) { location in
             let correction = GeometryDirectManipulation.perspective(
                 corner: corner, normalizedPoint: normalized(location, in: extent))
             onChange(.perspectiveVertical, correction.vertical)
@@ -450,14 +450,14 @@ private struct MaskHandlesOverlay: View {
             }
             .stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
             MaskDragHandle(position: center, color: .white,
-                           identifier: "mask-handle-center", label: "Centre du dégradé",
+                           identifier: "mask-handle-center", label: "Gradient center",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = linear
                 updated.center = normalized(location, in: extent)
                 onChange(.linear(updated.validated))
             } onEnd: { onEnd() }
             MaskDragHandle(position: direction, color: .yellow,
-                           identifier: "mask-handle-direction", label: "Angle du dégradé",
+                           identifier: "mask-handle-direction", label: "Gradient angle",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = linear
                 let angle = atan2(location.y - center.y, location.x - center.x) * 180 / .pi
@@ -465,7 +465,7 @@ private struct MaskHandlesOverlay: View {
                 onChange(.linear(updated.validated))
             } onEnd: { onEnd() }
             MaskDragHandle(position: feather, color: .orange,
-                           identifier: "mask-handle-feather", label: "Contour progressif du dégradé",
+                           identifier: "mask-handle-feather", label: "Gradient feather",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = linear
                 let projectedDistance = max(0,
@@ -498,28 +498,28 @@ private struct MaskHandlesOverlay: View {
             Path(ellipseIn: innerRect)
                 .stroke(.orange.opacity(0.9), style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
             MaskDragHandle(position: center, color: .white,
-                           identifier: "mask-handle-center", label: "Centre du radial",
+                           identifier: "mask-handle-center", label: "Radial center",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.center = normalized(location, in: extent)
                 onChange(.radial(updated.validated))
             } onEnd: { onEnd() }
             MaskDragHandle(position: horizontal, color: .yellow,
-                           identifier: "mask-handle-radius-x", label: "Largeur du radial",
+                           identifier: "mask-handle-radius-x", label: "Radial width",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.radiusX = Double(abs(location.x - center.x) / max(1, extent.width))
                 onChange(.radial(updated.validated))
             } onEnd: { onEnd() }
             MaskDragHandle(position: vertical, color: .yellow,
-                           identifier: "mask-handle-radius-y", label: "Hauteur du radial",
+                           identifier: "mask-handle-radius-y", label: "Radial height",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.radiusY = Double(abs(location.y - center.y) / max(1, extent.height))
                 onChange(.radial(updated.validated))
             } onEnd: { onEnd() }
             MaskDragHandle(position: feather, color: .orange,
-                           identifier: "mask-handle-feather", label: "Contour progressif du radial",
+                           identifier: "mask-handle-feather", label: "Radial feather",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 let normalizedX = (location.x - center.x) / max(1, extent.width * radial.radiusX)
@@ -652,7 +652,7 @@ private struct MaskOverlay: View {
             overlay = rendered
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(outlineOnly ? "Contour du masque" : "Superposition rouge du masque")
+        .accessibilityLabel(outlineOnly ? "Mask outline" : "Red mask overlay")
         .accessibilityIdentifier(outlineOnly ? "mask-outline-overlay" : "mask-red-overlay")
     }
 }

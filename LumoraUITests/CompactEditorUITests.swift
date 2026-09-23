@@ -24,7 +24,7 @@ final class CompactEditorUITests: XCTestCase {
             let shot = XCTAttachment(screenshot: app.screenshot())
             shot.name = name; shot.lifetime = .keepAlways; add(shot)
         }
-        panel("Colorimétrie")
+        panel("Color Tools")
         app.buttons["Grading"].tap()
         let preset = app.buttons["grading-preset-softPortrait"]
         XCTAssertTrue(preset.isHittable)
@@ -36,7 +36,7 @@ final class CompactEditorUITests: XCTestCase {
         let wheel = app.descendants(matching: .any).matching(identifier: "grading-wheel").firstMatch
         XCTAssertTrue(wheel.isHittable)
         capture("Compact Grading")
-        panel("Courbes")
+        panel("Curves")
         let auto = app.buttons["auto-curves"]
         XCTAssertTrue(auto.isHittable)
         XCTAssertGreaterThanOrEqual(auto.frame.height, 44)

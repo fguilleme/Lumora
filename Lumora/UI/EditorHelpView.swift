@@ -7,10 +7,10 @@ struct EditorHelpView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Aide")
+                Text("Help")
                     .font(.title3.weight(.semibold))
                     .padding(.bottom, 2)
-                Text("Choisissez un onglet pour comprendre ses réglages et ses gestes. L’aide ne modifie pas la photographie.")
+                Text("Choose a tab to learn its controls and gestures. Help does not change the photo.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -76,7 +76,7 @@ struct EditorHelpView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Fermer") { selectedTopic = nil }
+                        Button("Close") { selectedTopic = nil }
                             .accessibilityIdentifier("help-close")
                     }
                 }
@@ -114,15 +114,15 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .creative: "Creative"
-        case .light: "Lumière"
-        case .color: "Couleur"
-        case .curves: "Courbes"
-        case .colorTools: "Colorimétrie"
-        case .effects: "Effets"
-        case .detail: "Détail"
-        case .optics: "Optique"
-        case .geometry: "Géométrie"
-        case .masks: "Masques"
+        case .light: "Light"
+        case .color: "Color"
+        case .curves: "Curves"
+        case .colorTools: "Color Tools"
+        case .effects: "Effects"
+        case .detail: "Detail"
+        case .optics: "Optics"
+        case .geometry: "Geometry"
+        case .masks: "Masks"
         case .presets: "Presets"
         }
     }
@@ -145,33 +145,33 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
 
     var summary: String {
         switch self {
-        case .creative: "Pile d’effets photographiques et looks"
-        case .light: "Exposition et répartition des tons"
-        case .color: "Balance des blancs et intensité des couleurs"
-        case .curves: "Contrôle précis des tons et des canaux"
-        case .colorTools: "Mélangeur de couleurs et grading"
-        case .effects: "Texture, clarté, voile, vignette et grain"
-        case .detail: "Netteté et réduction du bruit"
-        case .optics: "Profil optique et corrections manuelles"
-        case .geometry: "Horizon, perspective et recadrage"
-        case .masks: "Calques et retouches locales"
-        case .presets: "Enregistrer et réutiliser ses réglages"
+        case .creative: "Photographic effects and looks in a stack"
+        case .light: "Exposure and tonal balance"
+        case .color: "White balance and color intensity"
+        case .curves: "Precise tonal and channel control"
+        case .colorTools: "Color Mixer and grading"
+        case .effects: "Texture, clarity, dehaze, vignette, grain"
+        case .detail: "Sharpening and noise reduction"
+        case .optics: "Lens profile and manual corrections"
+        case .geometry: "Horizon, perspective, and crop"
+        case .masks: "Layers and local adjustments"
+        case .presets: "Save and reuse your settings"
         }
     }
 
     var introduction: String {
         switch self {
-        case .creative: "Creative assemble des effets autonomes. Chacun possède ses propres réglages ; leur ordre dans la pile change le rendu. Les looks intégrés servent de point de départ et restent modifiables."
-        case .light: "Lumière règle l’équilibre tonal général ou celui du masque sélectionné. Commencez par l’exposition, puis protégez les hautes lumières et ajustez ombres, blancs et noirs."
-        case .color: "Couleur règle la dominante et l’intensité colorée. Une balance des blancs prudente préserve l’ambiance d’une scène volontairement chaude ou froide."
-        case .curves: "Courbes permet de placer précisément les tons et de modifier séparément les canaux RVB. Son mode consultation évite toute modification accidentelle pendant le défilement."
-        case .colorTools: "Colorimétrie contient deux outils : Mélangeur pour les couleurs de la scène, Grading pour colorer les zones tonales. Ils agissent sur des propriétés différentes."
-        case .effects: "Effets rassemble des ajustements de finition. Texture et clarté modifient le contraste local ; la correction du voile, la vignette et le grain répondent à d’autres besoins."
-        case .detail: "Détail règle la netteté et les réductions de bruit. Examinez le résultat à 100 % : une vignette réduite masque facilement un excès de netteté ou de lissage."
-        case .optics: "Optique corrige des défauts d’objectif. Le profil constructeur est disponible seulement lorsque le RAW expose un profil compatible ; les corrections manuelles restent utilisables autrement."
-        case .geometry: "Géométrie corrige l’orientation, la perspective et le cadrage. Les corrections modifient la portion de l’image visible, sans altérer le fichier source."
-        case .masks: "Masques crée des calques de retouche locale. Sélectionnez un masque ici, puis utilisez les réglages des autres onglets pour modifier seulement sa zone."
-        case .presets: "Presets enregistre des groupes de réglages personnels et les applique à d’autres images. Vous choisissez les groupes inclus lors de la création."
+        case .creative: "Creative combines independent effects. Each has its own settings, and its position in the stack changes the result. Built-in looks are editable starting points."
+        case .light: "Light controls the overall tonal balance, or that of the selected mask. Start with exposure, protect highlights, then refine shadows, whites, and blacks."
+        case .color: "Color controls color cast and intensity. Careful white balance preserves the mood of a deliberately warm or cool scene."
+        case .curves: "Curves positions tones precisely and can adjust RGB channels separately. View mode prevents accidental edits while scrolling."
+        case .colorTools: "Color Tools contains Color Mixer for colors in the scene and Grading for tonal regions. They change different properties."
+        case .effects: "Effects provides finishing adjustments. Texture and Clarity change local contrast; Dehaze, Vignette, and Grain serve different purposes."
+        case .detail: "Detail controls sharpening and noise reduction. Examine results at 100%: a reduced preview can hide oversharpening and excessive smoothing."
+        case .optics: "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise."
+        case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
+        case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
+        case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
         }
     }
 
@@ -179,162 +179,162 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         switch self {
         case .creative:
             return [
-                HelpSection("Construire une pile", [
-                    HelpItem("Ajouter un effet", "Choisissez un effet dans le catalogue. Chaque effet devient une étape distincte de la pile ; les effets sont calculés dans leur ordre affiché."),
-                    HelpItem("Réorganiser", "Déplacez un effet avant ou après un autre pour changer le résultat. Par exemple, Silver B&W avant Silver Toning produit un tirage viré ; l’ordre inverse peut supprimer sa coloration."),
-                    HelpItem("Actions rapides", "L’œil active ou désactive une étape. Les icônes permettent aussi de dupliquer, supprimer, réinitialiser ou réordonner l’effet sélectionné."),
-                    HelpItem("Opacité et masque", "L’opacité dose l’effet. Vous pouvez lui affecter un masque existant pour limiter son action à une zone de la photo.")
+                HelpSection("Build an effect stack", [
+                    HelpItem("Add an effect", "Choose from the catalog. Every effect becomes a separate step; effects run in their displayed order."),
+                    HelpItem("Change the order", "Move an effect earlier or later to change the result. Silver B&W before Silver Toning creates a toned print; reversing them can remove the toning color."),
+                    HelpItem("Quick actions", "The eye enables or disables a step. Other icons duplicate, delete, reset, or reorder the selected effect."),
+                    HelpItem("Opacity and mask", "Opacity controls the effect's strength. Assign an existing mask to limit the effect to part of the photo.")
                 ]),
-                HelpSection("Familles et usage", [
-                    HelpItem("Tons et détail", "High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor et Glamour Glow façonnent la lumière ou le détail. Comparez à 100 % pour éviter une structure excessive."),
-                    HelpItem("Film et procédés", "Film Grain ajoute du grain ; Film Emulation modifie la réponse de film sans en générer ; Cross Processing et Bleach Bypass transforment le rendu coloré."),
-                    HelpItem("Argentique monochrome", "Silver B&W convertit les couleurs en densités de gris et Silver Toning colore le tirage selon sa densité. Vous pouvez ajouter Film Grain ensuite si souhaité."),
-                    HelpItem("Darken / Lighten Center", "Placez le centre sur le sujet, puis dosez séparément l’éclaircissement ou l’assombrissement du centre et des bords."),
-                    HelpItem("Looks et Custom", "Choisir un look remplit les paramètres de l’effet. Après une modification, le réglage devient Custom ; le look d’origine reste disponible.")
+                HelpSection("Effect families", [
+                    HelpItem("Tone and detail", "High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor, and Glamour Glow shape light or detail. Inspect at 100% to avoid excessive structure."),
+                    HelpItem("Film and processes", "Film Grain adds grain. Film Emulation changes film response without generating grain. Cross Processing and Bleach Bypass alter color response."),
+                    HelpItem("Monochrome prints", "Silver B&W converts colors to gray densities. Silver Toning colors the print according to density. Add Film Grain separately if desired."),
+                    HelpItem("Darken / Lighten Center", "Position the center on your subject, then adjust the center and outer exposure independently."),
+                    HelpItem("Looks and Custom", "Choosing a look fills in the effect's settings. Changing a value switches to Custom; the original look remains available.")
                 ])
             ]
         case .light:
             return [
-                HelpSection("Les six réglages", [
-                    HelpItem("Exposition", "Déplace la luminosité globale en valeurs d’exposition. Une augmentation éclaire aussi les zones déjà lumineuses ; surveillez l’histogramme et les hautes lumières."),
-                    HelpItem("Contraste", "Écarte ou rapproche les valeurs sombres et claires autour des tons moyens. Une forte valeur peut réduire les nuances aux extrémités."),
-                    HelpItem("Hautes lumières", "Agit surtout sur les parties lumineuses. Réduisez-les pour mieux préserver une robe, des nuages ou un reflet qui contiennent encore du détail."),
-                    HelpItem("Ombres", "Agit surtout sur les parties sombres. Les ouvrir révèle de l’information, mais peut aussi rendre le bruit plus visible."),
-                    HelpItem("Blancs", "Ajuste la présence du blanc et des tons très clairs ; ce n’est pas un outil de reconstruction des pixels définitivement écrêtés."),
-                    HelpItem("Noirs", "Ajuste la profondeur des tons les plus sombres. Ouvrir légèrement les noirs peut préserver une texture ; les fermer donne plus d’assise.")
+                HelpSection("Six controls", [
+                    HelpItem("Exposure", "Shifts overall brightness in exposure values. Raising it also brightens already light regions; watch the histogram and highlights."),
+                    HelpItem("Contrast", "Increases or reduces separation between dark and light values around the midtones. Strong settings may lose subtlety at either end."),
+                    HelpItem("Highlights", "Primarily affects bright regions. Lower it to retain detail in clouds, fabric, or reflections that still contain usable information."),
+                    HelpItem("Shadows", "Primarily affects dark regions. Opening them reveals detail, but can make noise more apparent."),
+                    HelpItem("Whites", "Changes the presence of white and very light tones. It cannot reconstruct detail in pixels that are permanently clipped."),
+                    HelpItem("Blacks", "Sets the depth of the darkest tones. Opening them slightly can retain texture; closing them adds weight.")
                 ]),
-                HelpSection("Utilisation", [
-                    HelpItem("Auto", "Analyse l’image et remplit les curseurs visibles avec une proposition de départ. C’est une action ponctuelle : vous pouvez ensuite retoucher chaque valeur, annuler ou relancer Auto."),
-                    HelpItem("Réglage local", "Si un masque est sélectionné, ces curseurs agissent sur ce calque. Sélectionnez Photo entière pour revenir au réglage général."),
-                    HelpItem("Contrôle fin", "Touchez la valeur numérique d’un curseur pour réduire sa plage de déplacement ; double-touchez le curseur ou utilisez sa flèche pour le remettre à sa valeur initiale.")
+                HelpSection("How to use it", [
+                    HelpItem("Auto", "Analyzes the photo and fills the visible sliders with a starting proposal. It is a one-time action: edit the values, undo it, or run Auto again."),
+                    HelpItem("Local adjustment", "When a mask is selected, these sliders affect that layer. Select Whole photo to return to the global settings."),
+                    HelpItem("Fine adjustment", "Tap a slider's numeric value for a narrower adjustment range. Double-tap the slider or use its reset arrow to restore its default value.")
                 ])
             ]
         case .color:
             return [
-                HelpSection("Balance et intensité", [
-                    HelpItem("Température", "Déplace la balance des blancs entre une impression plus froide et plus chaude. Servez-vous d’un gris connu seulement s’il doit réellement être neutre dans la scène."),
-                    HelpItem("Teinte", "Corrige l’axe vert–magenta, utile quand l’éclairage laisse une dominante que Température ne suffit pas à enlever."),
-                    HelpItem("Saturation", "Augmente ou réduit l’intensité de toutes les couleurs. À forte valeur, les couleurs déjà vives peuvent devenir excessives."),
-                    HelpItem("Vibrance", "Dose la couleur plus prudemment sur une scène hétérogène ; contrôlez toujours les carnations et les couleurs proches du gamut.")
+                HelpSection("Balance and intensity", [
+                    HelpItem("Temperature", "Moves white balance toward a cooler or warmer appearance. Use a known gray reference only if it should actually be neutral in the scene."),
+                    HelpItem("Tint", "Corrects the green–magenta axis when Temperature alone cannot remove a lighting cast."),
+                    HelpItem("Saturation", "Raises or lowers the intensity of all colors. High values can push already vivid colors too far."),
+                    HelpItem("Vibrance", "Adjusts color more cautiously in mixed scenes. Always check skin tones and colors near the gamut boundary.")
                 ]),
-                HelpSection("Auto et retouche locale", [
-                    HelpItem("Auto Couleur", "Utilise la même analyse d’image que les autres outils Auto, mais ne remplit que les réglages colorimétriques. Une scène volontairement chaude n’est pas forcément une erreur de balance des blancs."),
-                    HelpItem("Avec Auto Lumière", "Auto Couleur ne reproduit pas l’exposition ni le contraste. Les deux propositions peuvent être utilisées ensemble, puis affinées à la main."),
-                    HelpItem("Avec un masque", "Les réglages Couleur peuvent cibler le calque actif. Revenez à Photo entière pour ajuster la photographie dans son ensemble.")
+                HelpSection("Auto and local color", [
+                    HelpItem("Auto Color", "Uses the shared Auto image analysis but fills only color controls. A deliberately warm scene does not necessarily have a white-balance error."),
+                    HelpItem("With Auto Light", "Auto Color does not duplicate exposure or contrast. You can use both proposals together and refine them manually."),
+                    HelpItem("With a mask", "Color settings can target the active layer. Select Whole photo to adjust the image as a whole.")
                 ])
             ]
         case .curves:
             return [
-                HelpSection("Lire et modifier la courbe", [
-                    HelpItem("Axes", "L’axe horizontal représente la valeur d’entrée, du noir à gauche au blanc à droite ; l’axe vertical représente la valeur de sortie. Monter un point éclaircit les tons correspondants."),
-                    HelpItem("RVB et canaux", "RVB règle la courbe tonale commune. Rouge, Vert et Bleu modifient séparément les canaux : des écarts entre eux peuvent introduire une dominante colorée."),
-                    HelpItem("Mode consultation", "Le graphe est passif : commencez un défilement dessus sans risque de déplacer ou créer un point."),
-                    HelpItem("Mode Modifier", "Activez Modifier pour déplacer les points. Touchez le graphe pour en créer un ; utilisez les contrôles Entrée/Sortie pour un placement précis, puis Terminé pour redevenir passif."),
-                    HelpItem("Pipette", "Touchez la pipette, puis parcourez la photo pour situer une tonalité sur la courbe. L’échantillon n’ajoute pas de point tout seul ; utilisez + pour le faire volontairement."),
-                    HelpItem("Supprimer un point", "Sélectionnez un point intérieur puis utilisez la corbeille. Les points d’extrémité gardent leur position horizontale, mais leur hauteur peut être ajustée.")
+                HelpSection("Read and edit the curve", [
+                    HelpItem("Axes", "The horizontal axis is input, from black at left to white at right. The vertical axis is output. Raising a point brightens the corresponding tones."),
+                    HelpItem("RGB and channels", "RGB controls the common tonal curve. Red, Green, and Blue adjust channels separately; differences between them can introduce a color cast."),
+                    HelpItem("View mode", "The graph is passive: start scrolling over it without moving or creating a point."),
+                    HelpItem("Edit mode", "Tap Edit to move points. Tap the graph to add one; use Input and Output for precise placement, then Done to return to passive scrolling."),
+                    HelpItem("Eyedropper", "Tap the eyedropper, then explore the photo to locate a tone on the curve. Sampling does not add a point by itself; tap + when you want one."),
+                    HelpItem("Delete a point", "Select an interior point and use the trash icon. Endpoints keep their horizontal position, but their output value can change.")
                 ]),
-                HelpSection("Auto et cohérence", [
-                    HelpItem("Naturel, Équilibré, Soutenu", "Ces trois variantes expriment la même analyse Auto avec une intensité tonale croissante. Les points générés restent éditables."),
-                    HelpItem("Avec Auto Lumière", "Auto Courbes représente une correction tonale alternative. Lumora évite d’empiler automatiquement une courbe équivalente sur Auto Lumière, ce qui doublerait la correction."),
-                    HelpItem("Undo/Redo", "La création, la suppression ou le déplacement d’un point peuvent être annulés ; quitter Modifier ne change pas le rendu.")
+                HelpSection("Auto and consistency", [
+                    HelpItem("Natural, Balanced, Punchy", "These three styles express the same Auto analysis with increasing tonal strength. Generated points remain editable."),
+                    HelpItem("With Auto Light", "Auto Curves is an alternative representation of a tonal correction. Lumora does not automatically stack an equivalent curve on Auto Light and double the adjustment."),
+                    HelpItem("Undo and redo", "Adding, deleting, or moving a point can be undone. Leaving Edit mode does not change the image.")
                 ])
             ]
         case .colorTools:
             return [
-                HelpSection("Mélangeur", [
-                    HelpItem("Huit plages", "Rouge, Orange, Jaune, Vert, Turquoise, Bleu, Violet et Magenta sélectionnent des familles de couleurs présentes dans l’image."),
-                    HelpItem("Teinte", "Déplace la couleur choisie vers ses voisines. Par exemple, le bleu d’un ciel peut devenir légèrement plus turquoise ou violet."),
-                    HelpItem("Saturation", "Rend la famille plus ou moins intense sans appliquer une saturation globale à toute la photographie."),
-                    HelpItem("Luminance", "Éclaircit ou assombrit la famille. Un changement important peut modifier la séparation entre ciel, végétation et sujet."),
-                    HelpItem("Réinitialiser une plage", "Le reset de la plage courante rend ses trois paramètres neutres, sans toucher aux sept autres.")
+                HelpSection("Color Mixer", [
+                    HelpItem("Eight ranges", "Red, Orange, Yellow, Green, Aqua, Blue, Purple, and Magenta target color families present in the photo."),
+                    HelpItem("Hue", "Moves the chosen color toward neighboring colors. A blue sky, for example, can shift toward aqua or purple."),
+                    HelpItem("Saturation", "Changes that family's intensity without applying global saturation to the whole photo."),
+                    HelpItem("Luminance", "Brightens or darkens the family. Strong changes may affect separation between sky, vegetation, and subject."),
+                    HelpItem("Reset a range", "Restores the current family's three values without changing the other seven.")
                 ]),
                 HelpSection("Grading", [
-                    HelpItem("Zones tonales", "Choisissez Ombres, Tons moyens ou Hautes lumières. La roue règle la nuance et l’intensité de la zone choisie ; sa luminance se règle séparément."),
-                    HelpItem("Mélange et Balance", "Mélange adoucit ou distingue les transitions entre zones ; Balance déplace la répartition du traitement vers les tons sombres ou clairs."),
-                    HelpItem("Presets Grading", "Les looks proposés remplissent uniquement le grading. Vous pouvez ensuite déplacer la roue ou les curseurs ; l’état devient Personnalisé.")
+                    HelpItem("Tonal regions", "Choose Shadows, Midtones, or Highlights. The wheel controls hue and intensity in that region; luminance has a separate control."),
+                    HelpItem("Blending and Balance", "Blending softens or distinguishes transitions between regions. Balance shifts the treatment toward dark or light tones."),
+                    HelpItem("Grading presets", "Built-in looks fill only the grading controls. Move the wheel or a slider afterward; the state becomes Custom.")
                 ])
             ]
         case .effects:
             return [
-                HelpSection("Réglages de finition", [
-                    HelpItem("Texture", "Renforce ou adoucit les petits détails, comme un tissu ou des cheveux. Une valeur négative les atténue."),
-                    HelpItem("Clarté", "Agit sur un contraste local plus large que Texture. Une dose élevée peut donner un aspect dur aux visages et produire des transitions trop marquées."),
-                    HelpItem("Correction du voile", "Augmente ou réduit la séparation dans une scène voilée. Elle influence également le contraste global et légèrement la couleur ; contrôlez les ombres."),
-                    HelpItem("Vignette", "Module la luminosité des bords pour guider le regard. Ce réglage de finition diffère du Vignetage optique, destiné à corriger l’objectif."),
-                    HelpItem("Grain", "Ajoute une texture de grain à la finition. Creative propose aussi Film Grain : utiliser les deux peut accumuler le grain.")
+                HelpSection("Finishing controls", [
+                    HelpItem("Texture", "Strengthens or softens fine detail such as fabric or hair. Negative values reduce detail."),
+                    HelpItem("Clarity", "Affects broader local contrast than Texture. High values can harden faces or create overly visible transitions."),
+                    HelpItem("Dehaze", "Increases or reduces separation in a hazy scene. It also changes global contrast and slightly affects color; inspect the shadows."),
+                    HelpItem("Vignette", "Modulates edge brightness to guide attention. It differs from Lens vignetting, which is meant to correct the lens."),
+                    HelpItem("Grain", "Adds a finishing grain texture. Creative also has Film Grain; using both can compound the grain.")
                 ]),
-                HelpSection("Conseils de contrôle", [
-                    HelpItem("À 100 %", "Vérifiez Texture, Clarté et Grain en taille réelle ; une vue réduite peut masquer un effet trop prononcé."),
-                    HelpItem("Masque actif", "Ces réglages suivent le calque sélectionné comme les autres réglages de développement.")
+                HelpSection("What to check", [
+                    HelpItem("At 100%", "Inspect Texture, Clarity, and Grain at full size. A reduced preview can hide an overly strong result."),
+                    HelpItem("Active mask", "These settings follow the selected layer, like other development controls.")
                 ])
             ]
         case .detail:
             return [
-                HelpSection("Netteté", [
-                    HelpItem("Gain", "Détermine l’intensité de netteté. Gardez une valeur modérée si le fichier est déjà accentué."),
-                    HelpItem("Rayon", "Détermine la largeur de la transition accentuée autour des contours. Un rayon trop grand peut créer des liserés."),
-                    HelpItem("Détail", "Dose la part des structures fines dans l’accentuation. Vérifiez cheveux, pierre et peau à 100 %."),
-                    HelpItem("Masquage", "Restreint l’accentuation aux contours pour éviter de renforcer uniformément les zones lisses et leur bruit.")
+                HelpSection("Sharpening", [
+                    HelpItem("Amount", "Sets sharpening strength. Use a restrained value if the source is already sharpened."),
+                    HelpItem("Radius", "Sets the width of sharpening around edges. Too large a radius can create halos."),
+                    HelpItem("Detail", "Controls the contribution of fine structures. Inspect hair, stone, and skin at 100%."),
+                    HelpItem("Masking", "Limits sharpening to edges so smooth areas and their noise are not enhanced evenly.")
                 ]),
-                HelpSection("Réduction du bruit", [
-                    HelpItem("Luminance", "Réduit le bruit clair/sombre. Trop de réduction efface les textures ; Détail et Contraste aident à conserver leur présence."),
-                    HelpItem("Couleur", "Réduit les taches colorées du bruit. Détail et Lissage contrôlent la finesse de cette correction."),
-                    HelpItem("Activation", "Les sous-réglages de netteté et de débruitage deviennent disponibles lorsque leur réglage principal est supérieur à zéro.")
+                HelpSection("Noise reduction", [
+                    HelpItem("Luminance", "Reduces light-and-dark noise. Too much removes texture; Detail and Contrast help preserve its presence."),
+                    HelpItem("Color", "Reduces colored noise blotches. Detail and Smoothing control how finely this correction is applied."),
+                    HelpItem("Activation", "Secondary sharpening and noise controls become available when their primary Amount, Luminance, or Color value is above zero.")
                 ])
             ]
         case .optics:
             return [
-                HelpSection("Profil constructeur", [
-                    HelpItem("Quand il est disponible", "Un RAW peut exposer un profil optique compatible avec iOS. Activez Profil constructeur pour utiliser cette correction. Un fichier déjà développé ne fournit généralement plus ce profil réglable."),
-                    HelpItem("Quand il est indisponible", "Le commutateur reste désactivé et le panneau en indique la raison. Vous pouvez toujours utiliser les corrections manuelles ci-dessous.")
+                HelpSection("Manufacturer profile", [
+                    HelpItem("When available", "A RAW may provide a lens profile compatible with iOS. Enable Manufacturer profile to use it. A developed image generally no longer exposes an adjustable profile."),
+                    HelpItem("When unavailable", "The switch is disabled and the panel explains why. Manual corrections below remain available.")
                 ]),
-                HelpSection("Corrections manuelles", [
-                    HelpItem("Distorsion", "Compense une courbure visible des lignes, surtout près des bords. Comparez avec des lignes d’architecture et évitez une correction plus forte que nécessaire."),
-                    HelpItem("Aberration chromatique", "Ajuste le décalage coloré au bord de forts contrastes. Examinez les silhouettes sur ciel clair à 100 %."),
-                    HelpItem("Vignetage optique", "Compense l’assombrissement causé par l’objectif sur les bords. Pour ajouter une vignette artistique, utilisez plutôt Effets → Vignette.")
+                HelpSection("Manual corrections", [
+                    HelpItem("Distortion", "Compensates visible bending of lines, especially near the edges. Compare architectural lines and avoid correcting more than needed."),
+                    HelpItem("Chromatic aberration", "Adjusts color fringing along high-contrast edges. Examine silhouettes against a bright sky at 100%."),
+                    HelpItem("Lens vignetting", "Compensates edge darkening caused by the lens. To add an artistic vignette, use Effects → Vignette instead.")
                 ])
             ]
         case .geometry:
             return [
-                HelpSection("Orientation et redressement", [
-                    HelpItem("Rotation et miroirs", "Les boutons tournent par quarts de tour ou inversent horizontalement/verticalement. Réinitialiser remet les corrections de ce panneau à leur état initial."),
-                    HelpItem("Horizon auto", "Estime un redressement de la ligne d’horizon. Vérifiez le résultat sur une scène dépourvue d’horizon évident."),
-                    HelpItem("Redresser", "Corrige finement l’inclinaison. La grille de tiers aide à aligner l’horizon ou une ligne architecturale.")
+                HelpSection("Orientation and straightening", [
+                    HelpItem("Rotate and flip", "Buttons rotate by quarter-turns or flip horizontally or vertically. Reset restores the geometry controls to their initial values."),
+                    HelpItem("Auto horizon", "Estimates horizon straightening. Check the result in a scene without an obvious horizon."),
+                    HelpItem("Straighten", "Corrects fine rotation. The thirds grid helps align a horizon or architectural line.")
                 ]),
-                HelpSection("Perspective et cadrage", [
-                    HelpItem("Perspective auto", "Propose une correction géométrique, notamment pour des lignes convergentes. L’analyse peut être annulée ou ajustée manuellement."),
-                    HelpItem("Verticale et horizontale", "Redressent les convergences dans ces deux directions. Surveillez les bords et la forme du sujet après une forte correction."),
-                    HelpItem("Aspect, échelle et décalages", "Affinent les proportions et la position après correction de perspective, afin de retrouver un cadrage utile."),
-                    HelpItem("Format", "Choisissez un ratio de recadrage. Recadrage ajuste le zoom et Position horizontale/verticale déplace la fenêtre visible dans l’image.")
+                HelpSection("Perspective and crop", [
+                    HelpItem("Auto perspective", "Suggests a geometric correction, particularly for converging lines. You can undo or refine the result manually."),
+                    HelpItem("Vertical and horizontal", "Straighten convergence in either direction. Watch the edges and subject shape after a strong correction."),
+                    HelpItem("Aspect, scale, and offsets", "Refine proportions and position after perspective correction to recover a useful frame."),
+                    HelpItem("Format", "Choose a crop aspect ratio. Crop changes zoom; Horizontal and Vertical position move the visible window across the photo.")
                 ])
             ]
         case .masks:
             return [
-                HelpSection("Calques", [
-                    HelpItem("Photo entière", "C’est la base globale. Ajouter un masque crée un calque local au-dessus, sélectionnable et réordonnable."),
-                    HelpItem("Sélection et réglages", "Sélectionnez un masque ici, puis ouvrez Lumière, Couleur, Courbes, Colorimétrie, Effets ou Détail pour ajuster cette zone. Les curseurs ne sont pas dupliqués dans Masques."),
-                    HelpItem("Nom, opacité et ordre", "Renommez un masque pour le retrouver, dosez sa contribution avec l’opacité et déplacez-le dans la pile si son interaction avec les autres calques doit changer."),
-                    HelpItem("Visible / Contour", "Bascule entre l’overlay rouge et le contour du masque. Ce bouton concerne l’affichage de l’overlay, pas l’activation de la retouche."),
-                    HelpItem("Inverser", "Échange la zone sélectionnée et son complément. Pratique pour traiter l’arrière-plan après avoir isolé un sujet.")
+                HelpSection("Layers", [
+                    HelpItem("Whole photo", "The global base layer. Adding a mask creates a selectable, reorderable local layer above it."),
+                    HelpItem("Selection and settings", "Select a mask here, then open Light, Color, Curves, Color Tools, Effects, or Detail to adjust that area. Their sliders are not duplicated in Masks."),
+                    HelpItem("Name, opacity, and order", "Rename a mask so you can find it, control its contribution with opacity, and move it in the stack when its interaction with other layers should change."),
+                    HelpItem("Visible / Outline", "Switch between the red overlay and the mask outline. This only changes overlay display; it does not turn the adjustment off."),
+                    HelpItem("Invert", "Swaps the selected area with its complement. Useful for adjusting a background after isolating a subject.")
                 ]),
-                HelpSection("Créer une zone", [
-                    HelpItem("Pinceau", "Peindre ajoute au masque, Effacer le retire et Déplacer sert à naviguer dans la photo zoomée. Taille, contour progressif, débit et opacité déterminent la trace."),
-                    HelpItem("Gradients", "Les masques linéaire et radial se placent et se redimensionnent avec leurs poignées directement sur la photo, y compris après zoom."),
-                    HelpItem("Masques intelligents", "Selon l’image, Lumora peut proposer Sujet, Arrière-plan, Personne, Visage, Yeux, Ciel ou Peau ; inspectez le contour avant une retouche forte."),
-                    HelpItem("Ajouter / Soustraire", "Combinez plusieurs composants pour construire une sélection plus précise. Chaque composant peut être sélectionné, réordonné ou retiré."),
-                    HelpItem("Gestes de la photo", "Pincez pour zoomer et double-touchez pour rétablir le zoom, même avec le pinceau. Dans Masques, le tracé actualise la visualisation du masque sans relancer le développement complet à chaque geste.")
+                HelpSection("Create an area", [
+                    HelpItem("Brush", "Paint adds to the mask, Erase removes from it, and Pan navigates a zoomed photo. Size, Feather, Flow, and Opacity shape the stroke."),
+                    HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
+                    HelpItem("Smart masks", "Depending on the image, Lumora can propose Subject, Background, Person, Face, Eyes, Sky, or Skin. Inspect the outline before a strong adjustment."),
+                    HelpItem("Add / Subtract", "Combine several components for a more precise selection. Each can be selected, reordered, or removed."),
+                    HelpItem("Photo gestures", "Pinch to zoom and double-tap to reset zoom, even while using the brush. Mask strokes update the mask visualization without rerendering the full development after every gesture.")
                 ])
             ]
         case .presets:
             return [
-                HelpSection("Créer et appliquer", [
-                    HelpItem("Créer un preset", "Donnez-lui un nom et choisissez les groupes à sauvegarder. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets, Détail et Creative peuvent être inclus ; Optique, Géométrie et Masques sont optionnels."),
-                    HelpItem("Appliquer", "Seuls les groupes enregistrés dans le preset sont remplacés. Les autres réglages de la photo restent tels quels ; l’application peut être annulée en une opération."),
-                    HelpItem("Presets personnels", "Ils servent à réutiliser vos choix de développement. Les looks Creative et les presets de Grading sont des sélections intégrées à leurs outils respectifs.")
+                HelpSection("Create and apply", [
+                    HelpItem("Create a preset", "Give it a name and choose groups to save. Light, Color, Curves, Color Mixer, Grading, Effects, Detail, and Creative can be included. Optics, Geometry, and Masks are optional."),
+                    HelpItem("Apply", "Only groups stored in the preset are replaced. Other photo settings remain as they are; application is one undoable action."),
+                    HelpItem("Personal presets", "Reuse your development choices on other photos. Creative looks and Grading presets are built into their respective tools.")
                 ]),
-                HelpSection("Gérer et partager", [
-                    HelpItem("Renommer ou supprimer", "Organisez votre collection personnelle sans modifier les réglages déjà enregistrés dans une photographie."),
-                    HelpItem("Importer et exporter", "Partagez un preset au format JSON Lumora. Avant d’appliquer un preset reçu, vérifiez quels groupes il contient, notamment Géométrie et Masques.")
+                HelpSection("Manage and share", [
+                    HelpItem("Rename or delete", "Organize your personal collection without changing settings already saved in a photo."),
+                    HelpItem("Import and export", "Share a preset in Lumora's JSON format. Before applying one you received, check which groups it includes, especially Geometry and Masks.")
                 ])
             ]
         }

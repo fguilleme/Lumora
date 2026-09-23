@@ -21,9 +21,9 @@ struct AutoCorrectionControls: View {
                 .buttonStyle(CompactEditorButtonStyle())
                 .accessibilityIdentifier("auto-" + module.rawValue)
                 .disabled(session.isAnalyzingAuto)
-                if session.isAnalyzingAuto { ProgressView().controlSize(.small).accessibilityLabel("Analyse de la photo") }
+                if session.isAnalyzingAuto { ProgressView().controlSize(.small).accessibilityLabel("Analyzing photo") }
                 Spacer()
-                Text(session.autoIsApplied(module, style: resolvedStyle) ? "Auto appliqué" : "Personnalisé")
+                Text(session.autoIsApplied(module, style: resolvedStyle) ? "Auto applied" : "Custom")
                     .font(.caption).foregroundStyle(.secondary)
                     .accessibilityIdentifier("auto-status-" + module.rawValue)
             }
@@ -52,10 +52,10 @@ struct AutoCorrectionControls: View {
                         .padding(.vertical, 4)
                 }
                 .accessibilityElement(children: .contain)
-                .accessibilityLabel("Style Auto")
+                .accessibilityLabel("Auto style")
             }
             if module != .color {
-                Text("Auto remplace les réglages Lumière et la courbe RVB.")
+                Text("Auto replaces Light settings and the RGB curve.")
                     .font(.caption2).foregroundStyle(.secondary)
             }
         }

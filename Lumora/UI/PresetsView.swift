@@ -13,24 +13,24 @@ struct PresetsView: View {
     @State private var showingImporter = false
     @State private var showingExporter = false
     @State private var exportDocument: PresetFileDocument?
-    @State private var exportName = "Preset Lumora"
+    @State private var exportName = "Lumora Preset"
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("Mes presets").font(.headline)
+                    Text("My presets").font(.headline)
                     Spacer()
-                    Button { showingImporter = true } label: { Label("Importer", systemImage: "square.and.arrow.down") }
+                    Button { showingImporter = true } label: { Label("Import", systemImage: "square.and.arrow.down") }
                         .accessibilityIdentifier("preset-import")
                     Button { createName = ""; selectedSections = PresetSection.photographicDefaults; showingCreate = true } label: {
-                        Label("Créer", systemImage: "plus.circle")
+                        Label("Create", systemImage: "plus.circle")
                     }.accessibilityIdentifier("preset-create")
                 }
-                if controller.isLoading { ProgressView("Chargement…") }
+                if controller.isLoading { ProgressView("Loading…") }
                 else if controller.presets.isEmpty {
-                    ContentUnavailableView("Aucun preset", systemImage: "slider.horizontal.2.square",
-                                           description: Text("Enregistrez les réglages actuels, puis appliquez-les à d’autres photos."))
+                    ContentUnavailableView("No presets", systemImage: "slider.horizontal.2.square",
+                                           description: Text("Save the current settings, then apply them to other photos."))
                 } else {
                     ForEach(controller.presets) { preset in
                         presetRow(preset)
@@ -40,15 +40,15 @@ struct PresetsView: View {
         }
         .accessibilityIdentifier("presets-controls")
         .sheet(isPresented: $showingCreate) { createSheet }
-        .alert("Renommer le preset", isPresented: Binding(get: { renamePreset != nil }, set: { if !$0 { renamePreset = nil } })) {
-            TextField("Nom", text: $renameName)
-            Button("Annuler", role: .cancel) { renamePreset = nil }
-            Button("Renommer") {
+        .alert("Rename preset", isPresented: Binding(get: { renamePreset != nil }, set: { if !$0 { renamePreset = nil } })) {
+            TextField("Name", text: $renameName)
+            Button("Cancel", role: .cancel) { renamePreset = nil }
+            Button("Rename") {
                 if let preset = renamePreset { Task { await controller.rename(preset, to: renameName) } }
                 renamePreset = nil
             }.disabled(renameName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
-        .alert("Impossible de gérer le preset", isPresented: Binding(get: { controller.error != nil }, set: { if !$0 { controller.error = nil } })) {
+        .alert("Unable to manage preset", isPresented: Binding(get: { controller.error != nil }, set: { if !$0 { controller.error = nil } })) {
             Button("OK") { controller.error = nil }
         } message: { Text(controller.error ?? "") }
         .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
@@ -70,22 +70,22 @@ struct PresetsView: View {
                     .font(.caption2).foregroundStyle(.secondary).lineLimit(2)
             }
             Spacer()
-            Button("Appliquer") { onApply(preset) }
+            Button("Apply") { onApply(preset) }
                 .buttonStyle(.borderedProminent).accessibilityIdentifier("preset-apply-\(preset.id)")
             Menu {
-                Button("Renommer", systemImage: "pencil") { renamePreset = preset; renameName = preset.name }
-                Button("Exporter", systemImage: "square.and.arrow.up") { prepareExport(preset) }
-                Button("Supprimer", systemImage: "trash", role: .destructive) { Task { await controller.delete(preset) } }
+                Button("Rename", systemImage: "pencil") { renamePreset = preset; renameName = preset.name }
+                Button("Export", systemImage: "square.and.arrow.up") { prepareExport(preset) }
+                Button("Delete", systemImage: "trash", role: .destructive) { Task { await controller.delete(preset) } }
             } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
-                .accessibilityLabel("Options de \(preset.name)")
+                .accessibilityLabel("Options for \(preset.name)")
         }.padding(10).background(.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
     }
 
     private var createSheet: some View {
         NavigationStack {
             List {
-                Section("Nom") { TextField("Nom du preset", text: $createName).accessibilityIdentifier("preset-name") }
-                Section("Réglages inclus") {
+                Section("Name") { TextField("Preset name", text: $createName).accessibilityIdentifier("preset-name") }
+                Section("Included settings") {
                     ForEach(PresetSection.allCases) { section in
                         Toggle(section.title, isOn: Binding(
                             get: { selectedSections.contains(section) },
@@ -96,11 +96,11 @@ struct PresetsView: View {
                     }
                 }
             }
-            .navigationTitle("Nouveau preset").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("New preset").navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Annuler") { showingCreate = false } }
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showingCreate = false } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Enregistrer") {
+                    Button("Save") {
                         let name = createName; let sections = selectedSections
                         showingCreate = false
                         Task { await controller.create(name: name, sections: sections, state: state) }

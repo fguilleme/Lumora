@@ -26,10 +26,10 @@ struct LibraryView: View {
 
     private var scopeTitle: String {
         switch effectiveScope {
-        case .all: "Toutes"
-        case .favorites: "Favoris"
-        case let .folder(id): session.libraryFolders.first(where: { $0.id == id })?.name ?? "Toutes"
-        case let .tag(id): session.libraryTags.first(where: { $0.id == id })?.name ?? "Toutes"
+        case .all: "All"
+        case .favorites: "Favorites"
+        case let .folder(id): session.libraryFolders.first(where: { $0.id == id })?.name ?? "All"
+        case let .tag(id): session.libraryTags.first(where: { $0.id == id })?.name ?? "All"
         }
     }
 
@@ -45,22 +45,22 @@ struct LibraryView: View {
     private var visibleDocumentIDs: Set<UUID> { Set(visibleDocuments.map(\.id)) }
 
     private var navigationTitle: String {
-        guard isSelecting else { return "Bibliothèque" }
-        return selection.isEmpty ? "Sélectionner" : "\(selection.count) sélectionnée\(selection.count > 1 ? "s" : "")"
+        guard isSelecting else { return "Library" }
+        return selection.isEmpty ? "Select" : "\(selection.count) selected"
     }
 
     var body: some View {
         NavigationStack {
             Group {
                 if session.isLoadingLibrary {
-                    ProgressView("Chargement de la bibliothèque…")
+                    ProgressView("Loading library…")
                 } else if session.libraryDocuments.isEmpty {
-                    ContentUnavailableView("Bibliothèque vide", systemImage: "photo.stack",
-                                           description: Text("Importez une photo pour créer un développement local."))
+                    ContentUnavailableView("Empty library", systemImage: "photo.stack",
+                                           description: Text("Import a photo to create a local edit."))
                 } else if visibleDocuments.isEmpty {
                     if search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        ContentUnavailableView("Aucune photo", systemImage: "folder",
-                                               description: Text("Ce dossier ou cette sélection est vide."))
+                        ContentUnavailableView("No photos", systemImage: "folder",
+                                               description: Text("This folder or selection is empty."))
                     } else {
                         ContentUnavailableView.search(text: search)
                     }
@@ -75,13 +75,13 @@ struct LibraryView: View {
             .toolbar {
                 if isSelecting {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(selection == visibleDocumentIDs ? "Aucune" : "Toutes") {
+                        Button(selection == visibleDocumentIDs ? "None" : "All") {
                             selection = selection == visibleDocumentIDs ? [] : visibleDocumentIDs
                         }
                         .accessibilityIdentifier("library-select-all")
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Terminé") { endSelection() }
+                        Button("Done") { endSelection() }
                     }
                     ToolbarItemGroup(placement: .bottomBar) {
                         batchActions
@@ -89,77 +89,77 @@ struct LibraryView: View {
                 } else {
                     ToolbarItemGroup(placement: .topBarLeading) {
                         Menu {
-                            Button("Toutes", systemImage: "photo.stack") { scope = .all }
-                            Button("Favoris", systemImage: "star") { scope = .favorites }
+                            Button("All", systemImage: "photo.stack") { scope = .all }
+                            Button("Favorites", systemImage: "star") { scope = .favorites }
                             if !session.libraryFolders.isEmpty {
-                                Section("Dossiers") {
+                                Section("Folders") {
                                     ForEach(session.libraryFolders) { folder in
                                         Button(folder.name, systemImage: "folder") { scope = .folder(folder.id) }
                                     }
                                 }
                             }
                             if !session.libraryTags.isEmpty {
-                                Section("Étiquettes") {
+                                Section("Tags") {
                                     ForEach(session.libraryTags) { tag in
                                         Button(tag.name, systemImage: "tag") { scope = .tag(tag.id) }
                                     }
                                 }
                             }
                             Divider()
-                            Button("Gérer les dossiers…", systemImage: "folder.badge.gearshape") {
+                            Button("Manage folders…", systemImage: "folder.badge.gearshape") {
                                 showingFolders = true
                             }
-                            Button("Gérer les étiquettes…", systemImage: "tag") {
+                            Button("Manage tags…", systemImage: "tag") {
                                 showingTags = true
                             }
                         } label: { Label(scopeTitle, systemImage: scopeSymbol) }
                         .accessibilityIdentifier("library-scope")
 
                         Menu {
-                            Picker("Tri", selection: $sort) {
+                            Picker("Sort", selection: $sort) {
                                 ForEach(LibrarySortOrder.allCases) { order in Text(order.title).tag(order) }
                             }
-                        } label: { Label("Trier", systemImage: "arrow.up.arrow.down") }
+                        } label: { Label("Sort by", systemImage: "arrow.up.arrow.down") }
                         .accessibilityIdentifier("library-sort")
                     }
                     ToolbarItemGroup(placement: .confirmationAction) {
-                        Button("Sélectionner") {
+                        Button("Select") {
                             isSelecting = true
                             selection.removeAll()
                         }
                         .accessibilityIdentifier("library-select")
-                        Button("Fermer") { dismiss() }
+                        Button("Close") { dismiss() }
                     }
                 }
             }
         }
-        .searchable(text: $search, prompt: "Rechercher une photo")
+        .searchable(text: $search, prompt: "Search photos")
         .task { await session.loadLibrary() }
         .sheet(isPresented: $showingFolders) { LibraryFoldersView(session: session) }
         .sheet(isPresented: $showingTags) { LibraryTagsView(session: session) }
         .onChange(of: visibleDocumentIDs) { _, ids in selection.formIntersection(ids) }
-        .confirmationDialog("Supprimer ce développement ?", isPresented: Binding(
+        .confirmationDialog("Delete this edit?", isPresented: Binding(
             get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }),
                             titleVisibility: .visible) {
-            Button("Supprimer définitivement", role: .destructive) {
+            Button("Delete permanently", role: .destructive) {
                 guard let entry = pendingDeletion else { return }
                 pendingDeletion = nil
                 Task { await session.deleteDocument(entry.id) }
             }
-            Button("Annuler", role: .cancel) { pendingDeletion = nil }
+            Button("Cancel", role: .cancel) { pendingDeletion = nil }
         } message: {
-            Text("L’original privé et toutes ses retouches seront supprimés de Lumora.")
+            Text("The private original and all its edits will be deleted from Lumora.")
         }
-        .confirmationDialog("Supprimer \(selection.count) développement\(selection.count > 1 ? "s" : "") ?",
+        .confirmationDialog("Delete \(selection.count) edit\(selection.count > 1 ? "s" : "")?",
                             isPresented: $showingBatchDeletion, titleVisibility: .visible) {
-            Button("Supprimer définitivement", role: .destructive) {
+            Button("Delete permanently", role: .destructive) {
                 let ids = selection
                 endSelection()
                 Task { await session.deleteDocuments(ids) }
             }
-            Button("Annuler", role: .cancel) {}
+            Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Les originaux privés et toutes leurs retouches seront supprimés de Lumora.")
+            Text("The private originals and all their edits will be deleted from Lumora.")
         }
     }
 
@@ -180,7 +180,7 @@ struct LibraryView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("library-selection-row")
-                .accessibilityValue(selection.contains(entry.id) ? "Sélectionnée" : "Non sélectionnée")
+                .accessibilityValue(selection.contains(entry.id) ? "Selected" : "Not selected")
             } else {
                 standardLibraryRow(entry)
             }
@@ -201,7 +201,7 @@ struct LibraryView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("library-document-row")
-            .accessibilityHint("Ouvre ce développement")
+            .accessibilityHint("Open this edit")
 
             Button {
                 Task { await session.toggleFavorite(entry.id) }
@@ -210,13 +210,13 @@ struct LibraryView: View {
                     .frame(width: 44, height: 44)
             }
             .foregroundStyle(entry.isFavorite ? .yellow : .secondary)
-            .accessibilityLabel(entry.isFavorite ? "Retirer des favoris" : "Ajouter aux favoris")
-            .accessibilityValue(entry.isFavorite ? "Favori" : "Non favori")
+            .accessibilityLabel(entry.isFavorite ? "Remove from favorites" : "Add to favorites")
+            .accessibilityValue(entry.isFavorite ? "Favorite" : "Not a favorite")
             .accessibilityIdentifier("library-favorite-button")
 
             Menu {
-                Menu("Déplacer vers", systemImage: "folder") {
-                    Button("Sans dossier", systemImage: "tray") {
+                Menu("Move to", systemImage: "folder") {
+                    Button("No folder", systemImage: "tray") {
                         Task { await session.setLibraryFolder(nil, for: entry.id) }
                     }
                     ForEach(session.libraryFolders) { folder in
@@ -226,7 +226,7 @@ struct LibraryView: View {
                     }
                 }
                 if !session.libraryTags.isEmpty {
-                    Menu("Étiquettes", systemImage: "tag") {
+                    Menu("Tags", systemImage: "tag") {
                         ForEach(session.libraryTags) { tag in
                             Button(tag.name,
                                    systemImage: entry.tagIDs.contains(tag.id) ? "checkmark.circle.fill" : "circle") {
@@ -235,13 +235,13 @@ struct LibraryView: View {
                         }
                     }
                 }
-                Button("Supprimer", systemImage: "trash", role: .destructive) {
+                Button("Delete", systemImage: "trash", role: .destructive) {
                     pendingDeletion = entry
                 }
             } label: {
                 Image(systemName: "ellipsis.circle").frame(width: 44, height: 44)
             }
-            .accessibilityLabel("Options de \(entry.document.originalName)")
+            .accessibilityLabel("Options for \(entry.document.originalName)")
         }
     }
 
@@ -254,7 +254,7 @@ struct LibraryView: View {
                 Text(entry.document.createdAt, format: .dateTime.day().month(.abbreviated).year().hour().minute())
                     .font(.caption).foregroundStyle(.secondary)
                 if session.document?.id == entry.id {
-                    Label("Ouvert", systemImage: "checkmark.circle.fill")
+                    Label("Open", systemImage: "checkmark.circle.fill")
                         .font(.caption2.weight(.medium)).foregroundStyle(.mint)
                 }
                 if let folderID = entry.folderID,
@@ -274,20 +274,20 @@ struct LibraryView: View {
 
     @ViewBuilder private var batchActions: some View {
         Menu {
-            Button("Ajouter aux favoris", systemImage: "star.fill") {
+            Button("Add to favorites", systemImage: "star.fill") {
                 let ids = selection
                 Task { await session.setFavorites(true, for: ids) }
             }
-            Button("Retirer des favoris", systemImage: "star.slash") {
+            Button("Remove from favorites", systemImage: "star.slash") {
                 let ids = selection
                 Task { await session.setFavorites(false, for: ids) }
             }
-        } label: { Label("Favoris", systemImage: "star") }
+        } label: { Label("Favorites", systemImage: "star") }
         .disabled(selection.isEmpty)
         .accessibilityIdentifier("library-batch-favorites")
 
         Menu {
-            Button("Sans dossier", systemImage: "tray") {
+            Button("No folder", systemImage: "tray") {
                 let ids = selection
                 Task { await session.setLibraryFolder(nil, for: ids) }
             }
@@ -297,29 +297,29 @@ struct LibraryView: View {
                     Task { await session.setLibraryFolder(folder.id, for: ids) }
                 }
             }
-        } label: { Label("Dossier", systemImage: "folder") }
+        } label: { Label("Folder", systemImage: "folder") }
         .disabled(selection.isEmpty)
         .accessibilityIdentifier("library-batch-folder")
 
         Menu {
             ForEach(session.libraryTags) { tag in
                 Menu(tag.name) {
-                    Button("Ajouter", systemImage: "plus") {
+                    Button("Add", systemImage: "plus") {
                         let ids = selection
                         Task { await session.setLibraryTag(tag.id, enabled: true, for: ids) }
                     }
-                    Button("Retirer", systemImage: "minus") {
+                    Button("Remove", systemImage: "minus") {
                         let ids = selection
                         Task { await session.setLibraryTag(tag.id, enabled: false, for: ids) }
                     }
                 }
             }
-        } label: { Label("Étiquettes", systemImage: "tag") }
+        } label: { Label("Tags", systemImage: "tag") }
         .disabled(selection.isEmpty || session.libraryTags.isEmpty)
         .accessibilityIdentifier("library-batch-tags")
 
         Spacer()
-        Button("Supprimer", systemImage: "trash", role: .destructive) {
+        Button("Delete", systemImage: "trash", role: .destructive) {
             showingBatchDeletion = true
         }
         .disabled(selection.isEmpty)
@@ -343,8 +343,8 @@ private struct LibraryTagsView: View {
         NavigationStack {
             Group {
                 if session.libraryTags.isEmpty {
-                    ContentUnavailableView("Aucune étiquette", systemImage: "tag",
-                                           description: Text("Créez des étiquettes pour croiser vos classements."))
+                    ContentUnavailableView("No tags", systemImage: "tag",
+                                           description: Text("Create tags to organize photos across folders."))
                 } else {
                     List(session.libraryTags) { tag in
                         HStack {
@@ -354,42 +354,42 @@ private struct LibraryTagsView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .swipeActions {
-                            Button("Supprimer", systemImage: "trash", role: .destructive) {
+                            Button("Delete", systemImage: "trash", role: .destructive) {
                                 pendingDeletion = tag
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Étiquettes")
+            .navigationTitle("Tags")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Nouvelle", systemImage: "tag.badge.plus") {
+                    Button("New", systemImage: "tag.badge.plus") {
                         newTagName = ""
                         showingNewTag = true
                     }
                     .accessibilityIdentifier("library-new-tag")
                 }
-                ToolbarItem(placement: .confirmationAction) { Button("Terminé") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
         }
-        .alert("Nouvelle étiquette", isPresented: $showingNewTag) {
-            TextField("Nom", text: $newTagName)
-            Button("Créer") { Task { await session.createLibraryTag(named: newTagName) } }
-            Button("Annuler", role: .cancel) {}
+        .alert("New tag", isPresented: $showingNewTag) {
+            TextField("Name", text: $newTagName)
+            Button("Create") { Task { await session.createLibraryTag(named: newTagName) } }
+            Button("Cancel", role: .cancel) {}
         }
-        .confirmationDialog("Supprimer cette étiquette ?", isPresented: Binding(
+        .confirmationDialog("Delete this tag?", isPresented: Binding(
             get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }),
                             titleVisibility: .visible) {
-            Button("Supprimer l’étiquette", role: .destructive) {
+            Button("Delete tag", role: .destructive) {
                 guard let tag = pendingDeletion else { return }
                 pendingDeletion = nil
                 Task { await session.deleteLibraryTag(tag.id) }
             }
-            Button("Annuler", role: .cancel) { pendingDeletion = nil }
+            Button("Cancel", role: .cancel) { pendingDeletion = nil }
         } message: {
-            Text("Les photos et leurs retouches resteront dans la bibliothèque.")
+            Text("Photos and edits will remain in the library.")
         }
     }
 }
@@ -405,8 +405,8 @@ private struct LibraryFoldersView: View {
         NavigationStack {
             Group {
                 if session.libraryFolders.isEmpty {
-                    ContentUnavailableView("Aucun dossier", systemImage: "folder",
-                                           description: Text("Créez un dossier pour classer vos développements."))
+                    ContentUnavailableView("No folders", systemImage: "folder",
+                                           description: Text("Create a folder to organize your edits."))
                 } else {
                     List(session.libraryFolders) { folder in
                         HStack {
@@ -416,42 +416,42 @@ private struct LibraryFoldersView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .swipeActions {
-                            Button("Supprimer", systemImage: "trash", role: .destructive) {
+                            Button("Delete", systemImage: "trash", role: .destructive) {
                                 pendingDeletion = folder
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Dossiers")
+            .navigationTitle("Folders")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Nouveau", systemImage: "folder.badge.plus") {
+                    Button("New", systemImage: "folder.badge.plus") {
                         newFolderName = ""
                         showingNewFolder = true
                     }
                     .accessibilityIdentifier("library-new-folder")
                 }
-                ToolbarItem(placement: .confirmationAction) { Button("Terminé") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
         }
-        .alert("Nouveau dossier", isPresented: $showingNewFolder) {
-            TextField("Nom", text: $newFolderName)
-            Button("Créer") { Task { await session.createLibraryFolder(named: newFolderName) } }
-            Button("Annuler", role: .cancel) {}
+        .alert("New folder", isPresented: $showingNewFolder) {
+            TextField("Name", text: $newFolderName)
+            Button("Create") { Task { await session.createLibraryFolder(named: newFolderName) } }
+            Button("Cancel", role: .cancel) {}
         }
-        .confirmationDialog("Supprimer ce dossier ?", isPresented: Binding(
+        .confirmationDialog("Delete this folder?", isPresented: Binding(
             get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }),
                             titleVisibility: .visible) {
-            Button("Supprimer le dossier", role: .destructive) {
+            Button("Delete folder", role: .destructive) {
                 guard let folder = pendingDeletion else { return }
                 pendingDeletion = nil
                 Task { await session.deleteLibraryFolder(folder.id) }
             }
-            Button("Annuler", role: .cancel) { pendingDeletion = nil }
+            Button("Cancel", role: .cancel) { pendingDeletion = nil }
         } message: {
-            Text("Les photos resteront dans la bibliothèque et seront simplement retirées de ce dossier.")
+            Text("Photos will remain in the library and simply be removed from this folder.")
         }
     }
 }

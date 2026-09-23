@@ -21,7 +21,7 @@ struct CreativeEffectsView: View {
                                 ForEach(CreativeEffectKind.allCases.filter { $0.descriptor.category == category }) { kind in
                                     Button(kind.descriptor.title, systemImage: kind.descriptor.symbol) {
                                         let effect = CreativeEffect(kind, maskID: session.selectedMaskID)
-                                        session.changeCreative("Ajouter \(kind.descriptor.title)") { $0.effects.append(effect) }
+                                        session.changeCreative("Add \(kind.descriptor.title)") { $0.effects.append(effect) }
                                         selected = effect.id
                                     }.disabled(session.state.creative.effects.count >= 32)
                                     .accessibilityIdentifier("creative-add-\(kind.rawValue)")
@@ -35,9 +35,9 @@ struct CreativeEffectsView: View {
                     } label: {
                         if dynamicTypeSize.isAccessibilitySize {
                             Image(systemName: "plus.circle").frame(width: 44, height: 44)
-                        } else { Label("Ajouter", systemImage: "plus.circle") }
+                        } else { Label("Add", systemImage: "plus.circle") }
                     }
-                    .accessibilityLabel("Ajouter un effet")
+                    .accessibilityLabel("Add effect")
                     .accessibilityIdentifier("creative-add")
                     Menu {
                         ForEach(CreativeEffectKind.allCases) { kind in
@@ -59,13 +59,13 @@ struct CreativeEffectsView: View {
                         Text("FX").font(.caption).foregroundStyle(.secondary)
                     }
                     Toggle("FX", isOn: Binding(get: { !session.bypassCreative }, set: { session.setCreativeBypass(!$0) }))
-                        .labelsHidden().accessibilityLabel("Activer l’aperçu Creative")
+                        .labelsHidden().accessibilityLabel("Enable Creative preview")
                     Button { session.finishInteraction(); showsTile = true } label: {
                         if dynamicTypeSize.isAccessibilitySize {
                             Image(systemName: "viewfinder").frame(width: 44, height: 44)
                         } else { Text("100 %") }
                     }
-                        .accessibilityLabel("Détail Creative à résolution native")
+                        .accessibilityLabel("Creative detail at native resolution")
                 }.dimsDuringAdjustment()
                 HStack(spacing: 8) {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -90,55 +90,55 @@ struct CreativeEffectsView: View {
                         update { $0 = preset.applying(to: $0) }
                     } headerActions: {
                         HStack(spacing: 0) {
-                            effectAction(effect.enabled ? "Désactiver l’effet" : "Activer l’effet", effect.enabled ? "eye" : "eye.slash", "toggle") { update { $0.enabled.toggle() } }
-                            effectAction("Dupliquer", "plus.square.on.square", "duplicate") {
-                                session.changeCreative("Dupliquer un effet") { $0.duplicate(effect.id) }
+                            effectAction(effect.enabled ? "Disable effect" : "Enable effect", effect.enabled ? "eye" : "eye.slash", "toggle") { update { $0.enabled.toggle() } }
+                            effectAction("Duplicate", "plus.square.on.square", "duplicate") {
+                                session.changeCreative("Duplicate effect") { $0.duplicate(effect.id) }
                             }
-                            effectAction("Supprimer", "trash", "delete") {
-                                session.changeCreative("Supprimer un effet") { $0.effects.removeAll { $0.id == effect.id } }
+                            effectAction("Delete", "trash", "delete") {
+                                session.changeCreative("Delete effect") { $0.effects.removeAll { $0.id == effect.id } }
                                 selected = session.state.creative.effects.last?.id
                             }
-                            effectAction("Appliquer plus tôt", "arrow.up", "earlier") {
-                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: -1) }
+                            effectAction("Apply earlier", "arrow.up", "earlier") {
+                                session.changeCreative("Move effect") { $0.move(effect.id, by: -1) }
                             }.disabled(session.state.creative.effects.first?.id == effect.id)
-                            effectAction("Appliquer plus tard", "arrow.down", "later") {
-                                session.changeCreative("Déplacer un effet") { $0.move(effect.id, by: 1) }
+                            effectAction("Apply later", "arrow.down", "later") {
+                                session.changeCreative("Move effect") { $0.move(effect.id, by: 1) }
                             }.disabled(session.state.creative.effects.last?.id == effect.id)
-                            effectAction("Réinitialiser", "arrow.counterclockwise", "reset") { update { $0.reset() } }
+                            effectAction("Reset", "arrow.counterclockwise", "reset") { update { $0.reset() } }
                         }
                     }
                     .dimsDuringAdjustment()
                     HStack {
-                        Picker("Zone", selection: Binding<UUID?>(get: { effect.maskID }, set: { id in
+                        Picker("Area", selection: Binding<UUID?>(get: { effect.maskID }, set: { id in
                             update { $0.maskID = id }
                             if let id { session.selectMask(id) } else { session.selectBaseLayer() }
                         })) {
-                            Text("Photo entière").tag(nil as UUID?)
+                            Text("Whole photo").tag(nil as UUID?)
                             ForEach(session.state.masks) { Text($0.name).tag(Optional($0.id)) }
                             if let id = effect.maskID, !session.state.masks.contains(where: { $0.id == id }) {
-                                Text("Masque absent — effet suspendu").tag(Optional(id))
+                                Text("Mask missing — effect suspended").tag(Optional(id))
                             }
                         }.font(.caption).dimsDuringAdjustment()
                         Spacer(minLength: 0)
                     }.font(.caption).dimsDuringAdjustment()
 
-                    Text("Réglages").font(.subheadline.weight(.semibold)).dimsDuringAdjustment()
-                    slider("opacity", "Opacité", 0...100, effect.opacity, 100) { value in update { $0.opacity = value } }
+                    Text("Settings").font(.subheadline.weight(.semibold)).dimsDuringAdjustment()
+                    slider("opacity", "Opacity", 0...100, effect.opacity, 100) { value in update { $0.opacity = value } }
                     if effect.kind == .grain {
                         Picker("Mode", selection: $advanced) {
-                            Text("Simple").tag(false); Text("Avancé").tag(true)
+                            Text("Simple").tag(false); Text("Advanced").tag(true)
                         }.pickerStyle(.segmented).dimsDuringAdjustment()
                     }
                     if effect.kind == .tonalContrast {
-                        Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
+                        Button(advanced ? "Hide protections" : "Advanced protections") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .detailExtractor {
-                        Button(advanced ? "Masquer les protections" : "Protections avancées") { advanced.toggle() }
+                        Button(advanced ? "Hide protections" : "Advanced protections") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation || effect.kind == .silverBW || effect.kind == .silverToning {
-                        Button(advanced ? "Masquer les réglages avancés" : "Réglages avancés") { advanced.toggle() }
+                        Button(advanced ? "Hide advanced settings" : "Advanced settings") { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .silverBW {
@@ -149,10 +149,10 @@ struct CreativeEffectsView: View {
                                 Text(response.title).tag(response.rawValue)
                             }
                         }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-film-response")
-                        Menu("Filtre coloré") {
-                            Button("Aucun") { update { $0["filterStrength"] = 0 } }
-                            ForEach(["Jaune", "Orange", "Rouge", "Vert", "Bleu"].indices, id: \.self) { index in
-                                Button(["Jaune", "Orange", "Rouge", "Vert", "Bleu"][index]) {
+                        Menu("Color filter") {
+                            Button("None") { update { $0["filterStrength"] = 0 } }
+                            ForEach(["Yellow", "Orange", "Red", "Green", "Blue"].indices, id: \.self) { index in
+                                Button(["Yellow", "Orange", "Red", "Green", "Blue"][index]) {
                                     update {
                                         $0["filterHue"] = [60,30,0,120,240][index]
                                         if $0["filterStrength"] == 0 { $0["filterStrength"] = 50 }
@@ -171,9 +171,9 @@ struct CreativeEffectsView: View {
                         }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-toner")
                     }
                     if effect.kind == .darkenLightenCenter {
-                        Text("Déplacez la poignée sur la photo pour placer le centre.")
+                        Text("Drag the handle on the photo to position the center.")
                             .font(.caption).foregroundStyle(.secondary)
-                        Button(advanced ? "Masquer la position précise" : "Position précise X / Y") { advanced.toggle() }
+                        Button(advanced ? "Hide precise position" : "Precise X / Y position") { advanced.toggle() }
                             .buttonStyle(.bordered).accessibilityIdentifier("creative-dlc-position")
                     }
                     ForEach(effect.kind.descriptor.parameters.filter { spec in
@@ -220,10 +220,10 @@ struct CreativeEffectsView: View {
                     if effect.kind == .grain && advanced {
                         Toggle("Monochrome", isOn: Binding(get: { effect.monochromatic }, set: { v in update { $0.monochromatic = v } }))
                             .dimsDuringAdjustment()
-                        Button("Nouvelle structure") { update { $0.seed = $0.seed &+ 1 } }.dimsDuringAdjustment()
+                        Button("New structure") { update { $0.seed = $0.seed &+ 1 } }.dimsDuringAdjustment()
                     }
                 } else {
-                    Text("Empilez Pro Contrast, Bleach Bypass et les autres effets Creative. Chaque effet peut cibler un masque existant.")
+                    Text("Stack Pro Contrast, Bleach Bypass and other Creative effects. Each effect can target an existing mask.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)
@@ -259,7 +259,7 @@ struct CreativeEffectsView: View {
             }
         } else {
             let effect = preset.makeEffect(maskID: session.selectedMaskID)
-            session.changeCreative("Ajouter le preset \(preset.title)") { $0.effects.append(effect) }
+            session.changeCreative("Add \(preset.title) preset") { $0.effects.append(effect) }
             selected = effect.id
         }
         presetFeedback += 1
@@ -302,14 +302,14 @@ struct CreativeTileView: View {
                         Image(decorative: tile, scale: displayScale).interpolation(.none)
                     }
                 }
-                if loading { ProgressView("Région à résolution native…") }
+                if loading { ProgressView("Native-resolution region…") }
                 if let error { Text(error).font(.caption) }
-                Text("100 % · un pixel photo par pixel écran").font(.caption)
-                Slider(value: $x, in: 0...1, step: 0.1).accessibilityLabel("Position horizontale")
-                Slider(value: $y, in: 0...1, step: 0.1).accessibilityLabel("Position verticale")
+                Text("100% · one photo pixel per screen pixel").font(.caption)
+                Slider(value: $x, in: 0...1, step: 0.1).accessibilityLabel("Horizontal position")
+                Slider(value: $y, in: 0...1, step: 0.1).accessibilityLabel("Vertical position")
             }.padding().background(.black)
-                .navigationTitle("Détail Creative")
-                .toolbar { Button("Fermer") { dismiss() } }
+                .navigationTitle("Creative detail")
+                .toolbar { Button("Close") { dismiss() } }
                 .task(id: position) {
                     loading = true; error = nil
                     do {

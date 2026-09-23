@@ -4,7 +4,7 @@ enum GradingRange: String, Codable, CaseIterable, Sendable, Identifiable {
     case shadows, midtones, highlights
     var id: String { rawValue }
     var title: String {
-        switch self { case .shadows: "Ombres"; case .midtones: "Tons moyens"; case .highlights: "Hautes lumières" }
+        switch self { case .shadows: "Shadows"; case .midtones: "Midtones"; case .highlights: "Highlights" }
     }
 }
 

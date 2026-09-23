@@ -71,7 +71,7 @@ struct BrushMask: Codable, Sendable, Equatable {
 enum BrushMode: String, CaseIterable, Sendable {
     case paint, erase, pan
 
-    var title: String { switch self { case .paint: "Peindre"; case .erase: "Effacer"; case .pan: "Déplacer" } }
+    var title: String { switch self { case .paint: "Paint"; case .erase: "Erase"; case .pan: "Pan" } }
 }
 
 struct LinearGradientMask: Codable, Sendable, Equatable {
@@ -109,13 +109,13 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .subject: "Sujet"
-        case .background: "Arrière-plan"
-        case .person: "Personne"
-        case .face: "Visage"
-        case .eyes: "Yeux"
-        case .sky: "Ciel"
-        case .skin: "Peau"
+        case .subject: "Subject"
+        case .background: "Background"
+        case .person: "Person"
+        case .face: "Face"
+        case .eyes: "Eyes"
+        case .sky: "Sky"
+        case .skin: "Skin"
         }
     }
     var symbol: String {
@@ -154,8 +154,8 @@ enum MaskShape: Codable, Sendable, Equatable {
 
     var title: String {
         switch self {
-        case .brush: "Pinceau"
-        case .linear: "Linéaire"
+        case .brush: "Brush"
+        case .linear: "Linear"
         case .radial: "Radial"
         case .generated(let mask): mask.kind.title
         }
@@ -334,15 +334,15 @@ enum LocalAdjustment: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .exposure: "Exposition"
-        case .contrast: "Contraste"
-        case .highlights: "Hautes lumières"
-        case .shadows: "Ombres"
-        case .temperature: "Température"
-        case .tint: "Teinte"
+        case .exposure: "Exposure"
+        case .contrast: "Contrast"
+        case .highlights: "Highlights"
+        case .shadows: "Shadows"
+        case .temperature: "Temperature"
+        case .tint: "Tint"
         case .saturation: "Saturation"
-        case .clarity: "Clarté"
-        case .sharpness: "Netteté"
+        case .clarity: "Clarity"
+        case .sharpness: "Sharpening"
         }
     }
     var range: ClosedRange<Double> { self == .exposure ? -5...5 : (self == .sharpness ? 0...100 : -100...100) }
@@ -376,7 +376,7 @@ struct AdjustmentLayer: Codable, Sendable, Equatable, Identifiable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
-        name = try values.decodeIfPresent(String.self, forKey: .name) ?? "Calque"
+        name = try values.decodeIfPresent(String.self, forKey: .name) ?? "Layer"
         components = try values.decodeIfPresent([MaskComponent].self, forKey: .components) ?? []
         adjustments = try values.decodeIfPresent(LocalAdjustmentState.self, forKey: .adjustments) ?? LocalAdjustmentState()
         inverted = try values.decodeIfPresent(Bool.self, forKey: .inverted) ?? false
@@ -388,7 +388,7 @@ struct AdjustmentLayer: Codable, Sendable, Equatable, Identifiable {
     var validated: Self {
         var value = self
         let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        value.name = cleanName.isEmpty ? "Calque" : String(cleanName.prefix(60))
+        value.name = cleanName.isEmpty ? "Layer" : String(cleanName.prefix(60))
         value.components = components.prefix(32).map(\.validated)
         value.adjustments = adjustments.validated
         value.opacity = opacity.isFinite ? min(100, max(0, opacity)) : 100
@@ -403,7 +403,7 @@ typealias LocalMask = AdjustmentLayer
 enum MaskKind: String, CaseIterable, Sendable, Identifiable {
     case brush, linear, radial
     var id: String { rawValue }
-    var title: String { switch self { case .brush: "Pinceau"; case .linear: "Linéaire"; case .radial: "Radial" } }
+    var title: String { switch self { case .brush: "Brush"; case .linear: "Linear"; case .radial: "Radial" } }
     func shape() -> MaskShape {
         switch self {
         case .brush: .brush(BrushMask())
@@ -418,9 +418,9 @@ enum MaskParameter: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .size: "Taille"; case .feather: "Contour progressif"; case .flow: "Débit"
-        case .opacity: "Opacité"; case .angle: "Angle"; case .centerX: "Centre horizontal"
-        case .centerY: "Centre vertical"; case .radiusX: "Largeur"; case .radiusY: "Hauteur"
+        case .size: "Size"; case .feather: "Feather"; case .flow: "Flow"
+        case .opacity: "Opacity"; case .angle: "Angle"; case .centerX: "Horizontal center"
+        case .centerY: "Vertical center"; case .radiusX: "Width"; case .radiusY: "Height"
         }
     }
     var range: ClosedRange<Double> {

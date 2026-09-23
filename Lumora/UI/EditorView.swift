@@ -34,7 +34,7 @@ struct EditorView: View {
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
-        case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets", help = "Aide"
+        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
         var symbol: String {
             switch self {
             case .creative: "sparkles"
@@ -87,10 +87,10 @@ struct EditorView: View {
                             },
                             showingOriginal: $session.showingOriginal,
                             dlcSettings: activeDLCSettings,
-                            onDLCBegin: { session.beginInteraction("Déplacer le centre") },
+                            onDLCBegin: { session.beginInteraction("Move center") },
                             onDLCChange: { point in
                                 guard let id = selectedCreativeEffectID else { return }
-                                session.changeCreative("Déplacer le centre") { stack in
+                                session.changeCreative("Move center") { stack in
                                     if let i = stack.effects.firstIndex(where: { $0.id == id }) {
                                         stack.effects[i]["centerX"] = point.x
                                         stack.effects[i]["centerY"] = point.y
@@ -107,7 +107,7 @@ struct EditorView: View {
                             onBrushBegin: session.beginBrushStroke,
                             onBrushPoint: session.appendBrushPoint,
                             onBrushEnd: session.finishInteraction,
-                            onMaskTransformBegin: { session.beginInteraction("Transformer la composante") },
+                            onMaskTransformBegin: { session.beginInteraction("Transform component") },
                             onMaskShapeChange: session.setSelectedMaskShape,
                             onMaskTransformEnd: session.finishInteraction,
                             showsGeometryGrid: panel == .geometry,
@@ -140,8 +140,8 @@ struct EditorView: View {
             } else {
                 Spacer()
                 Image(systemName: "camera.aperture").font(.system(size: 64, weight: .ultraLight)).foregroundStyle(.mint)
-                Text("La lumière, à votre façon.").font(.title2).padding(.top, 20)
-                Text("Importez une photographie pour commencer.\nVotre original reste intact, vos retouches restent locales.")
+                Text("Light, your way.").font(.title2).padding(.top, 20)
+                Text("Import a photo to get started.\nYour original stays intact, and your edits stay local.")
                     .font(.subheadline).multilineTextAlignment(.center).foregroundStyle(.secondary).padding()
                 importButtons
                 Spacer()
@@ -156,7 +156,7 @@ struct EditorView: View {
             if session.isImporting || photoLoading {
                 ZStack {
                     Color.black.opacity(0.6).ignoresSafeArea()
-                    ProgressView("Ouverture de l’original…").padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
+                    ProgressView("Opening original…").padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
                 }
             }
         }
@@ -185,7 +185,7 @@ struct EditorView: View {
                 if let url = try result.get().first { Task { await session.importPhoto(at: url) } }
             } catch { session.error = error.localizedDescription }
         }
-        .alert("Impossible de terminer", isPresented: Binding(get: { session.error != nil }, set: { if !$0 { session.error = nil } })) {
+        .alert("Unable to finish", isPresented: Binding(get: { session.error != nil }, set: { if !$0 { session.error = nil } })) {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
         .onAppear { session.setMaskEditingPreview(panel == .masks) }
@@ -243,7 +243,7 @@ struct EditorView: View {
 
     private func photoInformation(_ result: RenderResult) -> some View {
         HStack(spacing: 6) {
-            Text(URL(fileURLWithPath: session.document?.originalName ?? "Photographie")
+            Text(URL(fileURLWithPath: session.document?.originalName ?? "Photo")
                 .deletingPathExtension().lastPathComponent)
                 .lineLimit(1).truncationMode(.middle)
             activeLayerMenu
@@ -269,8 +269,8 @@ struct EditorView: View {
                     .font(.system(size: 15, weight: .medium))
                     .frame(width: 44, height: 44)
             }
-            .accessibilityLabel("Changer le côté des contrôles")
-            .accessibilityValue(controlsSide == .leading ? "Début" : "Fin")
+            .accessibilityLabel("Switch controls side")
+            .accessibilityValue(controlsSide == .leading ? "Leading" : "Trailing")
             .accessibilityIdentifier("controls-side-switch")
             .padding(.trailing, 4)
         }
@@ -317,38 +317,38 @@ struct EditorView: View {
                     Button { showPhotos = true } label: {
                         Image(systemName: "photo.on.rectangle").frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("Importer depuis Photos")
+                    .accessibilityLabel("Import from Photos")
                     .accessibilityIdentifier("header-photos")
                     Button { showLibrary = true } label: {
                         Image(systemName: "photo.stack").frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("Ouvrir la bibliothèque")
+                    .accessibilityLabel("Open library")
                     .accessibilityIdentifier("header-library")
                     Button(action: session.undo) { Image(systemName: "arrow.uturn.backward").frame(width: 44, height: 44) }
-                        .disabled(!session.history.canUndo).accessibilityLabel("Annuler")
+                        .disabled(!session.history.canUndo).accessibilityLabel("Undo")
                     Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
-                        .disabled(!session.history.canRedo).accessibilityLabel("Rétablir")
+                        .disabled(!session.history.canRedo).accessibilityLabel("Redo")
                     Menu {
-                        Button("Bibliothèque", systemImage: "photo.stack") { showLibrary = true }
+                        Button("Library", systemImage: "photo.stack") { showLibrary = true }
                         Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
-                        Button("Exporter", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
-                        Button("Fichiers", systemImage: "folder") { showFiles = true }
-                        Button("Réinitialiser les réglages", systemImage: "arrow.counterclockwise", action: session.resetAll)
+                        Button("Export", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
+                        Button("Files", systemImage: "folder") { showFiles = true }
+                        Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
                         #if DEBUG
-                        Toggle("Mesures de rendu", isOn: $showMetrics)
+                        Toggle("Render metrics", isOn: $showMetrics)
                         #endif
                     } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Importer et options")
+                    .accessibilityLabel("Import and options")
                 }
             }
         }.padding(.horizontal)
     }
     private var importButtons: some View {
         HStack(spacing: 8) {
-            welcomeImportButton("Bibliothèque", symbol: "photo.stack") { showLibrary = true }
+            welcomeImportButton("Library", symbol: "photo.stack") { showLibrary = true }
                 .accessibilityIdentifier("library-open")
             welcomeImportButton("Photos", symbol: "photo.on.rectangle", prominent: true) { showPhotos = true }
-            welcomeImportButton("Fichiers", symbol: "folder") { showFiles = true }
+            welcomeImportButton("Files", symbol: "folder") { showFiles = true }
         }
         .padding(.horizontal, 16)
     }
@@ -373,7 +373,7 @@ struct EditorView: View {
             Button {
                 selectQuickLayer(nil)
             } label: {
-                Label("Photo entière",
+                Label("Whole photo",
                       systemImage: session.selectedMaskID == nil ? "checkmark" : "rectangle.fill")
             }
             .accessibilityIdentifier("quick-layer-base")
@@ -399,7 +399,7 @@ struct EditorView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Calque actif")
+        .accessibilityLabel("Active layer")
         .accessibilityValue(session.activeLayerName)
         .accessibilityIdentifier("active-layer")
     }
@@ -573,7 +573,7 @@ struct EditorView: View {
     }
     #if DEBUG
     private func metrics(_ result: RenderResult) -> some View {
-        Text(String(format: "%.1f ms · %@ · cache %@ · génération %d\n%d × %d preview · ≈ %.1f Mo pixels · FPS : non mesuré",
+        Text(String(format: "%.1f ms · %@ · cache %@ · generation %d\n%d × %d preview · ≈ %.1f MB pixels · FPS: not measured",
                     result.milliseconds, result.gpu ? "Metal" : "Core Image CPU", result.cacheHit ? "hit" : "miss", session.generation,
                     result.image.width, result.image.height,
                     Double(result.image.bytesPerRow * result.image.height + result.original.bytesPerRow * result.original.height) / 1_048_576))

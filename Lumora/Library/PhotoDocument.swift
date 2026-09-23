@@ -37,9 +37,9 @@ enum LibrarySortOrder: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .newest: "Plus récentes"
-        case .oldest: "Plus anciennes"
-        case .name: "Nom"
+        case .newest: "Newest first"
+        case .oldest: "Oldest first"
+        case .name: "Name"
         }
     }
 }
@@ -80,12 +80,12 @@ enum LibraryError: LocalizedError {
     case invalidTagName, duplicateTagName, unknownTag
     var errorDescription: String? {
         switch self {
-        case .invalidFolderName: "Le nom du dossier ne peut pas être vide."
-        case .duplicateFolderName: "Un dossier porte déjà ce nom."
-        case .unknownFolder: "Ce dossier n’existe plus."
-        case .invalidTagName: "Le nom de l’étiquette ne peut pas être vide."
-        case .duplicateTagName: "Une étiquette porte déjà ce nom."
-        case .unknownTag: "Cette étiquette n’existe plus."
+        case .invalidFolderName: "The folder name cannot be empty."
+        case .duplicateFolderName: "A folder already has that name."
+        case .unknownFolder: "This folder no longer exists."
+        case .invalidTagName: "The tag name cannot be empty."
+        case .duplicateTagName: "A tag already has that name."
+        case .unknownTag: "This tag no longer exists."
         }
     }
 }
@@ -94,9 +94,9 @@ enum PhotoError: LocalizedError {
     case unreadable, renderFailed, incompatibleDocument
     var errorDescription: String? {
         switch self {
-        case .unreadable: "Cette image ne peut pas être décodée. Vérifiez son format et sa disponibilité locale."
-        case .renderFailed: "Le moteur n’a pas pu produire l’image."
-        case .incompatibleDocument: "Ce développement provient d’une version non prise en charge."
+        case .unreadable: "This image cannot be decoded. Check its format and local availability."
+        case .renderFailed: "The renderer could not produce the image."
+        case .incompatibleDocument: "This edit was created by an unsupported version."
         }
     }
 }

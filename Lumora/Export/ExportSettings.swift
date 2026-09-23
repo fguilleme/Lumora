@@ -70,10 +70,10 @@ enum ExportStage: Int, Sendable {
     }
     var title: String {
         switch self {
-        case .decoding: "Lecture de l’original…"
-        case .rendering: "Développement haute résolution…"
-        case .encoding: "Écriture du fichier…"
-        case .finished: "Export terminé"
+        case .decoding: "Reading original…"
+        case .rendering: "Rendering at high resolution…"
+        case .encoding: "Writing file…"
+        case .finished: "Export complete"
         }
     }
 }
@@ -82,8 +82,8 @@ enum ExportError: LocalizedError {
     case unsupportedFormat, encodingFailed
     var errorDescription: String? {
         switch self {
-        case .unsupportedFormat: "Ce format n’est pas disponible sur cet appareil."
-        case .encodingFailed: "Impossible d’encoder l’image exportée. Essayez un autre format ou des dimensions réduites."
+        case .unsupportedFormat: "This format is not available on this device."
+        case .encodingFailed: "Unable to encode the exported image. Try another format or smaller dimensions."
         }
     }
 }

@@ -37,42 +37,42 @@ struct MasksView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("Pile de modifications").font(.headline)
+                    Text("Adjustment stack").font(.headline)
                     Spacer()
                     if isGenerating {
-                        ProgressView().controlSize(.small).accessibilityLabel("Détection du masque")
+                        ProgressView().controlSize(.small).accessibilityLabel("Mask detection")
                     }
                     newMaskMenu
                     if mask != nil {
                         Button(role: .destructive, action: onDelete) { Image(systemName: "trash") }
-                            .accessibilityLabel("Supprimer le masque")
+                            .accessibilityLabel("Delete mask")
                     }
                 }
                 maskPicker
                 if mask == nil {
-                    Label("Ce premier calque couvre toute la photographie.", systemImage: "rectangle.fill")
+                    Label("This base layer covers the entire photo.", systemImage: "rectangle.fill")
                         .font(.subheadline).foregroundStyle(.secondary)
-                    Text("Peignez, tracez un dégradé ou laissez Vision détecter le sujet.")
+                    Text("Paint, draw a gradient, or let Vision detect the subject.")
                         .font(.subheadline).foregroundStyle(.secondary)
                     HStack {
                         ForEach(MaskKind.allCases) { kind in
                             Button(kind.title) { onCreate(kind) }.buttonStyle(.bordered)
                         }
-                        smartMaskMenu("Détecter", operation: nil)
+                        smartMaskMenu("Detect", operation: nil)
                     }
                 } else if let mask {
                         layerControls(mask)
-                        AdjustmentSlider(title: "Opacité du calque", range: 0...100,
+                        AdjustmentSlider(title: "Layer opacity", range: 0...100,
                                          accessibilityID: "layer-opacity", value: mask.opacity,
-                                         onBegin: { onBegin("Opacité du calque") },
+                                         onBegin: { onBegin("Layer opacity") },
                                          onChange: onOpacity, onEnd: onEnd,
                                          onReset: { onOpacity(100) })
                         Divider()
                         HStack {
-                            componentMenu("Ajouter", operation: .add)
-                            componentMenu("Soustraire", operation: .subtract)
+                            componentMenu("Add", operation: .add)
+                            componentMenu("Subtract", operation: .subtract)
                             Spacer()
-                            Toggle("Inverser", isOn: Binding(get: { mask.inverted }, set: { _ in onInvert() }))
+                            Toggle("Invert", isOn: Binding(get: { mask.inverted }, set: { _ in onInvert() }))
                                 .fixedSize().accessibilityIdentifier("mask-invert")
                         }
                         componentPicker(mask)
@@ -85,10 +85,10 @@ struct MasksView: View {
             }.padding(.horizontal, 18).padding(.bottom, 12)
         }
         .accessibilityIdentifier("masks-controls")
-        .alert("Renommer le calque", isPresented: $showingRename) {
-            TextField("Nom", text: $renameName).accessibilityIdentifier("layer-rename-field")
-            Button("Annuler", role: .cancel) {}
-            Button("Renommer") { onRename(renameName) }
+        .alert("Rename layer", isPresented: $showingRename) {
+            TextField("Name", text: $renameName).accessibilityIdentifier("layer-rename-field")
+            Button("Cancel", role: .cancel) {}
+            Button("Rename") { onRename(renameName) }
                 .disabled(renameName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
@@ -100,14 +100,14 @@ struct MasksView: View {
             ForEach(SmartMaskKind.allCases) { kind in
                 Button(kind.title, systemImage: kind.symbol) { onGenerate(kind, nil) }
             }
-        } label: { Label("Nouveau", systemImage: "plus.circle").frame(minHeight: 44) }
+        } label: { Label("New", systemImage: "plus.circle").frame(minHeight: 44) }
         .accessibilityIdentifier("mask-new")
         .disabled(isGenerating)
     }
     private var maskPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                Button("Photo entière") { onSelectBase() }
+                Button("Whole photo") { onSelectBase() }
                     .buttonStyle(.bordered).tint(selectedMaskID == nil ? .mint : .secondary)
                     .accessibilityIdentifier("layer-base")
                     .accessibilityAddTraits(selectedMaskID == nil ? .isSelected : [])
@@ -128,12 +128,12 @@ struct MasksView: View {
             Button {
                 onToggleVisibility()
             } label: {
-                Label(overlayVisible ? "Visible" : "Contour",
+                Label(overlayVisible ? "Visible" : "Outline",
                       systemImage: overlayVisible ? "eye" : "eye.slash")
             }
             .buttonStyle(.bordered)
             .accessibilityIdentifier("layer-visibility")
-            .accessibilityHint("Afficher le remplissage rouge ou seulement le contour du masque")
+            .accessibilityHint("Show the red fill or just the mask outline")
             Button {
                 renameName = mask.name
                 showingRename = true
@@ -141,18 +141,18 @@ struct MasksView: View {
                 Image(systemName: "pencil")
             }
             .buttonStyle(.bordered)
-            .accessibilityLabel("Renommer le calque")
+            .accessibilityLabel("Rename layer")
             .accessibilityIdentifier("layer-rename")
             Spacer()
             Button { onMove(-1) } label: { Image(systemName: "arrow.left") }
                 .buttonStyle(.bordered)
                 .disabled(maskIndex == 0)
-                .accessibilityLabel("Appliquer plus tôt")
+                .accessibilityLabel("Apply earlier")
                 .accessibilityIdentifier("layer-move-earlier")
             Button { onMove(1) } label: { Image(systemName: "arrow.right") }
                 .buttonStyle(.bordered)
                 .disabled(maskIndex == masks.indices.last)
-                .accessibilityLabel("Appliquer plus tard")
+                .accessibilityLabel("Apply later")
                 .accessibilityIdentifier("layer-move-later")
         }
     }
@@ -194,38 +194,38 @@ struct MasksView: View {
     private func componentControls(_ component: MaskComponent, in mask: LocalMask) -> some View {
         let index = mask.components.firstIndex { $0.id == component.id }
         return HStack(spacing: 8) {
-            Picker("Opération", selection: Binding(
+            Picker("Operation", selection: Binding(
                 get: { component.operation },
                 set: { operation in onComponentOperation(operation) }
             )) {
-                Text("Ajouter").tag(MaskOperation.add)
-                Text("Soustraire").tag(MaskOperation.subtract)
+                Text("Add").tag(MaskOperation.add)
+                Text("Subtract").tag(MaskOperation.subtract)
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("mask-component-operation")
             Button { onMoveComponent(-1) } label: { Image(systemName: "arrow.left") }
                 .buttonStyle(.bordered).disabled(index == 0)
-                .accessibilityLabel("Composante plus tôt")
+                .accessibilityLabel("Move component earlier")
                 .accessibilityIdentifier("mask-component-earlier")
             Button { onMoveComponent(1) } label: { Image(systemName: "arrow.right") }
                 .buttonStyle(.bordered).disabled(index == mask.components.indices.last)
-                .accessibilityLabel("Composante plus tard")
+                .accessibilityLabel("Move component later")
                 .accessibilityIdentifier("mask-component-later")
             Button(role: .destructive, action: onDeleteComponent) { Image(systemName: "trash") }
                 .buttonStyle(.bordered).disabled(mask.components.count <= 1)
-                .accessibilityLabel("Supprimer la composante")
+                .accessibilityLabel("Delete component")
                 .accessibilityIdentifier("mask-component-delete")
         }
     }
     @ViewBuilder private func shapeControls(_ component: MaskComponent) -> some View {
         switch component.shape {
         case .brush(let brush):
-            Picker("Mode du pinceau", selection: Binding(get: { brushMode }, set: { onBrushMode($0) })) {
+            Picker("Brush mode", selection: Binding(get: { brushMode }, set: { onBrushMode($0) })) {
                 ForEach(BrushMode.allCases, id: \.self) { mode in Text(mode.title).tag(mode) }
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("brush-mode")
-            Label(brushMode == .pan ? "Déplacez l’image zoomée sans peindre." : "Peignez sur la photo. Pour naviguer, choisissez Déplacer.", systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
+            Label(brushMode == .pan ? "Pan the zoomed image without painting." : "Paint on the photo. To navigate, choose Pan.", systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
                 .font(.caption).foregroundStyle(.secondary)
             parameter(.size, brush.size); parameter(.feather, brush.feather)
             parameter(.flow, brush.flow); parameter(.opacity, brush.opacity)
@@ -237,7 +237,7 @@ struct MasksView: View {
             parameter(.radiusX, radial.radiusX * 100); parameter(.radiusY, radial.radiusY * 100)
             parameter(.feather, radial.feather)
         case .generated(let generated):
-            Label("Masque \(generated.kind.title.lowercased()) détecté par Vision",
+            Label("Vision detected \(generated.kind.title.lowercased()) mask",
                   systemImage: generated.kind.symbol)
                 .font(.caption).foregroundStyle(.secondary)
         }
@@ -245,7 +245,7 @@ struct MasksView: View {
     private func parameter(_ parameter: MaskParameter, _ value: Double) -> some View {
         AdjustmentSlider(title: parameter.title, range: parameter.range,
                          accessibilityID: "mask-parameter-\(parameter.rawValue)", value: value,
-                         onBegin: { onBegin("Masque · \(parameter.title)") },
+                         onBegin: { onBegin("Mask · \(parameter.title)") },
                          onChange: { onParameter(parameter, $0) }, onEnd: onEnd,
                          onReset: { onParameter(parameter, defaultValue(parameter)) })
     }

@@ -28,7 +28,7 @@ final class LandscapeEditorUITests: XCTestCase {
         XCTAssertTrue(histogram.waitForExistence(timeout: 10))
         let compactWidth = histogram.frame.width
         histogram.tap()
-        XCTAssertEqual(histogram.label, "Réduire l’histogramme RVB")
+        XCTAssertEqual(histogram.label, "Collapse RGB histogram")
         XCTAssertGreaterThan(histogram.frame.width, compactWidth * 1.5)
         XCTAssertEqual(canvas.frame, photoFrame)
         histogram.press(forDuration: 1)
@@ -41,7 +41,7 @@ final class LandscapeEditorUITests: XCTestCase {
         let initial = exposure.value as? String
         exposure.adjust(toNormalizedSliderPosition: 0.65)
         XCTAssertNotEqual(exposure.value as? String, initial)
-        XCTAssertTrue(app.buttons["Annuler"].isEnabled)
+        XCTAssertTrue(app.buttons["Undo"].isEnabled)
         XCUIDevice.shared.orientation = .portrait
     }
 
@@ -86,15 +86,15 @@ final class LandscapeEditorUITests: XCTestCase {
         let portraitHeight = canvas.frame.height
         print("PORTRAIT_FRAME", canvas.frame)
         let generationBefore = canvas.value as? String
-        let undoBefore = app.buttons["Annuler"].isEnabled
+        let undoBefore = app.buttons["Undo"].isEnabled
 
         XCUIDevice.shared.orientation = .landscapeLeft
         let controls = app.descendants(matching: .any).matching(identifier: "editor-controls-column").firstMatch
         let side = app.buttons["controls-side-switch"]
         XCTAssertTrue(side.waitForExistence(timeout: 10))
         Thread.sleep(forTimeInterval: 0.8)
-        if side.value as? String == "Fin" { side.tap() }
-        XCTAssertEqual(side.value as? String, "Début")
+        if side.value as? String == "Trailing" { side.tap() }
+        XCTAssertEqual(side.value as? String, "Leading")
         XCTAssertLessThan(controls.frame.midX, canvas.frame.midX)
         XCTAssertGreaterThan(canvas.frame.width, controls.frame.width)
         XCTAssertGreaterThan(canvas.frame.height, 180)
@@ -102,25 +102,25 @@ final class LandscapeEditorUITests: XCTestCase {
         capture("controls_leading", app)
         capture("light_panel", app)
         side.tap()
-        XCTAssertEqual(side.value as? String, "Fin")
+        XCTAssertEqual(side.value as? String, "Trailing")
         XCTAssertGreaterThan(controls.frame.midX, canvas.frame.midX)
-        XCTAssertEqual(app.buttons["Annuler"].isEnabled, undoBefore)
+        XCTAssertEqual(app.buttons["Undo"].isEnabled, undoBefore)
         XCTAssertEqual(canvas.value as? String, generationBefore)
         capture("controls_trailing", app)
 
-        selectPanel("Couleur", in: app)
+        selectPanel("Color", in: app)
         capture("color_panel", app)
-        selectPanel("Colorimétrie", in: app)
+        selectPanel("Color Tools", in: app)
         capture("grading_panel", app)
-        selectPanel("Effets", in: app)
+        selectPanel("Effects", in: app)
         capture("effects_panel", app)
-        selectPanel("Masques", in: app)
+        selectPanel("Masks", in: app)
         capture("masks_panel", app)
 
         app.terminate()
         app.launch()
         XCTAssertTrue(side.waitForExistence(timeout: 20))
-        selectPanel("Courbes", in: app)
+        selectPanel("Curves", in: app)
         let curveChart = app.descendants(matching: .any).matching(identifier: "tone-curve-chart").firstMatch
         let curveScroll = app.scrollViews["curve-controls-scroll"]
         for _ in 0..<4 where !curveChart.isHittable { curveScroll.swipeUp() }
@@ -138,21 +138,21 @@ final class LandscapeEditorUITests: XCTestCase {
         XCUIDevice.shared.orientation = .portrait
         XCTAssertTrue(canvas.waitForExistence(timeout: 5))
         XCTAssertGreaterThan(canvas.frame.height, portraitHeight - 2)
-        XCTAssertEqual(editCurve.label, "Terminé")
+        XCTAssertEqual(editCurve.label, "Done")
         XCUIDevice.shared.orientation = .landscapeRight
         XCTAssertTrue(side.waitForExistence(timeout: 10))
-        XCTAssertEqual(side.value as? String, "Fin")
+        XCTAssertEqual(side.value as? String, "Trailing")
         XCTAssertGreaterThan(controls.frame.midX, canvas.frame.midX)
         XCTAssertEqual(canvas.value as? String, generationBefore)
-        XCTAssertEqual(editCurve.label, "Terminé")
+        XCTAssertEqual(editCurve.label, "Done")
         for _ in 0..<4 where !editCurve.isHittable { curveScroll.swipeDown() }
         editCurve.tap()
-        XCTAssertEqual(editCurve.label, "Modifier")
+        XCTAssertEqual(editCurve.label, "Edit")
 
         app.terminate()
         app.launch()
         XCTAssertTrue(side.waitForExistence(timeout: 10))
-        XCTAssertEqual(side.value as? String, "Fin")
+        XCTAssertEqual(side.value as? String, "Trailing")
         XCUIDevice.shared.orientation = .portrait
     }
 

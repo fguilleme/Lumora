@@ -84,16 +84,16 @@ enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .sharpeningAmount: "Gain"
-        case .sharpeningRadius: "Rayon"
-        case .sharpeningDetail: "Détail"
-        case .sharpeningMasking: "Masquage"
+        case .sharpeningAmount: "Amount"
+        case .sharpeningRadius: "Radius"
+        case .sharpeningDetail: "Detail"
+        case .sharpeningMasking: "Masking"
         case .luminanceNoise: "Luminance"
-        case .luminanceDetail: "Détail"
-        case .luminanceContrast: "Contraste"
-        case .colorNoise: "Couleur"
-        case .colorDetail: "Détail"
-        case .colorSmoothness: "Lissage"
+        case .luminanceDetail: "Detail"
+        case .luminanceContrast: "Contrast"
+        case .colorNoise: "Color"
+        case .colorDetail: "Detail"
+        case .colorSmoothness: "Smoothing"
         }
     }
     var range: ClosedRange<Double> {
@@ -135,9 +135,9 @@ enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
         }
     }
     static let groups: [(String, [Self])] = [
-        ("Netteté", allCases.filter { $0.group == 0 }),
-        ("Réduction du bruit", allCases.filter { $0.group == 1 }),
-        ("Bruit coloré", allCases.filter { $0.group == 2 })
+        ("Sharpening", allCases.filter { $0.group == 0 }),
+        ("Noise reduction", allCases.filter { $0.group == 1 }),
+        ("Color noise", allCases.filter { $0.group == 2 })
     ]
 }
 

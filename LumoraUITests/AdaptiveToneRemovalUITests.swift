@@ -14,19 +14,19 @@ final class AdaptiveToneRemovalUITests: XCTestCase {
             photo.tap()
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
-        app.buttons["Importer et options"].tap()
-        app.buttons["Réinitialiser les réglages"].tap()
-        app.buttons["Lumière"].tap()
+        app.buttons["Import and options"].tap()
+        app.buttons["Reset settings"].tap()
+        app.buttons["Light"].tap()
         XCTAssertFalse(app.sliders["adaptiveTone"].exists)
         XCTAssertFalse(app.staticTexts["Adaptatif"].exists)
-        let exposure = app.sliders["Exposition"]
+        let exposure = app.sliders["Exposure"]
         XCTAssertTrue(exposure.waitForExistence(timeout: 10))
         for position in [0.42, 0.68, 0.35, 0.55] {
             exposure.adjust(toNormalizedSliderPosition: position)
         }
-        app.buttons["Couleur"].tap()
-        XCTAssertTrue(app.sliders["Température"].waitForExistence(timeout: 10))
-        app.buttons["Lumière"].tap()
+        app.buttons["Color"].tap()
+        XCTAssertTrue(app.sliders["Temperature"].waitForExistence(timeout: 10))
+        app.buttons["Light"].tap()
         XCTAssertTrue(exposure.waitForExistence(timeout: 10))
         exposure.adjust(toNormalizedSliderPosition: 0.5)
         let deadline = Date().addingTimeInterval(10)

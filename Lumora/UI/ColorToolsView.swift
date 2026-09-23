@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ColorToolsView: View {
     enum Mode: String, CaseIterable, Identifiable {
-        case mixer = "Mélangeur"
+        case mixer = "Color Mixer"
         case grading = "Grading"
         var id: String { rawValue }
     }
@@ -17,7 +17,7 @@ struct ColorToolsView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Picker("Outil couleur", selection: $mode) {
+            Picker("Color tools", selection: $mode) {
                 ForEach(Mode.allCases) { mode in Text(mode.rawValue).tag(mode) }
             }
             .pickerStyle(.segmented)

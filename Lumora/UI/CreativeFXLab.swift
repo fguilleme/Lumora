@@ -18,7 +18,7 @@ struct CreativeFXLab: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Traitement", selection: $choice) {
+                Picker("Processed", selection: $choice) {
                     ForEach(["Original", "High Key", "Low Key", "Grain"], id: \.self) { Text($0) }
                 }.pickerStyle(.segmented)
                 if let image {
@@ -29,11 +29,11 @@ struct CreativeFXLab: View {
                 Text(status).font(.caption.monospacedDigit())
                 Toggle("100 %", isOn: $native)
                 HStack {
-                    Button("Charger une photo") { importing = true }
-                    Button("Mire") { source = nil }
+                    Button("Load photo") { importing = true }
+                    Button("Test chart") { source = nil }
                 }
             }.padding().background(.black).navigationTitle("Creative FX Lab")
-                .toolbar { Button("Fermer") { dismiss() } }
+                .toolbar { Button("Close") { dismiss() } }
                 .fileImporter(isPresented: $importing, allowedContentTypes: [.image]) { result in
                     do {
                         let url = try result.get()

@@ -81,14 +81,14 @@ enum Adjustment: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .exposure: "Exposition"
-        case .contrast: "Contraste"
-        case .highlights: "Hautes lumières"
-        case .shadows: "Ombres"
-        case .whites: "Blancs"
-        case .blacks: "Noirs"
-        case .temperature: "Température"
-        case .tint: "Teinte"
+        case .exposure: "Exposure"
+        case .contrast: "Contrast"
+        case .highlights: "Highlights"
+        case .shadows: "Shadows"
+        case .whites: "Whites"
+        case .blacks: "Blacks"
+        case .temperature: "Temperature"
+        case .tint: "Tint"
         case .vibrance: "Vibrance"
         case .saturation: "Saturation"
         }

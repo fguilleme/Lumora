@@ -135,8 +135,8 @@ struct AdjustmentSlider: View {
                     .foregroundStyle(fine ? Color.mint : Color.secondary)
                     .frame(width: 48, height: 40)
             }
-            .accessibilityLabel("\(title), réglage fin")
-            .accessibilityValue(fine ? "Activé" : "Désactivé")
+            .accessibilityLabel("\(title), fine adjustment")
+            .accessibilityValue(fine ? "On" : "Off")
     }
 
     private var resetButton: some View {
@@ -146,7 +146,7 @@ struct AdjustmentSlider: View {
                 .frame(width: usesSideControlLayout ? 44 : 32, height: 40)
         }
             .foregroundStyle(.secondary)
-            .accessibilityLabel("Réinitialiser \(title)")
+            .accessibilityLabel("Reset \(title)")
     }
 
     private func finishEditing() {

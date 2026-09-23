@@ -5,10 +5,10 @@ enum PresetSection: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .light: "Lumière"; case .color: "Couleur"; case .curves: "Courbes"
-        case .mixer: "Mélangeur"; case .grading: "Grading"; case .effects: "Effets"
-        case .detail: "Détail"; case .optics: "Optique"; case .geometry: "Géométrie"
-        case .masks: "Masques"; case .creative: "Creative"
+        case .light: "Light"; case .color: "Color"; case .curves: "Curves"
+        case .mixer: "Color Mixer"; case .grading: "Grading"; case .effects: "Effects"
+        case .detail: "Detail"; case .optics: "Optics"; case .geometry: "Geometry"
+        case .masks: "Masks"; case .creative: "Creative"
         }
     }
     static let photographicDefaults: Set<Self> = [.light, .color, .curves, .mixer, .grading, .effects, .detail, .creative]
@@ -80,9 +80,9 @@ enum PresetError: LocalizedError {
     case invalid, unsupported, tooLarge
     var errorDescription: String? {
         switch self {
-        case .invalid: "Ce preset est vide ou illisible."
-        case .unsupported: "Cette version de preset n’est pas prise en charge."
-        case .tooLarge: "Ce preset dépasse la taille maximale autorisée."
+        case .invalid: "This preset is empty or unreadable."
+        case .unsupported: "This preset version is not supported."
+        case .tooLarge: "This preset exceeds the maximum allowed size."
         }
     }
 }

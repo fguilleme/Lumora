@@ -13,20 +13,20 @@ struct OpticsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Toggle("Profil constructeur", isOn: Binding(
+                Toggle("Manufacturer profile", isOn: Binding(
                     get: { settings.profileCorrection },
                     set: { enabled in onProfileChange(enabled) }
                 ))
                     .disabled(!availability.profileSupported)
                     .accessibilityIdentifier("optics-profile")
                 if availability.profileSupported {
-                    Label(settings.profileCorrection ? "Correction RAW active" : "Correction RAW désactivée",
+                    Label(settings.profileCorrection ? "RAW correction on" : "RAW correction off",
                           systemImage: settings.profileCorrection ? "checkmark.seal.fill" : "seal")
                         .font(.caption).foregroundStyle(settings.profileCorrection ? .mint : .secondary)
                 } else {
                     Text(isRAW
-                         ? "Ce RAW ne publie pas de profil optique compatible avec CIRAWFilter."
-                         : "Cette image est déjà développée ; aucun profil constructeur réglable n’est exposé par iOS.")
+                         ? "This RAW does not provide a lens profile compatible with CIRAWFilter."
+                         : "This image has already been processed; iOS provides no adjustable manufacturer profile.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 if let camera = availability.camera {
@@ -36,7 +36,7 @@ struct OpticsView: View {
                     Label(lens, systemImage: "camera.aperture").font(.caption).foregroundStyle(.secondary)
                 }
                 Divider().padding(.vertical, 4)
-                Text("Corrections manuelles").font(.headline)
+                Text("Manual corrections").font(.headline)
                 ForEach(OpticsAdjustment.allCases) { adjustment in
                     AdjustmentSlider(title: adjustment.title, range: adjustment.range,
                                      accessibilityID: "optics-\(adjustment.rawValue)",

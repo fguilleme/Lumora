@@ -10,9 +10,9 @@ final class CurvesInteractionUITests: XCTestCase {
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
         let tools = app.scrollViews["tools-toolbar"]
-        for _ in 0..<8 where !app.buttons["Courbes"].isHittable { tools.swipeRight() }
-        for _ in 0..<8 where !app.buttons["Courbes"].isHittable { tools.swipeLeft() }
-        app.buttons["Courbes"].tap()
+        for _ in 0..<8 where !app.buttons["Curves"].isHittable { tools.swipeRight() }
+        for _ in 0..<8 where !app.buttons["Curves"].isHittable { tools.swipeLeft() }
+        app.buttons["Curves"].tap()
     }
 
     @MainActor private func capture(_ name: String, app: XCUIApplication) {
@@ -31,7 +31,7 @@ final class CurvesInteractionUITests: XCTestCase {
         let chart = app.descendants(matching: .any).matching(identifier: "tone-curve-chart").firstMatch
         XCTAssertTrue(chart.waitForExistence(timeout: 5))
         let before = chart.value as? String
-        XCTAssertTrue(before?.contains("Consultation") == true)
+        XCTAssertTrue(before?.contains("Viewing") == true)
         capture("view_mode", app: app)
         for index in 0..<10 {
             let start = chart.coordinate(withNormalizedOffset: CGVector(dx: index.isMultiple(of: 2) ? 0.35 : 0.55, dy: 0.25))
@@ -42,7 +42,7 @@ final class CurvesInteractionUITests: XCTestCase {
         controls.swipeUp()
         controls.swipeUp()
         app.buttons["curve-edit-mode"].tap()
-        XCTAssertTrue((chart.value as? String)?.contains("Édition") == true)
+        XCTAssertTrue((chart.value as? String)?.contains("Editing") == true)
         capture("edit_mode", app: app)
         let editBefore = chart.value as? String
         // A real tap is required to insert a point.
@@ -59,11 +59,11 @@ final class CurvesInteractionUITests: XCTestCase {
         dragStart.press(forDuration: 0.05, thenDragTo: dragStart.withOffset(CGVector(dx: 14, dy: -12)))
         let afterDrag = chart.value as? String
         XCTAssertNotEqual(afterDrag, beforeDrag)
-        app.buttons["Annuler"].tap()
+        app.buttons["Undo"].tap()
         XCTAssertEqual(chart.value as? String, beforeDrag)
-        app.buttons["Rétablir"].tap()
+        app.buttons["Redo"].tap()
         XCTAssertEqual(chart.value as? String, afterDrag)
-        app.buttons["Annuler"].tap()
+        app.buttons["Undo"].tap()
         XCTAssertEqual(chart.value as? String, beforeDrag)
         let sampleButton = app.buttons["curve-eyedropper"]
         sampleButton.tap()
@@ -72,16 +72,16 @@ final class CurvesInteractionUITests: XCTestCase {
         let photo = app.descendants(matching: .any).matching(identifier: "curve-photo-sampling").firstMatch
         XCTAssertTrue(photo.waitForExistence(timeout: 5))
         let beforeSampling = chart.value as? String
-        let undoBeforeSampling = app.buttons["Annuler"].isEnabled
+        let undoBeforeSampling = app.buttons["Undo"].isEnabled
         photo.coordinate(withNormalizedOffset: CGVector(dx: 0.45, dy: 0.5))
             .press(forDuration: 0.05, thenDragTo: photo.coordinate(
                 withNormalizedOffset: CGVector(dx: 0.55, dy: 0.5)))
         let value = app.staticTexts["curve-sample-value"]
         XCTAssertTrue(value.waitForExistence(timeout: 10))
         XCTAssertEqual(chart.value as? String, beforeSampling)
-        XCTAssertEqual(app.buttons["Annuler"].isEnabled, undoBeforeSampling)
+        XCTAssertEqual(app.buttons["Undo"].isEnabled, undoBeforeSampling)
         capture("eyedropper_sample", app: app)
-        app.buttons["Rouge"].tap()
+        app.buttons["Red"].tap()
         XCTAssertTrue((chart.value as? String)?.hasPrefix("2 points") == true)
         XCTAssertTrue(value.exists)
         app.buttons["curve-add-point"].tap()
@@ -89,9 +89,9 @@ final class CurvesInteractionUITests: XCTestCase {
         XCTAssertTrue((chart.value as? String)?.hasPrefix("3 points") == true)
         app.buttons["curve-delete-point"].tap()
         XCTAssertTrue((chart.value as? String)?.hasPrefix("2 points") == true)
-        app.buttons["Annuler"].tap()
+        app.buttons["Undo"].tap()
         XCTAssertTrue((chart.value as? String)?.hasPrefix("3 points") == true)
-        app.buttons["Rétablir"].tap()
+        app.buttons["Redo"].tap()
         XCTAssertTrue((chart.value as? String)?.hasPrefix("2 points") == true)
         let afterInsertion = chart.value as? String
         chart.coordinate(withNormalizedOffset: CGVector(dx: 0.38, dy: 0.27))
@@ -100,7 +100,7 @@ final class CurvesInteractionUITests: XCTestCase {
         XCTAssertEqual(chart.value as? String, afterInsertion)
         if !app.buttons["curve-edit-mode"].isHittable { controls.swipeUp() }
         app.buttons["curve-edit-mode"].tap()
-        XCTAssertTrue((chart.value as? String)?.contains("Consultation") == true)
+        XCTAssertTrue((chart.value as? String)?.contains("Viewing") == true)
         XCTAssertFalse(photo.exists)
         XCTAssertTrue(controls.exists)
     }

@@ -13,7 +13,7 @@ struct ColorGradingView: View {
             GradingPresetSelector(grading: grading) { preset in
                 onEnd(); onBegin("Grading · " + preset.title); onChange(preset.settings); onEnd()
             }
-            Picker("Plage tonale", selection: $selected) {
+            Picker("Tonal range", selection: $selected) {
                 ForEach(GradingRange.allCases) { range in
                     Text(range.title).tag(range)
                 }
@@ -36,7 +36,7 @@ struct ColorGradingView: View {
                     .dimsDuringAdjustment()
                 VStack(alignment: .leading, spacing: 2) {
                     Text(selected.title).font(.subheadline.weight(.semibold))
-                    Text("Teinte \(Int(grading[selected].hue))°")
+                    Text("Hue \(Int(grading[selected].hue))°")
                     Text("Saturation \(Int(grading[selected].saturation))")
                 }
                 .font(.caption).foregroundStyle(.secondary)
@@ -45,7 +45,7 @@ struct ColorGradingView: View {
                 Button {
                     onEnd(); var updated = grading; updated[selected] = GradingWheel(); onChange(updated)
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Réinitialiser grading \(selected.title)")
+                    .accessibilityLabel("Reset grading for \(selected.title)")
                     .dimsDuringAdjustment()
             }
             AdjustmentSlider(title: "Luminance", accessibilityID: "grading-luminance", value: grading[selected].luminance,
@@ -54,9 +54,9 @@ struct ColorGradingView: View {
                              }, onEnd: onEnd, onReset: {
                                  onEnd(); var updated = grading; updated[selected].luminance = 0; onChange(updated)
                              }).id(selected)
-            DisclosureGroup("Teinte et saturation précises", isExpanded: $precise) {
-                AdjustmentSlider(title: "Teinte", range: 0...360, accessibilityID: "grading-hue", value: grading[selected].hue,
-                                 onBegin: { onBegin("Grading teinte") }, onChange: { value in
+            DisclosureGroup("Precise hue and saturation", isExpanded: $precise) {
+                AdjustmentSlider(title: "Hue", range: 0...360, accessibilityID: "grading-hue", value: grading[selected].hue,
+                                 onBegin: { onBegin("Grading hue") }, onChange: { value in
                                      var updated = grading; updated[selected].hue = value; onChange(updated)
                                  }, onEnd: onEnd, onReset: {
                                      onEnd(); var updated = grading; updated[selected].hue = 0; onChange(updated)
@@ -68,8 +68,8 @@ struct ColorGradingView: View {
                                      onEnd(); var updated = grading; updated[selected].saturation = 0; onChange(updated)
                                  }).id(selected)
             }.font(.caption).padding(.vertical, 3)
-            AdjustmentSlider(title: "Mélange", range: 0...100, accessibilityID: "grading-blending", value: grading.blending,
-                             onBegin: { onBegin("Grading mélange") }, onChange: { value in
+            AdjustmentSlider(title: "Blending", range: 0...100, accessibilityID: "grading-blending", value: grading.blending,
+                             onBegin: { onBegin("Grading blending") }, onChange: { value in
                                  var updated = grading; updated.blending = value; onChange(updated)
                              }, onEnd: onEnd, onReset: {
                                  onEnd(); var updated = grading; updated.blending = 50; onChange(updated)

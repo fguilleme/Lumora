@@ -26,7 +26,7 @@ struct CreativePresetSelector<HeaderActions: View>: View {
                 headerActions
             }
             if selectedID == nil {
-                Label("Personnalisé", systemImage: "slider.horizontal.3")
+                Label("Custom", systemImage: "slider.horizontal.3")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("creative-preset-custom")
@@ -54,7 +54,7 @@ struct CreativePresetSelector<HeaderActions: View>: View {
                             .buttonStyle(CreativePresetChipStyle(selected: selectedID == preset.id))
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel("\(preset.title), preset")
-                            .accessibilityValue(selectedID == preset.id ? "Sélectionné" : "Non sélectionné")
+                            .accessibilityValue(selectedID == preset.id ? "Selected" : "Not selected")
                             .accessibilityAddTraits(selectedID == preset.id ? [.isButton, .isSelected] : .isButton)
                             .accessibilityIdentifier("creative-preset-chip-\(preset.id)")
                             .id(preset.id)

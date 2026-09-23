@@ -18,29 +18,29 @@ struct GeometryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 10) {
-                    toolButton("Rotation gauche", "rotate.left") { onRotate(false) }
-                    toolButton("Rotation droite", "rotate.right") { onRotate(true) }
-                    toolButton("Miroir horizontal", "arrow.left.and.right") {
+                    toolButton("Rotate left", "rotate.left") { onRotate(false) }
+                    toolButton("Rotate right", "rotate.right") { onRotate(true) }
+                    toolButton("Flip horizontally", "arrow.left.and.right") {
                         onFlip(true)
                     }
-                    toolButton("Miroir vertical", "arrow.up.and.down") {
+                    toolButton("Flip vertically", "arrow.up.and.down") {
                         onFlip(false)
                     }
                     Spacer()
-                    Button("Réinitialiser", action: onResetAll)
+                    Button("Reset", action: onResetAll)
                         .font(.caption).accessibilityIdentifier("geometry-reset")
                 }
 
                 HStack {
                     Button(action: onAutoStraighten) {
-                        Label("Horizon auto", systemImage: "wand.and.rays")
+                        Label("Auto horizon", systemImage: "wand.and.rays")
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.mint)
                     .disabled(isAnalyzing)
                     .accessibilityIdentifier("geometry-auto-straighten")
                     Button(action: onAutoPerspective) {
-                        Label("Perspective auto", systemImage: "square.on.square")
+                        Label("Auto perspective", systemImage: "square.on.square")
                     }
                     .buttonStyle(.bordered)
                     .tint(.mint)
@@ -67,7 +67,7 @@ struct GeometryView: View {
                 ForEach(GeometryAdjustment.perspective) { adjustment in
                     adjustmentSlider(adjustment)
                 }
-                Text("Recadrage").font(.headline)
+                Text("Crop").font(.headline)
                 ForEach(GeometryAdjustment.crop) { adjustment in
                     adjustmentSlider(adjustment)
                 }

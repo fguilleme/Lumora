@@ -14,22 +14,22 @@ final class HistogramOverlayUITests: XCTestCase {
             photo.tap()
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
-        app.buttons["Importer et options"].tap()
-        app.buttons["Réinitialiser les réglages"].tap()
+        app.buttons["Import and options"].tap()
+        app.buttons["Reset settings"].tap()
         let overlay = app.buttons["histogram-overlay"]
         XCTAssertTrue(overlay.waitForExistence(timeout: 10))
         var expectedActivations = 0
         for expanded in [false, true] {
-            let label = expanded ? "Réduire l’histogramme RVB" : "Agrandir l’histogramme RVB"
+            let label = expanded ? "Collapse RGB histogram" : "Expand RGB histogram"
             XCTAssertEqual(overlay.label, label)
             XCTAssertFalse(app.images["clipping-warning-overlay"].exists)
             overlay.press(forDuration: 1.0)
             expectedActivations += 1
             XCTAssertTrue((overlay.value as? String)?.contains("Activations clipping : \(expectedActivations).") == true,
-                          "Le masque doit avoir été préparé pendant l’appui")
+                          "The mask should be ready during the press")
             XCTAssertFalse(app.images["clipping-warning-overlay"].exists,
-                           "L’overlay doit disparaître au relâchement")
-            XCTAssertEqual(overlay.label, label, "L’appui long ne doit pas déclencher le tap")
+                           "The overlay should disappear on release")
+            XCTAssertEqual(overlay.label, label, "A long press must not trigger a tap")
             if !expanded { overlay.tap() }
         }
     }
@@ -47,26 +47,26 @@ final class HistogramOverlayUITests: XCTestCase {
             photo.tap()
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
-        app.buttons["Importer et options"].tap()
-        app.buttons["Réinitialiser les réglages"].tap()
+        app.buttons["Import and options"].tap()
+        app.buttons["Reset settings"].tap()
         let overlay = app.buttons["histogram-overlay"]
         XCTAssertTrue(overlay.waitForExistence(timeout: 10))
-        XCTAssertEqual(overlay.label, "Agrandir l’histogramme RVB")
+        XCTAssertEqual(overlay.label, "Expand RGB histogram")
         let photoHeight = canvas.frame.height
         let compactWidth = overlay.frame.width
         XCTAssertGreaterThanOrEqual(overlay.frame.height, 44)
-        capture("Histogramme compact sur photo", in: app)
+        capture("Compact histogram on photo", in: app)
 
         let outside = canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.75))
         outside.press(forDuration: 0.05, thenDragTo: canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.7)))
-        XCTAssertEqual(overlay.label, "Agrandir l’histogramme RVB")
+        XCTAssertEqual(overlay.label, "Expand RGB histogram")
         overlay.tap()
-        XCTAssertEqual(overlay.label, "Réduire l’histogramme RVB")
+        XCTAssertEqual(overlay.label, "Collapse RGB histogram")
         XCTAssertGreaterThan(overlay.frame.width, compactWidth * 1.5)
         XCTAssertEqual(canvas.frame.height, photoHeight, accuracy: 1)
-        capture("Histogramme agrandi sur photo", in: app)
+        capture("Expanded histogram on photo", in: app)
         overlay.tap()
-        XCTAssertEqual(overlay.label, "Agrandir l’histogramme RVB")
+        XCTAssertEqual(overlay.label, "Expand RGB histogram")
         XCTAssertEqual(canvas.frame.height, photoHeight, accuracy: 1)
     }
 

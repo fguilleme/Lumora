@@ -31,9 +31,9 @@ struct DLCCenterOverlay:View {
                         if !dragging {dragging=true;initial=center;onBegin()}
                         onChange(viewport.normalized(CGPoint(x:initial.x+value.translation.width,y:initial.y+value.translation.height)))
                     }.onEnded { _ in dragging=false;onEnd() })
-                    .accessibilityElement().accessibilityLabel("Centre de l’éclairage")
+                    .accessibilityElement().accessibilityLabel("Lighting center")
                     .accessibilityValue(String(format:"X %.3f Y %.3f",settings.centerX,settings.centerY))
-                    .accessibilityHint("Déplacez la poignée, ou utilisez les curseurs de position précise dans Creative.")
+                    .accessibilityHint("Drag the handle, or use the precise position sliders in Creative.")
                     .accessibilityIdentifier("creative-dlc-center-handle")
             }.frame(width:proxy.size.width,height:proxy.size.height).clipped()
         }.onDisappear {if dragging {dragging=false;onEnd()}}

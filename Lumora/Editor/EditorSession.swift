@@ -64,7 +64,7 @@ final class EditorSession {
                     importGeneration: importGeneration, documentID: currentID, sourceURL: currentURL,
                     selectedLayer: selectedMaskID, state: state)), !Task.isCancelled else { return }
             let applied = analysis.proposal.applying(module, style: style, to: activeState)
-            history.begin("Auto · " + (module == .color ? "Couleur" : module == .curves ? "Courbes" : "Lumière"), state: state)
+            history.begin("Auto · " + (module == .color ? "Color" : module == .curves ? "Curves" : "Light"), state: state)
             if let index = selectedMaskIndex { state.masks[index].adjustments = LocalAdjustmentState(editState: applied) }
             else { state = applied }
             autoProposal = analysis.proposal; autoProposalDocument = documentID; autoProposalLayer = layer
@@ -279,14 +279,14 @@ final class EditorSession {
         interacting = true
     }
     func setCurve(_ channel: CurveChannel, curve: ToneCurve) {
-        if !interacting { history.begin("Courbe \(channel.title)", state: state) }
+        if !interacting { history.begin("\(channel.title) curve", state: state) }
         if let index = selectedMaskIndex { state.masks[index].adjustments.curves[channel] = curve }
         else { state.curves[channel] = curve }
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
     func setMixer(_ channel: MixerChannel, adjustment: MixerAdjustment) {
-        if !interacting { history.begin("Mélangeur \(channel.title)", state: state) }
+        if !interacting { history.begin("Color Mixer \(channel.title)", state: state) }
         if let index = selectedMaskIndex { state.masks[index].adjustments.colorMixer[channel] = adjustment }
         else { state.colorMixer[channel] = adjustment }
         requestRender(interacting ? .interactive : .high)
@@ -340,7 +340,7 @@ final class EditorSession {
     }
     func setProfileCorrection(_ enabled: Bool) {
         finishInteraction()
-        history.begin("Profil optique", state: state)
+        history.begin("Lens profile", state: state)
         state.optics.profileCorrection = enabled
         history.commit(state); persist(); requestRender(.high)
     }
@@ -358,14 +358,14 @@ final class EditorSession {
     }
     func rotateGeometry(clockwise: Bool) {
         finishInteraction()
-        history.begin(clockwise ? "Rotation droite" : "Rotation gauche", state: state)
+        history.begin(clockwise ? "Rotate right" : "Rotate left", state: state)
         state.geometry.quarterTurns += clockwise ? 1 : -1
         state.geometry = state.geometry.validated
         history.commit(state); persist(); requestRender(.high)
     }
     func toggleGeometryFlip(horizontal: Bool) {
         finishInteraction()
-        history.begin(horizontal ? "Miroir horizontal" : "Miroir vertical", state: state)
+        history.begin(horizontal ? "Flip horizontally" : "Flip vertically", state: state)
         if horizontal { state.geometry.flipHorizontal.toggle() }
         else { state.geometry.flipVertical.toggle() }
         history.commit(state); persist(); requestRender(.high)
@@ -440,7 +440,7 @@ final class EditorSession {
         selectFirstMaskIfNeeded(); history.commit(state); persist(); requestRender(.high)
     }
     var selectedMask: LocalMask? { state.masks.first { $0.id == selectedMaskID } }
-    var activeLayerName: String { selectedMask?.name ?? "Photo entière" }
+    var activeLayerName: String { selectedMask?.name ?? "Whole photo" }
     var activeState: EditState {
         guard let index = selectedMaskIndex else { return state }
         var projected = state.masks[index].adjustments.editState
@@ -468,7 +468,7 @@ final class EditorSession {
     func setSelectedMaskComponentOperation(_ operation: MaskOperation) {
         finishInteraction(); guard let (maskIndex, componentIndex) = selectedComponentIndex,
                                    state.masks[maskIndex].components[componentIndex].operation != operation else { return }
-        history.begin(operation == .add ? "Composante en ajout" : "Composante en soustraction", state: state)
+        history.begin(operation == .add ? "Additive component" : "Subtractive component", state: state)
         state.masks[maskIndex].components[componentIndex].operation = operation
         history.commit(state); persist(); requestRender(.high)
     }
@@ -476,7 +476,7 @@ final class EditorSession {
         finishInteraction(); guard let (maskIndex, componentIndex) = selectedComponentIndex else { return }
         let destination = min(state.masks[maskIndex].components.count - 1, max(0, componentIndex + offset))
         guard destination != componentIndex else { return }
-        history.begin(destination > componentIndex ? "Composante plus tard" : "Composante plus tôt", state: state)
+        history.begin(destination > componentIndex ? "Move component later" : "Move component earlier", state: state)
         let component = state.masks[maskIndex].components.remove(at: componentIndex)
         state.masks[maskIndex].components.insert(component, at: destination)
         history.commit(state); persist(); requestRender(.high)
@@ -484,7 +484,7 @@ final class EditorSession {
     func deleteSelectedMaskComponent() {
         finishInteraction(); guard let (maskIndex, componentIndex) = selectedComponentIndex,
                                    state.masks[maskIndex].components.count > 1 else { return }
-        history.begin("Supprimer la composante", state: state)
+        history.begin("Delete component", state: state)
         state.masks[maskIndex].components.remove(at: componentIndex)
         let replacement = min(componentIndex, state.masks[maskIndex].components.count - 1)
         selectedMaskComponentID = state.masks[maskIndex].components[replacement].id
@@ -492,7 +492,7 @@ final class EditorSession {
     }
     func setSelectedMaskShape(_ shape: MaskShape) {
         guard let (maskIndex, componentIndex) = selectedComponentIndex else { return }
-        if !interacting { history.begin("Transformer la composante", state: state) }
+        if !interacting { history.begin("Transform component", state: state) }
         var component = state.masks[maskIndex].components[componentIndex]
         component.shape = shape
         state.masks[maskIndex].components[componentIndex] = component.validated
@@ -501,7 +501,7 @@ final class EditorSession {
         if !interacting { history.commit(state); persist() }
     }
     func createMask(_ kind: MaskKind) {
-        finishInteraction(); history.begin("Créer un masque", state: state)
+        finishInteraction(); history.begin("Create mask", state: state)
         let component = MaskComponent(shape: kind.shape())
         let mask = LocalMask(name: "\(kind.title) \(state.masks.count + 1)", components: [component])
         state.masks.append(mask); selectedMaskID = mask.id; selectedMaskComponentID = component.id
@@ -509,7 +509,7 @@ final class EditorSession {
     }
     func addMaskComponent(_ kind: MaskKind, operation: MaskOperation) {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
-        history.begin(operation == .add ? "Ajouter au masque" : "Soustraire du masque", state: state)
+        history.begin(operation == .add ? "Add to mask" : "Subtract from mask", state: state)
         let component = MaskComponent(operation: operation, shape: kind.shape())
         state.masks[index].components.append(component); selectedMaskComponentID = component.id
         history.commit(state); persist(); requestRender(.high)
@@ -523,7 +523,7 @@ final class EditorSession {
             let generated = try await maskGenerator.generate(kind, from: image)
             try Task.checkCancellation()
             guard document?.id == documentID else { return }
-            history.begin(operation == nil ? "Détecter \(kind.title)" : "Modifier avec \(kind.title)", state: state)
+            history.begin(operation == nil ? "Detect \(kind.title)" : "Edit with \(kind.title)", state: state)
             let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated))
             if operation != nil, let index = selectedMaskIndex {
                 state.masks[index].components.append(component)
@@ -542,7 +542,7 @@ final class EditorSession {
     }
     func deleteSelectedMask() {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
-        history.begin("Supprimer le calque", state: state)
+        history.begin("Delete layer", state: state)
         state.masks.remove(at: index); history.commit(state)
         selectedMaskID = nil; selectedMaskComponentID = nil
         persist(); requestRender(.high)
@@ -551,19 +551,19 @@ final class EditorSession {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         let cleanName = String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(60))
         guard !cleanName.isEmpty, cleanName != state.masks[index].name else { return }
-        history.begin("Renommer le calque", state: state)
+        history.begin("Rename layer", state: state)
         state.masks[index].name = cleanName
         history.commit(state); persist()
     }
     func toggleSelectedLayerVisibility() {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
-        history.begin(state.masks[index].isVisible ? "Masquer le calque" : "Afficher le calque", state: state)
+        history.begin(state.masks[index].isVisible ? "Hide layer" : "Show layer", state: state)
         state.masks[index].isVisible.toggle()
         history.commit(state); persist(); requestRender(.high)
     }
     func setSelectedLayerOpacity(_ opacity: Double) {
         guard let index = selectedMaskIndex else { return }
-        if !interacting { history.begin("Opacité du calque", state: state) }
+        if !interacting { history.begin("Layer opacity", state: state) }
         state.masks[index].opacity = opacity.isFinite ? min(100, max(0, opacity)) : 100
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
@@ -572,19 +572,19 @@ final class EditorSession {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         let destination = min(state.masks.count - 1, max(0, index + offset))
         guard destination != index else { return }
-        history.begin(destination > index ? "Appliquer le calque plus tard" : "Appliquer le calque plus tôt", state: state)
+        history.begin(destination > index ? "Apply layer later" : "Apply layer earlier", state: state)
         let layer = state.masks.remove(at: index)
         state.masks.insert(layer, at: destination)
         history.commit(state); persist(); requestRender(.high)
     }
     func toggleMaskInversion() {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
-        history.begin("Inverser le masque", state: state)
+        history.begin("Invert mask", state: state)
         state.masks[index].inverted.toggle(); history.commit(state); persist(); requestRender(.high)
     }
     func setLocalAdjustment(_ adjustment: LocalAdjustment, to value: Double) {
         guard let index = selectedMaskIndex else { return }
-        if !interacting { history.begin("Masque · \(adjustment.title)", state: state) }
+        if !interacting { history.begin("Mask · \(adjustment.title)", state: state) }
         state.masks[index].adjustments[adjustment] = value
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
@@ -594,7 +594,7 @@ final class EditorSession {
     }
     func setMaskParameter(_ parameter: MaskParameter, to value: Double) {
         guard let (maskIndex, componentIndex) = selectedComponentIndex else { return }
-        if !interacting { history.begin("Masque · \(parameter.title)", state: state) }
+        if !interacting { history.begin("Mask · \(parameter.title)", state: state) }
         var shape = state.masks[maskIndex].components[componentIndex].shape
         switch shape {
         case .brush(var brush):
@@ -634,7 +634,7 @@ final class EditorSession {
         guard brushMode != .pan else { return }
         guard let (maskIndex, componentIndex) = selectedComponentIndex,
               case .brush(var brush) = state.masks[maskIndex].components[componentIndex].shape else { return }
-        history.begin(brushMode == .paint ? "Peindre le masque" : "Effacer le masque", state: state)
+        history.begin(brushMode == .paint ? "Paint mask" : "Erase mask", state: state)
         interacting = true
         if brushMode == .paint { brush.strokes.append([]) }
         else { brush.eraseStrokes.append([]) }
@@ -679,13 +679,13 @@ final class EditorSession {
     }
     func resetGeometry() {
         finishInteraction()
-        history.begin("Réinitialiser la géométrie", state: state)
+        history.begin("Reset geometry", state: state)
         state.geometry = GeometrySettings()
         history.commit(state); persist(); requestRender(.high)
     }
     func resetAll() {
         finishInteraction()
-        history.begin("Réinitialiser", state: state)
+        history.begin("Reset", state: state)
         state = EditState()
         selectedMaskID = nil; selectedMaskComponentID = nil
         brushMode = .paint

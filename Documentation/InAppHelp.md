@@ -1,7 +1,7 @@
-# Aide intégrée de l’éditeur
+# In-app editor help
 
-L’onglet **Aide** se trouve après **Presets** dans la barre des outils, en portrait comme dans la colonne de contrôles du mode paysage. Il présente les onze panneaux de retouche. Toucher une rubrique ouvre une page de lecture défilante avec les réglages, les gestes et les interactions propres au panneau ; **Fermer** ramène à la liste. L’aide est embarquée dans l’application et reste accessible hors ligne.
+The **Help** tab follows **Presets** in the editor toolbar, both in portrait and in the landscape controls column. It covers all eleven editing tabs. Selecting a topic opens a scrollable reading sheet with that tab’s controls, gestures, and interactions; **Close** returns to the topic list. The guide is bundled with the app and works offline.
 
-Les rubriques sont **Creative**, **Lumière**, **Couleur**, **Courbes**, **Colorimétrie**, **Effets**, **Détail**, **Optique**, **Géométrie**, **Masques** et **Presets**. Leur contenu est maintenu dans `Lumora/UI/EditorHelpView.swift`, au plus près des libellés de l’interface. Quand un réglage est renommé, ajouté ou retiré, mettre à jour la rubrique correspondante et ce document.
+Topics are **Creative**, **Light**, **Color**, **Curves**, **Color Tools**, **Effects**, **Detail**, **Optics**, **Geometry**, **Masks**, and **Presets**. Their content lives in `Lumora/UI/EditorHelpView.swift`, alongside the interface labels. Update the relevant topic when a control is renamed, added, or removed.
 
-L’aide est une vue de lecture : ouvrir une rubrique ou la refermer ne crée pas d’opération Undo, ne change pas le calque actif et ne déclenche aucun réglage de développement. La ligne d’informations photo est masquée dans cet onglet pour réserver l’espace aux rubriques. Les identifiants d’accessibilité `help-controls`, `help-topic-*`, `help-detail-*` et `help-close` permettent de vérifier le parcours au simulateur.
+Help is read-only: opening and closing a topic does not create an Undo operation, change the active layer, or alter development settings. The photo information row is hidden in this tab to leave room for the topics. The accessibility identifiers `help-controls`, `help-topic-*`, `help-detail-*`, and `help-close` support simulator tests.

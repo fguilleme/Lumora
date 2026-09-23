@@ -9,9 +9,9 @@ enum ColorGradingPreset: String, CaseIterable, Identifiable, Sendable {
     enum Family: String, CaseIterable { case portrait, cinematic, atmosphere, special
         var title: String { switch self {
         case .portrait: String(localized:"Portrait")
-        case .cinematic: String(localized:"Cinéma")
-        case .atmosphere: String(localized:"Atmosphère")
-        case .special: String(localized:"Spécial")
+        case .cinematic: String(localized:"Cinema")
+        case .atmosphere: String(localized:"Atmosphere")
+        case .special: String(localized:"Special")
         } }
     }
     var family: Family? { switch self {

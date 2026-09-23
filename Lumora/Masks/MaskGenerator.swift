@@ -10,13 +10,13 @@ enum MaskGenerationError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .noForeground: "Vision n’a détecté aucun sujet distinct dans cette photographie."
-        case .noPerson: "Vision n’a détecté aucune personne dans cette photographie."
-        case .noFace: "Vision n’a détecté aucun visage dans cette photographie."
-        case .noEyes: "Vision n’a détecté aucun contour d’œil suffisamment précis dans cette photographie."
-        case .noSky: "Lumora n’a détecté aucune zone de ciel suffisamment fiable dans cette photographie."
-        case .noSkin: "Lumora a besoin d’au moins un visage visible pour identifier les teintes de peau de cette photographie."
-        case .encodingFailed: "Le masque détecté n’a pas pu être enregistré."
+        case .noForeground: "Vision found no distinct subject in this photo."
+        case .noPerson: "Vision found no person in this photo."
+        case .noFace: "Vision found no face in this photo."
+        case .noEyes: "Vision found no sufficiently precise eye outline in this photo."
+        case .noSky: "Lumora found no sufficiently reliable sky area in this photo."
+        case .noSkin: "Lumora needs at least one visible face to identify skin tones in this photo."
+        case .encodingFailed: "The detected mask could not be saved."
         }
     }
 }
@@ -79,7 +79,7 @@ actor MaskGenerator {
         case .person:
             result = try await handler.perform(GeneratePersonInstanceMaskRequest())
         case .face, .eyes, .sky, .skin:
-            preconditionFailure("Ce masque est traité avant la segmentation d’instances.")
+            preconditionFailure("This mask is handled before instance segmentation.")
         }
         try Task.checkCancellation()
         guard let observation = result, !observation.allInstances.isEmpty else {

@@ -28,7 +28,7 @@ struct ColorMixerView: View {
                                 Text(item.title).font(.caption2).foregroundStyle(item == channel ? .primary : .secondary)
                             }.frame(minWidth: 52, minHeight: 50)
                         }
-                        .accessibilityLabel("Plage \(item.title)")
+                        .accessibilityLabel("Range \(item.title)")
                         .accessibilityIdentifier("mixer-band-\(item.rawValue)")
                         .accessibilityAddTraits(item == channel ? .isSelected : [])
                     }
@@ -36,12 +36,12 @@ struct ColorMixerView: View {
             }
             .dimsDuringAdjustment()
             HStack {
-                Text("Mélangeur · \(channel.title)").font(.subheadline.weight(.medium))
+                Text("Color Mixer · \(channel.title)").font(.subheadline.weight(.medium))
                 Spacer()
                 Button {
                     onEnd(); onChange(channel, MixerAdjustment())
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Réinitialiser la plage \(channel.title)")
+                    .accessibilityLabel("Reset \(channel.title) range")
             }
             .dimsDuringAdjustment()
             ForEach(MixerComponent.allCases) { component in

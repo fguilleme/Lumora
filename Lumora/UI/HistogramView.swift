@@ -43,13 +43,13 @@ struct HistogramView: View {
                     if expanded {
                         HStack(spacing: 5) {
                             clippingIndicator(fraction: histogram.shadowFraction,
-                                              symbol: "arrowtriangle.down.fill", label: "Noirs")
+                                              symbol: "arrowtriangle.down.fill", label: "Blacks")
                             Spacer()
-                            Text("RVB").font(.system(size: 10, weight: .semibold, design: .rounded))
+                            Text("RGB").font(.system(size: 10, weight: .semibold, design: .rounded))
                                 .foregroundStyle(.white.opacity(0.72))
                             Spacer()
                             clippingIndicator(fraction: histogram.highlightFraction,
-                                              symbol: "arrowtriangle.up.fill", label: "Blancs")
+                                              symbol: "arrowtriangle.up.fill", label: "Whites")
                         }
                         .frame(height: 15)
                     }
@@ -63,9 +63,9 @@ struct HistogramView: View {
             .buttonStyle(.plain)
             .simultaneousGesture(clippingGesture)
             .accessibilityIdentifier("histogram-overlay")
-            .accessibilityLabel(expanded ? "Réduire l’histogramme RVB" : "Agrandir l’histogramme RVB")
-            .accessibilityValue("Noirs proches du bord : \(histogram.shadowFraction.formatted(.percent.precision(.fractionLength(2)))). Blancs proches du bord : \(histogram.highlightFraction.formatted(.percent.precision(.fractionLength(2)))). Aperçu SDR, pas écrêtage du fichier original." + (diagnosticActivationCount.map { " Activations clipping : \($0)." } ?? ""))
-            .accessibilityHint("Touchez deux fois pour \(expanded ? "réduire" : "agrandir"). Maintenez pour afficher temporairement les zones proches du noir en bleu et du blanc en rouge.")
+            .accessibilityLabel(expanded ? "Collapse RGB histogram" : "Expand RGB histogram")
+            .accessibilityValue("Near-black pixels: \(histogram.shadowFraction.formatted(.percent.precision(.fractionLength(2)))). Near-white pixels: \(histogram.highlightFraction.formatted(.percent.precision(.fractionLength(2)))). SDR preview, not clipping in the original file." + (diagnosticActivationCount.map { " Clipping activations: \($0)." } ?? ""))
+            .accessibilityHint("Double-tap to \(expanded ? "collapse" : "expand"). Hold to temporarily show near-black areas in blue and near-white areas in red.")
             .onChange(of: clippingPressed) { _, active in
                 if active { longPressConsumed = true }
                 onClippingPressChanged(active)

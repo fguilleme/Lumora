@@ -12,8 +12,8 @@ final class GradingPresetUITests:XCTestCase {
         }
         func openGrading() {
             let tools=app.scrollViews["tools-toolbar"]
-            for _ in 0..<8 where !app.buttons["Colorimétrie"].isHittable {tools.swipeLeft()}
-            app.buttons["Colorimétrie"].tap();app.buttons["Grading"].tap()
+            for _ in 0..<8 where !app.buttons["Color Tools"].isHittable {tools.swipeLeft()}
+            app.buttons["Color Tools"].tap();app.buttons["Grading"].tap()
         }
         openGrading()
         let strip=app.scrollViews["grading-preset-strip"],panel=app.scrollViews["color-tools-controls"]
@@ -38,16 +38,16 @@ final class GradingPresetUITests:XCTestCase {
         select("neutral")
         let status=app.staticTexts["grading-preset-status"]
         select("softPortrait");XCTAssertEqual(status.label,"Soft Portrait")
-        app.buttons["Annuler"].tap();XCTAssertEqual(status.label,"Neutral")
-        app.buttons["Rétablir"].tap();XCTAssertEqual(status.label,"Soft Portrait")
+        app.buttons["Undo"].tap();XCTAssertEqual(status.label,"Neutral")
+        app.buttons["Redo"].tap();XCTAssertEqual(status.label,"Soft Portrait")
         let luminance=app.sliders["grading-luminance"]
         for _ in 0..<4 where !luminance.isHittable {scrollPanel(up: true)}
         luminance.adjust(toNormalizedSliderPosition:0.65)
         for _ in 0..<4 where !status.isHittable {scrollPanel(up: false)}
-        XCTAssertEqual(status.label,"Personnalisé")
-        app.buttons["Annuler"].tap();XCTAssertEqual(status.label,"Soft Portrait")
+        XCTAssertEqual(status.label,"Custom")
+        app.buttons["Undo"].tap();XCTAssertEqual(status.label,"Soft Portrait")
         let ids=["warmPortrait","coolPortrait","cinematic","tealWarm","coolCinema","warmCinema","mutedCinema","goldenHour","blueHour","moody","pastel","autumn","bleachGrade","splitWarmCool","neutral"]
-        for id in ids {select(id);XCTAssertNotEqual(status.label,"Personnalisé")}
+        for id in ids {select(id);XCTAssertNotEqual(status.label,"Custom")}
         for _ in 0..<12 {select("softPortrait");select("warmPortrait");select("neutral")}
         select("warmPortrait")
         let screenshot=XCTAttachment(screenshot:app.screenshot());screenshot.name="Grading presets compact";screenshot.lifetime = .keepAlways;add(screenshot)
@@ -67,8 +67,8 @@ final class GradingPresetUITests:XCTestCase {
             XCTAssertTrue(photo.waitForExistence(timeout:20));photo.tap();XCTAssertTrue(canvas.waitForExistence(timeout:30))
         }
         let tools=app.scrollViews["tools-toolbar"]
-        for _ in 0..<8 where !app.buttons["Colorimétrie"].isHittable {tools.swipeLeft()}
-        app.buttons["Colorimétrie"].tap();app.buttons["Grading"].tap()
+        for _ in 0..<8 where !app.buttons["Color Tools"].isHittable {tools.swipeLeft()}
+        app.buttons["Color Tools"].tap();app.buttons["Grading"].tap()
         let neutral=app.buttons["grading-preset-neutral"]
         XCTAssertTrue(neutral.isHittable);XCTAssertGreaterThanOrEqual(neutral.frame.height,44)
         app.buttons["grading-preset-softPortrait"].tap()

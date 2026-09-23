@@ -50,9 +50,9 @@ struct DetailView: View {
 
     private func requirement(for group: Int) -> String? {
         switch group {
-        case 0 where settings.sharpening.amount == 0: "Augmentez Gain pour activer les réglages de netteté."
-        case 1 where settings.noiseReduction.luminance == 0: "Augmentez Luminance pour activer Détail et Contraste."
-        case 2 where settings.colorNoiseReduction.color == 0: "Augmentez Couleur pour activer Détail et Lissage."
+        case 0 where settings.sharpening.amount == 0: "Increase Amount to enable sharpening controls."
+        case 1 where settings.noiseReduction.luminance == 0: "Increase Luminance to enable Detail and Contrast."
+        case 2 where settings.colorNoiseReduction.color == 0: "Increase Color to enable Detail and Smoothing."
         default: nil
         }
     }

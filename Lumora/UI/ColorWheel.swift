@@ -39,13 +39,13 @@ struct ColorWheel: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityIdentifier(identifier)
-        .accessibilityLabel("Roue \(title)")
-        .accessibilityValue("Teinte \(Int(hue)) degrés, saturation \(Int(saturation)) pour cent")
+        .accessibilityLabel("\(title) color wheel")
+        .accessibilityValue("Hue \(Int(hue)) degrees, saturation \(Int(saturation)) percent")
         .accessibilityAdjustableAction { direction in
             onChange(hue, min(100, max(0, saturation + (direction == .increment ? 5 : -5))))
         }
-        .accessibilityAction(named: "Teinte suivante") { onChange(HSLColor.wrap(hue + 5), saturation) }
-        .accessibilityAction(named: "Teinte précédente") { onChange(HSLColor.wrap(hue - 5), saturation) }
+        .accessibilityAction(named: "Next hue") { onChange(HSLColor.wrap(hue + 5), saturation) }
+        .accessibilityAction(named: "Previous hue") { onChange(HSLColor.wrap(hue - 5), saturation) }
         .onDisappear(perform: finish)
     }
     private func finish() {

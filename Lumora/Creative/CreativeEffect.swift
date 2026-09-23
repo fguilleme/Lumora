@@ -28,125 +28,125 @@ enum CreativeEffectCatalog {
         .highKey: .init(title: "High Key", category: "Key", symbol: "sun.max", parameters: keyParameters(high: true)),
         .lowKey: .init(title: "Low Key", category: "Key", symbol: "moon", parameters: keyParameters(high: false)),
         .glamourGlow: .init(title: "Glamour Glow", category: "Film", symbol: "sparkles", parameters: [
-            .init("amount", "Quantité", 0...100, 50),
-            .init("glow", "Diffusion", 0...100, 45),
-            .init("softness", "Douceur", 0...100, 40),
-            .init("warmth", "Chaleur", -100...100),
-            .init("threshold", "Seuil lumineux", 0...100, 40),
-            .init("highlightProtection", "Protéger les hautes lumières", 0...100, 55),
-            .init("shadowProtection", "Protéger les ombres", 0...100, 70)
+            .init("amount", "Amount", 0...100, 50),
+            .init("glow", "Glow", 0...100, 45),
+            .init("softness", "Softness", 0...100, 40),
+            .init("warmth", "Warmth", -100...100),
+            .init("threshold", "Highlight threshold", 0...100, 40),
+            .init("highlightProtection", "Protect highlights", 0...100, 55),
+            .init("shadowProtection", "Protect shadows", 0...100, 70)
         ]),
         .bleachBypass: .init(title: "Bleach Bypass", category: "Film", symbol: "circle.lefthalf.filled", parameters: [
-            .init("amount", "Quantité", 0...100, 55),
+            .init("amount", "Amount", 0...100, 55),
             .init("bleach", "Bleach", 0...100, 55),
-            .init("contrast", "Contraste", 0...100, 55),
+            .init("contrast", "Contrast", 0...100, 55),
             .init("saturation", "Saturation", -100...100),
-            .init("blackDensity", "Densité des noirs", 0...100, 50),
-            .init("highlightRollOff", "Compression des lumières", 0...100, 55),
-            .init("shadowProtection", "Protéger les ombres", 0...100, 40)
+            .init("blackDensity", "Black density", 0...100, 50),
+            .init("highlightRollOff", "Highlight roll-off", 0...100, 55),
+            .init("shadowProtection", "Protect shadows", 0...100, 40)
         ]),
         .proContrast: .init(title: "Pro Contrast", category: "Film", symbol: "slider.horizontal.3", parameters: [
-            .init("amount", "Quantité", 0...100, 60),
-            .init("correctColorCast", "Corriger la dominante", 0...100, 25),
-            .init("correctContrast", "Corriger le contraste", 0...100, 60),
-            .init("dynamicContrast", "Contraste dynamique", 0...100, 35),
-            .init("shadowProtection", "Protéger les ombres", 0...100, 65),
-            .init("highlightProtection", "Protéger les hautes lumières", 0...100, 70)
+            .init("amount", "Amount", 0...100, 60),
+            .init("correctColorCast", "Correct color cast", 0...100, 25),
+            .init("correctContrast", "Correct contrast", 0...100, 60),
+            .init("dynamicContrast", "Dynamic contrast", 0...100, 35),
+            .init("shadowProtection", "Protect shadows", 0...100, 65),
+            .init("highlightProtection", "Protect highlights", 0...100, 70)
         ]),
         .crossProcessing: .init(title: "Cross Processing", category: "Film", symbol: "circle.hexagongrid.fill", parameters: [
-            .init("amount", "Quantité", 0...100, 65),
-            .init("styleStrength", "Force du style", 0...100, 75),
-            .init("contrast", "Contraste", -100...100, 20),
+            .init("amount", "Amount", 0...100, 65),
+            .init("styleStrength", "Style strength", 0...100, 75),
+            .init("contrast", "Contrast", -100...100, 20),
             .init("saturation", "Saturation", -100...100, 0),
-            .init("shadowHue", "Couleur des ombres", 0...360, 195),
-            .init("shadowStrength", "Force des ombres", 0...100, 30),
-            .init("highlightHue", "Couleur des lumières", 0...360, 35),
-            .init("highlightStrength", "Force des lumières", 0...100, 25),
-            .init("blackLift", "Lever les noirs", 0...100, 0),
-            .init("style", "Style interne", 0...6, 0)
+            .init("shadowHue", "Shadow color", 0...360, 195),
+            .init("shadowStrength", "Shadow strength", 0...100, 30),
+            .init("highlightHue", "Highlight color", 0...360, 35),
+            .init("highlightStrength", "Highlight strength", 0...100, 25),
+            .init("blackLift", "Lift blacks", 0...100, 0),
+            .init("style", "Internal style", 0...6, 0)
         ]),
         .filmEmulation: .init(title: "Film Emulation", category: "Film", symbol: "film.stack", parameters: [
-            .init("amount", "Quantité", 0...100, 75),
-            .init("filmStrength", "Force du film", 0...100, 80),
-            .init("exposure", "Exposition (EV)", -2...2, 0),
-            .init("contrast", "Contraste", -100...100, 0),
+            .init("amount", "Amount", 0...100, 75),
+            .init("filmStrength", "Film strength", 0...100, 80),
+            .init("exposure", "Exposure (EV)", -2...2, 0),
+            .init("contrast", "Contrast", -100...100, 0),
             .init("saturation", "Saturation", -100...100, 0),
-            .init("highlightRollOff", "Compression des lumières", -100...100, 0),
-            .init("shadowDensity", "Densité des ombres", -100...100, 0),
-            .init("colorResponse", "Réponse couleur", 0...100, 75),
-            .init("style", "Type interne", 0...6, 0)
+            .init("highlightRollOff", "Highlight roll-off", -100...100, 0),
+            .init("shadowDensity", "Shadow density", -100...100, 0),
+            .init("colorResponse", "Color response", 0...100, 75),
+            .init("style", "Internal type", 0...6, 0)
         ]),
         .darkenLightenCenter: .init(title: "Darken / Lighten Center", category: "Key", symbol: "scope", parameters: [
-            .init("amount", "Quantité", 0...100, 100),
-            .init("centerEV", "Centre (EV)", -2...2),
-            .init("borderEV", "Extérieur (EV)", -2...2),
-            .init("size", "Taille", 5...150, 45),
-            .init("shape", "Forme (haut / large)", -100...100),
-            .init("feather", "Contour progressif", 0...100, 75),
+            .init("amount", "Amount", 0...100, 100),
+            .init("centerEV", "Center (EV)", -2...2),
+            .init("borderEV", "Outer (EV)", -2...2),
+            .init("size", "Size", 5...150, 45),
+            .init("shape", "Shape (tall / wide)", -100...100),
+            .init("feather", "Feather", 0...100, 75),
             .init("rotation", "Rotation (°)", -180...180),
-            .init("centerX", "Centre X", 0...1, 0.5),
-            .init("centerY", "Centre Y", 0...1, 0.5)
+            .init("centerX", "Center X", 0...1, 0.5),
+            .init("centerY", "Center Y", 0...1, 0.5)
         ]),
         .silverToning: .init(title: "Silver Toning", category: "Film", symbol: "drop.halffull", parameters: [
-            .init("amount", "Quantité", 0...100, 100),
+            .init("amount", "Amount", 0...100, 100),
             .init("toner", "Toner", 0...8),
-            .init("strength", "Intensité", 0...100, 50),
+            .init("strength", "Strength", 0...100, 50),
             .init("balance", "Balance", -100...100),
-            .init("shadowStrength", "Force des ombres", 0...100, 100),
-            .init("highlightStrength", "Force des lumières", 0...100, 100),
-            .init("paperTone", "Papier (froid / chaud)", -100...100),
-            .init("silverTone", "Virage de l’argent", 0...100, 100),
-            .init("shadowHue", "Teinte des ombres", 0...360, 220),
-            .init("highlightHue", "Teinte des lumières", 0...360, 40)
+            .init("shadowStrength", "Shadow strength", 0...100, 100),
+            .init("highlightStrength", "Highlight strength", 0...100, 100),
+            .init("paperTone", "Paper (cool / warm)", -100...100),
+            .init("silverTone", "Silver tone", 0...100, 100),
+            .init("shadowHue", "Shadow hue", 0...360, 220),
+            .init("highlightHue", "Highlight hue", 0...360, 40)
         ]),
         .silverBW: .init(title: "Silver B&W", category: "Film", symbol: "circle.lefthalf.filled", parameters: [
-            .init("amount", "Quantité", 0...100, 100),
-            .init("brightness", "Luminosité", -100...100),
-            .init("contrast", "Contraste", -100...100),
+            .init("amount", "Amount", 0...100, 100),
+            .init("brightness", "Brightness", -100...100),
+            .init("contrast", "Contrast", -100...100),
             .init("structure", "Structure", 0...100),
-            .init("filmResponse", "Réponse film", 0...6),
-            .init("filterHue", "Couleur du filtre", 0...360, 60),
-            .init("filterStrength", "Force du filtre", 0...100),
-            .init("dynamicBrightness", "Luminosité dynamique", -100...100),
-            .init("softContrast", "Contraste doux", -100...100),
-            .init("blacks", "Densité des noirs", -100...100),
-            .init("whites", "Présence des blancs", -100...100)
+            .init("filmResponse", "Film response", 0...6),
+            .init("filterHue", "Filter color", 0...360, 60),
+            .init("filterStrength", "Filter strength", 0...100),
+            .init("dynamicBrightness", "Dynamic brightness", -100...100),
+            .init("softContrast", "Soft contrast", -100...100),
+            .init("blacks", "Black density", -100...100),
+            .init("whites", "White presence", -100...100)
         ]),
         .tonalContrast: .init(title: "Tonal Contrast", category: "Detail", symbol: "circle.hexagongrid", parameters: [
             .init("globalAmount", "Global", 0...100, 60),
-            .init("highlights", "Hautes lumières", -100...100, 25),
-            .init("midtones", "Tons moyens", -100...100, 30),
-            .init("shadows", "Ombres", -100...100, 20),
+            .init("highlights", "Highlights", -100...100, 25),
+            .init("midtones", "Midtones", -100...100, 30),
+            .init("shadows", "Shadows", -100...100, 20),
             // Radius is mapped logarithmically to 1.2...24 photographic px on a 3000 px long edge.
-            .init("radius", "Rayon", 0...100, 45),
+            .init("radius", "Radius", 0...100, 45),
             .init("saturation", "Saturation", -100...100),
-            .init("protectHighlights", "Protéger les hautes lumières", 0...100, 50),
-            .init("protectShadows", "Protéger les ombres", 0...100, 55)
+            .init("protectHighlights", "Protect highlights", 0...100, 50),
+            .init("protectShadows", "Protect shadows", 0...100, 55)
         ]),
         .detailExtractor: .init(title: "Detail Extractor", category: "Detail", symbol: "viewfinder", parameters: [
-            .init("amount", "Quantité", -100...100, 45),
-            .init("fine", "Détails fins", 0...100, 40),
-            .init("medium", "Détails moyens", 0...100, 60),
-            .init("large", "Grands détails", 0...100, 20),
-            .init("protectShadows", "Protéger les ombres", 0...100, 70),
-            .init("protectHighlights", "Protéger les hautes lumières", 0...100, 65)
+            .init("amount", "Amount", -100...100, 45),
+            .init("fine", "Fine detail", 0...100, 40),
+            .init("medium", "Medium detail", 0...100, 60),
+            .init("large", "Large detail", 0...100, 20),
+            .init("protectShadows", "Protect shadows", 0...100, 70),
+            .init("protectHighlights", "Protect highlights", 0...100, 65)
         ]),
         .grain: .init(title: "Grain", category: "Film", symbol: "camera.filters", parameters: [
-            .init("amount", "Quantité", 0...100, 35), .init("size", "Taille", 1...100, 35),
-            .init("hardness", "Dureté", 0...100, 45), .init("irregularity", "Irrégularité", 0...100, 50),
-            .init("clumping", "Agrégation", 0...100, 30), .init("softness", "Douceur", 0...100, 25),
-            .init("shadowAmount", "Ombres", 0...200, 80), .init("midtoneAmount", "Tons moyens", 0...200, 100),
-            .init("highlightAmount", "Hautes lumières", 0...200, 45),
-            .init("chromaAmount", "Grain couleur", 0...100, 15)
+            .init("amount", "Amount", 0...100, 35), .init("size", "Size", 1...100, 35),
+            .init("hardness", "Hardness", 0...100, 45), .init("irregularity", "Irregularity", 0...100, 50),
+            .init("clumping", "Clumping", 0...100, 30), .init("softness", "Softness", 0...100, 25),
+            .init("shadowAmount", "Shadows", 0...200, 80), .init("midtoneAmount", "Midtones", 0...200, 100),
+            .init("highlightAmount", "Highlights", 0...200, 45),
+            .init("chromaAmount", "Color grain", 0...100, 15)
         ])
     ]
     private static func keyParameters(high: Bool) -> [FXParameter] {
-        [.init("amount", "Quantité", 0...100, 50), .init("dynamic", "Dynamique", 0...100, 50),
-         .init("glow", "Glow"), .init("glowRadius", "Rayon glow", 1...100, 30),
-         .init("glowThreshold", "Seuil glow", 0...100, 70), .init("contrast", "Contraste", -100...100),
+        [.init("amount", "Amount", 0...100, 50), .init("dynamic", "Dynamic", 0...100, 50),
+         .init("glow", "Glow"), .init("glowRadius", "Glow radius", 1...100, 30),
+         .init("glowThreshold", "Glow threshold", 0...100, 70), .init("contrast", "Contrast", -100...100),
          .init("saturation", "Saturation", -100...100),
-         .init("darkProtection", high ? "Préserver noirs" : "Protéger ombres", 0...100, 65),
-         .init("lightProtection", high ? "Protéger blancs" : "Préserver lumières", 0...100, 70)]
+         .init("darkProtection", high ? "Preserve blacks" : "Protect shadows", 0...100, 65),
+         .init("lightProtection", high ? "Protect whites" : "Preserve highlights", 0...100, 70)]
     }
 }
 
@@ -444,7 +444,7 @@ struct FilmGrainSettings: Sendable, Codable, Equatable {
 
 enum FilmGrainProfile: String, CaseIterable, Identifiable {
     case fine50 = "Fine 50", classic100 = "Classic 100", classic400 = "Classic 400"
-    case reportage800 = "Reportage 800", push1600 = "Push 1600", rough3200 = "Rough 3200"
+    case reportage800 = "Documentary 800", push1600 = "Push 1600", rough3200 = "Rough 3200"
     var id: String { rawValue }
     func applying(to effect: CreativeEffect) -> CreativeEffect {
         var value = effect
@@ -508,18 +508,18 @@ struct CreativeFXPreset: Identifiable {
         switch kind {
         case .highKey:
             return [
-                values("High Key doux", ["amount": 30, "dynamic": 0]),
-                values("High Key dynamique", ["amount": 55, "dynamic": 65]),
-                values("Lumières protégées", ["amount": 70, "dynamic": 50, "lightProtection": 100]),
-                values("High Key lumineux", ["amount": 55, "dynamic": 45, "glow": 30])
+                values("Soft High Key", ["amount": 30, "dynamic": 0]),
+                values("Dynamic High Key", ["amount": 55, "dynamic": 65]),
+                values("Protected highlights", ["amount": 70, "dynamic": 50, "lightProtection": 100]),
+                values("Bright High Key", ["amount": 55, "dynamic": 45, "glow": 30])
             ]
         case .lowKey:
             return [
-                values("Low Key doux", ["amount": 30, "dynamic": 0]),
-                values("Low Key dynamique", ["amount": 55, "dynamic": 65]),
-                values("Noirs profonds", ["amount": 75, "dynamic": 30, "darkProtection": 30]),
-                values("Ombres protégées", ["amount": 70, "dynamic": 60, "darkProtection": 100]),
-                values("Low Key lumineux", ["amount": 55, "dynamic": 45, "glow": 25])
+                values("Soft Low Key", ["amount": 30, "dynamic": 0]),
+                values("Dynamic Low Key", ["amount": 55, "dynamic": 65]),
+                values("Deep blacks", ["amount": 75, "dynamic": 30, "darkProtection": 30]),
+                values("Protected shadows", ["amount": 70, "dynamic": 60, "darkProtection": 100]),
+                values("Bright Low Key", ["amount": 55, "dynamic": 45, "glow": 25])
             ]
         case .grain:
             return FilmGrainProfile.allCases.map { profile in
