@@ -11,7 +11,8 @@ let package = Package(
                 sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
         .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"]),
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
-                    exclude: ["LOW_KEY_CONTRACT.md"],
+                    exclude: ["LOW_KEY_CONTRACT.md", "AdaptiveToneMetalPrototype", "SpatialImportancePrototype",
+                              "ShadowBudgetPrototype", "adaptive_tone_phase2.py", "adaptive_tone_prototype.py", "__pycache__"],
                     resources: [.copy("Baselines"), .copy("Fixtures")])
     ]
 )

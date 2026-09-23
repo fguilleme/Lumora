@@ -16,6 +16,32 @@ import UniformTypeIdentifiers
     #expect(EditState().validated == EditState())
 }
 
+@Test func obsoleteAdaptiveToneDocumentLoadsAndSavesWithoutField() async throws {
+    let source = try fixture()
+    let root = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: source); try? FileManager.default.removeItem(at: root) }
+    let store = DocumentStore(root: root)
+    let imported = try await store.importPhoto(at: source)
+    let sidecar = root.appendingPathComponent(imported.id.uuidString).appendingPathComponent("edits.json")
+    var json = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: sidecar)) as? [String: Any])
+    var state = try #require(json["state"] as? [String: Any])
+    state["adaptiveTone"] = 100
+    json["state"] = state
+    try JSONSerialization.data(withJSONObject: json).write(to: sidecar)
+
+    let loaded = try await store.load(imported.id)
+    #expect(loaded.state == imported.state)
+    let original = await store.originalURL(for: loaded)
+    let renderer = RenderEngine()
+    let baseline = try await renderer.render(url: original, state: imported.state, quality: .high)
+    let legacy = try await renderer.render(url: original, state: loaded.state, quality: .high)
+    #expect(baseline.image.dataProvider?.data == legacy.image.dataProvider?.data)
+    try await store.save(loaded, revision: 1)
+    let saved = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: sidecar)) as? [String: Any])
+    let savedState = try #require(saved["state"] as? [String: Any])
+    #expect(savedState["adaptiveTone"] == nil)
+}
+
 @Test func historyGroupsGestureAndInvalidatesRedo() {
     var history = HistoryManager(), state = EditState()
     history.begin("Exposition", state: state)

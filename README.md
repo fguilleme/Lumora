@@ -75,6 +75,8 @@ Film Emulation propose sept types originaux. Silver B&W propose sept réponses s
 
 ## Validation et documentation
 
+**Adaptive Tone — recherche hors production** : l'essai du contrôle manuel sur iPhone a révélé un blocage de l'interface pour un gain visuel faible ; le contrôle et son rendu ont été retirés. Voir le [rapport de retrait](AdaptiveToneRemovalReport.md). Les prototypes des phases 1–5 et les artefacts de validation Phase 6 restent dans l'espace de travail de recherche, hors de l'application.
+
 Color Grading Presets : **16 presets**, **876 PASS / 29 WARN / 0 FAIL**, 106 tests Core, tests UI iPhone/iPad et 126 comparaisons de rendu manuel/Creative FX réussis. Les WARN restent à inspecter ; aucun tuning automatique. [Bilan et limites](Documentation/ColorGradingPresetsValidation.md).
 
 Les contrôles d’interface couvrent également les poignées de masque sous zoom, la navigation séparée du pinceau, le rendu différé dans Masques, les informations contextuelles et les actions Creative directes. Les tests de rendu des effets restent indépendants de ces changements d’éditeur.
