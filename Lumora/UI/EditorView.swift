@@ -34,7 +34,7 @@ struct EditorView: View {
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
-        case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets"
+        case light = "Lumière", color = "Couleur", curve = "Courbes", colorTools = "Colorimétrie", effects = "Effets", detail = "Détail", optics = "Optique", geometry = "Géométrie", masks = "Masques", presets = "Presets", help = "Aide"
         var symbol: String {
             switch self {
             case .creative: "sparkles"
@@ -48,6 +48,7 @@ struct EditorView: View {
             case .geometry: "crop.rotate"
             case .masks: "circle.dashed.inset.filled"
             case .presets: "slider.horizontal.2.square"
+            case .help: "questionmark.circle"
             }
         }
     }
@@ -221,7 +222,7 @@ struct EditorView: View {
     }
 
     private var showsPhotoInformation: Bool {
-        ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel)
+        ![Panel.creative, .optics, .geometry, .masks, .presets, .help].contains(panel)
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -501,6 +502,8 @@ struct EditorView: View {
                       onEnd: session.finishInteraction)
         case .presets:
             PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
+        case .help:
+            EditorHelpView()
         case .light, .color:
             controls
         }

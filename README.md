@@ -19,6 +19,7 @@ Les tests Swift Testing exécutent le cœur partagé et Core Image sur macOS, in
 ## Utilisation
 
 - Importer depuis Photos ou Fichiers. Le sélecteur Photos donne uniquement accès au fichier choisi, sans autorisation globale de photothèque.
+- Ouvrir **Aide**, à la fin de la barre des onglets, pour consulter hors ligne un guide détaillé de chacun des onze panneaux de retouche. Choisir une rubrique ouvre une page lisible en plein écran ; l’aide ne modifie pas la photographie. [Guide de l’aide intégrée](Documentation/InAppHelp.md).
 - Ajuster Lumière / Couleur. Les contrôles défilent dans un panneau compact. La ligne d’informations est réservée aux panneaux de développement ; elle affiche le nom sans extension, le calque actif, le format et la résolution. Elle est masquée dans Creative, Optique, Géométrie, Masques et Presets, libérant cet espace pour l’aperçu.
 - Pendant le déplacement d’un curseur, l’interface secondaire s’efface sur le fond noir pour laisser l’image et le réglage actif au premier plan.
 - Toucher une valeur numérique pour activer/désactiver le réglage fin. Double-toucher le curseur, ou utiliser sa flèche, pour le réinitialiser.
