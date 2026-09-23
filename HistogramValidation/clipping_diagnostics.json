@@ -1,0 +1,167 @@
+[
+  {
+    "blueBin255" : 0,
+    "case" : "Black",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 0,
+    "highlightFraction" : 0,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 25600,
+    "shadowFraction" : 1
+  },
+  {
+    "blueBin255" : 25600,
+    "case" : "White",
+    "greenBin255" : 25600,
+    "highlightEndpointPixels" : 25600,
+    "highlightFraction" : 1,
+    "redBin255" : 25600,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "18% gray",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 0,
+    "highlightFraction" : 0,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 160,
+    "case" : "Gradient 0–1",
+    "greenBin255" : 160,
+    "highlightEndpointPixels" : 160,
+    "highlightFraction" : 0.0062500000000000003,
+    "redBin255" : 160,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 320,
+    "shadowFraction" : 0.012500000000000001
+  },
+  {
+    "blueBin255" : 19200,
+    "case" : "Extended 0–4 → SDR",
+    "greenBin255" : 19200,
+    "highlightEndpointPixels" : 19200,
+    "highlightFraction" : 0.75,
+    "redBin255" : 19200,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 160,
+    "shadowFraction" : 0.0062500000000000003
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "R endpoint",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 25600,
+    "highlightFraction" : 1,
+    "redBin255" : 25600,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "G endpoint",
+    "greenBin255" : 25600,
+    "highlightEndpointPixels" : 25600,
+    "highlightFraction" : 1,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 25600,
+    "case" : "B endpoint",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 25600,
+    "highlightFraction" : 1,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "Sparse highlight",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 1,
+    "highlightFraction" : 3.9062500000000001e-05,
+    "redBin255" : 1,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "Broad highlight",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 12800,
+    "highlightFraction" : 0.5,
+    "redBin255" : 12800,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 132,
+    "case" : "01_dark_indoor_portrait",
+    "greenBin255" : 125,
+    "highlightEndpointPixels" : 169,
+    "highlightFraction" : 0.0066015624999999998,
+    "redBin255" : 129,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 1442,
+    "shadowFraction" : 0.056328125
+  },
+  {
+    "blueBin255" : 224,
+    "case" : "02_overexposed_beach_portrait",
+    "greenBin255" : 220,
+    "highlightEndpointPixels" : 10224,
+    "highlightFraction" : 0.39937499999999998,
+    "redBin255" : 422,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 0,
+    "shadowFraction" : 0
+  },
+  {
+    "blueBin255" : 16,
+    "case" : "08_high_iso_rainy_night",
+    "greenBin255" : 13,
+    "highlightEndpointPixels" : 179,
+    "highlightFraction" : 0.0069921875000000001,
+    "redBin255" : 122,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 23,
+    "shadowFraction" : 0.00089843750000000004
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "07_flat_foggy_landscape",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 0,
+    "highlightFraction" : 0,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 5,
+    "shadowFraction" : 0.00019531250000000001
+  },
+  {
+    "blueBin255" : 0,
+    "case" : "07_flat_foggy_landscape — horizontal crop",
+    "greenBin255" : 0,
+    "highlightEndpointPixels" : 0,
+    "highlightFraction" : 0,
+    "redBin255" : 0,
+    "samples" : 25600,
+    "shadowEndpointPixels" : 14,
+    "shadowFraction" : 0.00054687500000000005
+  }
+]

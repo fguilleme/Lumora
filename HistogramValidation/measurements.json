@@ -1,0 +1,8 @@
+{
+  "compactSnapshotMedianMs" : 0.82279199999999997,
+  "expandedAdditionalHistogramComputations" : 0,
+  "expandedSnapshotMedianMs" : 1.00675,
+  "histogramUpdateMedianMs" : 3.8336670000000002,
+  "platform" : "macOS AppKit\/SwiftUI, Apple M2 Pro",
+  "sampleSize" : 25600
+}

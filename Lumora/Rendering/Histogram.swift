@@ -2,6 +2,12 @@ import CoreGraphics
 import Foundation
 
 struct Histogram: Sendable {
+    /// Display histogram: 256 sRGB 8-bit bins after the preview has been rendered
+    /// to SDR. Bin 255 includes display white and any brighter values compressed
+    /// or clipped by the upstream rendering path; it does not prove RAW clipping.
+    static let endpointBin = 255
+    static let shadowEndpoint = 1
+    static let highlightEndpoint = 254
     var red = [Int](repeating: 0, count: 256)
     var green = [Int](repeating: 0, count: 256)
     var blue = [Int](repeating: 0, count: 256)
@@ -9,6 +15,15 @@ struct Histogram: Sendable {
     var shadows = 0
     var highlights = 0
     var samples = 0
+
+    /// Occupancy of near-black / near-white display endpoints, not sensor clipping.
+    var shadowFraction: Double { samples == 0 ? 0 : Double(shadows) / Double(samples) }
+    var highlightFraction: Double { samples == 0 ? 0 : Double(highlights) / Double(samples) }
+
+    /// Square-root scaling retains small peaks when a single bin dominates.
+    static func displayedHeight(_ count: Int, peak: Int) -> Double {
+        sqrt(Double(max(0, count)) / Double(max(1, peak)))
+    }
 
     static func compute(_ image: CGImage) -> Self {
         let width = 160, height = 160
@@ -31,8 +46,8 @@ struct Histogram: Sendable {
             let blueLuma = 0.0722 * Double(b)
             let bin = Int(redLuma + greenLuma + blueLuma)
             result.luminance[bin] += 1
-            if max(r, g, b) <= 1 { result.shadows += 1 }
-            if max(r, g, b) >= 254 { result.highlights += 1 }
+            if max(r, g, b) <= shadowEndpoint { result.shadows += 1 }
+            if max(r, g, b) >= highlightEndpoint { result.highlights += 1 }
             result.samples += 1
         }
         return result

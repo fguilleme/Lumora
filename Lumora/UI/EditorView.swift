@@ -54,9 +54,6 @@ struct EditorView: View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
             if let result = session.result {
-                HistogramView(histogram: result.histogram)
-                    .frame(height: 52).padding(.vertical, 4)
-                    .dimsDuringAdjustment()
                 PhotoCanvas(result: result,
                             curveSampling: panel == .curve && curveEditMode && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
                             curveSampleLocation: curveSample?.location,
@@ -96,6 +93,11 @@ struct EditorView: View {
                     .id(session.document?.id)
                     .frame(maxHeight: .infinity)
                     .background(.black)
+                    .overlay {
+                        HistogramView(histogram: result.histogram,
+                                      imageSize: CGSize(width: result.image.width, height: result.image.height))
+                            .id(session.document?.id)
+                    }
                 if ![Panel.creative, .optics, .geometry, .masks, .presets].contains(panel) {
                     HStack(spacing: 6) {
                         Text(URL(fileURLWithPath: session.document?.originalName ?? "Photographie").deletingPathExtension().lastPathComponent)
