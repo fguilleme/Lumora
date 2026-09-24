@@ -27,6 +27,24 @@ struct EditorView: View {
     @State private var curveEyedropper = false
     @State private var curveSample: CurveSample?
     @State private var curveSamplingBuffer: CurveSamplingBuffer?
+    #if DEBUG
+    @State private var debugVariantA: DebugToneVariant = .off
+    @State private var debugVariantB: DebugToneVariant = .phase2C
+    @State private var debugAmount = 100
+    @State private var debugMode: DebugCompareMode = .split
+    @State private var debugHistogramSide = "B"
+    @State private var debugOverlay = "None"
+    @State private var debugHaloLayer = "Halo Map"
+    @State private var debugA: DebugToneOutput?
+    @State private var debugB: DebugToneOutput?
+    @State private var debugHistA: Histogram?
+    @State private var debugHistB: Histogram?
+    @State private var debugScene: DebugSceneResult?
+    @State private var debugMapOverlay: CGImage?
+    @State private var debugHalo: DebugHaloDiagnostics.Result?
+    @State private var debugWorking = false
+    @State private var debugError: String?
+    #endif
     @AppStorage("editor.controlsSide") private var controlsSideRaw = ControlsSide.leading.rawValue
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.layoutDirection) private var layoutDirection
@@ -35,6 +53,9 @@ struct EditorView: View {
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
         case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
+        #if DEBUG
+        case debug = "Debug"
+        #endif
         var symbol: String {
             switch self {
             case .creative: "sparkles"
@@ -49,6 +70,9 @@ struct EditorView: View {
             case .masks: "circle.dashed.inset.filled"
             case .presets: "slider.horizontal.2.square"
             case .help: "questionmark.circle"
+            #if DEBUG
+            case .debug: "ladybug"
+            #endif
             }
         }
     }
@@ -59,14 +83,21 @@ struct EditorView: View {
               effect.kind == .darkenLightenCenter, effect.enabled, effect.opacity > 0 else { return nil }
         return DarkenLightenCenterSettings(effect: effect)
     }
+    #if DEBUG
+    private var debugSourceID: String {
+        session.result.map { "\(session.generation)-\(ObjectIdentifier($0.image))" } ?? "none"
+    }
+    private var debugRenderID: String {
+        "render-\(panel.rawValue)-\(debugSourceID)-\(debugVariantA.id)-\(debugVariantB.id)-\(debugAmount)-\(debugScene != nil)"
+    }
+    #endif
 
     var body: some View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
             if let result = session.result {
                 GeometryReader { available in
-                    let landscape = UIDevice.current.userInterfaceIdiom == .phone
-                        && available.size.width > available.size.height
+                    let landscape = available.size.width > available.size.height
                     EditorWorkspaceLayout(landscape: landscape,
                                           controlsSide: controlsSideRaw,
                                           direction: layoutDirection,
@@ -128,6 +159,21 @@ struct EditorView: View {
                                       })
                             .id(session.document?.id)
                     }
+                    #if DEBUG
+                    .overlay {
+                        if panel == .debug {
+                            DebugLabCanvas(original:result.image,a:debugA?.image,b:debugB?.image,
+                                           mode:debugMode,
+                                           overlay:debugMode == .halo ? debugHalo?.overlays[debugHaloLayer] :
+                                               (debugMapOverlay ?? debugScene?.overlays[debugOverlay]))
+                            .overlay {
+                                HistogramView(histogram:debugHistogramSide == "A" ? (debugHistA ?? result.histogram) : (debugHistB ?? result.histogram),
+                                              imageSize:CGSize(width:result.image.width,height:result.image.height),
+                                              compactLandscape:landscape)
+                            }
+                        }
+                    }
+                    #endif
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
@@ -198,6 +244,9 @@ struct EditorView: View {
             curveEditMode = false; curveEyedropper = false
             curveSample = nil; curveSamplingBuffer = nil
             clearClippingOverlay()
+            #if DEBUG
+            debugA=nil;debugB=nil;debugScene=nil;debugMapOverlay=nil;debugHalo=nil;debugHistA=nil;debugHistB=nil
+            #endif
         }
         .onChange(of: session.result.map { ObjectIdentifier($0.image) }) { _, _ in
             clippingOverlay = nil; clippingSource = nil; clippingRequest &+= 1
@@ -211,6 +260,56 @@ struct EditorView: View {
             }
         }
         .onDisappear { session.setMaskEditingPreview(false) }
+        #if DEBUG
+        .task(id: "scene-\(panel.rawValue)-\(debugSourceID)") {
+            guard panel == .debug,let image=session.result?.image else{return}
+            debugScene=nil
+            do {
+                let scene=try await DebugSceneAnalyzer.shared.analyze(image)
+                if !Task.isCancelled {debugScene=scene}
+            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
+        }
+        .task(id: debugRenderID) {
+            guard panel == .debug,let image=session.result?.image else{return}
+            let request=debugRenderID
+            debugA=nil;debugB=nil;debugHistA=nil;debugHistB=nil
+            debugWorking=true;debugError=nil
+            defer {if debugRenderID == request {debugWorking=false}}
+            do {
+                let a=try await DebugAdaptiveToneLab.shared.render(image,variant:debugVariantA,amount:debugAmount,scene:debugScene)
+                guard !Task.isCancelled,debugRenderID == request else{return}
+                debugA=a;debugHistA=Histogram.compute(a.image)
+                let b=try await DebugAdaptiveToneLab.shared.render(image,variant:debugVariantB,amount:debugAmount,scene:debugScene)
+                guard !Task.isCancelled,debugRenderID == request else{return}
+                debugB=b;debugHistB=Histogram.compute(b.image)
+            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
+        }
+        .task(id: "map-\(panel.rawValue)-\(debugSourceID)-\(debugOverlay)-\(debugScene != nil)-\(debugB != nil)") {
+            debugMapOverlay=nil
+            guard panel == .debug,let image=session.result?.image,let scene=debugScene else{return}
+            do {
+                let map:CGImage
+                switch debugOverlay {
+                case "Phase 4 Spatial map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.spatial)
+                case "Phase 4 Semantic map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.semantic)
+                case "Phase 4 Combined map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.combined)
+                case "Gain map B":
+                    guard let output=debugB?.image else{return}
+                    map=try await DebugAdaptiveToneLab.shared.gainOverlay(image,output)
+                default:return
+                }
+                if !Task.isCancelled,panel == .debug {debugMapOverlay=map}
+            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
+        }
+        .task(id: "halo-\(panel.rawValue)-\(debugSourceID)-\(debugB.map { ObjectIdentifier($0.image) }.map(String.init(describing:)) ?? "none")-\(debugScene != nil)") {
+            debugHalo=nil
+            guard panel == .debug,let image=session.result?.image,let output=debugB?.image else{return}
+            do {
+                let diagnostic=try await DebugHaloAnalyzer.shared.analyze(original:image,processed:output,scene:debugScene)
+                if !Task.isCancelled,panel == .debug {debugHalo=diagnostic}
+            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
+        }
+        #endif
         .onChange(of: scenePhase) { _, phase in if phase != .active { session.flush() } }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in session.memoryWarning() }
     }
@@ -504,6 +603,12 @@ struct EditorView: View {
             PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
         case .help:
             EditorHelpView()
+        #if DEBUG
+        case .debug:
+            DebugLabControls(a:$debugVariantA,b:$debugVariantB,amount:$debugAmount,mode:$debugMode,
+                             histogramSide:$debugHistogramSide,overlay:$debugOverlay,haloLayer:$debugHaloLayer,scene:debugScene,
+                             outputA:debugA,outputB:debugB,halo:debugHalo,working:debugWorking,error:debugError)
+        #endif
         case .light, .color:
             controls
         }

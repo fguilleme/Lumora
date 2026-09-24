@@ -80,6 +80,8 @@ Film Emulation propose sept types originaux. Silver B&W propose sept réponses s
 
 **Adaptive Tone — recherche hors production** : l'essai du contrôle manuel sur iPhone a révélé un blocage de l'interface pour un gain visuel faible ; le contrôle et son rendu ont été retirés. Voir le [rapport de retrait](AdaptiveToneRemovalReport.md). Les prototypes des phases 1–5 et les artefacts de validation Phase 6 restent dans l'espace de travail de recherche, hors de l'application.
 
+**Debug Lab Adaptive Tone** : une interface de comparaison temporaire, compilée uniquement en Debug, permet de confronter les prototypes archivés et d'inspecter les cartes Vision/Scene Analysis. Le mode Halo Map superpose les écarts lumineux positifs et négatifs, les contours forts, les halos suspects et les anomalies de bord ; il affiche aussi les mesures de modification par variante, sans modifier le rendu. Elle n'écrit aucun réglage dans le document et ne fait pas partie de l'application Release. Voir le [rapport du laboratoire](AdaptiveToneDebugLabReport.md), le [diagnostic halos et destructivité](DebugLab/HaloAndDestructivenessValidationReport.md) et les [planches de comparaison](DebugLab/).
+
 Color Grading Presets : **16 presets**, **876 PASS / 29 WARN / 0 FAIL**, 106 tests Core, tests UI iPhone/iPad et 126 comparaisons de rendu manuel/Creative FX réussis. Les WARN restent à inspecter ; aucun tuning automatique. [Bilan et limites](Documentation/ColorGradingPresetsValidation.md).
 
 Les contrôles d’interface couvrent également les poignées de masque sous zoom, la navigation séparée du pinceau, le rendu différé dans Masques, les informations contextuelles et les actions Creative directes. Les tests de rendu des effets restent indépendants de ces changements d’éditeur.
