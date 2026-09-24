@@ -1,6 +1,68 @@
 import XCTest
 
 final class LandscapeEditorUITests: XCTestCase {
+    @MainActor func testLandscapeControlsAndFullWidthBottomTabs() throws {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing-landscape", "-AppleLanguages", "(en)"]
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").firstMatch
+            XCTAssertTrue(photo.waitForExistence(timeout: 20))
+            photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+
+        let tabs = app.scrollViews["tools-toolbar"]
+        let controls = app.descendants(matching: .any).matching(identifier: "editor-controls-column").firstMatch
+        XCTAssertTrue(tabs.waitForExistence(timeout: 10))
+        XCTAssertTrue(controls.exists)
+        XCTAssertLessThanOrEqual(tabs.frame.minX, app.frame.minX + 2)
+        XCTAssertGreaterThanOrEqual(tabs.frame.maxX, app.frame.maxX - 50)
+        XCTAssertGreaterThanOrEqual(tabs.frame.minY, max(canvas.frame.maxY, controls.frame.maxY) - 2)
+        XCTAssertGreaterThanOrEqual(controls.frame.width, 420)
+
+        selectPanel("Creative", in: app)
+        for identifier in ["creative-add", "creative-presets"] {
+            let button = app.buttons[identifier]
+            XCTAssertTrue(button.isHittable, identifier)
+            XCTAssertLessThanOrEqual(button.frame.maxX, controls.frame.maxX + 2, identifier)
+        }
+        let previewToggle = app.switches["creative-preview-toggle"]
+        XCTAssertTrue(previewToggle.isHittable)
+        XCTAssertLessThanOrEqual(previewToggle.frame.maxX, controls.frame.maxX + 2)
+        capture("creative_full_width_bottom_tabs", app)
+        XCUIDevice.shared.orientation = .portrait
+    }
+
+    @MainActor func testFrenchCreativeActionsFitInLandscape() throws {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let app = XCUIApplication()
+        app.launchArguments += ["-ui-testing-landscape", "-AppleLanguages", "(fr)", "-AppleLocale", "fr_FR"]
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").firstMatch
+            XCTAssertTrue(photo.waitForExistence(timeout: 20))
+            photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        app.buttons["editor-tab-Creative"].tap()
+        let controls = app.descendants(matching: .any).matching(identifier: "editor-controls-column").firstMatch
+        for identifier in ["creative-add", "creative-presets", "creative-preview-toggle"] {
+            let element = app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+            XCTAssertTrue(element.isHittable, identifier)
+            XCTAssertLessThanOrEqual(element.frame.maxX, controls.frame.maxX + 2, identifier)
+        }
+        capture("creative_french_landscape", app)
+        XCUIDevice.shared.orientation = .portrait
+    }
+
     @MainActor func testLandscapeCreativePanel() throws {
         continueAfterFailure = false
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -96,7 +158,8 @@ final class LandscapeEditorUITests: XCTestCase {
         if side.value as? String == "Trailing" { side.tap() }
         XCTAssertEqual(side.value as? String, "Leading")
         XCTAssertLessThan(controls.frame.midX, canvas.frame.midX)
-        XCTAssertGreaterThan(canvas.frame.width, controls.frame.width)
+        XCTAssertGreaterThanOrEqual(controls.frame.width, 420)
+        XCTAssertGreaterThanOrEqual(canvas.frame.width, 220)
         XCTAssertGreaterThan(canvas.frame.height, 180)
         print("LANDSCAPE_FRAME", canvas.frame, "CONTROLS_FRAME", controls.frame)
         capture("controls_leading", app)
@@ -159,15 +222,20 @@ final class LandscapeEditorUITests: XCTestCase {
     @MainActor private func selectPanel(_ name: String, in app: XCUIApplication) {
         let tools = app.scrollViews["tools-toolbar"]
         let target = app.buttons[name]
-        for _ in 0..<12 where !target.isHittable {
+        func visible() -> Bool {
+            guard target.exists else { return false }
+            let intersection = target.frame.intersection(tools.frame.insetBy(dx: 24, dy: 0))
+            return !intersection.isNull && intersection.width >= 24
+        }
+        for _ in 0..<12 where !visible() {
             tools.coordinate(withNormalizedOffset: CGVector(dx: 0.78, dy: 0.5))
                 .press(forDuration: 0.15, thenDragTo: tools.coordinate(withNormalizedOffset: CGVector(dx: 0.24, dy: 0.5)))
         }
-        for _ in 0..<12 where !target.isHittable {
+        for _ in 0..<12 where !visible() {
             tools.coordinate(withNormalizedOffset: CGVector(dx: 0.24, dy: 0.5))
                 .press(forDuration: 0.15, thenDragTo: tools.coordinate(withNormalizedOffset: CGVector(dx: 0.78, dy: 0.5)))
         }
-        XCTAssertTrue(target.isHittable, "Panneau inaccessible : \(name)")
+        XCTAssertTrue(visible(), "Panneau inaccessible : \(name)")
         target.tap()
     }
 

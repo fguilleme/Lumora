@@ -1,6 +1,6 @@
 # In-app editor help
 
-The **Help** tab follows **Presets** in the editor toolbar, both in portrait and in the landscape controls column. It covers all eleven editing tabs. Selecting a topic opens a scrollable reading sheet with that tab’s controls, gestures, and interactions; **Close** returns to the topic list. The guide is bundled with the app and works offline.
+The **Help** tab follows **Presets** in the full-width bottom editor toolbar, in portrait and landscape. Landscape controls occupy a side column above that toolbar. It covers all eleven editing tabs. Selecting a topic opens a scrollable reading sheet with that tab’s controls, gestures, and interactions; **Close** returns to the topic list. The guide is bundled with the app and works offline.
 
 Topics are **Creative**, **Light**, **Color**, **Curves**, **Color Tools**, **Effects**, **Detail**, **Optics**, **Geometry**, **Masks**, and **Presets**. Their content lives in `Lumora/UI/EditorHelpView.swift`, alongside the interface labels. Update the relevant topic when a control is renamed, added, or removed.
 

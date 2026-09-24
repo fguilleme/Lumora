@@ -99,10 +99,11 @@ struct EditorView: View {
             if let result = session.result {
                 GeometryReader { available in
                     let landscape = available.size.width > available.size.height
-                    EditorWorkspaceLayout(landscape: landscape,
-                                          controlsSide: controlsSideRaw,
-                                          direction: layoutDirection,
-                                          portraitControlsHeight: 252 + 56 + (showsPhotoInformation ? 28 : 0)) {
+                    VStack(spacing: 0) {
+                        EditorWorkspaceLayout(landscape: landscape,
+                                              controlsSide: controlsSideRaw,
+                                              direction: layoutDirection,
+                                              portraitControlsHeight: 252 + (showsPhotoInformation ? 28 : 0)) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
                                 // Test-only accessibility counter: proves the photo overlay
@@ -178,6 +179,9 @@ struct EditorView: View {
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
+                        }
+                        .frame(maxHeight: .infinity)
+                        if landscape { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
@@ -327,7 +331,6 @@ struct EditorView: View {
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
         VStack(spacing: 0) {
-            if landscape { landscapeToolbar }
             if showsPhotoInformation { photoInformation(result) }
             editorControls(result)
                 .environment(\.usesSideControlLayout, landscape)
@@ -335,7 +338,6 @@ struct EditorView: View {
                 .frame(maxHeight: landscape ? .infinity : nil)
                 .background(.black)
                 .clipped()
-            if !landscape { toolBar.dimsDuringAdjustment() }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.black)
@@ -359,8 +361,8 @@ struct EditorView: View {
     }
 
     private var landscapeToolbar: some View {
-        HStack(spacing: 0) {
-            toolBar
+        ZStack(alignment: .trailing) {
+            toolBar(trailingInset: 56)
             Button {
                 controlsSideRaw = controlsSide == .leading
                     ? ControlsSide.trailing.rawValue : ControlsSide.leading.rawValue
@@ -372,9 +374,11 @@ struct EditorView: View {
             .accessibilityLabel("Switch controls side")
             .accessibilityValue(controlsSide == .leading ? "Leading" : "Trailing")
             .accessibilityIdentifier("controls-side-switch")
-            .padding(.trailing, 4)
+            .padding(.trailing, 6)
+            .background(.black)
         }
         .frame(height: 56)
+        .frame(maxWidth: .infinity)
         .dimsDuringAdjustment()
     }
 
@@ -629,7 +633,7 @@ struct EditorView: View {
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }
     }
-    private var toolBar: some View {
+    private func toolBar(trailingInset: CGFloat = 0) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
                 ForEach(Panel.allCases, id: \.self) { item in
@@ -640,11 +644,14 @@ struct EditorView: View {
                             .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
                     }.foregroundStyle(panel == item ? .mint : .secondary)
                         .accessibilityAddTraits(panel == item ? .isSelected : [])
+                        .accessibilityIdentifier("editor-tab-\(item.rawValue)")
                 }
             }
+            .padding(.leading, 12)
+            .padding(.trailing, 12 + trailingInset)
         }
         .accessibilityIdentifier("tools-toolbar")
-        .padding(.horizontal, 12).padding(.vertical, 6).background(.black.opacity(0.3))
+        .padding(.vertical, 6).background(.black.opacity(0.3))
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
@@ -715,7 +722,9 @@ private struct EditorWorkspaceLayout: Layout {
                        subviews: Subviews, cache: inout ()) {
         guard subviews.count == 2 else { return }
         if landscape {
-            let controlsWidth = min(340, max(248, bounds.width * 0.35))
+            let desiredControlsWidth = min(640, max(460, bounds.width * 0.47))
+            let minimumPhotoWidth = min(220, bounds.width * 0.32)
+            let controlsWidth = min(desiredControlsWidth, max(0, bounds.width - minimumPhotoWidth))
             let photoWidth = max(0, bounds.width - controlsWidth)
             let leadingIsLeft = direction == .leftToRight
             let controlsOnLeft = (controlsSide != "trailing") == leadingIsLeft

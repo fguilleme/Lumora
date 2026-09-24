@@ -3,6 +3,7 @@ import SwiftUI
 struct CreativeEffectsView: View {
     @Bindable var session: EditorSession
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.usesSideControlLayout) private var usesSideControlLayout
     @Binding var selected: UUID?
     @State private var advanced = false
     @State private var showsTile = false
@@ -11,6 +12,20 @@ struct CreativeEffectsView: View {
     @State private var showsLab = false
     #endif
     private var effect: CreativeEffect? { session.state.creative.effects.first { $0.id == selected } }
+    @ViewBuilder private var previewActions: some View {
+        if !dynamicTypeSize.isAccessibilitySize {
+            Text("FX").font(.caption).foregroundStyle(.secondary)
+        }
+        Toggle("FX", isOn: Binding(get: { !session.bypassCreative }, set: { session.setCreativeBypass(!$0) }))
+            .labelsHidden().accessibilityLabel("Enable Creative preview")
+            .accessibilityIdentifier("creative-preview-toggle")
+        Button { session.finishInteraction(); showsTile = true } label: {
+            if dynamicTypeSize.isAccessibilitySize {
+                Image(systemName: "viewfinder").frame(width: 44, height: 44)
+            } else { Text("100 %") }
+        }
+        .accessibilityLabel("Creative detail at native resolution")
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
@@ -55,18 +70,12 @@ struct CreativeEffectsView: View {
                     } label: { Label("Presets", systemImage: "sparkles").fixedSize(horizontal: true, vertical: false) }
                     .accessibilityIdentifier("creative-presets")
                     Spacer()
-                    if !dynamicTypeSize.isAccessibilitySize {
-                        Text("FX").font(.caption).foregroundStyle(.secondary)
-                    }
-                    Toggle("FX", isOn: Binding(get: { !session.bypassCreative }, set: { session.setCreativeBypass(!$0) }))
-                        .labelsHidden().accessibilityLabel("Enable Creative preview")
-                    Button { session.finishInteraction(); showsTile = true } label: {
-                        if dynamicTypeSize.isAccessibilitySize {
-                            Image(systemName: "viewfinder").frame(width: 44, height: 44)
-                        } else { Text("100 %") }
-                    }
-                        .accessibilityLabel("Creative detail at native resolution")
+                    if !usesSideControlLayout { previewActions }
                 }.dimsDuringAdjustment()
+                if usesSideControlLayout {
+                    HStack { Spacer(minLength: 0); previewActions }
+                        .dimsDuringAdjustment()
+                }
                 HStack(spacing: 8) {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
