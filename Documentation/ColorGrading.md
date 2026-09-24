@@ -2,7 +2,7 @@
 
 ## Utilisation
 
-Faire défiler la barre inférieure jusqu’à **Colorimétrie**, puis ouvrir le sous-onglet **Grading**. Le sélecteur tonal choisit **Ombres**, **Tons moyens** ou **Hautes lumières** et une roue unique édite la zone active. Glisser dans la roue choisit la teinte par l’angle et l’intensité par la distance au centre. Le centre retire la coloration en conservant la teinte choisie pour le prochain geste.
+Faire défiler la barre inférieure jusqu’à **Colorimétrie**, puis ouvrir le sous-onglet **Grading**. Le sélecteur tonal choisit **Ombres**, **Tons moyens** ou **Hautes lumières** et une roue unique, centrée dans le panneau, édite la zone active. Le nom de la zone et les valeurs Teinte/Saturation apparaissent sous la roue. Glisser dans la roue choisit la teinte par l’angle et l’intensité par la distance au centre. Le centre retire la coloration en conservant la teinte choisie pour le prochain geste.
 
 Changer de zone dans le sélecteur ne modifie pas ses réglages. Le curseur **Luminance** et le reset concernent uniquement la zone affichée. Déplier **Teinte et saturation précises** pour accéder aux deux curseurs numériques. La roue dispose aussi d’actions VoiceOver ; le composant `ColorWheel` reste indépendant de l’éditeur.
 

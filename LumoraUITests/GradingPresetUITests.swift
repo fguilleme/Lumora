@@ -1,6 +1,38 @@
 import XCTest
 
 final class GradingPresetUITests:XCTestCase {
+    @MainActor func testWheelAndLabelsAreCenteredWithoutOverlap() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication(); app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").element(boundBy: 1)
+            XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        let tools = app.scrollViews["tools-toolbar"]
+        for _ in 0..<8 where !app.buttons["Color Tools"].isHittable { tools.swipeLeft() }
+        app.buttons["Color Tools"].tap()
+        app.buttons["Grading"].tap()
+        let content = app.descendants(matching: .any).matching(identifier: "grading-content").firstMatch
+        let wheel = app.descendants(matching: .any).matching(identifier: "grading-wheel").firstMatch
+        let info = app.descendants(matching: .any).matching(identifier: "grading-wheel-info").firstMatch
+        XCTAssertTrue(content.waitForExistence(timeout: 5))
+        XCTAssertTrue(wheel.waitForExistence(timeout: 5))
+        XCTAssertTrue(info.waitForExistence(timeout: 5))
+        func checkLayout() {
+            XCTAssertEqual(wheel.frame.midX, content.frame.midX, accuracy: 2,
+                           "wheel \(wheel.frame), content \(content.frame)")
+            XCTAssertGreaterThanOrEqual(info.frame.minY, wheel.frame.maxY - 2)
+            XCTAssertEqual(info.frame.midX, wheel.frame.midX, accuracy: 2)
+        }
+        checkLayout()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        checkLayout()
+        XCUIDevice.shared.orientation = .portrait
+    }
+
     @MainActor func testPresetsCustomHistoryPersistenceAndRapidSwitching() throws {
         continueAfterFailure=false
         let app=XCUIApplication();app.launch()

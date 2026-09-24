@@ -23,7 +23,8 @@ struct ColorGradingView: View {
             .onChange(of: selected) { _, _ in onEnd() }
             .dimsDuringAdjustment()
 
-            HStack(spacing: 10) {
+            HStack {
+                Spacer(minLength: 0)
                 ColorWheel(hue: grading[selected].hue, saturation: grading[selected].saturation,
                            title: selected.title, identifier: "grading-wheel", selected: true,
                            onBegin: { onBegin("Grading · \(selected.title)") },
@@ -34,14 +35,20 @@ struct ColorGradingView: View {
                            }, onEnd: onEnd)
                     .frame(width: 128, height: 128)
                     .dimsDuringAdjustment()
-                VStack(alignment: .leading, spacing: 2) {
+                Spacer(minLength: 0)
+            }
+            HStack(spacing: 0) {
+                Color.clear.frame(width: 44, height: 44).allowsHitTesting(false)
+                VStack(spacing: 2) {
                     Text(selected.title).font(.subheadline.weight(.semibold))
                     Text(String(format: NSLocalizedString("Hue %d°", comment: "Color grading"), Int(grading[selected].hue)))
                     Text(String(format: NSLocalizedString("Saturation %d", comment: "Color grading"), Int(grading[selected].saturation)))
                 }
                 .font(.caption).foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("grading-wheel-info")
                 .dimsDuringAdjustment()
-                Spacer()
                 Button {
                     onEnd(); var updated = grading; updated[selected] = GradingWheel(); onChange(updated)
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
@@ -80,6 +87,11 @@ struct ColorGradingView: View {
                              }, onEnd: onEnd, onReset: {
                                  onEnd(); var updated = grading; updated.balance = 0; onChange(updated)
                              })
-        }.padding(.horizontal, 14).padding(.bottom, 8).onDisappear(perform: onEnd)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 14).padding(.bottom, 8)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("grading-content")
+        .onDisappear(perform: onEnd)
     }
 }
