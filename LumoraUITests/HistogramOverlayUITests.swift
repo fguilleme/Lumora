@@ -25,8 +25,8 @@ final class HistogramOverlayUITests: XCTestCase {
             XCTAssertFalse(app.images["clipping-warning-overlay"].exists)
             overlay.press(forDuration: 1.0)
             expectedActivations += 1
-            XCTAssertTrue((overlay.value as? String)?.contains("Activations clipping : \(expectedActivations).") == true,
-                          "The mask should be ready during the press")
+            XCTAssertTrue((overlay.value as? String)?.contains("Clipping activations: \(expectedActivations).") == true,
+                          "The mask should be ready during the press; value: \(overlay.value ?? "nil")")
             XCTAssertFalse(app.images["clipping-warning-overlay"].exists,
                            "The overlay should disappear on release")
             XCTAssertEqual(overlay.label, label, "A long press must not trigger a tap")
@@ -68,6 +68,54 @@ final class HistogramOverlayUITests: XCTestCase {
         overlay.tap()
         XCTAssertEqual(overlay.label, "Expand RGB histogram")
         XCTAssertEqual(canvas.frame.height, photoHeight, accuracy: 1)
+    }
+
+    @MainActor func testLandscapeHistogramAnchorsAndCanBeMoved() throws {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)"]
+        app.launch()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        if !canvas.waitForExistence(timeout: 5) {
+            app.buttons["Photos"].tap()
+            let photo = app.images.matching(identifier: "PXGGridLayout-Info").firstMatch
+            XCTAssertTrue(photo.waitForExistence(timeout: 20))
+            photo.tap()
+            XCTAssertTrue(canvas.waitForExistence(timeout: 30))
+        }
+        let overlay = app.buttons["histogram-overlay"]
+        XCTAssertTrue(overlay.waitForExistence(timeout: 10))
+        XCTAssertLessThan(overlay.frame.midX, canvas.frame.midX,
+                          "The compact histogram should start on the photo's left side")
+
+        overlay.tap()
+        XCTAssertEqual(overlay.label, "Collapse RGB histogram")
+        XCTAssertEqual(overlay.frame.midX, canvas.frame.midX, accuracy: 3,
+                       "The expanded histogram should be centered over the photo")
+        let original = overlay.frame
+        let start = overlay.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 45, dy: -25)))
+        XCTAssertEqual(overlay.label, "Collapse RGB histogram", "Dragging must not toggle the size")
+        XCTAssertGreaterThan(overlay.frame.midX, original.midX + 20)
+        XCTAssertLessThan(overlay.frame.midY, original.midY - 3)
+        XCTAssertGreaterThanOrEqual(overlay.frame.minX, canvas.frame.minX - 1)
+        XCTAssertLessThanOrEqual(overlay.frame.maxX, canvas.frame.maxX + 1)
+        let movedCenter = overlay.frame.midX
+        capture("Moved expanded histogram in landscape", in: app)
+
+        overlay.tap()
+        XCTAssertEqual(overlay.label, "Expand RGB histogram")
+        let compactCenter = overlay.frame.midX
+        let compactStart = overlay.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        compactStart.press(forDuration: 0.05,
+                           thenDragTo: compactStart.withOffset(CGVector(dx: 35, dy: 0)))
+        XCTAssertEqual(overlay.label, "Expand RGB histogram")
+        XCTAssertGreaterThan(overlay.frame.midX, compactCenter + 10)
+        overlay.tap()
+        XCTAssertEqual(overlay.frame.midX, movedCenter, accuracy: 3,
+                       "The expanded position should survive a size toggle")
     }
 
     @MainActor private func capture(_ name: String, in app: XCUIApplication) {

@@ -660,3 +660,5 @@
 "Sample %d %%" = "Sample %d %%";
 "%@ curve" = "%@ curve";
 "Reset %@ curve" = "Reset %@ curve";
+"Double-tap to collapse. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Double-tap to collapse. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red.";
+"Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red.";

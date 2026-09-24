@@ -154,7 +154,6 @@ struct EditorView: View {
                     .overlay {
                         HistogramView(histogram: result.histogram,
                                       imageSize: CGSize(width: result.image.width, height: result.image.height),
-                                      compactLandscape: landscape,
                                       diagnosticActivationCount: ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") ? clippingActivationCount : nil,
                                       onClippingPressChanged: { active in
                                           setClippingPress(active, image: result.image)
@@ -170,8 +169,7 @@ struct EditorView: View {
                                                (debugMapOverlay ?? debugScene?.overlays[debugOverlay]))
                             .overlay {
                                 HistogramView(histogram:debugHistogramSide == "A" ? (debugHistA ?? result.histogram) : (debugHistB ?? result.histogram),
-                                              imageSize:CGSize(width:result.image.width,height:result.image.height),
-                                              compactLandscape:landscape)
+                                              imageSize:CGSize(width:result.image.width,height:result.image.height))
                             }
                         }
                     }
