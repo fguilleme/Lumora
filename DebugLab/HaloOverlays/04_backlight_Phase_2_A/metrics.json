@@ -1,0 +1,75 @@
+{
+  "bottom" : {
+    "edgeMeanAbsoluteY" : 0.019243135573384584,
+    "excess" : -0.0012321349777713935,
+    "innerMeanAbsoluteY" : 0.02047527055115598,
+    "signedEdgeY" : 0.019243135573384584
+  },
+  "brightHaloBands" : 270,
+  "brightHaloCount" : 12402,
+  "brightHaloFraction" : 0.27349107989503163,
+  "changed10" : 0.18102723508418742,
+  "changed2" : 0.7443894125183016,
+  "changed20" : 0.14787272373718888,
+  "changed5" : 0.21378139870058566,
+  "darkHaloBands" : 263,
+  "darkHaloCount" : 17111,
+  "darkHaloFraction" : 0.37733477407546256,
+  "diagnosisConfidence" : "low",
+  "edgeEnhancementCount" : 2313,
+  "height" : 1024,
+  "highlights" : {
+    "meanAbsoluteChroma" : 0.00359015401398173,
+    "meanAbsoluteY" : 0.25285931187451594,
+    "meanSignedY" : -0.25285753796924987,
+    "pixels" : 134585
+  },
+  "introducedHighlightClipping" : 0,
+  "introducedShadowClipping" : 0,
+  "largestBandPixels" : 941,
+  "left" : {
+    "edgeMeanAbsoluteY" : 0.03407167970680352,
+    "excess" : 0.0016042818852298637,
+    "innerMeanAbsoluteY" : 0.03246739782157365,
+    "signedEdgeY" : 0.021258642405363827
+  },
+  "leftRightExcessAsymmetry" : 0.009026094935952678,
+  "meanAbsoluteChroma" : 0.009227696378597447,
+  "meanAbsoluteLocalContrastChange" : 0.006936952881978777,
+  "meanAbsoluteY" : 0.07164589068947608,
+  "meanSignedLocalContrastChange" : -0.0029221116461127204,
+  "midtones" : {
+    "meanAbsoluteChroma" : 0.0004399270463355699,
+    "meanAbsoluteY" : 0.010785615701251132,
+    "meanSignedY" : -0.007048123082317042,
+    "pixels" : 166849
+  },
+  "p95AbsoluteChroma" : 0.022222222222222223,
+  "p95AbsoluteY" : 0.3094017094017094,
+  "right" : {
+    "edgeMeanAbsoluteY" : 0.06344739436561546,
+    "excess" : -0.007421813050722815,
+    "innerMeanAbsoluteY" : 0.07086920741633827,
+    "signedEdgeY" : -0.0404525854038557
+  },
+  "shadows" : {
+    "meanAbsoluteChroma" : 0.014818636036699999,
+    "meanAbsoluteY" : 0.0358779647558895,
+    "meanSignedY" : 0.0358779647558895,
+    "pixels" : 397958
+  },
+  "strongEdgeCount" : 45347,
+  "subjectSource" : "unavailable",
+  "suspectedCause" : "Local reconstruction or filter response; compare variants to isolate stage",
+  "top" : {
+    "edgeMeanAbsoluteY" : 2.1808916986617927e-06,
+    "excess" : 2.1808916986617927e-06,
+    "innerMeanAbsoluteY" : 0,
+    "signedEdgeY" : 2.1808916986617927e-06
+  },
+  "topBottomExcessAsymmetry" : 0.0012343158694700554,
+  "width" : 683,
+  "worstResidual" : 0.324484720826149,
+  "worstX" : 502,
+  "worstY" : 679
+}

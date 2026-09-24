@@ -1,0 +1,75 @@
+{
+  "bottom" : {
+    "edgeMeanAbsoluteY" : 0.0018395493423469592,
+    "excess" : 0.000934117363517409,
+    "innerMeanAbsoluteY" : 0.0009054319788295501,
+    "signedEdgeY" : -0.0007065160529877931
+  },
+  "brightHaloBands" : 731,
+  "brightHaloCount" : 38021,
+  "brightHaloFraction" : 0.32065208224399955,
+  "changed10" : 0.12952739113951472,
+  "changed2" : 0.28008726440641246,
+  "changed20" : 0.07726521880415944,
+  "changed5" : 0.16017486730935876,
+  "darkHaloBands" : 571,
+  "darkHaloCount" : 40692,
+  "darkHaloFraction" : 0.34317809975205354,
+  "diagnosisConfidence" : "low",
+  "edgeEnhancementCount" : 5119,
+  "height" : 1024,
+  "highlights" : {
+    "meanAbsoluteChroma" : 0.00032516961707593163,
+    "meanAbsoluteY" : 0.19001239138379783,
+    "meanSignedY" : -0.1900116588703971,
+    "pixels" : 87630
+  },
+  "introducedHighlightClipping" : 0,
+  "introducedShadowClipping" : 0,
+  "largestBandPixels" : 1837,
+  "left" : {
+    "edgeMeanAbsoluteY" : 0.17485351859371157,
+    "excess" : 0.07630110473783701,
+    "innerMeanAbsoluteY" : 0.09855241385587457,
+    "signedEdgeY" : -0.17482344963698296
+  },
+  "leftRightExcessAsymmetry" : 0.07469860945816122,
+  "meanAbsoluteChroma" : 0.0008690975958224482,
+  "meanAbsoluteLocalContrastChange" : 0.014960864034238415,
+  "meanAbsoluteY" : 0.03538294802413347,
+  "meanSignedLocalContrastChange" : -0.014166046101842007,
+  "midtones" : {
+    "meanAbsoluteChroma" : 0.00012172134434247877,
+    "meanAbsoluteY" : 0.006418887060462394,
+    "meanSignedY" : -0.00541836509736996,
+    "pixels" : 464534
+  },
+  "p95AbsoluteChroma" : 0.00463980463980464,
+  "p95AbsoluteY" : 0.2354090354090354,
+  "right" : {
+    "edgeMeanAbsoluteY" : 0.0358294448818372,
+    "excess" : 0.0016024952796757919,
+    "innerMeanAbsoluteY" : 0.03422694960216141,
+    "signedEdgeY" : -0.03163756469237059
+  },
+  "shadows" : {
+    "meanAbsoluteChroma" : 0.01107605882999069,
+    "meanAbsoluteY" : 0.03291714754048629,
+    "meanSignedY" : 0.03291214679145097,
+    "pixels" : 38684
+  },
+  "strongEdgeCount" : 118574,
+  "subjectSource" : "unavailable",
+  "suspectedCause" : "Border-localized difference; scene content or boundary processing not isolated",
+  "top" : {
+    "edgeMeanAbsoluteY" : 0.02211049445939038,
+    "excess" : 0.0014436350943962354,
+    "innerMeanAbsoluteY" : 0.020666859364994145,
+    "signedEdgeY" : -0.016203308659412236
+  },
+  "topBottomExcessAsymmetry" : 0.0005095177308788263,
+  "width" : 577,
+  "worstResidual" : 0.3240390419960022,
+  "worstX" : 224,
+  "worstY" : 106
+}

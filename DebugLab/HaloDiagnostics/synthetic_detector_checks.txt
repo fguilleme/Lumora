@@ -1,0 +1,7 @@
+identity mean 0.0 bright 0 dark 0 enhance 0 L/R 0.0
+global monotone mean 0.02436911314725876 bright 0 dark 0 enhance 0 L/R 0.0
+bright halo mean 0.0015726475976407528 bright 208 dark 0 enhance 0 L/R 0.0
+dark halo mean 0.0016019097529351711 bright 0 dark 208 enhance 0 L/R 0.0
+edge contrast mean 0.0004857315798290074 bright 0 dark 0 enhance 0 L/R 0.0
+broad edge contrast mean 0.0019047344103455544 bright 0 dark 0 enhance 208 L/R 0.0
+left border mean 0.0015188171528279781 bright 0 dark 0 enhance 0 L/R 0.0486021488904953
