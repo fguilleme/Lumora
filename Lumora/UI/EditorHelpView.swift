@@ -10,7 +10,7 @@ struct EditorHelpView: View {
                 Text("Help")
                     .font(.title3.weight(.semibold))
                     .padding(.bottom, 2)
-                Text("Choose a tab to learn its controls and gestures. Help does not change the photo.")
+                Text("Start with common gestures, then choose a tab to learn its controls. Help does not change the photo.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -108,11 +108,12 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case creative, light, color, curves, colorTools, effects, detail, optics, geometry, masks, presets
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, optics, geometry, masks, presets
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .commonGestures: String(localized: "Common gestures")
         case .creative: "Creative"
         case .light: String(localized: "Light")
         case .color: String(localized: "Color")
@@ -129,6 +130,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
 
     var symbol: String {
         switch self {
+        case .commonGestures: "hand.draw"
         case .creative: "sparkles"
         case .light: "sun.max"
         case .color: "slider.horizontal.3"
@@ -145,6 +147,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
 
     var summary: String {
         switch self {
+        case .commonGestures: "Tap, hold, zoom, and use the histogram"
         case .creative: "Photographic effects and looks in a stack"
         case .light: "Exposure and tonal balance"
         case .color: "White balance and color intensity"
@@ -161,6 +164,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
 
     var introduction: String {
         switch self {
+        case .commonGestures: "These gestures work directly on the photo and its floating histogram. A tool such as the mask brush or curve eyedropper may temporarily use the same area for its own action."
         case .creative: "Creative combines independent effects. Each has its own settings, and its position in the stack changes the result. Built-in looks are editable starting points."
         case .light: "Light controls the overall tonal balance, or that of the selected mask. Start with exposure, protect highlights, then refine shadows, whites, and blacks."
         case .color: "Color controls color cast and intensity. Careful white balance preserves the mood of a deliberately warm or cool scene."
@@ -177,6 +181,21 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
 
     var sections: [HelpSection] {
         switch self {
+        case .commonGestures:
+            return [
+                HelpSection("On the photo", [
+                    HelpItem("Short tap", "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor."),
+                    HelpItem("Double-tap", "Double-tap the photo to reset its zoom and position."),
+                    HelpItem("Touch and hold", "Hold a finger on the photo to compare with the original. Release to return to the edited preview."),
+                    HelpItem("Pinch and pan", "Pinch to zoom in or out. When zoomed in, drag the photo to inspect another area.")
+                ]),
+                HelpSection("On the histogram", [
+                    HelpItem("Short tap on histogram", "Tap the floating histogram to switch between compact and expanded views. A tap on its clipping indicators also changes the view."),
+                    HelpItem("Touch and hold histogram", "Hold the histogram to show near-black areas in blue and near-white areas in red on the SDR preview. Release to hide this temporary overlay."),
+                    HelpItem("Drag histogram", "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately."),
+                    HelpItem("Placement", "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it.")
+                ])
+            ]
         case .creative:
             return [
                 HelpSection("Build an effect stack", [

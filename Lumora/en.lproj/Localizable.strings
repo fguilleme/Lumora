@@ -664,3 +664,26 @@
 "Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red.";
 "Full-screen photo" = "Full-screen photo";
 "Tap to return to the editor" = "Tap to return to the editor";
+/* Common gestures help */
+"Start with common gestures, then choose a tab to learn its controls. Help does not change the photo." = "Start with common gestures, then choose a tab to learn its controls. Help does not change the photo.";
+"Common gestures" = "Common gestures";
+"Tap, hold, zoom, and use the histogram" = "Tap, hold, zoom, and use the histogram";
+"These gestures work directly on the photo and its floating histogram. A tool such as the mask brush or curve eyedropper may temporarily use the same area for its own action." = "These gestures work directly on the photo and its floating histogram. A tool such as the mask brush or curve eyedropper may temporarily use the same area for its own action.";
+"On the photo" = "On the photo";
+"Short tap" = "Short tap";
+"Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor." = "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor.";
+"Double-tap" = "Double-tap";
+"Double-tap the photo to reset its zoom and position." = "Double-tap the photo to reset its zoom and position.";
+"Touch and hold" = "Touch and hold";
+"Hold a finger on the photo to compare with the original. Release to return to the edited preview." = "Hold a finger on the photo to compare with the original. Release to return to the edited preview.";
+"Pinch and pan" = "Pinch and pan";
+"Pinch to zoom in or out. When zoomed in, drag the photo to inspect another area." = "Pinch to zoom in or out. When zoomed in, drag the photo to inspect another area.";
+"On the histogram" = "On the histogram";
+"Short tap on histogram" = "Short tap on histogram";
+"Tap the floating histogram to switch between compact and expanded views. A tap on its clipping indicators also changes the view." = "Tap the floating histogram to switch between compact and expanded views. A tap on its clipping indicators also changes the view.";
+"Touch and hold histogram" = "Touch and hold histogram";
+"Hold the histogram to show near-black areas in blue and near-white areas in red on the SDR preview. Release to hide this temporary overlay." = "Hold the histogram to show near-black areas in blue and near-white areas in red on the SDR preview. Release to hide this temporary overlay.";
+"Drag histogram" = "Drag histogram";
+"Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately." = "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately.";
+"Placement" = "Placement";
+"By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it." = "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it.";

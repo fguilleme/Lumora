@@ -21,25 +21,34 @@ final class EditorHelpUITests: XCTestCase {
 
         let toolbar = app.scrollViews["tools-toolbar"]
         let helpTab = app.buttons["Help"]
-        for _ in 0..<12 where !helpTab.isHittable { toolbar.swipeLeft() }
+        for _ in 0..<8 { toolbar.swipeLeft() }
         XCTAssertTrue(helpTab.isHittable)
         helpTab.tap()
-        XCTAssertTrue(app.scrollViews["help-controls"].exists)
+        XCTAssertTrue(app.buttons["help-topic-commonGestures"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.descendants(matching: .any).matching(identifier: "photo-information").firstMatch.exists)
-        for topic in ["creative", "light", "color", "curves", "colorTools", "effects",
+        for topic in ["commonGestures", "creative", "light", "color", "curves", "colorTools", "effects",
                       "detail", "optics", "geometry", "masks", "presets"] {
             XCTAssertTrue(app.buttons["help-topic-\(topic)"].exists, topic)
         }
+        let gestures = app.buttons["help-topic-commonGestures"]
+        XCTAssertLessThan(gestures.frame.minY, app.buttons["help-topic-creative"].frame.minY)
+        gestures.tap()
+        XCTAssertTrue(app.scrollViews["help-detail-commonGestures"].waitForExistence(timeout: 5))
+        for heading in ["On the photo", "On the histogram", "Short tap", "Double-tap",
+                        "Touch and hold", "Short tap on histogram", "Touch and hold histogram", "Drag histogram"] {
+            XCTAssertTrue(app.staticTexts[heading].exists, heading)
+        }
+        app.buttons["help-close"].tap()
 
         app.buttons["help-topic-creative"].tap()
         XCTAssertTrue(app.scrollViews["help-detail-creative"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Build an effect stack"].exists)
         app.buttons["help-close"].tap()
-        XCTAssertTrue(app.scrollViews["help-controls"].exists)
+        XCTAssertTrue(app.buttons["help-topic-commonGestures"].waitForExistence(timeout: 5))
 
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(app.buttons["controls-side-switch"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.scrollViews["help-controls"].exists)
+        XCTAssertTrue(app.buttons["help-topic-commonGestures"].waitForExistence(timeout: 5))
         app.buttons["help-topic-light"].tap()
         XCTAssertTrue(app.scrollViews["help-detail-light"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Six controls"].exists)

@@ -664,3 +664,26 @@
 "Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Toucher deux fois pour agrandir. Faire glisser pour déplacer. Maintenir le doigt pour afficher temporairement les zones proches du noir en bleu et du blanc en rouge.";
 "Full-screen photo" = "Photo en plein écran";
 "Tap to return to the editor" = "Touchez pour revenir à l’éditeur";
+/* Aide : gestes courants */
+"Start with common gestures, then choose a tab to learn its controls. Help does not change the photo." = "Commencez par les gestes courants, puis choisissez un onglet pour découvrir ses réglages. L’aide ne modifie pas la photographie.";
+"Common gestures" = "Gestes courants";
+"Tap, hold, zoom, and use the histogram" = "Toucher, maintenir, zoomer et utiliser l’histogramme";
+"These gestures work directly on the photo and its floating histogram. A tool such as the mask brush or curve eyedropper may temporarily use the same area for its own action." = "Ces gestes s’effectuent sur la photo et son histogramme flottant. Un outil comme le pinceau de masque ou la pipette Courbes peut temporairement utiliser la même zone pour sa propre action.";
+"On the photo" = "Sur la photo";
+"Short tap" = "Toucher bref";
+"Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor." = "Touchez brièvement la photo pour l’afficher seule en plein écran. Touchez-la de nouveau pour revenir à l’éditeur.";
+"Double-tap" = "Double toucher";
+"Double-tap the photo to reset its zoom and position." = "Touchez deux fois la photo pour rétablir son zoom et sa position.";
+"Touch and hold" = "Appui long";
+"Hold a finger on the photo to compare with the original. Release to return to the edited preview." = "Maintenez le doigt sur la photo pour la comparer à l’original. Relâchez pour retrouver l’aperçu retouché.";
+"Pinch and pan" = "Pincer et déplacer";
+"Pinch to zoom in or out. When zoomed in, drag the photo to inspect another area." = "Pincez pour agrandir ou réduire la photo. Une fois agrandie, faites-la glisser pour examiner une autre zone.";
+"On the histogram" = "Sur l’histogramme";
+"Short tap on histogram" = "Toucher bref sur l’histogramme";
+"Tap the floating histogram to switch between compact and expanded views. A tap on its clipping indicators also changes the view." = "Touchez l’histogramme flottant pour alterner entre les vues compacte et agrandie. Toucher ses indicateurs d’écrêtage change aussi la vue.";
+"Touch and hold histogram" = "Appui long sur l’histogramme";
+"Hold the histogram to show near-black areas in blue and near-white areas in red on the SDR preview. Release to hide this temporary overlay." = "Maintenez le doigt sur l’histogramme pour afficher en bleu les zones proches du noir et en rouge celles proches du blanc dans l’aperçu SDR. Relâchez pour masquer cette superposition temporaire.";
+"Drag histogram" = "Déplacer l’histogramme";
+"Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately." = "Faites glisser l’histogramme sur la photo. Les vues compacte et agrandie mémorisent chacune leur position.";
+"Placement" = "Position initiale";
+"By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it." = "Par défaut, l’histogramme compact se place à gauche de la photo ; la version agrandie est centrée sur elle.";
