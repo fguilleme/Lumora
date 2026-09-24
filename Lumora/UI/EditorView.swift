@@ -8,6 +8,7 @@ struct EditorView: View {
     @State private var showFiles = false
     @State private var showPhotos = false
     @State private var showLibrary = false
+    @State private var showFullscreenPhoto = false
     @State private var photoLoading = false
     @State private var panel: Panel = .light
     @State private var showMetrics = false
@@ -118,6 +119,7 @@ struct EditorView: View {
                             onCurveSample: { location in
                                 if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
                             },
+                            onPhotoTap: { showFullscreenPhoto = true },
                             showingOriginal: $session.showingOriginal,
                             dlcSettings: activeDLCSettings,
                             onDLCBegin: { session.beginInteraction("Move center") },
@@ -213,6 +215,13 @@ struct EditorView: View {
             ExportView(request: request, controller: exporter)
         }
         .sheet(isPresented: $showLibrary) { LibraryView(session: session) }
+        .fullScreenCover(isPresented: $showFullscreenPhoto) {
+            if let result = session.result {
+                FullscreenPhotoView(image: session.showingOriginal ? result.original : result.image) {
+                    showFullscreenPhoto = false
+                }
+            }
+        }
         .photosPicker(isPresented: $showPhotos, selection: $selection, matching: .images, preferredItemEncoding: .current)
         .task { await session.restore() }
         .task { await presetController.load() }
@@ -691,6 +700,33 @@ struct EditorView: View {
             .font(.system(.caption2, design: .monospaced)).foregroundStyle(.secondary).padding(8)
     }
     #endif
+}
+
+private struct FullscreenPhotoView: View {
+    let image: CGImage
+    let onDismiss: () -> Void
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Color.black
+                Image(decorative: image, scale: 1)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onDismiss)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Full-screen photo")
+            .accessibilityHint("Tap to return to the editor")
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("fullscreen-photo")
+        }
+        .ignoresSafeArea()
+        .background(.black)
+        .statusBarHidden()
+    }
 }
 
 private struct WelcomeImportButtonStyle: ButtonStyle {

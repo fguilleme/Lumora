@@ -9,6 +9,7 @@ struct PhotoCanvas: View {
     var curveSampling = false
     var curveSampleLocation: MaskPoint? = nil
     var onCurveSample: (MaskPoint) -> Void = { _ in }
+    var onPhotoTap: () -> Void = {}
     @Binding var showingOriginal: Bool
     let dlcSettings: DarkenLightenCenterSettings?
     let onDLCBegin: () -> Void
@@ -88,6 +89,24 @@ struct PhotoCanvas: View {
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .contentShape(Rectangle())
                 .clipped()
+                .simultaneousGesture(
+                    SpatialTapGesture(count: 2)
+                        .exclusively(before: SpatialTapGesture(count: 1))
+                        .onEnded { gesture in
+                            switch gesture {
+                            case .first:
+                                if !isPainting { restoreZoom() }
+                            case .second(let tap):
+                                guard !allowsMaskEditing, !curveSampling,
+                                      geometrySettings == nil, dlcSettings == nil else { return }
+                                let imageSize = CGSize(width: result.image.width, height: result.image.height)
+                                guard normalized(tap.location, viewSize: geometry.size,
+                                                 imageSize: imageSize, displayScale: displayScale,
+                                                 displayOffset: displayOffset) != nil else { return }
+                                onPhotoTap()
+                            }
+                        }
+                )
                 // Attach comparison to the photo itself. Interactive overlays above
                 // it keep their touches, so a held mask/crop handle stays draggable.
                 .simultaneousGesture(
@@ -222,7 +241,6 @@ struct PhotoCanvas: View {
                     zoom = min(6, max(1, zoom * value.magnification))
                     offset = bounded(offset, size: geometry.size)
                 })
-            .simultaneousGesture(TapGesture(count: 2).onEnded { if !isPainting { restoreZoom() } })
         }
         .onChange(of: isPainting) { _, painting in if painting { showingOriginal = false } }
         .onChange(of: hasTransformHandles) { _, editing in

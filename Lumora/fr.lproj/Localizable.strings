@@ -662,3 +662,5 @@
 "Reset %@ curve" = "Réinitialiser la courbe %@";
 "Double-tap to collapse. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Toucher deux fois pour réduire. Faire glisser pour déplacer. Maintenir le doigt pour afficher temporairement les zones proches du noir en bleu et du blanc en rouge.";
 "Double-tap to expand. Drag to move. Hold to temporarily show near-black areas in blue and near-white areas in red." = "Toucher deux fois pour agrandir. Faire glisser pour déplacer. Maintenir le doigt pour afficher temporairement les zones proches du noir en bleu et du blanc en rouge.";
+"Full-screen photo" = "Photo en plein écran";
+"Tap to return to the editor" = "Touchez pour revenir à l’éditeur";

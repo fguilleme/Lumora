@@ -20,6 +20,44 @@ final class EditorInteractionFixesUITests: XCTestCase {
         for _ in 0..<8 where !app.buttons[name].isHittable { toolbar.swipeLeft() }
         app.buttons[name].tap()
     }
+    @MainActor func testSinglePhotoTapOpensImageOnlyFullscreenPreview() throws {
+        XCUIDevice.shared.orientation = .portrait
+        let app = try open()
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        let fullscreen = app.descendants(matching: .any).matching(identifier: "fullscreen-photo").firstMatch
+        let center = canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+
+        center.tap()
+        XCTAssertTrue(fullscreen.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["histogram-overlay"].isHittable)
+        fullscreen.tap()
+        XCTAssertFalse(fullscreen.exists)
+
+        center.doubleTap()
+        XCTAssertFalse(fullscreen.exists, "The existing double-tap must still reset zoom")
+        let histogram = app.buttons["histogram-overlay"]
+        XCTAssertTrue(histogram.isHittable, "Histogram frame: \(histogram.frame)")
+        histogram.tap()
+        XCTAssertFalse(fullscreen.exists, "Tapping the histogram must not open the photo viewer")
+        histogram.tap()
+        center.press(forDuration: 0.7)
+        XCTAssertFalse(fullscreen.exists, "Holding to compare the original must not open full screen")
+    }
+
+    @MainActor func testLandscapePhotoTapOpensFullscreenPreview() throws {
+        XCUIDevice.shared.orientation = .portrait
+        defer { XCUIDevice.shared.orientation = .portrait }
+        let app = try open()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.buttons["controls-side-switch"].waitForExistence(timeout: 5))
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        let fullscreen = app.descendants(matching: .any).matching(identifier: "fullscreen-photo").firstMatch
+        canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(fullscreen.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["histogram-overlay"].isHittable)
+        fullscreen.tap()
+        XCTAssertFalse(fullscreen.exists)
+    }
     @MainActor func testZoomedMaskHandlesAndBrushNavigation() throws {
         let app = try open()
         app.buttons["Import and options"].tap(); app.buttons["Render metrics"].tap()
