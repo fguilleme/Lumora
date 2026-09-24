@@ -1,7 +1,7 @@
 # Lumora
 
 Éditeur photo natif SwiftUI, iOS 18+, Swift 6, sans dépendance tierce.
-L’interface intégrée, ses messages et son aide détaillée sont désormais en anglais ; les clés de projet et les réglages sauvegardés gardent leur format existant.
+L’interface intégrée, ses messages et son aide détaillée sont disponibles en français et en anglais. Lumora suit la langue choisie pour l’appareil dans iOS ; l’anglais reste la langue de repli. Les clés de projet et les réglages sauvegardés gardent leur format existant.
 Lumora propose un développement non destructif, des masques composables, une bibliothèque locale, l’export pleine résolution et une pile de **treize Creative FX**. Les derniers ajouts sont Silver B&W, Silver Toning et Darken / Lighten Center.
 
 État documenté au **22 septembre 2026** : Darken / Lighten Center est implémenté, avec déplacement direct du centre et huit looks. Son banc compte **831 PASS / 13 WARN photographiques / 0 FAIL** ; les WARN concernent les nouvelles hautes lumières écrêtées en SDR. L’inspection visuelle reste ouverte, comme celle de Silver Toning (Deep Selenium mauve sur les portraits). Aucun Golden Master Silver ou Darken / Lighten Center n’est créé ; un PASS technique ne constitue pas une approbation esthétique.

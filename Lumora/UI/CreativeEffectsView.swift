@@ -17,9 +17,9 @@ struct CreativeEffectsView: View {
                 HStack {
                     Menu {
                         ForEach(["Key", "Detail", "Film"], id: \.self) { category in
-                            Section(category) {
+                            Section(NSLocalizedString(category, comment: "Creative effect category")) {
                                 ForEach(CreativeEffectKind.allCases.filter { $0.descriptor.category == category }) { kind in
-                                    Button(kind.descriptor.title, systemImage: kind.descriptor.symbol) {
+                                    Button(NSLocalizedString(kind.descriptor.title, comment: "Creative effect"), systemImage: kind.descriptor.symbol) {
                                         let effect = CreativeEffect(kind, maskID: session.selectedMaskID)
                                         session.changeCreative("Add \(kind.descriptor.title)") { $0.effects.append(effect) }
                                         selected = effect.id
@@ -41,9 +41,9 @@ struct CreativeEffectsView: View {
                     .accessibilityIdentifier("creative-add")
                     Menu {
                         ForEach(CreativeEffectKind.allCases) { kind in
-                            Section(kind.descriptor.title) {
+                            Section(NSLocalizedString(kind.descriptor.title, comment: "Creative effect")) {
                                 ForEach(CreativeFXPreset.all(for: kind)) { preset in
-                                    Button(preset.title) {
+                                    Button(NSLocalizedString(preset.title, comment: "Creative preset")) {
                                         applyCatalogPreset(preset)
                                     }
                                     .disabled(session.state.creative.effects.count >= 32 &&
@@ -76,7 +76,7 @@ struct CreativeEffectsView: View {
                                     if let mask = fx.maskID, session.state.masks.contains(where: { $0.id == mask }) { session.selectMask(mask) }
                                     else { session.selectBaseLayer() }
                                 } label: {
-                                    Label(fx.kind.descriptor.title, systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
+                                    Label(NSLocalizedString(fx.kind.descriptor.title, comment: "Creative effect"), systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
                                 }
                                 .buttonStyle(.bordered).tint(fx.id == selected ? .mint : .secondary)
                                 .accessibilityIdentifier("creative-effect-\(fx.id)")
@@ -215,7 +215,7 @@ struct CreativeEffectsView: View {
                         }
                         return true
                     }) { spec in
-                        slider(spec.id, spec.title, spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
+                        slider(spec.id, NSLocalizedString(spec.title, comment: "Creative effect parameter"), spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
                     }
                     if effect.kind == .grain && advanced {
                         Toggle("Monochrome", isOn: Binding(get: { effect.monochromatic }, set: { v in update { $0.monochromatic = v } }))

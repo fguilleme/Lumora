@@ -99,16 +99,16 @@ enum GeometryAdjustment: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .straighten: "Straighten"
-        case .cropZoom: "Crop"
-        case .cropX: "Horizontal position"
-        case .cropY: "Vertical position"
-        case .perspectiveVertical: "Vertical perspective"
-        case .perspectiveHorizontal: "Horizontal perspective"
+        case .straighten: String(localized: "Straighten")
+        case .cropZoom: String(localized: "Crop")
+        case .cropX: String(localized: "Horizontal position")
+        case .cropY: String(localized: "Vertical position")
+        case .perspectiveVertical: String(localized: "Vertical perspective")
+        case .perspectiveHorizontal: String(localized: "Horizontal perspective")
         case .perspectiveAspect: "Aspect"
-        case .perspectiveScale: "Scale"
-        case .perspectiveOffsetX: "X offset"
-        case .perspectiveOffsetY: "Y offset"
+        case .perspectiveScale: String(localized: "Scale")
+        case .perspectiveOffsetX: String(localized: "X offset")
+        case .perspectiveOffsetY: String(localized: "Y offset")
         }
     }
     var range: ClosedRange<Double> {

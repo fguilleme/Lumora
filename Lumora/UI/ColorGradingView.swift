@@ -36,8 +36,8 @@ struct ColorGradingView: View {
                     .dimsDuringAdjustment()
                 VStack(alignment: .leading, spacing: 2) {
                     Text(selected.title).font(.subheadline.weight(.semibold))
-                    Text("Hue \(Int(grading[selected].hue))°")
-                    Text("Saturation \(Int(grading[selected].saturation))")
+                    Text(String(format: NSLocalizedString("Hue %d°", comment: "Color grading"), Int(grading[selected].hue)))
+                    Text(String(format: NSLocalizedString("Saturation %d", comment: "Color grading"), Int(grading[selected].saturation)))
                 }
                 .font(.caption).foregroundStyle(.secondary)
                 .dimsDuringAdjustment()
@@ -45,7 +45,7 @@ struct ColorGradingView: View {
                 Button {
                     onEnd(); var updated = grading; updated[selected] = GradingWheel(); onChange(updated)
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Reset grading for \(selected.title)")
+                    .accessibilityLabel(String(format: NSLocalizedString("Reset grading for %@", comment: "Color grading"), selected.title))
                     .dimsDuringAdjustment()
             }
             AdjustmentSlider(title: "Luminance", accessibilityID: "grading-luminance", value: grading[selected].luminance,

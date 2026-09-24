@@ -5,10 +5,10 @@ enum PresetSection: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .light: "Light"; case .color: "Color"; case .curves: "Curves"
-        case .mixer: "Color Mixer"; case .grading: "Grading"; case .effects: "Effects"
-        case .detail: "Detail"; case .optics: "Optics"; case .geometry: "Geometry"
-        case .masks: "Masks"; case .creative: "Creative"
+        case .light: String(localized: "Light"); case .color: String(localized: "Color"); case .curves: String(localized: "Curves")
+        case .mixer: String(localized: "Color Mixer"); case .grading: "Grading"; case .effects: String(localized: "Effects")
+        case .detail: String(localized: "Detail"); case .optics: String(localized: "Optics"); case .geometry: String(localized: "Geometry")
+        case .masks: String(localized: "Masks"); case .creative: "Creative"
         }
     }
     static let photographicDefaults: Set<Self> = [.light, .color, .curves, .mixer, .grading, .effects, .detail, .creative]

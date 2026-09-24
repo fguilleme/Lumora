@@ -70,10 +70,10 @@ enum ExportStage: Int, Sendable {
     }
     var title: String {
         switch self {
-        case .decoding: "Reading original…"
-        case .rendering: "Rendering at high resolution…"
-        case .encoding: "Writing file…"
-        case .finished: "Export complete"
+        case .decoding: String(localized: "Reading original…")
+        case .rendering: String(localized: "Rendering at high resolution…")
+        case .encoding: String(localized: "Writing file…")
+        case .finished: String(localized: "Export complete")
         }
     }
 }

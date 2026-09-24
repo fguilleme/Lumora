@@ -28,7 +28,7 @@ struct ColorMixerView: View {
                                 Text(item.title).font(.caption2).foregroundStyle(item == channel ? .primary : .secondary)
                             }.frame(minWidth: 52, minHeight: 50)
                         }
-                        .accessibilityLabel("Range \(item.title)")
+                        .accessibilityLabel(String(format: NSLocalizedString("Range %@", comment: "Color mixer"), item.title))
                         .accessibilityIdentifier("mixer-band-\(item.rawValue)")
                         .accessibilityAddTraits(item == channel ? .isSelected : [])
                     }
@@ -36,12 +36,12 @@ struct ColorMixerView: View {
             }
             .dimsDuringAdjustment()
             HStack {
-                Text("Color Mixer · \(channel.title)").font(.subheadline.weight(.medium))
+                Text(String(format: NSLocalizedString("Color Mixer · %@", comment: "Color mixer"), channel.title)).font(.subheadline.weight(.medium))
                 Spacer()
                 Button {
                     onEnd(); onChange(channel, MixerAdjustment())
                 } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Reset \(channel.title) range")
+                    .accessibilityLabel(String(format: NSLocalizedString("Reset %@ range", comment: "Color mixer"), channel.title))
             }
             .dimsDuringAdjustment()
             ForEach(MixerComponent.allCases) { component in

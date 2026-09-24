@@ -84,16 +84,16 @@ enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .sharpeningAmount: "Amount"
-        case .sharpeningRadius: "Radius"
-        case .sharpeningDetail: "Detail"
-        case .sharpeningMasking: "Masking"
+        case .sharpeningAmount: String(localized: "Amount")
+        case .sharpeningRadius: String(localized: "Radius")
+        case .sharpeningDetail: String(localized: "Detail")
+        case .sharpeningMasking: String(localized: "Masking")
         case .luminanceNoise: "Luminance"
-        case .luminanceDetail: "Detail"
-        case .luminanceContrast: "Contrast"
-        case .colorNoise: "Color"
-        case .colorDetail: "Detail"
-        case .colorSmoothness: "Smoothing"
+        case .luminanceDetail: String(localized: "Detail")
+        case .luminanceContrast: String(localized: "Contrast")
+        case .colorNoise: String(localized: "Color")
+        case .colorDetail: String(localized: "Detail")
+        case .colorSmoothness: String(localized: "Smoothing")
         }
     }
     var range: ClosedRange<Double> {

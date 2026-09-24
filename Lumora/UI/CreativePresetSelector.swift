@@ -41,7 +41,7 @@ struct CreativePresetSelector<HeaderActions: View>: View {
                                 selectionFeedback += 1
                             } label: {
                                 HStack(spacing: 4) {
-                                    Text(preset.title)
+                                    Text(NSLocalizedString(preset.title, comment: "Creative preset"))
                                         .font(.subheadline.weight(selectedID == preset.id ? .semibold : .medium))
                                         .fixedSize(horizontal: true, vertical: false)
                                     if selectedID == preset.id {

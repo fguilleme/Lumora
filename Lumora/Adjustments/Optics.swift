@@ -38,9 +38,9 @@ enum OpticsAdjustment: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .distortion: "Distortion"
-        case .chromaticAberration: "Chromatic aberration"
-        case .lensVignette: "Lens vignetting"
+        case .distortion: String(localized: "Distortion")
+        case .chromaticAberration: String(localized: "Chromatic aberration")
+        case .lensVignette: String(localized: "Lens vignetting")
         }
     }
     var range: ClosedRange<Double> { self == .lensVignette ? 0...100 : -100...100 }

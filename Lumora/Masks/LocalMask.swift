@@ -71,7 +71,7 @@ struct BrushMask: Codable, Sendable, Equatable {
 enum BrushMode: String, CaseIterable, Sendable {
     case paint, erase, pan
 
-    var title: String { switch self { case .paint: "Paint"; case .erase: "Erase"; case .pan: "Pan" } }
+    var title: String { switch self { case .paint: String(localized: "Paint"); case .erase: String(localized: "Erase"); case .pan: String(localized: "Pan") } }
 }
 
 struct LinearGradientMask: Codable, Sendable, Equatable {
@@ -109,13 +109,13 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .subject: "Subject"
-        case .background: "Background"
-        case .person: "Person"
-        case .face: "Face"
-        case .eyes: "Eyes"
-        case .sky: "Sky"
-        case .skin: "Skin"
+        case .subject: String(localized: "Subject")
+        case .background: String(localized: "Background")
+        case .person: String(localized: "Person")
+        case .face: String(localized: "Face")
+        case .eyes: String(localized: "Eyes")
+        case .sky: String(localized: "Sky")
+        case .skin: String(localized: "Skin")
         }
     }
     var symbol: String {
@@ -154,8 +154,8 @@ enum MaskShape: Codable, Sendable, Equatable {
 
     var title: String {
         switch self {
-        case .brush: "Brush"
-        case .linear: "Linear"
+        case .brush: String(localized: "Brush")
+        case .linear: String(localized: "Linear")
         case .radial: "Radial"
         case .generated(let mask): mask.kind.title
         }
@@ -334,15 +334,15 @@ enum LocalAdjustment: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .exposure: "Exposure"
-        case .contrast: "Contrast"
-        case .highlights: "Highlights"
-        case .shadows: "Shadows"
-        case .temperature: "Temperature"
-        case .tint: "Tint"
+        case .exposure: String(localized: "Exposure")
+        case .contrast: String(localized: "Contrast")
+        case .highlights: String(localized: "Highlights")
+        case .shadows: String(localized: "Shadows")
+        case .temperature: String(localized: "Temperature")
+        case .tint: String(localized: "Tint")
         case .saturation: "Saturation"
-        case .clarity: "Clarity"
-        case .sharpness: "Sharpening"
+        case .clarity: String(localized: "Clarity")
+        case .sharpness: String(localized: "Sharpening")
         }
     }
     var range: ClosedRange<Double> { self == .exposure ? -5...5 : (self == .sharpness ? 0...100 : -100...100) }
@@ -403,7 +403,7 @@ typealias LocalMask = AdjustmentLayer
 enum MaskKind: String, CaseIterable, Sendable, Identifiable {
     case brush, linear, radial
     var id: String { rawValue }
-    var title: String { switch self { case .brush: "Brush"; case .linear: "Linear"; case .radial: "Radial" } }
+    var title: String { switch self { case .brush: String(localized: "Brush"); case .linear: String(localized: "Linear"); case .radial: "Radial" } }
     func shape() -> MaskShape {
         switch self {
         case .brush: .brush(BrushMask())
@@ -418,9 +418,9 @@ enum MaskParameter: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .size: "Size"; case .feather: "Feather"; case .flow: "Flow"
-        case .opacity: "Opacity"; case .angle: "Angle"; case .centerX: "Horizontal center"
-        case .centerY: "Vertical center"; case .radiusX: "Width"; case .radiusY: "Height"
+        case .size: String(localized: "Size"); case .feather: String(localized: "Feather"); case .flow: String(localized: "Flow")
+        case .opacity: String(localized: "Opacity"); case .angle: "Angle"; case .centerX: String(localized: "Horizontal center")
+        case .centerY: String(localized: "Vertical center"); case .radiusX: String(localized: "Width"); case .radiusY: String(localized: "Height")
         }
     }
     var range: ClosedRange<Double> {

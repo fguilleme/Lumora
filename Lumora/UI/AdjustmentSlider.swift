@@ -135,7 +135,7 @@ struct AdjustmentSlider: View {
                     .foregroundStyle(fine ? Color.mint : Color.secondary)
                     .frame(width: 48, height: 40)
             }
-            .accessibilityLabel("\(title), fine adjustment")
+            .accessibilityLabel(String(format: NSLocalizedString("%@, fine adjustment", comment: "Slider accessibility"), title))
             .accessibilityValue(fine ? "On" : "Off")
     }
 
@@ -146,7 +146,7 @@ struct AdjustmentSlider: View {
                 .frame(width: usesSideControlLayout ? 44 : 32, height: 40)
         }
             .foregroundStyle(.secondary)
-            .accessibilityLabel("Reset \(title)")
+            .accessibilityLabel(String(format: NSLocalizedString("Reset %@", comment: "Slider accessibility"), title))
     }
 
     private func finishEditing() {

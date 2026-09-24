@@ -56,6 +56,7 @@ struct EditorView: View {
         #if DEBUG
         case debug = "Debug"
         #endif
+        var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
         var symbol: String {
             switch self {
             case .creative: "sparkles"
@@ -633,7 +634,7 @@ struct EditorView: View {
             HStack(spacing: 6) {
                 ForEach(Panel.allCases, id: \.self) { item in
                     Button { selectPanel(item) } label: {
-                        Label(item.rawValue, systemImage: item.symbol)
+                        Label(item.title, systemImage: item.symbol)
                             .font(.subheadline.weight(.medium)).frame(minHeight: 44)
                             .padding(.horizontal, 10)
                             .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())

@@ -110,7 +110,7 @@ struct ToneCurveEditor: View {
                                     .onEnded { _ in finishGesture() })
                                 .accessibilityElement(children: .ignore)
                                 .accessibilityAddTraits(.isButton)
-                                .accessibilityLabel("Point \(index + 1) on the \(channel.title) curve")
+                                .accessibilityLabel(String(format: NSLocalizedString("Point %d on the %@ curve", comment: "Curve point"), index + 1, channel.title))
                                 .accessibilityIdentifier("curve-point-\(index)")
                         }
                     }
@@ -146,7 +146,7 @@ struct ToneCurveEditor: View {
                 }
                 .overlay(alignment: .topLeading) {
                     if editMode, eyedropper, let sample {
-                        Text("Sample \(Int((sample.value(for: channel) * 100).rounded())) %")
+                        Text(String(format: NSLocalizedString("Sample %d %%", comment: "Curve eyedropper"), Int((sample.value(for: channel) * 100).rounded())))
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.mint)
                             .padding(.horizontal, 8).padding(.vertical, 5)
@@ -165,7 +165,7 @@ struct ToneCurveEditor: View {
                 }, including: editMode ? .all : .none)
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier("tone-curve-chart")
-                .accessibilityLabel("\(channel.title) curve")
+                .accessibilityLabel(String(format: NSLocalizedString("%@ curve", comment: "Curve chart"), channel.title))
                 .accessibilityValue("\(curve.points.count) points. \(editMode ? "Editing" : "Viewing"). " +
                     curve.points.map { String(format: "%.4f:%.4f", $0.x, $0.y) }.joined(separator: ","))
             }
@@ -180,7 +180,7 @@ struct ToneCurveEditor: View {
                     Spacer(minLength: 0)
                     Button { onChange(channel, ToneCurve()); selected = nil } label: {
                         Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44)
-                    }.accessibilityLabel("Reset \(channel.title) curve")
+                    }.accessibilityLabel(String(format: NSLocalizedString("Reset %@ curve", comment: "Curve chart"), channel.title))
                 }
                 coordinateControl("Input", horizontal: true)
                 coordinateControl("Output", horizontal: false)

@@ -24,7 +24,7 @@ struct EditorHelpView: View {
                                 .foregroundStyle(.mint)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(topic.title).font(.subheadline.weight(.semibold))
-                                Text(topic.summary).font(.caption2).foregroundStyle(.secondary)
+                                Text(NSLocalizedString(topic.summary, comment: "Help topic summary")).font(.caption2).foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             Spacer(minLength: 0)
@@ -49,7 +49,7 @@ struct EditorHelpView: View {
             NavigationStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        Text(topic.introduction)
+                        Text(NSLocalizedString(topic.introduction, comment: "Help topic introduction"))
                             .font(.body)
                             .fixedSize(horizontal: false, vertical: true)
                         ForEach(topic.sections) { section in
@@ -92,8 +92,8 @@ private struct HelpItem: Identifiable {
     let explanation: String
     var id: String { name }
     init(_ name: String, _ explanation: String) {
-        self.name = name
-        self.explanation = explanation
+        self.name = NSLocalizedString(name, comment: "Help item")
+        self.explanation = NSLocalizedString(explanation, comment: "Help explanation")
     }
 }
 
@@ -102,7 +102,7 @@ private struct HelpSection: Identifiable {
     let items: [HelpItem]
     var id: String { title }
     init(_ title: String, _ items: [HelpItem]) {
-        self.title = title
+        self.title = NSLocalizedString(title, comment: "Help section")
         self.items = items
     }
 }
@@ -114,15 +114,15 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .creative: "Creative"
-        case .light: "Light"
-        case .color: "Color"
-        case .curves: "Curves"
-        case .colorTools: "Color Tools"
-        case .effects: "Effects"
-        case .detail: "Detail"
-        case .optics: "Optics"
-        case .geometry: "Geometry"
-        case .masks: "Masks"
+        case .light: String(localized: "Light")
+        case .color: String(localized: "Color")
+        case .curves: String(localized: "Curves")
+        case .colorTools: String(localized: "Color Tools")
+        case .effects: String(localized: "Effects")
+        case .detail: String(localized: "Detail")
+        case .optics: String(localized: "Optics")
+        case .geometry: String(localized: "Geometry")
+        case .masks: String(localized: "Masks")
         case .presets: "Presets"
         }
     }

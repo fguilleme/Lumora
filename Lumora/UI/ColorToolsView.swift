@@ -5,6 +5,7 @@ struct ColorToolsView: View {
         case mixer = "Color Mixer"
         case grading = "Grading"
         var id: String { rawValue }
+        var title: String { NSLocalizedString(rawValue, comment: "Color tools tab") }
     }
 
     let mixer: ColorMixer
@@ -18,7 +19,7 @@ struct ColorToolsView: View {
     var body: some View {
         VStack(spacing: 6) {
             Picker("Color tools", selection: $mode) {
-                ForEach(Mode.allCases) { mode in Text(mode.rawValue).tag(mode) }
+                ForEach(Mode.allCases) { mode in Text(mode.title).tag(mode) }
             }
             .pickerStyle(.segmented)
             .padding(.horizontal, 14)

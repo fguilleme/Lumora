@@ -30,8 +30,8 @@ enum EffectAdjustment: String, CaseIterable, Sendable, Identifiable {
     var title: String {
         switch self {
         case .texture: "Texture"
-        case .clarity: "Clarity"
-        case .dehaze: "Dehaze"
+        case .clarity: String(localized: "Clarity")
+        case .dehaze: String(localized: "Dehaze")
         case .vignette: "Vignette"
         case .grain: "Grain"
         }

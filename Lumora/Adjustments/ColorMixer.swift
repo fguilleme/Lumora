@@ -5,8 +5,8 @@ enum MixerChannel: String, Codable, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .red: "Red"; case .orange: "Orange"; case .yellow: "Yellow"; case .green: "Green"
-        case .aqua: "Aqua"; case .blue: "Blue"; case .purple: "Purple"; case .magenta: "Magenta"
+        case .red: String(localized: "Red"); case .orange: "Orange"; case .yellow: String(localized: "Yellow"); case .green: String(localized: "Green")
+        case .aqua: String(localized: "Aqua"); case .blue: String(localized: "Blue"); case .purple: String(localized: "Purple"); case .magenta: "Magenta"
         }
     }
     /// Centers in perceptual sRGB hue, in degrees around the circle.
@@ -22,7 +22,7 @@ enum MixerComponent: String, CaseIterable, Sendable, Identifiable {
     case hue, saturation, luminance
     var id: String { rawValue }
     var title: String {
-        switch self { case .hue: "Hue"; case .saturation: "Saturation"; case .luminance: "Luminance" }
+        switch self { case .hue: String(localized: "Hue"); case .saturation: "Saturation"; case .luminance: "Luminance" }
     }
     var keyPath: WritableKeyPath<MixerAdjustment, Double> {
         switch self { case .hue: \.hue; case .saturation: \.saturation; case .luminance: \.luminance }

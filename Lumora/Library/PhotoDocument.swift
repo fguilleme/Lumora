@@ -37,9 +37,9 @@ enum LibrarySortOrder: String, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .newest: "Newest first"
-        case .oldest: "Oldest first"
-        case .name: "Name"
+        case .newest: String(localized: "Newest first")
+        case .oldest: String(localized: "Oldest first")
+        case .name: String(localized: "Name")
         }
     }
 }

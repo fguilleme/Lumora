@@ -9,7 +9,7 @@ enum CurveChannel: String, Codable, CaseIterable, Sendable, Identifiable {
     case rgb, red, green, blue
     var id: String { rawValue }
     var title: String {
-        switch self { case .rgb: "RGB"; case .red: "Red"; case .green: "Green"; case .blue: "Blue" }
+        switch self { case .rgb: String(localized: "RGB"); case .red: String(localized: "Red"); case .green: String(localized: "Green"); case .blue: String(localized: "Blue") }
     }
 }
 

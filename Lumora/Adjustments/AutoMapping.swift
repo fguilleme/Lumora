@@ -3,7 +3,7 @@ import Foundation
 enum AutoCurveStyle: String, CaseIterable, Codable, Sendable, Identifiable {
     case natural, balanced, punchy
     var id: String { rawValue }
-    var title: String { switch self { case .natural: "Natural"; case .balanced: "Balanced"; case .punchy: "Punchy" } }
+    var title: String { switch self { case .natural: String(localized: "Natural"); case .balanced: String(localized: "Balanced"); case .punchy: String(localized: "Punchy") } }
 }
 enum AutoModule: String, Sendable { case light, color, curves, global }
 struct AutoFitError: Codable, Sendable {
