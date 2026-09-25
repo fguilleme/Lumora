@@ -75,7 +75,7 @@ final class HistogramOverlayUITests: XCTestCase {
         XCUIDevice.shared.orientation = .landscapeLeft
         defer { XCUIDevice.shared.orientation = .portrait }
         let app = XCUIApplication()
-        app.launchArguments += ["-AppleLanguages", "(en)"]
+        app.launchArguments += ["-AppleLanguages", "(en)", "-ui-testing-clipping"]
         app.launch()
         let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
         if !canvas.waitForExistence(timeout: 5) {
@@ -98,7 +98,14 @@ final class HistogramOverlayUITests: XCTestCase {
         let start = overlay.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
         start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 45, dy: -25)))
         XCTAssertEqual(overlay.label, "Collapse RGB histogram", "Dragging must not toggle the size")
-        XCTAssertGreaterThan(overlay.frame.midX, original.midX + 20)
+        XCTAssertTrue((overlay.value as? String)?.contains("Clipping activations: 0.") == true,
+                      "Dragging must not trigger the held clipping diagnostic")
+        if canvas.frame.width - original.width > 60 {
+            XCTAssertGreaterThan(overlay.frame.midX, original.midX + 20)
+        } else {
+            XCTAssertEqual(overlay.frame.midX, original.midX, accuracy: 1,
+                           "A full-width histogram has no horizontal room to move")
+        }
         XCTAssertLessThan(overlay.frame.midY, original.midY - 3)
         XCTAssertGreaterThanOrEqual(overlay.frame.minX, canvas.frame.minX - 1)
         XCTAssertLessThanOrEqual(overlay.frame.maxX, canvas.frame.maxX + 1)
@@ -112,7 +119,8 @@ final class HistogramOverlayUITests: XCTestCase {
         compactStart.press(forDuration: 0.05,
                            thenDragTo: compactStart.withOffset(CGVector(dx: 35, dy: 0)))
         XCTAssertEqual(overlay.label, "Expand RGB histogram")
-        XCTAssertGreaterThan(overlay.frame.midX, compactCenter + 10)
+        XCTAssertEqual(overlay.frame.midX, compactCenter + 35, accuracy: 6,
+                       "The compact histogram must follow the finger one-to-one")
         overlay.tap()
         XCTAssertEqual(overlay.frame.midX, movedCenter, accuracy: 3,
                        "The expanded position should survive a size toggle")

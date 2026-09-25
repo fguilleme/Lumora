@@ -10,10 +10,10 @@ struct HistogramView: View {
     @State private var expanded = false
     @State private var longPressConsumed = false
     @State private var dragConsumed = false
+    @State private var dragStartCenter: CGPoint?
     @State private var compactPosition: CGPoint?
     @State private var expandedPosition: CGPoint?
     @GestureState private var clippingPressed = false
-    @GestureState private var dragTranslation = CGSize.zero
 
     init(histogram: Histogram, imageSize: CGSize,
          initiallyExpanded: Bool = false,
@@ -40,9 +40,7 @@ struct HistogramView: View {
             let baseCenter = savedPosition.map {
                 CGPoint(x: $0.x * geometry.size.width, y: $0.y * geometry.size.height)
             } ?? defaultCenter
-            let center = bounded(CGPoint(x: baseCenter.x + dragTranslation.width,
-                                         y: baseCenter.y + dragTranslation.height),
-                                 in: geometry.size, width: width, height: height)
+            let center = bounded(baseCenter, in: geometry.size, width: width, height: height)
             Button {
                 guard !longPressConsumed && !dragConsumed else { return }
                 withAnimation(.easeInOut(duration: 0.18)) { expanded.toggle() }
@@ -68,7 +66,7 @@ struct HistogramView: View {
                 .background(.black.opacity(0.76), in: RoundedRectangle(cornerRadius: 10))
                 .contentShape(RoundedRectangle(cornerRadius: 10))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(StableHistogramButtonStyle())
             .simultaneousGesture(clippingGesture)
             .simultaneousGesture(movingGesture(in: geometry.size, from: baseCenter,
                                                width: width, height: height))
@@ -94,20 +92,31 @@ struct HistogramView: View {
 
     private func movingGesture(in size: CGSize, from baseCenter: CGPoint,
                                width: CGFloat, height: CGFloat) -> some Gesture {
-        DragGesture(minimumDistance: 8)
-            .updating($dragTranslation) { value, translation, _ in
-                translation = value.translation
+        // Use a fixed coordinate space: local translation changes when the
+        // histogram itself moves under the finger, causing feedback and jitter.
+        DragGesture(minimumDistance: 8, coordinateSpace: .global)
+            .onChanged { value in
+                if dragStartCenter == nil { dragStartCenter = baseCenter }
+                dragConsumed = true
+                savePosition(for: value.translation, from: dragStartCenter ?? baseCenter,
+                             in: size, width: width, height: height)
             }
-            .onChanged { _ in dragConsumed = true }
             .onEnded { value in
-                let center = bounded(CGPoint(x: baseCenter.x + value.translation.width,
-                                             y: baseCenter.y + value.translation.height),
-                                     in: size, width: width, height: height)
-                let normalized = CGPoint(x: center.x / max(1, size.width),
-                                         y: center.y / max(1, size.height))
-                if expanded { expandedPosition = normalized } else { compactPosition = normalized }
+                savePosition(for: value.translation, from: dragStartCenter ?? baseCenter,
+                             in: size, width: width, height: height)
+                dragStartCenter = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { dragConsumed = false }
             }
+    }
+
+    private func savePosition(for translation: CGSize, from start: CGPoint,
+                              in size: CGSize, width: CGFloat, height: CGFloat) {
+        let center = bounded(CGPoint(x: start.x + translation.width,
+                                     y: start.y + translation.height),
+                             in: size, width: width, height: height)
+        let normalized = CGPoint(x: center.x / max(1, size.width),
+                                 y: center.y / max(1, size.height))
+        if expanded { expandedPosition = normalized } else { compactPosition = normalized }
     }
 
     private func bounded(_ point: CGPoint, in size: CGSize,
@@ -119,7 +128,10 @@ struct HistogramView: View {
     }
 
     private var clippingGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.35, maximumDistance: 16)
+        // The move gesture starts at 8 points. The hold must fail before that
+        // distance, otherwise both gestures can briefly own the same drag and
+        // toggle the clipping overlay while the histogram is moving.
+        LongPressGesture(minimumDuration: 0.35, maximumDistance: 7)
             .sequenced(before: DragGesture(minimumDistance: 0))
             .updating($clippingPressed) { value, active, _ in
                 if case .second(true, _) = value { active = true }
@@ -173,5 +185,13 @@ struct HistogramView: View {
         return CGRect(x: (size.width - fitted.width) / 2,
                       y: (size.height - fitted.height) / 2,
                       width: fitted.width, height: fitted.height)
+    }
+}
+
+private struct StableHistogramButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        // Keep a moving histogram at constant opacity as the touch crosses
+        // the button's changing bounds.
+        configuration.label
     }
 }
