@@ -85,10 +85,13 @@ actor MaskGenerator {
         guard let observation = result, !observation.allInstances.isEmpty else {
             throw kind == .person ? MaskGenerationError.noPerson : MaskGenerationError.noForeground
         }
-        let buffer = try observation.generateScaledMask(
-            for: observation.allInstances, scaledToImageFrom: handler
-        )
-        var mask = CIImage(cvPixelBuffer: buffer)
+        // Vision's GPU-backed scaled-mask path can assert on macOS when it creates
+        // a texture view with resource options incompatible with its IOSurface.
+        // Copy the small instance mask to owned grayscale bytes and scale on CPU.
+        let buffer = try observation.generateMask(for: observation.allInstances)
+        let bitmap = try InstanceMaskRasterizer.scaledImage(from: buffer,
+                                                            width: image.width, height: image.height)
+        var mask = CIImage(cgImage: bitmap)
         if kind == .background { mask = mask.applyingFilter("CIColorInvert") }
         return try encoded(mask, kind: kind)
     }
