@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "coordinateSystem": "normalized lower-left, after EXIF orientation",
+  "origin": "Synthetic, generated diagnostic images; not real-camera evidence",
+  "cases": [
+    {
+      "id": "13_light_bluish_circles",
+      "feature": "Light skin, pronounced bluish-purple circles",
+      "source": "Sources/13_light_bluish_circles.png",
+      "frame": [0.00, 0.08, 1.00, 0.84],
+      "sha256": "55c4c25eb16f9c2f324c81f1216b8f9009a5427a766d60c3fde32e606e10534f"
+    },
+    {
+      "id": "14_dark_brown_purple_circles",
+      "feature": "Dark skin, pronounced brown-purple circles",
+      "source": "Sources/14_dark_brown_purple_circles.png",
+      "frame": [0.05, 0.08, 0.90, 0.84],
+      "sha256": "45cbe794c0f016228d19202f26796c0a2c25e7fa404959037da4664f43108cc5"
+    },
+    {
+      "id": "15_older_bags_circles",
+      "feature": "Older face, under-eye bags and circles",
+      "source": "Sources/15_older_bags_circles.png",
+      "frame": [0.00, 0.08, 1.00, 0.84],
+      "sha256": "3308ac35592d4daf9e2069ae9a8b6c09ca63959ec007c7af9cd369ba0a335a30"
+    }
+  ]
+}

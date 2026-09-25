@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "coordinateSystem": "normalized lower-left, after EXIF orientation",
+  "cases": [
+    {"id":"01_light_skin_pores","feature":"Light skin, visible pores","source":"Sources/01_light_skin_pores.jpg","sourcePage":"https://www.pexels.com/photo/close-up-photo-of-a-woman-s-face-7298680/","author":"Kindel Media","license":"Pexels License","frame":[0.10,0.04,0.80,0.80]},
+    {"id":"02_dark_skin_texture","feature":"Dark skin, natural texture","source":"Sources/02_dark_skin_texture.jpg","sourcePage":"https://www.pexels.com/photo/portrait-of-a-man-at-lagos-beach-36723294/","author":"Okiki Onipede","license":"Pexels License","frame":[0.08,0.08,0.89,0.89]},
+    {"id":"03_acne_redness","feature":"Acne and redness","source":"Sources/03_acne_redness.jpg","sourcePage":"https://www.pexels.com/photo/portrait-of-a-woman-with-acne-5587981/","author":"Polina Tankilevitch","license":"Pexels License","frame":[0.02,0.05,0.90,0.90]},
+    {"id":"04_strong_freckles","feature":"Strong natural freckles","source":"Sources/04_strong_freckles.jpg","sourcePage":"https://commons.wikimedia.org/wiki/File:Smiling_model_with_freckles.jpg","author":"Eddy Van 3000","license":"CC BY-SA 2.0","frame":[0.07,0.08,0.84,0.84]},
+    {"id":"05_older_wrinkles","feature":"Older face, wrinkles","source":"Sources/05_older_wrinkles.jpg","sourcePage":"https://www.pexels.com/photo/portrait-of-man-316680/","author":"Lennart Wittstock","license":"Pexels License","frame":[0.20,0.12,0.60,0.60]},
+    {"id":"06_beard_moustache","feature":"Beard and moustache","source":"Sources/06_beard_moustache.jpg","sourcePage":"https://www.pexels.com/photo/a-portrait-of-a-bearded-man-5976144/","author":"cottonbro studio","license":"Pexels License","frame":[0,0,1,1]},
+    {"id":"07_glasses","feature":"Glasses over eyes and skin","source":"Sources/07_glasses.jpg","sourcePage":"https://www.pexels.com/photo/a-woman-wearing-a-pair-of-eyeglasses-7372390/","author":"Xzibeat Da Grinder","license":"Pexels License","frame":[0.04,0.04,0.92,0.92]},
+    {"id":"08_open_smile_teeth","feature":"Open smile, visible natural teeth","source":"Sources/08_open_smile_teeth.jpg","sourcePage":"https://www.pexels.com/photo/pretty-woman-looking-at-camera-6476076/","author":"Hanna Pad","license":"Pexels License","frame":[0.16,0.06,0.69,0.69]},
+    {"id":"09_pronounced_dark_circles","feature":"Pronounced under-eye circles","source":"Sources/09_pronounced_dark_circles.jpg","sourcePage":"https://unsplash.com/photos/young-person-with-bright-red-hair-and-dark-circles-lGN4XlavQwo","author":"alex Roosso","license":"Unsplash License","frame":[0.18,0.10,0.65,0.65]},
+    {"id":"10_detailed_eyes","feature":"Detailed eyes, natural sclera","source":"Sources/10_detailed_eyes.jpg","sourcePage":"https://www.pexels.com/photo/natural-portrait-of-a-young-woman-outdoors-36615635/","author":"Marie-Claude Vergne","license":"Pexels License","frame":[0,0,1,1]},
+    {"id":"11_45_degree_face","feature":"Approximately 45-degree face","source":"Sources/11_45_degree_face.jpg","sourcePage":"https://www.pexels.com/photo/close-up-photo-of-a-woman-4672290/","author":"Anna Shvets","license":"Pexels License","frame":[0.10,0.10,0.85,0.85]},
+    {"id":"12_profile_face","feature":"Profile face","source":"Sources/12_profile_face.jpg","sourcePage":"https://www.pexels.com/photo/close-up-of-a-woman-side-face-8156973/","author":"Romka","license":"Pexels License","frame":[0.15,0.16,0.63,0.63]}
+  ]
+}
