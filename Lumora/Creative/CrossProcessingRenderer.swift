@@ -75,7 +75,11 @@ struct CrossProcessingRenderer: CreativeEffectRendering {
     func apply(_ image: CIImage, effect: CreativeEffect) throws -> CIImage {
         let s = CrossProcessingSettings(effect: effect)
         guard s.amount > 0, s.styleStrength > 0 else { return image }
-        let strength = s.styleStrength / 100
+        // The intentionally subtle base style remains subtle in its preset;
+        // manually pushing Amount to 100 reveals a stronger color response.
+        let endpoint = CreativeEndpointGain.multiplier(s.amount,
+            atMaximum: Int(s.style.rounded()) == 0 ? 4 : 2)
+        let strength = s.styleStrength / 100 * endpoint
         let style = CrossProcessingCurve.styles[min(6, max(0, Int(s.style.rounded())))]
         let a = style.a * strength, b = style.b * strength
         let shadows = Self.opponentHue(s.shadowHue) * (s.shadowStrength / 100 * strength)

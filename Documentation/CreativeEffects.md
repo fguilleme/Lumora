@@ -8,6 +8,10 @@ Le panneau **Creative** permet d’ajouter, désactiver, dupliquer, réordonner,
 
 Les effets utilisent les masques existants, y compris leurs composantes ajoutées/soustraites et leur inversion. Un masque absent, masqué ou d’opacité nulle suspend l’effet qui le référence. Les changements passent par Undo/Redo et sont enregistrés dans le document.
 
+Un nouvel effet s’applique d’abord à **Toute la photo**, même si un masque était sélectionné dans un autre onglet. Le sélecteur **Zone** permet ensuite de lui attribuer explicitement un masque. Les effets qui étaient neutres à l’ajout démarrent désormais avec un look représentatif : Silver Toning avec Classic Sepia et Darken / Lighten Center avec Portrait Focus, par exemple. Réinitialiser un effet restaure ce look de départ tout en conservant son identité et son masque. Les paramètres enregistrés dans les documents existants ne changent pas ; un ancien réglage manuel de quantité supérieur à 95 sera toutefois rendu plus fortement.
+
+Pour Tonal Contrast, Detail Extractor, Pro Contrast, Cross Processing et Film Emulation, la fin du curseur de quantité (95–100) offre une réponse nettement plus forte pour juger l’effet à son maximum. Les looks intégrés, dont les quantités ne dépassent pas 95, conservent leur rendu précédent. Les effets de détail s’apprécient surtout dans l’inspecteur **100 %**.
+
 Choisir un look remplit les réglages de l’effet. Changer une valeur affiche **Custom** ; revenir exactement aux valeurs du look le reconnaît de nouveau. Ces looks intégrés sont distincts des [presets personnels du document](Presets.md).
 
 ## Effets disponibles

@@ -114,7 +114,9 @@ struct FilmEmulationRenderer: CreativeEffectRendering {
         guard s.amount>0 else{return image}
         if s.filmStrength==0 && s.exposure==0 {return image}
         let p=FilmResponseParameters.styles[min(6,max(0,Int(s.style.rounded())))]
-        let strength=s.filmStrength/100
+        // The saved film looks stay unchanged; Amount 100 provides extra
+        // manual headroom beyond the strongest built-in preset (Amount 85).
+        let strength=s.filmStrength/100 * CreativeEndpointGain.multiplier(s.amount,atMaximum:2)
         let toe=p.toe*strength+0.15*s.shadowDensity/100*strength
         let mid=1+(p.midSlope-1)*strength+0.23*s.contrast/100*strength
         let shoulder=max(0,p.shoulder*strength+0.18*s.highlightRollOff/100*strength)

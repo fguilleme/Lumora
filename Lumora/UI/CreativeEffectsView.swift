@@ -35,8 +35,9 @@ struct CreativeEffectsView: View {
                             Section(NSLocalizedString(category, comment: "Creative effect category")) {
                                 ForEach(CreativeEffectKind.allCases.filter { $0.descriptor.category == category }) { kind in
                                     Button(NSLocalizedString(kind.descriptor.title, comment: "Creative effect"), systemImage: kind.descriptor.symbol) {
-                                        let effect = CreativeEffect(kind, maskID: session.selectedMaskID)
+                                        let effect = CreativeFXPreset.initialEffect(for: kind)
                                         session.changeCreative("Add \(kind.descriptor.title)") { $0.effects.append(effect) }
+                                        session.selectBaseLayer()
                                         selected = effect.id
                                     }.disabled(session.state.creative.effects.count >= 32)
                                     .accessibilityIdentifier("creative-add-\(kind.rawValue)")
@@ -113,7 +114,9 @@ struct CreativeEffectsView: View {
                             effectAction("Apply later", "arrow.down", "later") {
                                 session.changeCreative("Move effect") { $0.move(effect.id, by: 1) }
                             }.disabled(session.state.creative.effects.last?.id == effect.id)
-                            effectAction("Reset", "arrow.counterclockwise", "reset") { update { $0.reset() } }
+                            effectAction("Reset", "arrow.counterclockwise", "reset") {
+                                update { CreativeFXPreset.resetToInitialLook(&$0) }
+                            }
                         }
                     }
                     .dimsDuringAdjustment()
@@ -267,8 +270,9 @@ struct CreativeEffectsView: View {
                 }
             }
         } else {
-            let effect = preset.makeEffect(maskID: session.selectedMaskID)
+            let effect = preset.makeEffect()
             session.changeCreative("Add \(preset.title) preset") { $0.effects.append(effect) }
+            session.selectBaseLayer()
             selected = effect.id
         }
         presetFeedback += 1

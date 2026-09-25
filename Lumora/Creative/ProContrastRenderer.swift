@@ -151,7 +151,10 @@ struct ProContrastRenderer: CreativeEffectRendering {
         let s = ProContrastSettings(effect: effect).validated
         guard s.amount > 0 else { return image }
         let stats = ProContrastAnalyzer.shared.analyze(image).0
-        let strength = stats.strength(s)
+        // A fully manual Amount setting should remain visible even when the
+        // scene analyzer judges the original contrast already sufficient.
+        let manualEndpoint = 0.9 * (CreativeEndpointGain.multiplier(s.amount, atMaximum: 2) - 1)
+        let strength = max(stats.strength(s), manualEndpoint)
         guard strength > 0 || s.correctColorCast > 0 else { return image }
         guard let output = Self.kernel?.apply(extent: image.extent, arguments: [
             image,

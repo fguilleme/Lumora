@@ -492,6 +492,32 @@ struct CreativeFXPreset: Identifiable {
         all(for: effect.kind).first { $0.matches(effect) }
     }
 
+    /// New stack entries should demonstrate the effect immediately. Existing
+    /// documents and explicitly selected presets keep their stored parameters.
+    static func initialEffect(for kind: CreativeEffectKind) -> CreativeEffect {
+        let startingLook: [CreativeEffectKind: String] = [
+            .tonalContrast: "Landscape Definition",
+            .detailExtractor: "Landscape Detail",
+            .bleachBypass: "Classic Bypass",
+            .proContrast: "Punch",
+            .crossProcessing: "Warm Process",
+            .filmEmulation: "Vivid Chrome",
+            .silverToning: "Classic Sepia",
+            .darkenLightenCenter: "Portrait Focus"
+        ]
+        guard let title = startingLook[kind],
+              let preset = all(for: kind).first(where: { $0.title == title })
+        else { return CreativeEffect(kind) }
+        return preset.makeEffect()
+    }
+
+    static func resetToInitialLook(_ effect: inout CreativeEffect) {
+        let starting = initialEffect(for: effect.kind)
+        effect.parameters = starting.parameters
+        effect.monochromatic = starting.monochromatic
+        effect.opacity = 100
+    }
+
     static func all(for kind: CreativeEffectKind) -> [Self] {
         func snapshot(_ title: String, _ configure: (CreativeEffect) -> CreativeEffect) -> Self {
             let effect = configure(CreativeEffect(kind)).validated

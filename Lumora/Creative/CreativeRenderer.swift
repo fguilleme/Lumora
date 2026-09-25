@@ -52,6 +52,15 @@ enum FXBlend {
     }
 }
 
+/// Existing presets stop at or below 95. The last five points of a manual
+/// Amount slider offer a stronger endpoint without changing those looks.
+enum CreativeEndpointGain {
+    static func multiplier(_ amount: Double, atMaximum maximum: Double) -> Double {
+        let t = min(1, max(0, (abs(amount) - 95) / 5))
+        return 1 + (maximum - 1) * t * t * (3 - 2 * t)
+    }
+}
+
 struct KeyEffectRenderer: CreativeEffectRendering {
     let high: Bool
     // CIKernel is compiled once and evaluated by the existing Metal-backed CIContext.
@@ -182,7 +191,8 @@ struct TonalContrastRenderer: CreativeEffectRendering {
         }
         let small = blurred(0.5), medium = blurred(1.8), large = blurred(5)
         guard let output = Self.reconstruct?.apply(extent: image.extent, arguments: [image, small, medium, large,
-            CIVector(x: s.shadows / 100, y: s.midtones / 100, z: s.highlights / 100, w: s.globalAmount / 100 * 1.5),
+            CIVector(x: s.shadows / 100, y: s.midtones / 100, z: s.highlights / 100,
+                     w: s.globalAmount / 100 * 1.5 * CreativeEndpointGain.multiplier(s.globalAmount, atMaximum: 4)),
             CIVector(x: s.saturation / 100, y: s.protectShadows / 100, z: s.protectHighlights / 100)])
         else { throw PhotoError.renderFailed }
         return output
@@ -213,7 +223,7 @@ struct DetailExtractorRenderer: CreativeEffectRendering {
     }
     [[ stitchable ]] float4 detailExtract(coreimage::sample_t pixel,
             coreimage::sample_t small, coreimage::sample_t medium,
-            coreimage::sample_t large, float4 controls, float2 protection) {
+            coreimage::sample_t large, float4 controls, float3 protection) {
         float4 c = unpremultiply(pixel);
         float y = max(0.0, dot(c.rgb, float3(0.2126, 0.7152, 0.0722)));
         float4 m1 = unpremultiply(small);
@@ -232,7 +242,7 @@ struct DetailExtractorRenderer: CreativeEffectRendering {
         float broadEdgeGate = 1.0 / (1.0 + pow(edge / 0.16, 2.0));
         float shadowGuard = mix(1.0, smoothstep(0.012, 0.20, y), protection.x);
         float highlightGuard = mix(1.0, 1.0-smoothstep(0.78, 1.08, y), protection.y);
-        float signedAmount = controls.x * (controls.x < 0.0 ? 0.7 : 1.0);
+        float signedAmount = controls.x * protection.z * (controls.x < 0.0 ? 0.7 : 1.0);
         float delta = signedAmount * shadowGuard * highlightGuard *
             (1.20*controls.y*fine + 0.95*controls.z*mid +
              0.50*controls.w*coarse*broadEdgeGate);
@@ -259,7 +269,8 @@ struct DetailExtractorRenderer: CreativeEffectRendering {
         guard let output = Self.reconstruct?.apply(extent: image.extent, arguments: [
             image, small, medium, large,
             CIVector(x: s.amount / 100, y: s.fine / 100, z: s.medium / 100, w: s.large / 100),
-            CIVector(x: s.protectShadows / 100, y: s.protectHighlights / 100)
+            CIVector(x: s.protectShadows / 100, y: s.protectHighlights / 100,
+                     z: CreativeEndpointGain.multiplier(s.amount, atMaximum: 8))
         ]) else { throw PhotoError.renderFailed }
         return output
     }
