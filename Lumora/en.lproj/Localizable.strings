@@ -687,3 +687,46 @@
 "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately." = "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately.";
 "Placement" = "Placement";
 "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it." = "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it.";
+"Reset Auto" = "Reset Auto";
+"Auto base" = "Auto base";
+"Manual" = "Manual";
+"Applies a Core Image Auto baseline before manual edits. The sliders stay editable and do not pretend to represent Core Image filter values. Reset Auto or Undo restores the previous rendering." = "Applies a Core Image Auto baseline before manual edits. The sliders stay editable and do not pretend to represent Core Image filter values. Reset Auto or Undo restores the previous rendering.";
+"Applies the same Core Image Auto baseline used in Light and Curves. It is not a separate white-balance proposal." = "Applies the same Core Image Auto baseline used in Light and Curves. It is not a separate white-balance proposal.";
+"Pressing Auto in another panel refreshes the single shared baseline. It does not stack a second Auto correction." = "Pressing Auto in another panel refreshes the single shared baseline. It does not stack a second Auto correction.";
+"Auto applies a Core Image baseline; it does not generate editable curve points. You can edit the curve afterward." = "Auto applies a Core Image baseline; it does not generate editable curve points. You can edit the curve afterward.";
+"The Auto button in Light, Color and Curves controls one shared Core Image baseline, applied before manual settings." = "The Auto button in Light, Color and Curves controls one shared Core Image baseline, applied before manual settings.";
+
+// Beauty tab V1
+"Beauty" = "Beauty";
+"Beauty Amount" = "Beauty Amount";
+"Uniformity" = "Uniformity";
+"Texture" = "Texture";
+"Blemishes" = "Blemishes";
+"Dark Circles" = "Dark Circles";
+"Eye Brightness" = "Eye Brightness";
+"Eye Detail" = "Eye Detail";
+"Teeth" = "Teeth";
+"Portrait" = "Portrait";
+"Smile" = "Smile";
+"All Faces" = "All Faces";
+"No face detected" = "No face detected";
+"Analyzing faces…" = "Analyzing faces…";
+"Reset Beauty" = "Reset Beauty";
+"Show Beauty Masks" = "Show Beauty Masks";
+
+// Beauty help
+"Local, restrained portrait retouching" = "Local, restrained portrait retouching";
+"Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%." = "Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%.";
+"Portrait retouching" = "Portrait retouching";
+"Blends all Beauty adjustments. At zero the original pixels are preserved." = "Blends all Beauty adjustments. At zero the original pixels are preserved.";
+"Natural / Portrait / Beauty" = "Natural / Portrait / Beauty";
+"Three fixed, editable starting points. Changing any slider produces Custom." = "Three fixed, editable starting points. Changing any slider produces Custom.";
+"V1 applies the same settings to every reliably detected face. If no face is found, no adjustment is applied." = "V1 applies the same settings to every reliably detected face. If no face is found, no adjustment is applied.";
+"Skin, eyes and smile" = "Skin, eyes and smile";
+"Uniformity and Texture" = "Uniformity and Texture";
+"Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately." = "Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately.";
+"Targets isolated local redness conservatively; freckles and broad skin tone are not intentionally removed." = "Targets isolated local redness conservatively; freckles and broad skin tone are not intentionally removed.";
+"Slightly lifts and warms the region below detected eyes without painting over the eyes." = "Slightly lifts and warms the region below detected eyes without painting over the eyes.";
+"Eye Brightness and Eye Detail" = "Eye Brightness and Eye Detail";
+"Adds restrained brightness and detail within the detected eye area. It never changes the eye shape." = "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape.";
+"Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged." = "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged.";

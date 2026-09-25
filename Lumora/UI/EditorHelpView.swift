@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, optics, geometry, masks, presets
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, beauty, optics, geometry, masks, presets
     var id: String { rawValue }
 
     var title: String {
@@ -121,6 +121,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: String(localized: "Color Tools")
         case .effects: String(localized: "Effects")
         case .detail: String(localized: "Detail")
+        case .beauty: String(localized: "Beauty")
         case .optics: String(localized: "Optics")
         case .geometry: String(localized: "Geometry")
         case .masks: String(localized: "Masks")
@@ -138,6 +139,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "circle.lefthalf.filled"
         case .effects: "camera.filters"
         case .detail: "triangle"
+        case .beauty: "face.smiling"
         case .optics: "camera.aperture"
         case .geometry: "crop.rotate"
         case .masks: "circle.dashed.inset.filled"
@@ -155,6 +157,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "Color Mixer and grading"
         case .effects: "Texture, clarity, dehaze, vignette, grain"
         case .detail: "Sharpening and noise reduction"
+        case .beauty: "Local, restrained portrait retouching"
         case .optics: "Lens profile and manual corrections"
         case .geometry: "Horizon, perspective, and crop"
         case .masks: "Layers and local adjustments"
@@ -172,6 +175,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "Color Tools contains Color Mixer for colors in the scene and Grading for tonal regions. They change different properties."
         case .effects: "Effects provides finishing adjustments. Texture and Clarity change local contrast; Dehaze, Vignette, and Grain serve different purposes."
         case .detail: "Detail controls sharpening and noise reduction. Examine results at 100%: a reduced preview can hide oversharpening and excessive smoothing."
+        case .beauty: "Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%."
         case .optics: "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise."
         case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
         case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
@@ -299,6 +303,21 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Luminance", "Reduces light-and-dark noise. Too much removes texture; Detail and Contrast help preserve its presence."),
                     HelpItem("Color", "Reduces colored noise blotches. Detail and Smoothing control how finely this correction is applied."),
                     HelpItem("Activation", "Secondary sharpening and noise controls become available when their primary Amount, Luminance, or Color value is above zero.")
+                ])
+            ]
+        case .beauty:
+            return [
+                HelpSection("Portrait retouching", [
+                    HelpItem("Beauty Amount", "Blends all Beauty adjustments. At zero the original pixels are preserved."),
+                    HelpItem("Natural / Portrait / Beauty", "Three fixed, editable starting points. Changing any slider produces Custom."),
+                    HelpItem("All Faces", "V1 applies the same settings to every reliably detected face. If no face is found, no adjustment is applied.")
+                ]),
+                HelpSection("Skin, eyes and smile", [
+                    HelpItem("Uniformity and Texture", "Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately."),
+                    HelpItem("Blemishes", "Targets isolated local redness conservatively; freckles and broad skin tone are not intentionally removed."),
+                    HelpItem("Dark Circles", "Slightly lifts and warms the region below detected eyes without painting over the eyes."),
+                    HelpItem("Eye Brightness and Eye Detail", "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape."),
+                    HelpItem("Teeth", "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged.")
                 ])
             ]
         case .optics:

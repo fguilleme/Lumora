@@ -18,6 +18,7 @@ struct EditState: Codable, Sendable, Equatable {
     var colorGrading = ColorGrading()
     var effects = EffectsSettings()
     var detail = DetailSettings()
+    var beauty = BeautyState()
     var optics = OpticsSettings()
     var geometry = GeometrySettings()
     var creative = CreativeEffectStack()
@@ -28,7 +29,7 @@ struct EditState: Codable, Sendable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
-        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, optics, geometry, masks, creative
+        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative
     }
 
     /// Additive migration: older documents have no curve or mixer keys.
@@ -49,6 +50,7 @@ struct EditState: Codable, Sendable, Equatable {
         colorGrading = try values.decodeIfPresent(ColorGrading.self, forKey: .colorGrading) ?? ColorGrading()
         effects = try values.decodeIfPresent(EffectsSettings.self, forKey: .effects) ?? EffectsSettings()
         detail = try values.decodeIfPresent(DetailSettings.self, forKey: .detail) ?? DetailSettings()
+        beauty = try values.decodeIfPresent(BeautyState.self, forKey: .beauty) ?? BeautyState()
         optics = try values.decodeIfPresent(OpticsSettings.self, forKey: .optics) ?? OpticsSettings()
         geometry = try values.decodeIfPresent(GeometrySettings.self, forKey: .geometry) ?? GeometrySettings()
         masks = try values.decodeIfPresent([LocalMask].self, forKey: .masks) ?? []
@@ -67,6 +69,7 @@ struct EditState: Codable, Sendable, Equatable {
         result.colorGrading = colorGrading.validated
         result.effects = effects.validated
         result.detail = detail.validated
+        result.beauty = beauty.validated
         result.optics = optics.validated
         result.geometry = geometry.validated
         result.creative = creative.validated

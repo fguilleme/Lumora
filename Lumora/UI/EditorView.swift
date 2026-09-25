@@ -53,7 +53,7 @@ struct EditorView: View {
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
-        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
+        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
         #if DEBUG
         case debug = "Debug"
         #endif
@@ -67,6 +67,7 @@ struct EditorView: View {
             case .colorTools: "circle.lefthalf.filled"
             case .effects: "camera.filters"
             case .detail: "triangle"
+            case .beauty: "face.smiling"
             case .optics: "camera.aperture"
             case .geometry: "crop.rotate"
             case .masks: "circle.dashed.inset.filled"
@@ -249,6 +250,7 @@ struct EditorView: View {
         .onAppear { session.setMaskEditingPreview(panel == .masks) }
         .onChange(of: panel) { _, newPanel in
             session.setMaskEditingPreview(newPanel == .masks)
+            if newPanel == .beauty { Task { await session.analyzeBeautyFaces() } }
             if newPanel != .curve { curveEditMode = false; curveEyedropper = false
                 curveSample = nil; curveSamplingBuffer = nil }
         }
@@ -256,9 +258,16 @@ struct EditorView: View {
             curveEditMode = false; curveEyedropper = false
             curveSample = nil; curveSamplingBuffer = nil
             clearClippingOverlay()
+            if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
             #if DEBUG
             debugA=nil;debugB=nil;debugScene=nil;debugMapOverlay=nil;debugHalo=nil;debugHistA=nil;debugHistB=nil
             #endif
+        }
+        .onChange(of: session.state.geometry) { _, _ in
+            if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
+        }
+        .onChange(of: session.state.optics) { _, _ in
+            if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
         }
         .onChange(of: session.result.map { ObjectIdentifier($0.image) }) { _, _ in
             clippingOverlay = nil; clippingSource = nil; clippingRequest &+= 1
@@ -563,6 +572,16 @@ struct EditorView: View {
                        onChange: session.setDetail,
                        onEnd: session.finishInteraction,
                        onReset: session.resetDetail)
+        case .beauty:
+            BeautyView(settings: session.state.beauty,
+                       faceCount: session.beautyFaceCount,
+                       isAnalyzing: session.isAnalyzingBeauty,
+                       debugMasks: session.beautyDebugMasks,
+                       onPreset: session.applyBeautyPreset,
+                       onBegin: session.beginInteraction,
+                       onChange: session.setBeauty,
+                       onEnd: session.finishInteraction,
+                       onReset: session.resetBeauty)
         case .optics:
             OpticsView(settings: session.state.optics, availability: result.optics, isRAW: result.isRAW,
                        onProfileChange: session.setProfileCorrection,
@@ -662,7 +681,7 @@ struct EditorView: View {
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
-        if item == .optics || item == .geometry { session.selectBaseLayer() }
+        if item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
     }

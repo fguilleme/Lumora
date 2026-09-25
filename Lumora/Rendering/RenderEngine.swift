@@ -34,6 +34,15 @@ actor RenderEngine {
     private var lastLUTState: EditState?
     private var lastLUT: Data?
     private var autoCache: (AutoAnalysisKey, AutoProposal)?
+    private var beautyCache: (BeautyAnalysisKey, BeautyMasks)?
+
+    private struct BeautyAnalysisKey: Equatable {
+        var url: URL?
+        var width: Int
+        var height: Int
+        var optics: OpticsSettings
+        var geometry: GeometrySettings
+    }
 
     init() {
         let options: [CIContextOption: Any] = [
@@ -52,6 +61,7 @@ actor RenderEngine {
     func clearCaches() {
         sources.removeAll()
         autoCache = nil
+        beautyCache = nil
         lastLUT = nil
         lastLUTState = nil
         opticsAvailability = OpticsAvailability()
@@ -126,11 +136,48 @@ actor RenderEngine {
         try applyDevelopment(input, state: state)
     }
 
+    /// A single Vision pass is shared by the Beauty panel and subsequent
+    /// interactive/HQ renders. The analysis key excludes slider values.
+    func beautyAnalysis(url: URL, state: EditState) throws -> BeautyMasks {
+        if sourceURL != url { clearCaches(); sourceURL = url }
+        let original = try preview(url: url, maximum: 1_024, optics: state.optics)
+        return try beautyMasks(for: CIImage(cgImage: original), state: state)
+    }
+
+    private func beautyMasks(for source: CIImage, state: EditState) throws -> BeautyMasks {
+        let key = BeautyAnalysisKey(url: sourceURL,
+            width: sourceURL == nil ? Int(source.extent.width) : sourceWidth,
+            height: sourceURL == nil ? Int(source.extent.height) : sourceHeight,
+            optics: state.optics, geometry: state.geometry)
+        if let beautyCache, beautyCache.0 == key { return beautyCache.1 }
+        try Task.checkCancellation()
+        var prepared = try OpticsRenderer.apply(source, settings: state.optics)
+        prepared = GeometryRenderer.apply(prepared, settings: state.geometry)
+        let scale = min(1, 1_024 / max(prepared.extent.width, prepared.extent.height))
+        if scale < 1 { prepared = prepared.transformed(by: CGAffineTransform(scaleX: scale, y: scale)) }
+        guard let color = CGColorSpace(name: CGColorSpace.sRGB),
+              let bitmap = context.createCGImage(prepared, from: prepared.extent.integral,
+                                                 format: .RGBA8, colorSpace: color)
+        else { throw PhotoError.renderFailed }
+        let masks = try BeautyFaceAnalysis.analyze(bitmap)
+        try Task.checkCancellation()
+        beautyCache = (key, masks)
+        return masks
+    }
+
     /// Shared adjustment graph for both preview and export. No SwiftUI or bitmap history.
     private func adjusted(_ input: CIImage, state: EditState, bypassCreative: Bool = false) throws -> CIImage {
+        let beautyActive = !state.beauty.isIdentity
         var image = try OpticsRenderer.apply(input, settings: state.optics)
-        image = try applyDevelopment(image, state: state)
+        image = try applyDevelopment(image, state: state, deferDetail: beautyActive)
         image = GeometryRenderer.apply(image, settings: state.geometry)
+        if beautyActive {
+            let masks = try beautyMasks(for: input, state: state)
+            image = try BeautyRenderer.apply(image, settings: state.beauty, masks: masks)
+            image = try DetailRenderer.apply(image, settings: state.detail)
+            var finishing = state.effects; finishing.grain = 0
+            image = try EffectsRenderer.applyFinishing(image, settings: finishing)
+        }
         for layer in state.masks.prefix(16).map(\.validated)
             where layer.isVisible && layer.opacity > 0 && !layer.adjustments.isIdentity {
             let matte = try MaskRenderer.makeMask(layer, extent: image.extent)
@@ -162,7 +209,8 @@ actor RenderEngine {
 
     /// Applies the photographic controls carried by either the full-frame base layer
     /// or a masked adjustment layer. Spatial document transforms stay outside this graph.
-    private func applyDevelopment(_ input: CIImage, state: EditState) throws -> CIImage {
+    private func applyDevelopment(_ input: CIImage, state: EditState,
+                                  deferDetail: Bool = false) throws -> CIImage {
         var image = input
         if state.temperature != 0 || state.tint != 0 {
             let filter = CIFilter.temperatureAndTint()
@@ -184,6 +232,7 @@ actor RenderEngine {
         colorState.temperature = 0; colorState.tint = 0; colorState.exposure = 0
         colorState.effects = EffectsSettings()
         colorState.detail = DetailSettings()
+        colorState.beauty = BeautyState()
         colorState.optics = OpticsSettings()
         colorState.geometry = GeometrySettings()
         colorState.masks = []
@@ -203,6 +252,7 @@ actor RenderEngine {
             image = output
         }
         image = try EffectsRenderer.applyBeforeDetail(image, settings: state.effects)
+        if deferDetail { return image }
         image = try DetailRenderer.apply(image, settings: state.detail)
         var finishing = state.effects; finishing.grain = 0
         image = try EffectsRenderer.applyFinishing(image, settings: finishing)
@@ -212,6 +262,7 @@ actor RenderEngine {
     func export(request: ExportRequest, settings: ExportSettings, directory: URL,
                 progress: @Sendable (ExportStage) -> Void = { _ in }) throws -> ExportedPhoto {
         try Task.checkCancellation()
+        if sourceURL != request.sourceURL { clearCaches(); sourceURL = request.sourceURL }
         let settings = settings.validated
         guard ExportFormat.available.contains(settings.format) else { throw ExportError.unsupportedFormat }
         progress(.decoding)

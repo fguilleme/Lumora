@@ -12,6 +12,13 @@ final class EditorSession {
     private(set) var isRendering = false
     private(set) var isGeneratingMask = false
     private(set) var isAnalyzingGeometry = false
+    private(set) var beautyFaceCount: Int?
+    private(set) var isAnalyzingBeauty = false
+    #if DEBUG
+    private(set) var beautyDebugMasks: BeautyMasks?
+    #else
+    var beautyDebugMasks: BeautyMasks? { nil }
+    #endif
     private(set) var libraryDocuments: [LibraryDocument] = []
     private(set) var libraryFolders: [LibraryFolder] = []
     private(set) var libraryTags: [LibraryTag] = []
@@ -41,6 +48,7 @@ final class EditorSession {
     private var autoProposalDocument: UUID?
     private var autoProposalLayer: UUID?
     @ObservationIgnored private var autoRequest = 0
+    @ObservationIgnored private var beautyRequest = 0
 
     func autoIsApplied(_ module: AutoModule, style: AutoCurveStyle = .balanced) -> Bool {
         autoProposalDocument == document?.id && autoProposalLayer == selectedMaskID &&
@@ -124,6 +132,10 @@ final class EditorSession {
                 importGeneration += 1
                 renderTask?.cancel(); generation += 1
                 document = nil; sourceURL = nil; result = nil; state = EditState(); history = HistoryManager()
+                beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
+                #if DEBUG
+                beautyDebugMasks = nil
+                #endif
                 selectedMaskID = nil; selectedMaskComponentID = nil; showingOriginal = false
                 isRendering = false
             }
@@ -234,6 +246,10 @@ final class EditorSession {
                 importGeneration += 1
                 renderTask?.cancel(); generation += 1
                 document = nil; sourceURL = nil; result = nil; state = EditState(); history = HistoryManager()
+                beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
+                #if DEBUG
+                beautyDebugMasks = nil
+                #endif
                 selectedMaskID = nil; selectedMaskComponentID = nil; showingOriginal = false
                 isRendering = false
             }
@@ -262,6 +278,10 @@ final class EditorSession {
             guard token == importGeneration else { return }
             renderTask?.cancel(); generation += 1
             document = imported; sourceURL = original; state = imported.state
+            beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
+            #if DEBUG
+            beautyDebugMasks = nil
+            #endif
             history = HistoryManager(); result = preview
             selectedMaskID = nil; selectedMaskComponentID = nil; selectFirstMaskIfNeeded()
             brushMode = .paint
@@ -331,6 +351,48 @@ final class EditorSession {
         else { state.detail[adjustment] = value }
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
+    }
+    func analyzeBeautyFaces() async {
+        guard let sourceURL, let documentID = document?.id else { return }
+        beautyRequest &+= 1
+        let token = beautyRequest, importToken = importGeneration
+        let snapshot = state
+        beautyFaceCount = nil
+        #if DEBUG
+        beautyDebugMasks = nil
+        #endif
+        isAnalyzingBeauty = true
+        defer { if token == beautyRequest { isAnalyzingBeauty = false } }
+        do {
+            let masks = try await engine.beautyAnalysis(url: sourceURL, state: snapshot)
+            guard token == beautyRequest, importToken == importGeneration,
+                  document?.id == documentID, state.geometry == snapshot.geometry,
+                  state.optics == snapshot.optics, !Task.isCancelled else { return }
+            beautyFaceCount = masks.faceCount
+            #if DEBUG
+            beautyDebugMasks = masks
+            #endif
+        } catch is CancellationError { }
+        catch { if token == beautyRequest, document?.id == documentID { self.error = error.localizedDescription } }
+    }
+    func setBeauty(_ control: BeautyControl, to value: Double) {
+        if !interacting { history.begin(control.title, state: state) }
+        state.beauty[control] = value
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
+    func applyBeautyPreset(_ preset: BeautyPreset) {
+        finishInteraction()
+        history.begin(preset.title, state: state)
+        state.beauty = preset.settings
+        history.commit(state); persist(); requestRender(.high)
+    }
+    func resetBeauty() {
+        finishInteraction()
+        guard state.beauty != BeautyState() else { return }
+        history.begin("Reset Beauty", state: state)
+        state.beauty = BeautyState()
+        history.commit(state); persist(); requestRender(.high)
     }
     func setOptics(_ adjustment: OpticsAdjustment, to value: Double) {
         if !interacting { history.begin(adjustment.title, state: state) }
@@ -729,6 +791,10 @@ final class EditorSession {
         guard token == importGeneration else { return }
         renderTask?.cancel(); generation += 1
         document = saved; state = saved.state; sourceURL = url; result = preview
+        beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
+        #if DEBUG
+        beautyDebugMasks = nil
+        #endif
         history = HistoryManager(); selectedMaskID = nil; selectedMaskComponentID = nil
         selectFirstMaskIfNeeded(); brushMode = .paint; showingOriginal = false; isRendering = false
         try await store.select(saved)

@@ -687,3 +687,46 @@
 "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately." = "Faites glisser l’histogramme sur la photo. Les vues compacte et agrandie mémorisent chacune leur position.";
 "Placement" = "Position initiale";
 "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it." = "Par défaut, l’histogramme compact se place à gauche de la photo ; la version agrandie est centrée sur elle.";
+"Reset Auto" = "Réinitialiser Auto";
+"Auto base" = "Base Auto";
+"Manual" = "Manuel";
+"Applies a Core Image Auto baseline before manual edits. The sliders stay editable and do not pretend to represent Core Image filter values. Reset Auto or Undo restores the previous rendering." = "Auto applique une base Core Image avant les retouches manuelles. Les curseurs restent modifiables et ne prétendent pas représenter les valeurs des filtres Core Image. Réinitialiser Auto ou Annuler restaure le rendu précédent.";
+"Applies the same Core Image Auto baseline used in Light and Curves. It is not a separate white-balance proposal." = "Applique la même base Core Image Auto que dans Lumière et Courbes. Ce n’est pas une proposition distincte de balance des blancs.";
+"Pressing Auto in another panel refreshes the single shared baseline. It does not stack a second Auto correction." = "Appuyer sur Auto dans un autre panneau actualise la base commune unique. Cela n’empile pas une seconde correction Auto.";
+"Auto applies a Core Image baseline; it does not generate editable curve points. You can edit the curve afterward." = "Auto applique une base Core Image ; il ne génère pas de points de courbe modifiables. Vous pouvez modifier la courbe ensuite.";
+"The Auto button in Light, Color and Curves controls one shared Core Image baseline, applied before manual settings." = "Le bouton Auto de Lumière, Couleur et Courbes contrôle une seule base Core Image commune, appliquée avant les réglages manuels.";
+
+// Beauty tab V1
+"Beauty" = "Beauté";
+"Beauty Amount" = "Beauté";
+"Uniformity" = "Uniformité";
+"Texture" = "Texture";
+"Blemishes" = "Imperfections";
+"Dark Circles" = "Cernes";
+"Eye Brightness" = "Éclat";
+"Eye Detail" = "Détail";
+"Teeth" = "Dents";
+"Portrait" = "Portrait";
+"Smile" = "Sourire";
+"All Faces" = "Tous les visages";
+"No face detected" = "Aucun visage détecté";
+"Analyzing faces…" = "Analyse des visages…";
+"Reset Beauty" = "Réinitialiser Beauté";
+"Show Beauty Masks" = "Afficher les masques Beauté";
+
+// Beauty help
+"Local, restrained portrait retouching" = "Retouche portrait locale et mesurée";
+"Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%." = "Beauté retouche les visages détectés sans changer leur forme. Ses masques et sa séparation de fréquences préservent la texture ; examinez la peau et les yeux à 100 %.";
+"Portrait retouching" = "Retouche portrait";
+"Blends all Beauty adjustments. At zero the original pixels are preserved." = "Mélange toutes les retouches Beauté. À zéro, les pixels originaux sont conservés.";
+"Natural / Portrait / Beauty" = "Naturel / Portrait / Beauté";
+"Three fixed, editable starting points. Changing any slider produces Custom." = "Trois points de départ fixes et modifiables. Modifier un curseur affiche Personnalisé.";
+"V1 applies the same settings to every reliably detected face. If no face is found, no adjustment is applied." = "La V1 applique les mêmes réglages à chaque visage détecté avec fiabilité. Si aucun visage n’est trouvé, aucune retouche n’est appliquée.";
+"Skin, eyes and smile" = "Peau, regard et sourire";
+"Uniformity and Texture" = "Uniformité et texture";
+"Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately." = "Uniformité égalise les variations larges de la peau tout en conservant les pores. Texture règle séparément les détails fins.";
+"Targets isolated local redness conservatively; freckles and broad skin tone are not intentionally removed." = "Cible prudemment les rougeurs locales isolées ; les taches de rousseur et les variations générales de peau ne sont pas supprimées intentionnellement.";
+"Slightly lifts and warms the region below detected eyes without painting over the eyes." = "Éclaircit et réchauffe légèrement la zone sous les yeux détectés, sans recouvrir les yeux.";
+"Eye Brightness and Eye Detail" = "Éclat et détail des yeux";
+"Adds restrained brightness and detail within the detected eye area. It never changes the eye shape." = "Ajoute légèrement de l’éclat et du détail dans la zone des yeux détectés, sans changer leur forme.";
+"Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged." = "Agit seulement si une bouche ouverte et des dents plausibles sont détectées. Une bouche fermée reste inchangée.";
