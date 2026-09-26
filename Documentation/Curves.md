@@ -14,7 +14,7 @@ Le nouvel outil **Courbes** propose RVB, Rouge, Vert et Bleu. L’histogramme du
 - La **pipette** échantillonne la photo par zone de 3 × 3 pixels dans une preview de 512 px au maximum. Elle affiche une position et une valeur temporaires sur la courbe sans créer de point ni d’entrée Undo. **+** crée volontairement un point à cette tonalité. Le canal RVB utilise la tonalité pondérée du moteur ; Rouge, Vert et Bleu lisent chacun leur canal. La pipette est indisponible sur un calque masqué pour éviter une mesure incohérente avec l’entrée locale de la courbe.
 - Chaque geste constitue une commande Undo/Redo. Les courbes sont sauvegardées avec le développement et restaurées au lancement.
 
-La consultation, l’édition et la pipette sont des états d’interface temporaires ; les courbes restent les seules données persistées. Voir le [rapport de validation des interactions](../Docs/CurvesInteractionValidationReport.md) et les captures dans `TestArtifacts/CurvesInteraction/`.
+La consultation, l’édition et la pipette sont des états d’interface temporaires ; les courbes restent les seules données persistées. Voir le [rapport de validation des interactions](../Validation/Reports/CurvesInteractionValidationReport.md) et les captures dans `Validation/TestArtifacts/CurvesInteraction/`.
 
 ## Modèle et interpolation
 
@@ -38,7 +38,7 @@ Créés :
 
 - `Lumora/Adjustments/ToneCurve.swift`
 - `Lumora/UI/ToneCurveEditor.swift`
-- `Tests/LumoraCoreTests/ToneCurveTests.swift`
+- `Validation/Tests/LumoraCoreTests/ToneCurveTests.swift`
 - `Documentation/Curves.md`
 
 Modifiés : `EditState`, `EditorSession`, `TonalResponse`, `RenderEngine`, `EditorView`, les tests du moteur et le parcours UI, ainsi que la documentation.

@@ -29,7 +29,7 @@
 		};
 		A10000000000000000000002 /* LumoraUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LumoraUITests;
+			path = Validation/LumoraUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */

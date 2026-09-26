@@ -40,7 +40,7 @@ Créés :
 - `Lumora/Adjustments/ColorGrading.swift` : paramètres, validation, conversion des coordonnées et transformée précalculée.
 - `Lumora/UI/ColorWheel.swift` : composant de roue réutilisable et accessible.
 - `Lumora/UI/ColorGradingView.swift` : panneau et contrôles.
-- `Tests/LumoraCoreTests/ColorGradingTests.swift` : tests du modèle et de la transformée.
+- `Validation/Tests/LumoraCoreTests/ColorGradingTests.swift` : tests du modèle et de la transformée.
 - `Documentation/ColorGrading.md` : ce document.
 
 Modifiés : `EditState`, `EditorSession`, `RenderEngine`, `EditorView`, `AdjustmentSlider`, tests de rendu, parcours UI et documentation. Le repère central du curseur n’est plus affiché sur les plages unipolaires : leur zéro se trouve au début de la piste.

@@ -4,6 +4,6 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 
-TestArtifacts/
-VisualTestAssets/*
-!VisualTestAssets/README.md
+Validation/TestArtifacts/
+Validation/VisualTestAssets/*
+!Validation/VisualTestAssets/README.md

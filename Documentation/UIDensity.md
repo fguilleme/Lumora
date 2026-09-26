@@ -29,7 +29,7 @@ Le nouveau test UI contrôle des boutons de 44 à 46 pt, les états sélectionn�
 
 La première préparation des simulateurs a rencontré une saturation du disque système (installation et collecte XCTest impossibles). Les caches de builds temporaires ont été déplacés sur le disque de développement, et le simulateur iPad dédié a été supprimé après conservation de ses résultats. Les essais affectés ont été relancés. Le geste de défilement du test Grading utilise désormais la marge du panneau, afin de ne pas éditer la roue située sous son ancien trajet central. Les balayages horizontaux complets dépassaient une capsule intermédiaire ; le test utilise des glissements courts avec arrêt, sans changer le défilement natif de l’application.
 
-Le build final et les tests UI utilisent `SYMROOT`/`OBJROOT` dans `TestArtifacts/UIDensityBuild`, afin de ne pas dépendre du dossier de produits Xcode partagé devenu indisponible pendant la validation. Ces fichiers sont locaux et non versionnés.
+Le build final et les tests UI utilisent `SYMROOT`/`OBJROOT` dans `Validation/TestArtifacts/UIDensityBuild`, afin de ne pas dépendre du dossier de produits Xcode partagé devenu indisponible pendant la validation. Ces fichiers sont locaux et non versionnés.
 
 ## Résultats finaux
 

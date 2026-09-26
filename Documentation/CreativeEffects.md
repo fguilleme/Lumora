@@ -53,7 +53,7 @@ Neutral retourne l’entrée inchangée. Pour observer uniquement le papier, cho
 
 Looks : Neutral Print, Subtle Selenium, Deep Selenium, Classic Sepia, Soft Sepia, Copper Print, Cool Gold, Platinum Print, Warm Silver, Cool Silver et Split Warm/Cool. Platinum et Subtle Selenium restent volontairement discrets.
 
-**Validation visuelle en attente** : Deep Selenium donne une dominante mauve perceptible sur les carnations dans les planches de validation. Ce quality WARN est conservé ; aucun preset n’a été automatiquement corrigé. Le [rapport complet](../TestArtifacts/SilverToningValidationReport.md) distingue les résultats techniques et l’inspection photographique.
+**Validation visuelle en attente** : Deep Selenium donne une dominante mauve perceptible sur les carnations dans les planches de validation. Ce quality WARN est conservé ; aucun preset n’a été automatiquement corrigé. Le [rapport complet](../Validation/TestArtifacts/SilverToningValidationReport.md) distingue les résultats techniques et l’inspection photographique.
 
 ## Comparer les ordres et le détail
 
@@ -62,7 +62,7 @@ Looks : Neutral Print, Subtle Selenium, Deep Selenium, Classic Sepia, Soft Sepia
 - Film Grain avant ou après le virage peut changer le résultat. Lumora respecte cet ordre.
 - Le zoom ordinaire agrandit l’aperçu. L’inspecteur explicite **100 %** rend une région à la résolution source ; il permet notamment de regarder le grain et les détails.
 
-Les kernels compatibles HDR ne signifient pas que l’affichage et l’export sont HDR/EDR. Voir [les limites du pipeline](Rendering.md), [l’architecture Creative](../Docs/CREATIVE_FX.md) et [le protocole de validation](../Docs/VISUAL_VALIDATION.md).
+Les kernels compatibles HDR ne signifient pas que l’affichage et l’export sont HDR/EDR. Voir [les limites du pipeline](Rendering.md), [l’architecture Creative](../Docs/CREATIVE_FX.md) et [le protocole de validation](../Validation/Documentation/VISUAL_VALIDATION.md).
 
 ## Darken / Lighten Center
 
@@ -74,7 +74,7 @@ La poignée, le contour et la limite de feather apparaissent pour l’instance s
 
 Looks : **Subtle Focus, Portrait Focus, Dark Surround, Light Center, Wide Focus, Narrow Focus, Off-Center Drama, Reverse Focus**. Ils ne détectent pas automatiquement le sujet. Repositionner le centre selon la composition produit un réglage Custom. Une correction forte peut écrêter les blancs à l’export SDR ; le moteur ne compense pas cette exposition par une protection cachée.
 
-Les masques limitent l’effet via la même composition que les autres Creative FX. Plusieurs instances sont possibles. Le repère suit l’image développée après géométrie : recadrer le document peut donc déplacer le centre par rapport au contenu d’origine. Voir le [rapport et les planches décentrées](../TestArtifacts/DarkenLightenCenterValidationReport.md) avant toute approbation photographique.
+Les masques limitent l’effet via la même composition que les autres Creative FX. Plusieurs instances sont possibles. Le repère suit l’image développée après géométrie : recadrer le document peut donc déplacer le centre par rapport au contenu d’origine. Voir le [rapport et les planches décentrées](../Validation/TestArtifacts/DarkenLightenCenterValidationReport.md) avant toute approbation photographique.
 
 Les tests UI des actions directes, duplication/Undo/suppression et inspecteur 100 % passent sur iPhone 18 Pro simulé (iOS 27). La ligne nom/calque/format/résolution est masquée dans Creative.
 

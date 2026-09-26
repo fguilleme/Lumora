@@ -10,8 +10,9 @@ let package = Package(
         .target(name: "LumoraCore", path: "Lumora",
                 exclude: ["ContentView.swift", "MyApp.swift", "UI", "Editor/EditorSession.swift", "Editor/PresetController.swift", "Library/ImportedPhoto.swift", "Masks/MaskGenerator.swift", "Adjustments/GeometryAnalyzer.swift", "Assets.xcassets"],
                 sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Beauty", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
-        .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"]),
+        .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"], path: "Validation/Tests/LumoraCoreTests"),
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
+                    path: "Validation/Tests/LumoraVisualTestLab",
                     exclude: ["LOW_KEY_CONTRACT.md", "AdaptiveToneMetalPrototype", "SpatialImportancePrototype",
                               "ShadowBudgetPrototype", "adaptive_tone_phase2.py", "adaptive_tone_prototype.py", "__pycache__"],
                     resources: [.copy("Baselines"), .copy("Fixtures")])

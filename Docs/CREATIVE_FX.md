@@ -78,7 +78,7 @@ Dense Slide was refined and visually approved separately (`c4972f1`). Only its p
 
 `SilverBWSettings` and `SilverBWRenderer` implement continuous opponent-color spectral weighting and a continuous photographic hue/strength filter before monochrome tonal shaping. Neutral Silver, Fine Grain Response, Portrait Silver, Classic Panchromatic, High Contrast Film, Soft Orthochromatic and Documentary Silver are original Lumora responses. Fine Grain Response does not generate noise.
 
-Brightness and Dynamic Brightness precede the film/tone curve; Contrast, Soft Contrast, Blacks and Whites shape the response. Structure reuses the unchanged Tonal Contrast renderer with fixed moderate gains, then restores exact channel equality. Amount is the final blend: zero is strict RGB identity, 100 produces neutral monochrome. Eight looks are available. See the [Silver B&W report](../TestArtifacts/SilverBWValidationReport.md) for formulas, HDR/negative continuation and measured invariants.
+Brightness and Dynamic Brightness precede the film/tone curve; Contrast, Soft Contrast, Blacks and Whites shape the response. Structure reuses the unchanged Tonal Contrast renderer with fixed moderate gains, then restores exact channel equality. Amount is the final blend: zero is strict RGB identity, 100 produces neutral monochrome. Eight looks are available. See the [Silver B&W report](../Validation/TestArtifacts/SilverBWValidationReport.md) for formulas, HDR/negative continuation and measured invariants.
 
 ### Silver Toning
 
@@ -86,7 +86,7 @@ Brightness and Dynamic Brightness precede the film/tone curve; Contrast, Soft Co
 
 Silver Tone follows the density response; signed Paper Tone adds a weak warm/cool contribution concentrated in low-density whites. Strength scales both. Amount=0, Strength=0 and Neutral bypass processing exactly. The correction tends smoothly to zero at black; negative luminance is unchanged. HDR remains extended inside this effect. Split Silver exposes two hues and independent shadow/highlight strengths with the same continuous Balance coordinate. Nine toners and eleven looks are included, without grain or spatial filtering.
 
-Recommended workflow: Silver B&W → Silver Toning → optional Film Grain. Reversing B&W and Toning removes the latter’s chroma at full B&W Amount; other permutations are intentionally noncommutative. See the [Silver Toning report](../TestArtifacts/SilverToningValidationReport.md) for model constants, descriptive tables and the Deep Selenium portrait quality WARN. Numerical PASS does not constitute visual approval.
+Recommended workflow: Silver B&W → Silver Toning → optional Film Grain. Reversing B&W and Toning removes the latter’s chroma at full B&W Amount; other permutations are intentionally noncommutative. See the [Silver Toning report](../Validation/TestArtifacts/SilverToningValidationReport.md) for model constants, descriptive tables and the Deep Selenium portrait quality WARN. Numerical PASS does not constitute visual approval.
 
 ### Scope of HDR and performance claims
 
@@ -100,4 +100,4 @@ For elliptical radius `d`, transition width `w=.15+.85·feather/100`, `t=clamp((
 
 `DLCViewport` shares aspect-fit/zoom/pan geometry with `DLCCenterOverlay`. The overlay lives only in SwiftUI; the editor binds the selected effect UUID and wraps center drags in the existing grouped history interaction. Precise coordinate/EV steps are specific to DLC. Renderer registration and catalog additions leave existing effect algorithms unchanged.
 
-See [validation](../TestArtifacts/DarkenLightenCenterValidationReport.md) for aspect, translated extent, EXIF, crop semantics, image/export alignment, stack and masks. The expected noncommutativity depends on the paired effect; no synthetic requirement forces independent scalar gains to differ by order.
+See [validation](../Validation/TestArtifacts/DarkenLightenCenterValidationReport.md) for aspect, translated extent, EXIF, crop semantics, image/export alignment, stack and masks. The expected noncommutativity depends on the paired effect; no synthetic requirement forces independent scalar gains to differ by order.

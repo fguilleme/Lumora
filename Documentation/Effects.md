@@ -30,7 +30,7 @@ La Correction du voile est une approximation photographique locale, pas une esti
 
 ## Validation actuelle
 
-Le dernier passage du cœur comprend 97 tests réussis (22 septembre 2026). Les bancs Creative distinguent invariants obligatoires et qualité photographique ; les rapports et commandes sont décrits dans [Visual Validation](../Docs/VISUAL_VALIDATION.md).
+Le dernier passage du cœur comprend 97 tests réussis (22 septembre 2026). Les bancs Creative distinguent invariants obligatoires et qualité photographique ; les rapports et commandes sont décrits dans [Visual Validation](../Validation/Documentation/VISUAL_VALIDATION.md).
 
 ## Historique de la cinquième étape
 

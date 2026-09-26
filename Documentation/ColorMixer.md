@@ -35,7 +35,7 @@ Créés :
 
 - `Lumora/Adjustments/ColorMixer.swift`
 - `Lumora/UI/ColorMixerView.swift`
-- `Tests/LumoraCoreTests/ColorMixerTests.swift`
+- `Validation/Tests/LumoraCoreTests/ColorMixerTests.swift`
 - `Documentation/ColorMixer.md`
 
 Modifiés : `EditState`, `EditorSession`, `TonalResponse`, `AdjustmentSlider`, `EditorView`, tests du renderer, parcours UI et documentation.

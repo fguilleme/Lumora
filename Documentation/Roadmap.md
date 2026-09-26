@@ -4,7 +4,7 @@ Ce document conserve les évolutions volontairement repoussées après la mise e
 
 ## État de référence — 22 septembre 2026
 
-Les douze Creative FX, leurs looks intégrés, la pile masquable, l’inspecteur 100 %, Silver B&W et Silver Toning sont implémentés. Silver Toning attend encore la validation visuelle humaine ; les WARN restent ouverts. Voir [le guide](CreativeEffects.md) et [le rapport](../TestArtifacts/SilverToningValidationReport.md). Cette feuille de route conserve les travaux différés ; elle ne déclenche aucun nouvel effet ni raffinement automatique.
+Les douze Creative FX, leurs looks intégrés, la pile masquable, l’inspecteur 100 %, Silver B&W et Silver Toning sont implémentés. Silver Toning attend encore la validation visuelle humaine ; les WARN restent ouverts. Voir [le guide](CreativeEffects.md) et [le rapport](../Validation/TestArtifacts/SilverToningValidationReport.md). Cette feuille de route conserve les travaux différés ; elle ne déclenche aucun nouvel effet ni raffinement automatique.
 
 ## 1. Import et traitement en lot
 

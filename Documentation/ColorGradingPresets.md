@@ -42,15 +42,15 @@ Le preset s’applique au développement global ou au calque masqué sélectionn
 
 Les valeurs de la première collection sont figées avant le banc. Aucun WARN, rapprochement numérique ni appréciation visuelle automatique n’autorise à retoucher les presets.
 
-Commencer par [la planche des 16 presets sur huit photos](../TestArtifacts/ColorGradingPresets/all_presets_contact_sheet.png), puis [les portraits](../TestArtifacts/ColorGradingPresets/portrait_presets.png). Les [paramètres exacts](../TestArtifacts/ColorGradingPresets/preset_parameters.md), [distances](../TestArtifacts/ColorGradingPresets/preset_distances.md) et [rapport](../TestArtifacts/ColorGradingPresetsValidationReport.md) expliquent les mesures sans classer les looks.
+Commencer par [la planche des 16 presets sur huit photos](../Validation/TestArtifacts/ColorGradingPresets/all_presets_contact_sheet.png), puis [les portraits](../Validation/TestArtifacts/ColorGradingPresets/portrait_presets.png). Les [paramètres exacts](../Validation/TestArtifacts/ColorGradingPresets/preset_parameters.md), [distances](../Validation/TestArtifacts/ColorGradingPresets/preset_distances.md) et [rapport](../Validation/TestArtifacts/ColorGradingPresetsValidationReport.md) expliquent les mesures sans classer les looks.
 
 ```sh
 swift test --filter LumoraCoreTests
 swift test --filter colorGradingPresetsValidation
 ```
 
-La campagne nécessite le corpus `VisualTestAssets/`, Core Image/Metal et génère les artefacts dans `TestArtifacts/`, non versionné comme pour les autres campagnes. Les résultats initiaux restent dans `ColorGradingPresets/ValidationHistory/initial_results.json`. Aucun Golden Master n’est créé avant inspection humaine.
+La campagne nécessite le corpus `Validation/VisualTestAssets/`, Core Image/Metal et génère les artefacts dans `Validation/TestArtifacts/`, non versionné comme pour les autres campagnes. Les résultats initiaux restent dans `ColorGradingPresets/ValidationHistory/initial_results.json`. Aucun Golden Master n’est créé avant inspection humaine.
 
-Bilan final : **876 PASS / 29 WARN / 0 FAIL**, incluant le suivi mémoire prolongé. Voir [le résumé versionné](ColorGradingPresetsValidation.md) et [les paramètres figés](ColorGradingPresetParameters.md).
+Bilan final : **876 PASS / 29 WARN / 0 FAIL**, incluant le suivi mémoire prolongé. Voir [le résumé versionné](../Validation/Reports/ColorGradingPresetsValidation.md) et [les paramètres figés](ColorGradingPresetParameters.md).
 
 Présentation compacte : voir [Densité des panneaux](UIDensity.md).
