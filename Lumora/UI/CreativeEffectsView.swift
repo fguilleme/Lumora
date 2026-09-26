@@ -56,7 +56,7 @@ struct CreativeEffectsView: View {
                     .accessibilityLabel("Add effect")
                     .accessibilityIdentifier("creative-add")
                     Menu {
-                        ForEach(CreativeEffectKind.allCases) { kind in
+                        ForEach(CreativeEffectKind.allCases.filter { $0 != .importedXMP }) { kind in
                             Section(NSLocalizedString(kind.descriptor.title, comment: "Creative effect")) {
                                 ForEach(CreativeFXPreset.all(for: kind)) { preset in
                                     Button(NSLocalizedString(preset.title, comment: "Creative preset")) {
@@ -86,7 +86,7 @@ struct CreativeEffectsView: View {
                                     if let mask = fx.maskID, session.state.masks.contains(where: { $0.id == mask }) { session.selectMask(mask) }
                                     else { session.selectBaseLayer() }
                                 } label: {
-                                    Label(NSLocalizedString(fx.kind.descriptor.title, comment: "Creative effect"), systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
+                                    Label(fx.importedXMP?.name ?? NSLocalizedString(fx.kind.descriptor.title, comment: "Creative effect"), systemImage: fx.enabled ? fx.kind.descriptor.symbol : "eye.slash")
                                 }
                                 .buttonStyle(.bordered).tint(fx.id == selected ? .mint : .secondary)
                                 .accessibilityIdentifier("creative-effect-\(fx.id)")
@@ -95,6 +95,16 @@ struct CreativeEffectsView: View {
                     }
                 }.dimsDuringAdjustment()
                 if let effect {
+                    if let imported = effect.importedXMP {
+                        Text(imported.name).font(.headline)
+                        Text("XMP settings are interpreted by Lumora; rendering may differ from the source application.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        if !imported.unsupported.isEmpty {
+                            Text(String(localized: "Settings not imported:") + " " + imported.unsupported.joined(separator: ", "))
+                                .font(.caption).foregroundStyle(.secondary)
+                                .accessibilityIdentifier("creative-xmp-unsupported")
+                        }
+                    }
                     CreativePresetSelector(presets: CreativeFXPreset.all(for: effect.kind),
                                            selectedID: CreativeFXPreset.matching(effect)?.id) { preset in
                         update { $0 = preset.applying(to: $0) }

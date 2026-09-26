@@ -21,6 +21,7 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
     var sections: Set<PresetSection>
     var values: EditState
     var formatVersion = 2
+    var xmpImport: XMPImportReport?
 
     init(id: UUID = UUID(), name: String, createdAt: Date = Date(), sections: Set<PresetSection>, values: EditState) {
         self.id = id; self.name = name; self.createdAt = createdAt

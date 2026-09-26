@@ -37,6 +37,9 @@ actor PresetStore {
     }
 
     func importPreset(from source: URL) throws -> Preset {
+        if source.pathExtension.lowercased() == "xmp" {
+            return try save(XMPPresetImporter.read(source).makePreset())
+        }
         let scoped = source.startAccessingSecurityScopedResource()
         defer { if scoped { source.stopAccessingSecurityScopedResource() } }
         let data = try Data(contentsOf: source)

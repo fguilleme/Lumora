@@ -23,6 +23,7 @@ struct PresetsView: View {
                     Spacer()
                     Button { showingImporter = true } label: { Label("Import", systemImage: "square.and.arrow.down") }
                         .accessibilityIdentifier("preset-import")
+                        .accessibilityLabel("Import Lumora or XMP presets")
                     Button { createName = ""; selectedSections = PresetSection.photographicDefaults; showingCreate = true } label: {
                         Label("Create", systemImage: "plus.circle")
                     }.accessibilityIdentifier("preset-create")
@@ -51,7 +52,7 @@ struct PresetsView: View {
         .alert("Unable to manage preset", isPresented: Binding(get: { controller.error != nil }, set: { if !$0 { controller.error = nil } })) {
             Button("OK") { controller.error = nil }
         } message: { Text(controller.error ?? "") }
-        .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
+        .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.json, UTType(filenameExtension: "lumorapreset") ?? .data, UTType(filenameExtension: "xmp") ?? .xml], allowsMultipleSelection: false) { result in
             if case .success(let urls) = result, let url = urls.first { Task { await controller.importPreset(from: url) } }
             else if case .failure(let error) = result { controller.error = error.localizedDescription }
         }
@@ -63,6 +64,7 @@ struct PresetsView: View {
     }
 
     private func presetRow(_ preset: Preset) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(preset.name).font(.subheadline.weight(.semibold)).lineLimit(1)
@@ -78,6 +80,21 @@ struct PresetsView: View {
                 Button("Delete", systemImage: "trash", role: .destructive) { Task { await controller.delete(preset) } }
             } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
                 .accessibilityLabel("Options for \(preset.name)")
+        }
+        if let report = preset.xmpImport {
+            DisclosureGroup("XMP import details") {
+                Text("XMP settings are interpreted by Lumora; rendering may differ from the source application.")
+                    .font(.caption).foregroundStyle(.secondary)
+                if !report.approximated.isEmpty {
+                    Text(String(localized: "Adapted settings:") + " " + report.approximated.joined(separator: ", "))
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                if !report.unsupported.isEmpty {
+                    Text(String(localized: "Settings not imported:") + " " + report.unsupported.joined(separator: ", "))
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }.font(.caption).accessibilityIdentifier("preset-xmp-details-\(preset.id)")
+        }
         }.padding(10).background(.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
     }
 

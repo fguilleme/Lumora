@@ -21,11 +21,11 @@ struct CreativePresetSelector<HeaderActions: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 8) {
-                Text("Styles").font(.subheadline.weight(.semibold))
+                Text(presets.isEmpty ? "Imported XMP" : "Styles").font(.subheadline.weight(.semibold))
                 Spacer(minLength: 4)
                 headerActions
             }
-            if selectedID == nil {
+            if selectedID == nil && !presets.isEmpty {
                 Label("Custom", systemImage: "slider.horizontal.3")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)

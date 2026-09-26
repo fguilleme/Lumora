@@ -79,3 +79,57 @@ Les masques limitent l’effet via la même composition que les autres Creative 
 Les tests UI des actions directes, duplication/Undo/suppression et inspecteur 100 % passent sur iPhone 18 Pro simulé (iOS 27). La ligne nom/calque/format/résolution est masquée dans Creative.
 
 ![Actions directes Creative](CreativeActions-Simulator.png)
+
+## Import de presets XMP
+
+L’import se trouve désormais dans **Presets → Importer**, à côté des presets Lumora.
+Un fichier `.xmp` est converti en preset photographique, sauvegardé dans la bibliothèque,
+puis appliqué avec le bouton **Appliquer**. Il alimente les sections natives Lumière,
+Couleur, Courbes, Mélangeur, Grading, Effets, Détail et, si nécessaire, Géométrie.
+Il ne crée pas d’effet Creative et n’efface pas la pile Creative existante.
+Les effets XMP enregistrés par la première version restent lisibles dans les anciens documents.
+
+Les détails XMP sont repliés dans chaque preset. Ils distinguent les réglages adaptés
+et ceux non importés. Les empreintes de profils et options sans effet ne sont plus
+présentées comme des réglages perdus : nombres nuls sous toutes leurs formes, plages
+de défrangeage sans quantité active, paramètres de vignette sans vignette active.
+Les transformations géométriques neutres ne remplacent pas le recadrage courant.
+
+L’importeur prend en charge :
+
+- Réglages PV2012, exposition, tonalité, saturation, vibrance et température/teinte relatives.
+- Anciens champs Exposure, Brightness, Contrast, Shadows, FillLight, Recovery et Clarity.
+  Les champs modernes ont priorité lorsqu’ils coexistent. L’adaptation Lumora emploie
+  les références legacy 50/25/5 pour luminosité/contraste/noirs ; Brightness modifie une
+  courbe de tons moyens, Shadows la densité des noirs et Recovery les hautes lumières.
+  Ce sont des approximations signalées, pas une émulation du moteur PV2003/PV2010.
+- Balance des blancs chiffrée : Kelvin et teinte sont adaptés à la référence relative
+  6500 K de Lumora, avec bornage. As Shot conserve la balance de développement ; un mode
+  sans valeurs numériques exploitables reste signalé comme non importé.
+- Courbes RGB et par canal, anciennes et PV2012, et approximation des courbes paramétriques.
+- HSL et grading ombres/tons moyens/hautes lumières/global. La roue Global est éditable
+  dans Grading ; les anciens documents décodent avec une roue globale neutre.
+- Texture, clarté, voile, vignette, netteté et réduction du bruit.
+- Quantité, taille et irrégularité du grain, conservées dans la section Effets et utilisées
+  par le moteur de grain partagé en aperçu/export.
+- Rotation et réglages de perspective compatibles, adaptés aux plages de Géométrie.
+
+Les profils Adobe/Look, la calibration des primaires, le défrangeage actif et les retouches
+locales non compatibles restent signalés. Un nom de profil ou une empreinte ne contient
+pas la transformation colorimétrique nécessaire. Le rendu Lumora peut différer du rendu
+Adobe/Nik. Les recettes propriétaires Nik sans réglages Camera Raw ne sont pas décodées.
+
+Le parseur utilise les URI des espaces de noms, accepte plusieurs descriptions RDF et
+ignore les réglages des profils imbriqués. Limite de fichier : 2 Mo. Les XML mal formés,
+valeurs non finies, courbes invalides et déclarations d’entités sont refusés.
+
+Références Adobe : [spécification XMP](https://developer.adobe.com/xmp/docs/xmp-specifications/),
+[schéma Camera Raw](https://developer.adobe.com/xmp/docs/xmp-namespaces/crs/),
+[réglages de tonalité et versions de traitement](https://helpx.adobe.com/camera-raw/desktop/using/make-color-tonal-adjustments-camera.html).
+La spécification décrit les champs ; les algorithmes Adobe propriétaires ne sont pas fournis.
+
+Validation : compilation iOS Simulator réussie ; 28 tests ciblés passent (import du fichier
+Vintage, conversions legacy et priorité moderne, avertissements, balance des blancs,
+géométrie, grading global, sauvegarde/relecture/application native, historique et rendu GPU).
+Le fichier « light - ariadna a116 » visible sur la capture n’était pas fourni ; ses champs
+visibles sont couverts par des cas synthétiques, pas par une comparaison de son rendu original.

@@ -8,10 +8,22 @@ struct EffectsSettings: Codable, Sendable, Equatable {
     var dehaze = 0.0
     var vignette = 0.0
     var grain = 0.0
+    var grainSize: Double?
+    var grainIrregularity: Double?
+
+    var grainSettings: FilmGrainSettings {
+        var value = FilmGrainSettings()
+        value.amount = grain
+        if let grainSize { value.size = grainSize }
+        if let grainIrregularity { value.irregularity = grainIrregularity }
+        return value.validated
+    }
 
     var validated: Self {
         var value = self
         for adjustment in EffectAdjustment.allCases { value[adjustment] = self[adjustment] }
+        if let grainSize { value.grainSize = grainSize.isFinite ? min(100, max(1, grainSize)) : nil }
+        if let grainIrregularity { value.grainIrregularity = grainIrregularity.isFinite ? min(100, max(0, grainIrregularity)) : nil }
         return value
     }
     var isIdentity: Bool { self == EffectsSettings() }

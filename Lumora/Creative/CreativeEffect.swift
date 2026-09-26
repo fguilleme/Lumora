@@ -11,6 +11,7 @@ struct FXParameter: Sendable, Identifiable {
 }
 
 enum CreativeEffectKind: String, Codable, CaseIterable, Sendable, Identifiable {
+    case importedXMP
     case highKey, lowKey, grain, tonalContrast, detailExtractor, glamourGlow, bleachBypass, proContrast, crossProcessing, filmEmulation, silverBW, silverToning, darkenLightenCenter
     var id: String { rawValue }
     var descriptor: CreativeEffectDescriptor { CreativeEffectCatalog.descriptors[self]! }
@@ -25,6 +26,7 @@ struct CreativeEffectDescriptor: Sendable {
 
 enum CreativeEffectCatalog {
     static let descriptors: [CreativeEffectKind: CreativeEffectDescriptor] = [
+        .importedXMP: .init(title: "Imported XMP", category: "Import", symbol: "doc.badge.arrow.up", parameters: []),
         .highKey: .init(title: "High Key", category: "Key", symbol: "sun.max", parameters: keyParameters(high: true)),
         .lowKey: .init(title: "Low Key", category: "Key", symbol: "moon", parameters: keyParameters(high: false)),
         .glamourGlow: .init(title: "Glamour Glow", category: "Film", symbol: "sparkles", parameters: [
@@ -359,10 +361,11 @@ struct CreativeEffect: Codable, Sendable, Equatable, Identifiable {
     var parameters: [String: Double] = [:]
     var monochromatic = true
     var seed: UInt32 = 137
+    var importedXMP: XMPPresetSnapshot?
 
     init(_ kind: CreativeEffectKind, maskID: UUID? = nil) { self.kind = kind; self.maskID = maskID }
     private enum CodingKeys: String, CodingKey {
-        case id, kind, enabled, opacity, maskID, parameters, monochromatic, seed
+        case id, kind, enabled, opacity, maskID, parameters, monochromatic, seed, importedXMP
     }
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -374,6 +377,7 @@ struct CreativeEffect: Codable, Sendable, Equatable, Identifiable {
         parameters = try values.decodeIfPresent([String: Double].self, forKey: .parameters) ?? [:]
         monochromatic = try values.decodeIfPresent(Bool.self, forKey: .monochromatic) ?? true
         seed = try values.decodeIfPresent(UInt32.self, forKey: .seed) ?? 137
+        importedXMP = try values.decodeIfPresent(XMPPresetSnapshot.self, forKey: .importedXMP)
         self = validated
     }
     subscript(_ key: String) -> Double {
@@ -532,6 +536,7 @@ struct CreativeFXPreset: Identifiable {
             }
         }
         switch kind {
+        case .importedXMP: return []
         case .highKey:
             return [
                 values("Soft High Key", ["amount": 30, "dynamic": 0]),

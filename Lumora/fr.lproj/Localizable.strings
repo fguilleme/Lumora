@@ -804,3 +804,22 @@
 "Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded." = "Couleur des lèvres décale la teinte dans les deux directions, avec un effet expressif à −100 et +100. Saturation, luminosité et détail sont des contrôles distincts. L’intérieur de la bouche est exclu.";
 
 "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available." = "La saturation, la luminosité et le détail agissent sur les lèvres visibles. L’intérieur de la bouche est exclu. Le contrôle Couleur a été retiré.";
+
+// Creative XMP import
+"Import XMP…" = "Importer un XMP…";
+"Imported XMP" = "XMP importé";
+"Unable to import XMP" = "Impossible d’importer le XMP";
+"Settings not imported:" = "Réglages non importés :";
+"XMP settings are interpreted by Lumora; rendering may differ from the source application." = "Les réglages XMP sont interprétés par Lumora ; le rendu peut différer de celui de l’application d’origine.";
+"The XMP file is invalid or contains invalid settings." = "Le fichier XMP est invalide ou contient des réglages invalides.";
+"No compatible Camera Raw settings found. Proprietary Nik recipes cannot be imported." = "Aucun réglage Camera Raw compatible trouvé. Les recettes propriétaires Nik ne peuvent pas être importées.";
+"The XMP file exceeds the 2 MB limit." = "Le fichier XMP dépasse la limite de 2 Mo.";
+"The Creative stack is full (32 effects). Remove an effect before importing." = "La pile Creative est pleine (32 effets). Supprimez un effet avant d’importer.";
+
+"XMP import details" = "Détails de l’import XMP";
+
+"Adapted settings:" = "Réglages adaptés :";
+
+"Global" = "Global";
+
+"Import Lumora or XMP presets" = "Importer des presets Lumora ou XMP";

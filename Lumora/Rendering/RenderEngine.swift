@@ -308,10 +308,10 @@ actor RenderEngine {
             image = output.cropped(to: image.extent)
         }
         // Legacy grain is retained on disk but now uses the shared engine, after geometry/detail.
-        var grain = FilmGrainSettings(); grain.amount = state.effects.grain
+        var grain = state.effects.grainSettings
         image = try FilmGrainEngine.apply(image, settings: grain)
         for layer in state.masks where layer.isVisible && layer.opacity > 0 && layer.adjustments.effects.grain > 0 {
-            grain.amount = layer.adjustments.effects.grain
+            grain = layer.adjustments.effects.grainSettings
             let output = try FilmGrainEngine.apply(image, settings: grain)
             let blend = CIFilter.blendWithMask()
             blend.inputImage = output; blend.backgroundImage = image
@@ -329,53 +329,12 @@ actor RenderEngine {
     /// or a masked adjustment layer. Spatial document transforms stay outside this graph.
     private func applyDevelopment(_ input: CIImage, state: EditState,
                                   deferDetail: Bool = false) throws -> CIImage {
-        var image = input
-        if state.temperature != 0 || state.tint != 0 {
-            let filter = CIFilter.temperatureAndTint()
-            filter.inputImage = image
-            // Source is already developed at its as-shot WB, including RAW. Apply a relative adaptation once.
-            filter.neutral = CIVector(x: 6500, y: 0)
-            filter.targetNeutral = CIVector(x: 6500 + state.temperature * 35, y: state.tint * 0.6)
-            guard let output = filter.outputImage else { throw PhotoError.renderFailed }
-            image = output
+        try DevelopmentRenderer.apply(input, state: state, deferDetail: deferDetail) { colorState in
+            if lastLUTState == colorState, let cached = lastLUT { return cached }
+            let data = try Self.makeCube(colorState)
+            lastLUTState = colorState; lastLUT = data
+            return data
         }
-        if state.exposure != 0 {
-            let filter = CIFilter.exposureAdjust()
-            filter.inputImage = image
-            filter.ev = Float(state.exposure)
-            guard let output = filter.outputImage else { throw PhotoError.renderFailed }
-            image = output
-        }
-        var colorState = state
-        colorState.temperature = 0; colorState.tint = 0; colorState.exposure = 0
-        colorState.effects = EffectsSettings()
-        colorState.detail = DetailSettings()
-        colorState.beauty = BeautyState()
-        colorState.optics = OpticsSettings()
-        colorState.geometry = GeometrySettings()
-        colorState.coreImageAuto = nil
-        colorState.masks = []
-        colorState.creative = CreativeEffectStack()
-        if colorState != EditState() {
-            let data: Data
-            if lastLUTState == colorState, let cached = lastLUT { data = cached }
-            else {
-                data = try makeCube(colorState)
-                lastLUTState = colorState; lastLUT = data
-            }
-            guard let space = CGColorSpace(name: CGColorSpace.sRGB),
-                  let filter = CIFilter(name: "CIColorCubeWithColorSpace", parameters: [
-                    kCIInputImageKey: image, "inputCubeDimension": 32,
-                    "inputCubeData": data, "inputColorSpace": space
-                  ]), let output = filter.outputImage else { throw PhotoError.renderFailed }
-            image = output
-        }
-        image = try EffectsRenderer.applyBeforeDetail(image, settings: state.effects)
-        if deferDetail { return image }
-        image = try DetailRenderer.apply(image, settings: state.detail)
-        var finishing = state.effects; finishing.grain = 0
-        image = try EffectsRenderer.applyFinishing(image, settings: finishing)
-        return image
     }
 
     func export(request: ExportRequest, settings: ExportSettings, directory: URL,
@@ -529,7 +488,7 @@ actor RenderEngine {
         return result
     }
 
-    private func makeCube(_ state: EditState) throws -> Data {
+    nonisolated static func makeCube(_ state: EditState) throws -> Data {
         let dimension = 32
         let grading = state.colorGrading.isIdentity ? nil : GradingTransform(state.colorGrading)
         let curves = state.curves.isIdentity ? nil : CurveLookup(state.curves)

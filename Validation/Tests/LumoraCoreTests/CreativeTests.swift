@@ -39,7 +39,7 @@ private func patch(_ value: CGFloat = 0.25, size: Int = 256) -> CIImage {
 }
 
 @Test func creativeBuiltInPresetsCoverEveryEffectAndPreserveStackContext() {
-    for kind in CreativeEffectKind.allCases {
+    for kind in CreativeEffectKind.allCases where kind != .importedXMP {
         let presets = CreativeFXPreset.all(for: kind)
         #expect(!presets.isEmpty)
         #expect(Set(presets.map(\.id)).count == presets.count)

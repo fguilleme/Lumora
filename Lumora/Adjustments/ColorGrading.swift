@@ -1,10 +1,10 @@
 import Foundation
 
 enum GradingRange: String, Codable, CaseIterable, Sendable, Identifiable {
-    case shadows, midtones, highlights
+    case shadows, midtones, highlights, global
     var id: String { rawValue }
     var title: String {
-        switch self { case .shadows: String(localized: "Shadows"); case .midtones: String(localized: "Midtones"); case .highlights: String(localized: "Highlights") }
+        switch self { case .shadows: String(localized: "Shadows"); case .midtones: String(localized: "Midtones"); case .highlights: String(localized: "Highlights"); case .global: String(localized: "Global") }
     }
 }
 
@@ -31,7 +31,7 @@ struct GradingWheel: Codable, Sendable, Equatable {
 }
 
 struct ColorGrading: Codable, Sendable, Equatable {
-    var shadows = GradingWheel(), midtones = GradingWheel(), highlights = GradingWheel()
+    var shadows = GradingWheel(), midtones = GradingWheel(), highlights = GradingWheel(), global = GradingWheel()
     var blending: Double = 50
     var balance: Double = 0
     init() {}
@@ -39,8 +39,8 @@ struct ColorGrading: Codable, Sendable, Equatable {
         GradingRange.allCases.allSatisfy { self[$0].saturation == 0 && self[$0].luminance == 0 }
     }
     subscript(_ range: GradingRange) -> GradingWheel {
-        get { switch range { case .shadows: shadows; case .midtones: midtones; case .highlights: highlights } }
-        set { switch range { case .shadows: shadows = newValue.validated; case .midtones: midtones = newValue.validated; case .highlights: highlights = newValue.validated } }
+        get { switch range { case .shadows: shadows; case .midtones: midtones; case .highlights: highlights; case .global: global } }
+        set { switch range { case .shadows: shadows = newValue.validated; case .midtones: midtones = newValue.validated; case .highlights: highlights = newValue.validated; case .global: global = newValue.validated } }
     }
     var validated: Self {
         var result = self
@@ -49,12 +49,13 @@ struct ColorGrading: Codable, Sendable, Equatable {
         result.balance = GradingWheel.clamp(balance, -100...100)
         return result
     }
-    private enum CodingKeys: String, CodingKey { case shadows, midtones, highlights, blending, balance }
+    private enum CodingKeys: String, CodingKey { case shadows, midtones, highlights, global, blending, balance }
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         shadows = try values.decodeIfPresent(GradingWheel.self, forKey: .shadows) ?? GradingWheel()
         midtones = try values.decodeIfPresent(GradingWheel.self, forKey: .midtones) ?? GradingWheel()
         highlights = try values.decodeIfPresent(GradingWheel.self, forKey: .highlights) ?? GradingWheel()
+        global = try values.decodeIfPresent(GradingWheel.self, forKey: .global) ?? GradingWheel()
         blending = try values.decodeIfPresent(Double.self, forKey: .blending) ?? 50
         balance = try values.decodeIfPresent(Double.self, forKey: .balance) ?? 0
         self = validated
@@ -99,10 +100,10 @@ struct GradingTransform: Sendable {
         let y = r * 0.2126 + g * 0.7152 + b * 0.0722
         let weights = Self.weights(luminance: y, blending: settings.blending, balance: settings.balance)
         let envelope = 4 * y * (1 - y)
-        let luminance = settings.shadows.luminance * weights.x + settings.midtones.luminance * weights.y + settings.highlights.luminance * weights.z
+        let luminance = settings.shadows.luminance * weights.x + settings.midtones.luminance * weights.y + settings.highlights.luminance * weights.z + settings.global.luminance
         let delta = luminance * 0.0025 * envelope
         let base = SIMD3(min(1, max(0, r + delta)), min(1, max(0, g + delta)), min(1, max(0, b + delta)))
-        let tint = (vectors[0] * weights.x + vectors[1] * weights.y + vectors[2] * weights.z) * (0.35 * envelope)
+        let tint = (vectors[0] * weights.x + vectors[1] * weights.y + vectors[2] * weights.z + vectors[3]) * (0.35 * envelope)
         // Compress the tint uniformly to the available gamut, preserving its direction.
         var scale = 1.0
         for i in 0..<3 {

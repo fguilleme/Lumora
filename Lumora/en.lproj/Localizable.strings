@@ -804,3 +804,22 @@
 "Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded." = "Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded.";
 
 "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available." = "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available.";
+
+// Creative XMP import
+"Import XMP…" = "Import XMP…";
+"Imported XMP" = "Imported XMP";
+"Unable to import XMP" = "Unable to import XMP";
+"Settings not imported:" = "Settings not imported:";
+"XMP settings are interpreted by Lumora; rendering may differ from the source application." = "XMP settings are interpreted by Lumora; rendering may differ from the source application.";
+"The XMP file is invalid or contains invalid settings." = "The XMP file is invalid or contains invalid settings.";
+"No compatible Camera Raw settings found. Proprietary Nik recipes cannot be imported." = "No compatible Camera Raw settings found. Proprietary Nik recipes cannot be imported.";
+"The XMP file exceeds the 2 MB limit." = "The XMP file exceeds the 2 MB limit.";
+"The Creative stack is full (32 effects). Remove an effect before importing." = "The Creative stack is full (32 effects). Remove an effect before importing.";
+
+"XMP import details" = "XMP import details";
+
+"Adapted settings:" = "Adapted settings:";
+
+"Global" = "Global";
+
+"Import Lumora or XMP presets" = "Import Lumora or XMP presets";

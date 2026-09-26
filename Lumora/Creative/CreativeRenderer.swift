@@ -9,6 +9,7 @@ protocol CreativeEffectRendering: Sendable {
 /// Adding a renderer requires one registry entry, without changing the stack compositor.
 enum CreativeStackRenderer {
     static let renderers: [CreativeEffectKind: any CreativeEffectRendering] = [
+        .importedXMP: CreativeXMPRenderer(),
         .highKey: KeyEffectRenderer(high: true), .lowKey: KeyEffectRenderer(high: false),
         .grain: GrainEffectRenderer(), .tonalContrast: TonalContrastRenderer(),
         .detailExtractor: DetailExtractorRenderer(), .glamourGlow: GlamourGlowRenderer(),
