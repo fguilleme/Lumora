@@ -2,6 +2,7 @@ import Foundation
 
 /// Additive portrait-finishing values. Absent from V1 documents and presets.
 struct BeautyV2Settings: Codable, Sendable, Equatable {
+    // Legacy value retained for decoding; no production effect or control.
     var lipColor = 0.0
     var lipSaturation = 0.0
     var lipBrightness = 0.0
@@ -66,7 +67,7 @@ struct BeautyV2Settings: Codable, Sendable, Equatable {
 enum BeautyV2Control: String, Codable, CaseIterable, Sendable, Identifiable, CodingKey {
     case lipColor, lipSaturation, lipBrightness, lipDetail
     case skinShine, faceBalance, hairLight, hairShine, hairDetail
-    static let productionCases: [Self] = [.lipColor, .lipSaturation, .lipBrightness,
+    static let productionCases: [Self] = [.lipSaturation, .lipBrightness,
         .lipDetail, .skinShine, .faceBalance]
     var id: String { rawValue }
     var range: ClosedRange<Double> {

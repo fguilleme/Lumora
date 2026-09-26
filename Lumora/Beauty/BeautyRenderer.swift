@@ -63,9 +63,15 @@ enum BeautyRenderer {
         float3 n = unpremultiply(nearby).rgb;
         float weight = clamp(unpremultiply(mask).r, 0.0, 1.0);
         float y = max(0.0, dot(c.rgb, float3(0.2126, 0.7152, 0.0722)));
-        float brightnessGate = smoothstep(0.03, 0.35, y);
-        float3 adjusted = c.rgb * (1.0 + controls.x * 0.10 * brightnessGate * weight)
-                        + (c.rgb - n) * (controls.y * 0.12 * weight);
+        // The upper slider range is intentionally strong; black pupils and
+        // existing white catchlights stay protected. Gain preserves iris hue.
+        float brightnessGate = smoothstep(0.01, 0.12, y)
+                             * (1.0-smoothstep(0.65, 1.0, y));
+        float brightnessGain = exp2(controls.x * 1.0 * brightnessGate * weight);
+        float nearbyY = dot(n, float3(0.2126, 0.7152, 0.0722));
+        float detail = clamp((y-nearbyY)/max(y,0.02), -0.5, 0.5);
+        float detailGain = 1.0 + detail * controls.y * 1.2 * weight;
+        float3 adjusted = c.rgb * brightnessGain * detailGain;
         return premultiply(float4(adjusted, c.a));
     }
     """)

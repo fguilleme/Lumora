@@ -232,7 +232,11 @@ enum BeautyMaskPipeline {
               let teethBitmap = grayCanvas(extent, draw: { ctx in
                   for face in faces { drawTeeth(face, in: ctx) }
               }) else { throw PhotoError.renderFailed }
-        let eyesImage = soften(CIImage(cgImage: eyesBitmap), radius: 1.7, extent: extent)
+        let eyeOpening = CIImage(cgImage: eyesBitmap)
+        // Feather inward only: a Gaussian alone expands into eyelid skin.
+        let eyesImage = soften(eyeOpening, radius: 1.0, extent: extent)
+            .applyingFilter("CIMultiplyCompositing", parameters: [kCIInputBackgroundImageKey: eyeOpening])
+            .cropped(to: extent)
         let underImage = soften(CIImage(cgImage: underBitmap), radius: 2.0, extent: extent)
         let opening = CIImage(cgImage: teethBitmap)
         if profile {
@@ -469,9 +473,19 @@ enum BeautyMaskPipeline {
     }
 
     private static func drawEyes(_ face: BeautyMaskFace, in ctx: CGContext) {
-        for eye in [face.leftEye, face.rightEye].compactMap({ $0 }) {
-            ctx.fillEllipse(in: eye.insetBy(dx: -eye.width * 0.18,
-                                            dy: -eye.width * 0.10))
+        // Follow the visible landmark opening, not an expanded bounding ellipse.
+        // Missing/profile-occluded landmarks deliberately produce no eye mask.
+        for points in [face.leftEyePoints, face.rightEyePoints] where points.count >= 3 {
+            let center = CGPoint(x: points.map(\.x).reduce(0,+)/CGFloat(points.count),
+                                 y: points.map(\.y).reduce(0,+)/CGFloat(points.count))
+            let path = CGMutablePath()
+            for (index, point) in points.enumerated() {
+                let inner = CGPoint(x: center.x+(point.x-center.x)*0.92,
+                                    y: center.y+(point.y-center.y)*0.80)
+                if index == 0 { path.move(to: inner) } else { path.addLine(to: inner) }
+            }
+            path.closeSubpath()
+            ctx.addPath(path); ctx.fillPath()
         }
     }
 

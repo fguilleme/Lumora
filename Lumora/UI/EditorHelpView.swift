@@ -316,7 +316,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Uniformity and Texture", "Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately."),
                     HelpItem("Blemishes", "Targets isolated local redness conservatively; freckles and broad skin tone are not intentionally removed."),
                     HelpItem("Dark Circles", "Slightly lifts and warms the region below detected eyes without painting over the eyes."),
-                    HelpItem("Eye Brightness and Eye Detail", "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape."),
+                    HelpItem("Eye Brightness and Eye Detail", "Brightens eyes and strengthens fine detail within the eye mask. The upper range is deliberately strong; use intermediate values for a natural result. Iris hue is preserved."),
                     HelpItem("Teeth", "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged.")
                 ]),
                 HelpSection("Correction", [
@@ -326,7 +326,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Delete corrections", "Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them.")
                 ]),
                 HelpSection("Portrait finishing V2", [
-                    HelpItem("Lips", "Natural-color, saturation, brightness and fine-detail shifts are confined to the visible lip ring; the inner mouth is excluded."),
+                    HelpItem("Lips", "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available."),
                     HelpItem("Skin Shine", "Attenuates excess broad skin highlights without removing pores."),
                     HelpItem("Face Balance", "Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure."),
                 ])

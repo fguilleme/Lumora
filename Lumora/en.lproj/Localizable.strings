@@ -798,3 +798,9 @@
 "Finish editing area" = "Finish editing area";
 
 "Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection." = "Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection.";
+
+"Brightens eyes and strengthens fine detail within the eye mask. The upper range is deliberately strong; use intermediate values for a natural result. Iris hue is preserved." = "Brightens eyes and strengthens fine detail within the eye mask. The upper range is deliberately strong; use intermediate values for a natural result. Iris hue is preserved.";
+
+"Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded." = "Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded.";
+
+"Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available." = "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available.";

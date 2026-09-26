@@ -113,3 +113,5 @@ Les panneaux Auto et Grading utilisent des [contrôles compacts](Documentation/U
 The initial audit found that Beauty V2 and Correction/Zone were missing from the main iOS target ([audit evidence](ProductionBeautyAudit/ProductionBeautyAuditReport.md)). They are now integrated in this checkout, targeting `com.guilleme.Lumora`. See [Beauty integration, validation and Simulator screenshots](BeautyIntegrationIntoMainReport.md). Hair and Local Frequency Inpainting remain outside production.
 
 Manual Correction: tap an imperfection to add a correction. **Edit correction area** opens the Add/Erase brush tools for the selected target; **Finish editing area** returns to placement and handle movement. Delete correction removes the selected correction (Undo available).
+
+Beauty eyes: Éclat and Détail now use the visible eye opening, with inward-only feathering to protect eyelid skin. Lip Color has been removed and legacy values are ignored; Saturation, Brightness and Detail remain. See [eye-mask correction validation](BeautyValidation/EyeMaskCorrection/ValidationReport.md).

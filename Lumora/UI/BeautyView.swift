@@ -51,7 +51,7 @@ struct BeautyView: View {
                 ManualHealingControls(session: session)
                 section("Eyes", [.darkCircles, .eyeBrightness, .eyeDetail])
                 section("Smile", [.teeth])
-                v2Section("Lips", [.lipColor, .lipSaturation, .lipBrightness, .lipDetail])
+                v2Section("Lips", [.lipSaturation, .lipBrightness, .lipDetail])
                 v2Section("Face", [.faceBalance])
                 #if DEBUG
                 BeautyMaskDebugView(masks: debugMasks)

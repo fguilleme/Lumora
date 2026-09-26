@@ -798,3 +798,9 @@
 "Finish editing area" = "Terminer l’édition de la zone";
 
 "Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection." = "Ajouter étend cette zone de correction au pinceau ; Effacer en retire une partie. Terminez l’édition pour déplacer la cible ou la source, ou toucher une autre imperfection.";
+
+"Brightens eyes and strengthens fine detail within the eye mask. The upper range is deliberately strong; use intermediate values for a natural result. Iris hue is preserved." = "Éclaircit les yeux et renforce leurs détails dans le masque des yeux. La fin de plage est volontairement forte ; utilisez les valeurs intermédiaires pour un résultat naturel. La teinte de l’iris est conservée.";
+
+"Lip Color shifts the hue in both directions, with an expressive range at −100 and +100. Saturation, brightness and detail are separate controls. The inner mouth is excluded." = "Couleur des lèvres décale la teinte dans les deux directions, avec un effet expressif à −100 et +100. Saturation, luminosité et détail sont des contrôles distincts. L’intérieur de la bouche est exclu.";
+
+"Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available." = "La saturation, la luminosité et le détail agissent sur les lèvres visibles. L’intérieur de la bouche est exclu. Le contrôle Couleur a été retiré.";

@@ -108,7 +108,8 @@ import Testing
     history.commit(state)
     #expect(history.undo()?.beauty.finishing == partial)
     #expect(history.redo()?.beauty.finishing == finishing)
-    #expect(BeautyV2Control.productionCases.count == 6)
+    #expect(BeautyV2Control.productionCases.count == 5)
+    #expect(!BeautyV2Control.productionCases.contains(.lipColor))
     #expect(!BeautyV2Control.productionCases.contains(.hairLight))
 }
 

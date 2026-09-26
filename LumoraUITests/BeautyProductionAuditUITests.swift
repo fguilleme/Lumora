@@ -49,7 +49,7 @@ final class BeautyProductionAuditUITests: XCTestCase {
         let ids = ["beauty-uniformity", "beauty-texture", "beauty-blemishes",
                    "beauty-v2-skinShine", "manual-healing-toggle", "beauty-darkCircles",
                    "beauty-eyeBrightness", "beauty-eyeDetail", "beauty-teeth",
-                   "beauty-v2-lipColor", "beauty-v2-lipSaturation",
+                   "beauty-v2-lipSaturation",
                    "beauty-v2-lipBrightness", "beauty-v2-lipDetail", "beauty-v2-faceBalance"]
         var found = Set<String>()
         var foundLips = false
@@ -165,7 +165,7 @@ final class BeautyProductionAuditUITests: XCTestCase {
         XCTAssertTrue(panel.waitForExistence(timeout: 10))
         // Wait for the actual Vision result. No substituted successful analysis.
         _ = app.staticTexts["Face analysis unavailable"].waitForExistence(timeout: 10)
-        for id in ["skinShine", "lipColor", "lipSaturation", "lipBrightness", "lipDetail", "faceBalance"] {
+        for id in ["skinShine", "lipSaturation", "lipBrightness", "lipDetail", "faceBalance"] {
             let slider = app.sliders["beauty-v2-" + id]
             for _ in 0..<24 {
                 if slider.exists && slider.isHittable && panel.frame.contains(CGPoint(x: slider.frame.midX, y: slider.frame.midY)) { break }

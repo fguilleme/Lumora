@@ -2,7 +2,7 @@ import CoreGraphics
 import CoreImage
 import Foundation
 
-/// Additive V2 graph. Frozen BeautyRenderer kernels remain untouched.
+/// Additive V2 graph for lip finishing, skin shine and face balance.
 enum BeautyV2Renderer {
     private static let lips = CreativeMetal.compile("""
     [[ stitchable ]] float4 beautyV2Lips(coreimage::sample_t original,
@@ -13,12 +13,7 @@ enum BeautyV2Renderer {
         const float3 lum = float3(0.2126, 0.7152, 0.0722);
         float y = dot(c.rgb, lum);
         float3 chroma = c.rgb - y;
-        // A small opponent shift around the original lip color, not a fixed pigment.
-        float naturalRed = max(0.0, c.r - 0.5 * (c.g + c.b));
-        float3 tint = float3(0.023, -0.008, -0.010)
-                    * controls.x * smoothstep(0.0, 0.12, naturalRed);
-        tint -= dot(tint, lum);
-        float3 adjusted = c.rgb + tint + chroma * (controls.y * 0.22)
+        float3 adjusted = c.rgb + chroma * (controls.y * 0.22)
                         + c.rgb * (exp2(controls.z * 0.22) - 1.0)
                         + (c.rgb - blurred) * (controls.w * 0.20);
         return premultiply(float4(mix(c.rgb, adjusted, weight), c.a));
@@ -64,12 +59,12 @@ enum BeautyV2Renderer {
         let faceWidth = max(1, masks.faceWidthFraction * input.extent.width)
         var image = input
         if let matte = masks.v2.lips,
-           settings.lipColor != 0 || settings.lipSaturation != 0 ||
+           settings.lipSaturation != 0 ||
            settings.lipBrightness != 0 || settings.lipDetail != 0 {
             let low = gaussian(image, radius: max(0.8, faceWidth * 0.004))
             let soft = gaussian(scaled(matte, to: input.extent),
                                 radius: max(0.7, faceWidth * 0.003))
-            let controls = CIVector(x: settings.lipColor / 100 * blend,
+            let controls = CIVector(x: 0,
                                     y: settings.lipSaturation / 100 * blend,
                                     z: settings.lipBrightness / 100 * blend,
                                     w: settings.lipDetail / 100 * blend)
