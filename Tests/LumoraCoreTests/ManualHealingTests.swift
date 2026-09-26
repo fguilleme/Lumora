@@ -246,3 +246,23 @@ private func healingRead(_ image: CIImage, _ rect: CGRect? = nil) -> [Float] {
     #expect(maximum < 0.002)
   }
 }
+
+/// A dark region outside the repaired disk must not be extrapolated into a
+/// bright center. This models enlarging a cheek repair toward a hair boundary.
+@Test func manualHealingNoBrightExtrapolationFromDistantDarkBoundary() throws {
+ let n=512
+ var pixels=[Float](repeating:1,count:n*n*4)
+ for y in 0..<n {for x in 0..<n {
+  let value:Float=x<223 ? 0.02 : 0.45
+  for channel in 0..<3 {pixels[(y*n+x)*4+channel]=value}
+ }}
+ let space=CGColorSpace(name:CGColorSpace.extendedLinearSRGB)!
+ let image=CIImage(bitmapData:pixels.withUnsafeBytes{Data($0)},bytesPerRow:n*16,size:.init(width:n,height:n),format:.RGBAf,colorSpace:space)
+ let c=ManualBlemishCorrection(targetCenter:.init(x:0.5,y:0.5),targetRadius:0.05,sourceCenter:.init(x:0.7,y:0.5))
+ let output=healingRead(try ManualHealingRenderer.apply(image,corrections:[c]))
+ var peak:Float=0
+ for y in 250..<262 {for x in 250..<262 {peak=max(peak,output[(y*n+x)*4])}}
+ print("Distant dark boundary: center peak \(peak), original 0.45")
+ #expect(peak<=0.451)
+ #expect(output.allSatisfy { $0.isFinite })
+}

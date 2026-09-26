@@ -23,37 +23,38 @@ enum ManualHealingRenderer {
           float2 q = p + source - target;
           float3 ls = unpremultiply(low.sample(low.transform(q))).rgb;
           float3 hs = unpremultiply(original.sample(original.transform(q))).rgb - ls;
-          // Quadratic target LOW fitted to two concentric annuli. Fourier
-          // moments separate slope, isotropic curvature and saddle curvature.
-          // No lesion-center or source LOW participates in reconstruction.
-          float3 m0=float3(0), m1=float3(0), gx=float3(0), gy=float3(0);
-          float3 saddle=float3(0), cross=float3(0);
-          float targetEnergy=0.0, sourceEnergy=0.0;
-          for (int j=0;j<2;++j) {
-              float rho=j==0 ? 1.3 : 1.8;
-              for (int i=0;i<16;++i) {
-                  float a=float(i)*6.28318530718/16.0;
-                  float2 u=float2(cos(a),sin(a));
-                  float2 pt=target+radius*rho*u;
-                  float3 v=unpremultiply(low.sample(low.transform(pt))).rgb;
-                  if(j==0) m0+=v/16.0; else m1+=v/16.0;
-                  gx+=v*u.x/(16.0*rho); gy+=v*u.y/(16.0*rho);
-                  saddle+=v*cos(2.0*a)/(16.0*rho*rho);
-                  cross+=v*sin(2.0*a)/(16.0*rho*rho);
-                  float ht=dot(unpremultiply(original.sample(original.transform(pt))).rgb-v,float3(.2126,.7152,.0722));
-                  float2 ps=source+radius*(j==0 ? 0.45 : 0.85)*u;
-                  float sh=dot(unpremultiply(original.sample(original.transform(ps))).rgb-unpremultiply(low.sample(low.transform(ps))).rgb,float3(.2126,.7152,.0722));
-                  targetEnergy+=ht*ht; sourceEnergy+=sh*sh;
-              }
-          }
-          // Fixed regularization of second-order terms; affine fields remain exact.
-          float3 curvature=(m1-m0)/(3.24-1.69)*0.85;
+          // Reconstruct LOW from the immediate boundary with positive Poisson
+          // weights. Unlike quadratic extrapolation from distant annuli, this
+          // cannot create a brighter/darker extremum than its boundary samples.
           float2 d=(p-target)/radius;
-          float3 surface=m0-curvature*1.69+gx*d.x+gy*d.y
-              +curvature*dot(d,d)+0.85*(saddle*(d.x*d.x-d.y*d.y)+cross*2.0*d.x*d.y);
           float radial=length(d);
+          float2 z=d/1.05;
+          float3 boundarySum=float3(0);
+          float weightSum=0.0;
+          float targetEnergy=0.0, sourceEnergy=0.0;
+          for (int i=0;i<32;++i) {
+              float a=float(i)*6.28318530718/32.0;
+              float2 u=float2(cos(a),sin(a));
+              float2 pt=target+radius*1.05*u;
+              float3 v=unpremultiply(low.sample(low.transform(pt))).rgb;
+              float2 dz=z-u;
+              float weight=1.0/max(dot(dz,dz),0.0001);
+              boundarySum+=weight*v;
+              weightSum+=weight;
+              // Keep the existing texture-energy estimate independent of the
+              // LOW reconstruction boundary.
+              float energyAngle=float(i%16)*6.28318530718/16.0;
+              float2 energyDirection=float2(cos(energyAngle),sin(energyAngle));
+              float2 pe=target+radius*(i<16 ? 1.3 : 1.8)*energyDirection;
+              float3 le=unpremultiply(low.sample(low.transform(pe))).rgb;
+              float ht=dot(unpremultiply(original.sample(original.transform(pe))).rgb-le,float3(.2126,.7152,.0722));
+              float2 ps=source+radius*(i<16 ? 0.45 : 0.85)*energyDirection;
+              float sh=dot(unpremultiply(original.sample(original.transform(ps))).rgb-unpremultiply(low.sample(low.transform(ps))).rgb,float3(.2126,.7152,.0722));
+              targetEnergy+=ht*ht; sourceEnergy+=sh*sh;
+          }
+          float3 surface=boundarySum/weightSum;
           float blend=smoothstep(0.55,1.0,radial);
-          // C1 boundary match to actual target LOW, including its local gradient.
+          // Preserve the existing smooth join and source-texture transfer.
           float3 repairedLow=mix(surface,lt,blend);
           float textureScale=clamp(sqrt((targetEnergy+0.000001)/(sourceEnergy+0.000001)),0.8,1.25);
           float w = mask*strength;

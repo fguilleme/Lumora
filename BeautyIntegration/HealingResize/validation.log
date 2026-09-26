@@ -1,0 +1,51 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version--58304C5D6DBC2206.txt
+[3/5] Emitting module LumoraCore
+[4/5] Compiling LumoraCore ManualHealingRenderer.swift
+[5/6] Compiling LumoraCore RenderEngine.swift
+[6/11] Emitting module LumoraCoreTests
+[7/11] Compiling LumoraCoreTests HealingTargetAreaTests.swift
+[8/11] Compiling LumoraCoreTests ManualHealingTests.swift
+[9/11] Compiling LumoraCoreTests HealingCheekDiagnosticTests.swift
+[9/11] Write Objects.LinkFileList
+[10/11] Linking LumoraCorePackageTests
+Build complete! (3.80s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test healingCheekResizeDiagnostic() started.
+◇ Test manualHealingGeometryRoundtripAndRenderedCoordinates() started.
+◇ Test healingResizedTargetPreservesRelativeFeather() started.
+◇ Test healingAreaOrderedStrokesAndNativeResolution() started.
+◇ Test manualHealingIdentityReconstructionHDRAndLocality() started.
+◇ Test manualHealingPreservesTargetLightingAndExtendedRange() started.
+◇ Test manualHealingNoBrightExtrapolationFromDistantDarkBoundary() started.
+◇ Test manualHealingLocalProposalAndOutsideFace() started.
+◇ Test manualHealingResizedPatchTileConsistency() started.
+◇ Test healingAreaPersistenceMigrationHistoryAndTransforms() started.
+◇ Test manualHealingPersistenceMigrationAndUndo() started.
+◇ Test healingAreaLocalityMultipleAndIdentity() started.
+◇ Test manualHealingStrengthRadiusAndManualSourceResponse() started.
+◇ Test manualHealingCancellation() started.
+✔ Test manualHealingPersistenceMigrationAndUndo() passed after 0.075 seconds.
+✔ Test healingAreaPersistenceMigrationHistoryAndTransforms() passed after 0.075 seconds.
+✔ Test manualHealingLocalProposalAndOutsideFace() passed after 0.075 seconds.
+✔ Test healingResizedTargetPreservesRelativeFeather() passed after 0.075 seconds.
+✔ Test manualHealingCancellation() passed after 0.075 seconds.
+✔ Test manualHealingGeometryRoundtripAndRenderedCoordinates() passed after 0.111 seconds.
+Distant dark boundary: center peak 0.44030923, original 0.45
+✔ Test manualHealingPreservesTargetLightingAndExtendedRange() passed after 0.757 seconds.
+✔ Test manualHealingNoBrightExtrapolationFromDistantDarkBoundary() passed after 0.760 seconds.
+✔ Test healingCheekResizeDiagnostic() passed after 0.807 seconds.
+✔ Test manualHealingIdentityReconstructionHDRAndLocality() passed after 0.808 seconds.
+Healing tile consistency radius=0.01: 0.0
+✔ Test healingAreaLocalityMultipleAndIdentity() passed after 0.926 seconds.
+Healing tile consistency radius=0.02: 0.0
+Healing tile consistency radius=0.05: 0.0016344786
+✔ Test manualHealingResizedPatchTileConsistency() passed after 1.117 seconds.
+✔ Test manualHealingStrengthRadiusAndManualSourceResponse() passed after 1.252 seconds.
+✔ Test healingAreaOrderedStrokesAndNativeResolution() passed after 2.207 seconds.
+✔ Test run with 14 tests in 0 suites passed after 2.207 seconds.

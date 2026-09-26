@@ -1,0 +1,29 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write sources
+[2/4] Write swift-version--58304C5D6DBC2206.txt
+[4/6] Emitting module LumoraCore
+[5/6] Compiling LumoraCore ManualHealingRenderer.swift
+[6/7] Compiling LumoraCore RenderEngine.swift
+[7/12] Compiling LumoraCoreTests ManualHealingTests.swift
+[8/12] Emitting module LumoraCoreTests
+[9/12] Compiling LumoraCoreTests HealingCheekDiagnosticTests.swift
+[10/12] Compiling LumoraCoreTests HealingTargetAreaTests.swift
+[10/12] Write Objects.LinkFileList
+[11/12] Linking LumoraCorePackageTests
+Build complete! (5.27s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test manualHealingNoBrightExtrapolationFromDistantDarkBoundary() started.
+Distant dark boundary: center peak 0.4789424, original 0.45
+✘ Test manualHealingNoBrightExtrapolationFromDistantDarkBoundary() recorded an issue at ManualHealingTests.swift:266:2: Expectation failed: peak <= 0.451
+↳ peak <= 0.451 → false
+↳   peak → 0.4789424
+✘ Test manualHealingNoBrightExtrapolationFromDistantDarkBoundary() failed after 0.277 seconds with 1 issue.
+↳ /// A dark region outside the repaired disk must not be extrapolated into a
+↳ /// bright center. This models enlarging a cheek repair toward a hair boundary.
+✘ Test run with 1 test in 0 suites failed after 0.277 seconds with 1 issue.
+Note: Some test targets reported failures:
+  - LumoraCorePackageTests (Swift Testing)
