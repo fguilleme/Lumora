@@ -2,7 +2,7 @@ import Foundation
 
 /// A document value: no detected landmarks or generated mattes are persisted.
 struct BeautyState: Codable, Sendable, Equatable {
-    static let version = 1
+    static let version = 3
     var version = Self.version
     var amount: Double = 100
     var uniformity: Double = 0
@@ -12,16 +12,28 @@ struct BeautyState: Codable, Sendable, Equatable {
     var eyeBrightness: Double = 0
     var eyeDetail: Double = 0
     var teeth: Double = 0
+    /// Nil in V1 documents and in the three frozen V1 presets.
+    var finishing: BeautyV2Settings?
+    // Optional storage keeps synthesized decoding compatible with V1/V2 documents.
+    var manualCorrections: [ManualBlemishCorrection]?
+    var corrections: [ManualBlemishCorrection] {
+        get { manualCorrections ?? [] }
+        set { manualCorrections = newValue.isEmpty ? nil : newValue }
+    }
 
     var isIdentity: Bool {
         amount == 0 || (uniformity == 0 && texture == 0 && blemishes == 0 &&
-                        darkCircles == 0 && eyeBrightness == 0 && eyeDetail == 0 && teeth == 0)
+                        darkCircles == 0 && eyeBrightness == 0 && eyeDetail == 0 && teeth == 0 &&
+                        (finishing?.isIdentity ?? true) && !corrections.contains { $0.enabled && $0.strength > 0 })
     }
 
     var validated: Self {
         var value = self
         value.version = Self.version
         for control in BeautyControl.allCases { value[control] = self[control] }
+        value.corrections = corrections.map(\.validated)
+        value.finishing = finishing?.validated
+        if value.finishing?.hasStoredValues == false { value.finishing = nil }
         return value
     }
 

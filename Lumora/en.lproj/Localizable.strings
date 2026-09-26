@@ -730,3 +730,71 @@
 "Eye Brightness and Eye Detail" = "Eye Brightness and Eye Detail";
 "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape." = "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape.";
 "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged." = "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged.";
+
+// Beauty V2 portrait finishing
+"Lips" = "Lips";
+"Hair" = "Hair";
+"Skin Shine" = "Skin Shine";
+"Face Balance" = "Face Balance";
+"Lip Color" = "Lip Color";
+"Lip Saturation" = "Lip Saturation";
+"Lip Brightness" = "Lip Brightness";
+"Lip Detail" = "Lip Detail";
+"Hair Light" = "Hair Light";
+"Hair Shine" = "Hair Shine";
+"Hair Detail" = "Hair Detail";
+
+"Correction" = "Correction";
+
+"Delete correction" = "Delete correction";
+
+"Delete all corrections" = "Delete all corrections";
+
+"Delete all corrections?" = "Delete all corrections?";
+
+"Tap an imperfection. Drag the target or source to adjust." = "Tap an imperfection. Drag the target or source to adjust.";
+
+"Check the source: low confidence or manually moved." = "Check the source: low confidence or manually moved.";
+
+"No safe skin source here. Try a nearby skin area." = "No safe skin source here. Try a nearby skin area.";
+
+"Correction source" = "Correction source";
+
+"Correction target" = "Correction target";
+
+"Source diagnostics" = "Source diagnostics";
+
+"Frequency diagnostics" = "Frequency diagnostics";
+
+"Target and source" = "Target and source";
+
+"Tap a small skin imperfection. Drag the turquoise target or orange source. A warning identifies low-confidence sources; inspect them at 100%." = "Tap a small skin imperfection. Drag the turquoise target or orange source. A warning identifies low-confidence sources; inspect them at 100%.";
+
+"Size and Strength" = "Size and Strength";
+
+"Adjust the selected correction. Each drag is one Undo step. Closing Correction hides the guides but keeps the repair; guides are never exported." = "Adjust the selected correction. Each drag is one Undo step. Closing Correction hides the guides but keeps the repair; guides are never exported.";
+
+"Delete corrections" = "Delete corrections";
+
+"Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them." = "Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them.";
+
+"Bring source into view" = "Bring source into view";
+
+"Target area" = "Zone";
+
+"Brush operation" = "Brush operation";
+
+"Brush size" = "Brush size";
+
+"Paint the target. Leave Zone to move the photo or handles." = "Paint the target. Leave Zone to move the photo or handles.";
+
+"Face analysis unavailable" = "Face analysis unavailable";
+
+
+
+
+"Edit correction area" = "Edit correction area";
+
+"Finish editing area" = "Finish editing area";
+
+"Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection." = "Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection.";

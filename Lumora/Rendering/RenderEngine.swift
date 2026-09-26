@@ -34,8 +34,23 @@ actor RenderEngine {
     private var lastLUTState: EditState?
     private var lastLUT: Data?
     private var autoCache: (AutoAnalysisKey, AutoProposal)?
+    private var coreAutoCache: (CoreAutoCacheKey, CoreImageAutoEngine.Capture)?
+    private var autoBaselines: [(AutoBaselineKey, CGImage)] = []
     private var beautyCache: (BeautyAnalysisKey, BeautyMasks)?
+    private(set) var autoBaselineBuildCount = 0
 
+    private struct CoreAutoCacheKey: Equatable {
+        var url: URL
+        var sourceVersion: String
+        var optics: OpticsSettings
+        var geometry: GeometrySettings
+    }
+    private struct AutoBaselineKey: Equatable {
+        var maximum: Int
+        var optics: OpticsSettings
+        var geometry: GeometrySettings
+        var recipe: CoreImageAutoState
+    }
     private struct BeautyAnalysisKey: Equatable {
         var url: URL?
         var width: Int
@@ -61,6 +76,8 @@ actor RenderEngine {
     func clearCaches() {
         sources.removeAll()
         autoCache = nil
+        coreAutoCache = nil
+        autoBaselines.removeAll()
         beautyCache = nil
         lastLUT = nil
         lastLUTState = nil
@@ -79,7 +96,9 @@ actor RenderEngine {
         let hit = sources[key] != nil
         let original = try preview(url: url, maximum: quality.rawValue, optics: state.optics)
         try Task.checkCancellation()
-        let image = try adjusted(CIImage(cgImage: original), state: state, bypassCreative: bypassCreative)
+        let input = CIImage(cgImage: original)
+        let baseline = try previewAutoBaseline(input, state: state, maximum: quality.rawValue)
+        let image = try adjusted(input, state: state, bypassCreative: bypassCreative, autoBaseline: baseline)
         try Task.checkCancellation()
         guard let space = CGColorSpace(name: CGColorSpace.displayP3),
               let result = context.createCGImage(image, from: image.extent, format: .RGBA8, colorSpace: space)
@@ -131,6 +150,71 @@ actor RenderEngine {
         return Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
     }
 
+    /// Materialize at most two extended-linear half-float preview baselines.
+    /// Manual sliders reuse these pixels; export still evaluates the saved recipe
+    /// at full resolution rather than upscaling a preview.
+    private func previewAutoBaseline(_ input: CIImage, state: EditState, maximum: Int) throws -> CIImage? {
+        guard let recipe = state.coreImageAuto else { return nil }
+        // A healed image cannot reuse the unhealed Auto baseline. Neutral/disabled
+        // corrections keep the existing cache path and its exact pixel identity.
+        guard state.beauty.amount == 0 || !state.beauty.corrections.contains(where: { $0.enabled && $0.strength > 0 }) else { return nil }
+        let key = AutoBaselineKey(maximum: maximum, optics: state.optics,
+                                  geometry: state.geometry, recipe: recipe)
+        if let cached = autoBaselines.first(where: { $0.0 == key }) {
+            return CIImage(cgImage: cached.1)
+        }
+        var image = try OpticsRenderer.apply(input, settings: state.optics)
+        image = GeometryRenderer.apply(image, settings: state.geometry)
+        image = try CoreImageAutoEngine.apply(recipe, to: image)
+        guard let space = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
+              let bitmap = context.createCGImage(image, from: image.extent, format: .RGBAh,
+                                                 colorSpace: space) else { throw PhotoError.renderFailed }
+        autoBaselineBuildCount &+= 1
+        autoBaselines.removeAll { $0.0.maximum == maximum }
+        autoBaselines.append((key, bitmap))
+        if autoBaselines.count > 2 { autoBaselines.removeFirst() }
+        return CIImage(cgImage: bitmap)
+    }
+
+    /// Auto sees the oriented source after lens/crop geometry, before any manual
+    /// development setting. Only this explicit user action runs Apple's analysis.
+    func captureCoreImageAuto(url: URL, state: EditState) throws -> (CoreImageAutoEngine.Capture, Bool, Double) {
+        let start = ContinuousClock.now
+        if sourceURL != url {
+            clearCaches()
+            sourceURL = url
+        }
+        let metadata = try url.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey])
+        let key = CoreAutoCacheKey(url: url,
+            sourceVersion: "\(metadata.contentModificationDate?.timeIntervalSince1970 ?? 0)-\(metadata.fileSize ?? 0)",
+            optics: state.optics, geometry: state.geometry)
+        if let cached = coreAutoCache, cached.0 == key {
+            return (cached.1, true, autoMilliseconds(start))
+        }
+        try Task.checkCancellation()
+        let source: CIImage
+        if let rawFilter = CIRAWFilter(imageURL: url) {
+            rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported
+            rawFilter.scaleFactor = Float(min(1, 2048 / max(rawFilter.nativeSize.width, rawFilter.nativeSize.height)))
+            guard let decoded = rawFilter.outputImage else { throw PhotoError.unreadable }
+            source = decoded
+        } else {
+            guard let decoded = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
+            source = decoded
+        }
+        let normalized = source.transformed(by: CGAffineTransform(translationX: -source.extent.minX, y: -source.extent.minY))
+        let prepared = GeometryRenderer.apply(try OpticsRenderer.apply(normalized, settings: state.optics), settings: state.geometry)
+        let scale = min(1, 2048 / max(prepared.extent.width, prepared.extent.height))
+        let sample = scale < 1 ? prepared.transformed(by: CGAffineTransform(scaleX: scale, y: scale)) : prepared
+        guard let space = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
+              let bitmap = context.createCGImage(sample, from: sample.extent.integral, format: .RGBAh, colorSpace: space)
+        else { throw PhotoError.renderFailed }
+        try Task.checkCancellation()
+        let captured = try CoreImageAutoEngine.capture(CIImage(cgImage: bitmap))
+        coreAutoCache = (key, captured)
+        return (captured, false, autoMilliseconds(start))
+    }
+
     /// Diagnostics evaluate the unchanged production graph, not a second Auto renderer.
     func autoDiagnosticDevelopment(_ input: CIImage, state: EditState) throws -> CIImage {
         try applyDevelopment(input, state: state)
@@ -142,6 +226,18 @@ actor RenderEngine {
         if sourceURL != url { clearCaches(); sourceURL = url }
         let original = try preview(url: url, maximum: 1_024, optics: state.optics)
         return try beautyMasks(for: CIImage(cgImage: original), state: state)
+    }
+
+    func prepareManualHealing(url: URL, state: EditState) throws -> ManualHealingAnalysis {
+        if sourceURL != url { clearCaches(); sourceURL = url }
+        let original = try preview(url: url, maximum: 1_024, optics: state.optics)
+        let source = CIImage(cgImage: original)
+        var canonical = state; canonical.geometry = GeometrySettings()
+        let masks = try beautyMasks(for: source, state: canonical)
+        let optical = try OpticsRenderer.apply(source, settings: state.optics)
+        // Auto is geometry-dependent; healing remains in canonical coordinates before Auto.
+        let developed = state.coreImageAuto == nil ? try applyDevelopment(optical, state: state, deferDetail: true) : optical
+        return try ManualHealingAnalysis.prepare(developed, masks: masks, context: context)
     }
 
     private func beautyMasks(for source: CIImage, state: EditState) throws -> BeautyMasks {
@@ -166,14 +262,36 @@ actor RenderEngine {
     }
 
     /// Shared adjustment graph for both preview and export. No SwiftUI or bitmap history.
-    private func adjusted(_ input: CIImage, state: EditState, bypassCreative: Bool = false) throws -> CIImage {
+    private func adjusted(_ input: CIImage, state: EditState, bypassCreative: Bool = false,
+                          autoBaseline: CIImage? = nil) throws -> CIImage {
+        var image: CIImage
         let beautyActive = !state.beauty.isIdentity
-        var image = try OpticsRenderer.apply(input, settings: state.optics)
-        image = try applyDevelopment(image, state: state, deferDetail: beautyActive)
-        image = GeometryRenderer.apply(image, settings: state.geometry)
+        if let autoBaseline {
+            image = autoBaseline
+            image = try applyDevelopment(image, state: state, deferDetail: beautyActive)
+        } else if let auto = state.coreImageAuto {
+            image = try OpticsRenderer.apply(input, settings: state.optics)
+            image = try ManualHealingRenderer.apply(image, corrections: state.beauty.corrections, amount: state.beauty.amount)
+            image = GeometryRenderer.apply(image, settings: state.geometry)
+            image = try CoreImageAutoEngine.apply(auto, to: image)
+            image = try applyDevelopment(image, state: state, deferDetail: beautyActive)
+        } else {
+            // Preserve the rendering order of every existing document.
+            image = try OpticsRenderer.apply(input, settings: state.optics)
+            image = try applyDevelopment(image, state: state, deferDetail: beautyActive)
+            image = try ManualHealingRenderer.apply(image, corrections: state.beauty.corrections, amount: state.beauty.amount)
+            image = GeometryRenderer.apply(image, settings: state.geometry)
+        }
         if beautyActive {
-            let masks = try beautyMasks(for: input, state: state)
-            image = try BeautyRenderer.apply(image, settings: state.beauty, masks: masks)
+            var frozenV1 = state.beauty
+            frozenV1.finishing = nil
+            frozenV1.corrections = []
+            if !frozenV1.isIdentity || !(state.beauty.finishing?.isIdentity ?? true) {
+                let masks = try beautyMasks(for: input, state: state)
+                image = try BeautyRenderer.apply(image, settings: frozenV1, masks: masks)
+                image = try BeautyV2Renderer.apply(image, settings: state.beauty.finishing ?? .init(),
+                                                    masks: masks, amount: state.beauty.amount)
+            }
             image = try DetailRenderer.apply(image, settings: state.detail)
             var finishing = state.effects; finishing.grain = 0
             image = try EffectsRenderer.applyFinishing(image, settings: finishing)
@@ -235,6 +353,7 @@ actor RenderEngine {
         colorState.beauty = BeautyState()
         colorState.optics = OpticsSettings()
         colorState.geometry = GeometrySettings()
+        colorState.coreImageAuto = nil
         colorState.masks = []
         colorState.creative = CreativeEffectStack()
         if colorState != EditState() {

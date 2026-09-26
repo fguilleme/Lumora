@@ -12,9 +12,10 @@ struct BeautyMasks: @unchecked Sendable {
     let underEyes: CGImage?
     let teeth: CGImage?
     let blemishes: CGImage?
+    var v2: BeautyV2Masks = .empty
 
     static let empty = BeautyMasks(faceCount: 0, faceWidthFraction: 0, faceRects: [],
-        skin: nil, eyes: nil, underEyes: nil, teeth: nil, blemishes: nil)
+        skin: nil, eyes: nil, underEyes: nil, teeth: nil, blemishes: nil, v2: .empty)
 }
 
 /// Diagnostic timings only; never persisted and never used to select a preset.
@@ -80,7 +81,8 @@ enum BeautyFaceAnalysis {
             var rightBrow = bounds(points(landmarks.rightEyebrow))
             var leftBrowPoints = points(landmarks.leftEyebrow)
             var rightBrowPoints = points(landmarks.rightEyebrow)
-            let lips = bounds(points(landmarks.outerLips))
+            let outerLipPoints = points(landmarks.outerLips)
+            let lips = bounds(outerLipPoints)
             let inner = points(landmarks.innerLips)
             let nose = bounds(points(landmarks.nose))
             // Vision may synthesize bilateral eye landmarks on a true profile.
@@ -126,7 +128,8 @@ enum BeautyFaceAnalysis {
                         leftBrow: leftBrow, rightBrow: rightBrow,
                         leftBrowPoints: leftBrowPoints,
                         rightBrowPoints: rightBrowPoints,
-                        lips: lips, toothRegion: toothRegion,
+                        lips: lips, outerLipPoints: outerLipPoints,
+                        innerLipPoints: inner, toothRegion: toothRegion,
                         nose: nose, down: down, cheekColor: cheek)
         }
         guard !faces.isEmpty else { return .empty }
@@ -135,6 +138,7 @@ enum BeautyFaceAnalysis {
         let output = try BeautyMaskPipeline.generate(source: source, faces: faces,
             diagnostics: diagnostics != nil, profile: timing != nil,
             timings: &timings)
+        let v2 = BeautyV2MaskAnalyzer.generate(source: source, faces: faces)
         let width = faces.map(\.box.width).sorted()[faces.count / 2] / CGFloat(source.width)
         let result = BeautyMasks(faceCount: faces.count, faceWidthFraction: width,
             faceRects: faces.map { CGRect(x: $0.box.minX / CGFloat(source.width),
@@ -142,7 +146,7 @@ enum BeautyFaceAnalysis {
                                           width: $0.box.width / CGFloat(source.width),
                                           height: $0.box.height / CGFloat(source.height)) },
             skin: output.skin, eyes: output.eyes, underEyes: output.underEyes,
-            teeth: output.teeth, blemishes: output.blemishes)
+            teeth: output.teeth, blemishes: output.blemishes, v2: v2)
         if let diagnostic = output.diagnostics { diagnostics?(diagnostic) }
         timing?(timings)
         return result

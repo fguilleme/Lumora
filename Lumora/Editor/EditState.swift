@@ -21,6 +21,8 @@ struct EditState: Codable, Sendable, Equatable {
     var beauty = BeautyState()
     var optics = OpticsSettings()
     var geometry = GeometrySettings()
+    /// Frozen Core Image Auto baseline, applied before manual development controls.
+    var coreImageAuto: CoreImageAutoState?
     var creative = CreativeEffectStack()
     /// Ordered masked adjustment layers. The legacy key name is preserved on disk.
     var masks: [AdjustmentLayer] = []
@@ -29,7 +31,7 @@ struct EditState: Codable, Sendable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
-        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative
+        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative, coreImageAuto
     }
 
     /// Additive migration: older documents have no curve or mixer keys.
@@ -53,6 +55,7 @@ struct EditState: Codable, Sendable, Equatable {
         beauty = try values.decodeIfPresent(BeautyState.self, forKey: .beauty) ?? BeautyState()
         optics = try values.decodeIfPresent(OpticsSettings.self, forKey: .optics) ?? OpticsSettings()
         geometry = try values.decodeIfPresent(GeometrySettings.self, forKey: .geometry) ?? GeometrySettings()
+        coreImageAuto = try values.decodeIfPresent(CoreImageAutoState.self, forKey: .coreImageAuto)
         masks = try values.decodeIfPresent([LocalMask].self, forKey: .masks) ?? []
         creative = try values.decodeIfPresent(CreativeEffectStack.self, forKey: .creative) ?? CreativeEffectStack()
         self = validated

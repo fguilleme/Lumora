@@ -9,6 +9,18 @@ struct PhotoCanvas: View {
     var curveSampling = false
     var curveSampleLocation: MaskPoint? = nil
     var onCurveSample: (MaskPoint) -> Void = { _ in }
+    var healingActive = false
+    var healingPaintZone = false
+    var onHealingPaint: (MaskPoint) -> Void = { _ in }
+    var onHealingPaintEnd: () -> Void = {}
+    var healingCorrections: [ManualBlemishCorrection] = []
+    var healingSelectedID: UUID?
+    var healingGeometry: HealingGeometry?
+    var onHealingTap: (MaskPoint) -> Void = { _ in }
+    var onHealingSelect: (UUID) -> Void = { _ in }
+    var onHealingBegin: () -> Void = {}
+    var onHealingMove: (UUID, Bool, MaskPoint) -> Void = { _, _, _ in }
+    var onHealingEnd: () -> Void = {}
     var onPhotoTap: () -> Void = {}
     @Binding var showingOriginal: Bool
     let dlcSettings: DarkenLightenCenterSettings?
@@ -40,6 +52,7 @@ struct PhotoCanvas: View {
     @State private var dlcDragging = false
     @State private var brushActive = false
     @State private var brushLocation: CGPoint?
+    @State private var liveBrushStroke: [MaskPoint] = []
 
     private var activeComponent: MaskComponent? {
         activeMask?.components.first { $0.id == activeComponentID }
@@ -54,6 +67,7 @@ struct PhotoCanvas: View {
         guard let component = activeComponent, case .brush(let brush) = component.shape else { return nil }
         return brush
     }
+
     private var hasTransformHandles: Bool {
         guard allowsMaskEditing else { return false }
         guard let component = activeComponent else { return false }
@@ -95,15 +109,15 @@ struct PhotoCanvas: View {
                         .onEnded { gesture in
                             switch gesture {
                             case .first:
-                                if !isPainting { restoreZoom() }
+                                if !isPainting && !healingPaintZone { restoreZoom() }
                             case .second(let tap):
-                                guard !allowsMaskEditing, !curveSampling,
+                                guard !allowsMaskEditing, !curveSampling, !healingPaintZone,
                                       geometrySettings == nil, dlcSettings == nil else { return }
                                 let imageSize = CGSize(width: result.image.width, height: result.image.height)
-                                guard normalized(tap.location, viewSize: geometry.size,
+                                guard let point = normalized(tap.location, viewSize: geometry.size,
                                                  imageSize: imageSize, displayScale: displayScale,
-                                                 displayOffset: displayOffset) != nil else { return }
-                                onPhotoTap()
+                                                 displayOffset: displayOffset) else { return }
+                                if healingActive { onHealingTap(point) } else { onPhotoTap() }
                             }
                         }
                 )
@@ -113,13 +127,13 @@ struct PhotoCanvas: View {
                     LongPressGesture(minimumDuration: 0.3, maximumDistance: 12)
                         .sequenced(before: DragGesture(minimumDistance: 0))
                         .updating($pressing) { value, state, _ in
-                            if case .second(true, _) = value { state = true }
+                            if !healingActive, case .second(true, _) = value { state = true }
                         }
                 )
                 .simultaneousGesture(DragGesture(minimumDistance: 8).updating($translation) { value, state, _ in
-                    if zoom > 1 && !isPainting && !dlcDragging && !curveSampling { state = value.translation }
+                    if zoom > 1 && !isPainting && !healingPaintZone && !dlcDragging && !curveSampling { state = value.translation }
                 }.onEnded { value in
-                    if zoom > 1 && !isPainting && !dlcDragging && !curveSampling {
+                    if zoom > 1 && !isPainting && !healingPaintZone && !dlcDragging && !curveSampling {
                         offset = bounded(CGSize(width: offset.width + value.translation.width,
                                                 height: offset.height + value.translation.height), size: geometry.size)
                     }
@@ -135,7 +149,10 @@ struct PhotoCanvas: View {
                         MaskOverlay(mask: activeMask, outlineOnly: maskOutlineOnly,
                                     imageSize: CGSize(width: result.image.width, height: result.image.height),
                                     displayScale: displayScale,
-                                    displayOffset: displayOffset)
+                                    displayOffset: displayOffset,
+                                    activeComponentID: activeComponentID,
+                                    liveBrushStroke: brushActive ? liveBrushStroke : [],
+                                    liveBrushMode: brushActive ? brushMode : nil)
                             .opacity(showsMaskOverlay && !showingOriginal && !pressing ? 1 : 0)
                             .accessibilityHidden(!showsMaskOverlay || showingOriginal || pressing)
                             .allowsHitTesting(false)
@@ -182,6 +199,23 @@ struct PhotoCanvas: View {
                     }
                 }
                 .overlay {
+                    if healingActive, let map = healingGeometry, !showingOriginal {
+                        HealingGuides(corrections: healingCorrections, selected: healingSelectedID,
+                            map: map, rect: sampledImageRect(viewSize: geometry.size,
+                                imageSize: CGSize(width: result.image.width, height: result.image.height),
+                                displayScale: displayScale, displayOffset: displayOffset),
+                            onSelect: onHealingSelect, onBegin: onHealingBegin,
+                            onMove: onHealingMove, onEnd: onHealingEnd)
+                            .allowsHitTesting(!healingPaintZone)
+                        if healingPaintZone {
+                            Color.clear.contentShape(Rectangle())
+                              .gesture(DragGesture(minimumDistance:0).onChanged { value in
+                                if let point=normalized(value.location,viewSize:geometry.size,
+                                  imageSize:CGSize(width:result.image.width,height:result.image.height),displayScale:displayScale,displayOffset:displayOffset) {onHealingPaint(point)}
+                              }.onEnded {_ in onHealingPaintEnd()})
+                              .accessibilityLabel("Target area")
+                        }
+                    }
                     if curveSampling && !showingOriginal {
                         Color.clear.contentShape(Rectangle())
                             .gesture(DragGesture(minimumDistance: 0).onChanged { value in
@@ -236,8 +270,9 @@ struct PhotoCanvas: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .contentShape(Rectangle())
-            .gesture(MagnifyGesture().updating($magnification) { value, state, _ in state = value.magnification }
+            .gesture(MagnifyGesture().updating($magnification) { value, state, _ in if !healingPaintZone { state = value.magnification } }
                 .onEnded { value in
+                    guard !healingPaintZone else { return }
                     zoom = min(6, max(1, zoom * value.magnification))
                     offset = bounded(offset, size: geometry.size)
                 })
@@ -256,14 +291,22 @@ struct PhotoCanvas: View {
         .exclusively(before: DragGesture(minimumDistance: 0))
         .onChanged { gesture in
             guard case .second(let value) = gesture else { return }
-            if !brushActive { brushActive = true; onBrushBegin() }
+            if !brushActive {
+                liveBrushStroke = []
+                brushActive = true
+                onBrushBegin()
+            }
             brushLocation = value.location
             if let point = normalized(value.location, viewSize: viewSize,
                                       imageSize: CGSize(width: result.image.width,
                                                         height: result.image.height),
                                       displayScale: displayScale,
                                       displayOffset: displayOffset) {
-                onBrushPoint(point)
+                let validated = point.validated
+                if liveBrushStroke.last != validated {
+                    liveBrushStroke.append(validated)
+                    onBrushPoint(validated)
+                }
             }
         }
         .onEnded { gesture in
@@ -275,6 +318,7 @@ struct PhotoCanvas: View {
             }
             brushActive = false
             brushLocation = nil
+            liveBrushStroke = []
         }
     }
 
@@ -642,7 +686,33 @@ private struct MaskOverlay: View {
     let imageSize: CGSize
     let displayScale: CGFloat
     let displayOffset: CGSize
+    let activeComponentID: UUID?
+    let liveBrushStroke: [MaskPoint]
+    let liveBrushMode: BrushMode?
     @State private var overlay: CGImage?
+
+    private var activeBrush: BrushMask? {
+        guard let component = mask.components.first(where: { $0.id == activeComponentID }),
+              case .brush(let brush) = component.shape else { return nil }
+        return brush
+    }
+
+    private var activeOperation: MaskOperation? {
+        mask.components.first(where: { $0.id == activeComponentID })?.operation
+    }
+
+    /// Keep the expensive Core Image matte at the stroke's starting state. The
+    /// in-progress stroke is drawn by SwiftUI and the final matte renders once.
+    private var committedMask: LocalMask {
+        guard let liveBrushMode, liveBrushMode != .pan, activeComponentID != nil else { return mask }
+        var result = mask
+        guard let index = result.components.firstIndex(where: { $0.id == activeComponentID }),
+              case .brush(var brush) = result.components[index].shape else { return mask }
+        if liveBrushMode == .paint { if !brush.strokes.isEmpty { brush.strokes.removeLast() } }
+        else { if !brush.eraseStrokes.isEmpty { brush.eraseStrokes.removeLast() } }
+        result.components[index].shape = .brush(brush)
+        return result
+    }
 
     private struct RenderKey: Equatable {
         let mask: LocalMask
@@ -656,22 +726,68 @@ private struct MaskOverlay: View {
         // before applying zoom and pan, including its letterboxed space.
         GeometryReader { geometry in
             if let overlay {
-                Image(decorative: overlay, scale: 1)
-                    .resizable().aspectRatio(contentMode: .fit)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .scaleEffect(displayScale)
-                    .offset(displayOffset)
+                ZStack {
+                    Image(decorative: overlay, scale: 1)
+                        .resizable().aspectRatio(contentMode: .fit)
+                    if let liveBrushMode, let activeBrush,
+                       !liveBrushStroke.isEmpty {
+                        liveStrokeCanvas(brush: activeBrush, mode: liveBrushMode,
+                                         operation: activeOperation ?? .add,
+                                         canvasSize: geometry.size)
+                    }
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .compositingGroup()
+                .scaleEffect(displayScale)
+                .offset(displayOffset)
             }
         }
         .clipped()
-        .task(id: RenderKey(mask: mask, outlineOnly: outlineOnly, imageSize: imageSize)) {
-            let rendered = await MaskOverlayRenderer.shared.render(mask, imageSize: imageSize, outlineOnly: outlineOnly)
+        .task(id: RenderKey(mask: committedMask, outlineOnly: outlineOnly, imageSize: imageSize)) {
+            let rendered = await MaskOverlayRenderer.shared.render(committedMask, imageSize: imageSize, outlineOnly: outlineOnly)
             guard !Task.isCancelled else { return }
             overlay = rendered
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(outlineOnly ? "Mask outline" : "Red mask overlay")
         .accessibilityIdentifier(outlineOnly ? "mask-outline-overlay" : "mask-red-overlay")
+    }
+
+    private func liveStrokeCanvas(brush: BrushMask, mode: BrushMode,
+                                  operation: MaskOperation, canvasSize: CGSize) -> some View {
+        Canvas { context, size in
+            guard imageSize.width > 0, imageSize.height > 0 else { return }
+            let scale = min(size.width / imageSize.width, size.height / imageSize.height)
+            let fitted = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+            let origin = CGPoint(x: (size.width - fitted.width) / 2,
+                                 y: (size.height - fitted.height) / 2)
+            let points = liveBrushStroke.map {
+                CGPoint(x: origin.x + fitted.width * $0.x, y: origin.y + fitted.height * $0.y)
+            }
+            guard let first = points.first else { return }
+            let diameter = min(fitted.width, fitted.height) * CGFloat(brush.size / 100)
+            let strength = brush.opacity / 100 * brush.flow / 100
+            let path: Path
+            if points.count == 1 {
+                path = Path(ellipseIn: CGRect(x: first.x - diameter / 2, y: first.y - diameter / 2,
+                                             width: diameter, height: diameter))
+            } else {
+                var line = Path()
+                line.move(to: first)
+                for point in points.dropFirst() { line.addLine(to: point) }
+                path = line
+            }
+            let removesCoverage = (operation == .add && mode == .erase) ||
+                (operation == .subtract && mode == .paint)
+            context.blendMode = removesCoverage && !outlineOnly ? .destinationOut : .normal
+            let color = outlineOnly ? Color.white.opacity(0.85) :
+                Color.red.opacity((removesCoverage ? 1 : 0.55) * strength)
+            if points.count == 1 { context.fill(path, with: .color(color)) }
+            else { context.stroke(path, with: .color(color),
+                                  style: StrokeStyle(lineWidth: diameter, lineCap: .round, lineJoin: .round)) }
+        }
+        .frame(width: canvasSize.width, height: canvasSize.height)
+        .allowsHitTesting(false)
     }
 }
 

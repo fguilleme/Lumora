@@ -730,3 +730,71 @@
 "Eye Brightness and Eye Detail" = "Éclat et détail des yeux";
 "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape." = "Ajoute légèrement de l’éclat et du détail dans la zone des yeux détectés, sans changer leur forme.";
 "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged." = "Agit seulement si une bouche ouverte et des dents plausibles sont détectées. Une bouche fermée reste inchangée.";
+
+// Beauty V2 portrait finishing
+"Lips" = "Lèvres";
+"Hair" = "Cheveux";
+"Skin Shine" = "Brillance";
+"Face Balance" = "Équilibre visage";
+"Lip Color" = "Couleur des lèvres";
+"Lip Saturation" = "Saturation des lèvres";
+"Lip Brightness" = "Luminosité des lèvres";
+"Lip Detail" = "Détail des lèvres";
+"Hair Light" = "Lumière des cheveux";
+"Hair Shine" = "Brillance des cheveux";
+"Hair Detail" = "Détail des cheveux";
+
+"Correction" = "Correction";
+
+"Delete correction" = "Supprimer la correction";
+
+"Delete all corrections" = "Supprimer toutes les corrections";
+
+"Delete all corrections?" = "Supprimer toutes les corrections ?";
+
+"Tap an imperfection. Drag the target or source to adjust." = "Touchez une imperfection. Déplacez la cible ou la source pour ajuster.";
+
+"Check the source: low confidence or manually moved." = "Vérifiez la source : confiance faible ou déplacement manuel.";
+
+"No safe skin source here. Try a nearby skin area." = "Aucune source de peau fiable ici. Essayez une zone de peau voisine.";
+
+"Correction source" = "Source de la correction";
+
+"Correction target" = "Cible de la correction";
+
+"Source diagnostics" = "Diagnostic de la source";
+
+"Frequency diagnostics" = "Diagnostic des fréquences";
+
+"Target and source" = "Cible et source";
+
+"Tap a small skin imperfection. Drag the turquoise target or orange source. A warning identifies low-confidence sources; inspect them at 100%." = "Touchez une petite imperfection de peau. Déplacez la cible turquoise ou la source orange. Un avertissement signale les sources peu fiables ; vérifiez-les à 100 %.";
+
+"Size and Strength" = "Taille et Force";
+
+"Adjust the selected correction. Each drag is one Undo step. Closing Correction hides the guides but keeps the repair; guides are never exported." = "Ajustez la correction sélectionnée. Chaque déplacement correspond à une étape Annuler. Fermer Correction masque les guides mais conserve la retouche ; les guides ne sont jamais exportés.";
+
+"Delete corrections" = "Supprimer des corrections";
+
+"Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them." = "Supprimer retire la correction sélectionnée. Tout supprimer demande confirmation si elles sont plusieurs. Réinitialiser Beauté efface les corrections ; les presets Beauté les conservent.";
+
+"Bring source into view" = "Ramener la source dans le cadre";
+
+"Target area" = "Zone";
+
+"Brush operation" = "Action du pinceau";
+
+"Brush size" = "Taille du pinceau";
+
+"Paint the target. Leave Zone to move the photo or handles." = "Peignez la cible. Quittez Zone pour déplacer la photo ou les poignées.";
+
+"Face analysis unavailable" = "Analyse du visage indisponible";
+
+
+
+
+"Edit correction area" = "Modifier la zone de correction";
+
+"Finish editing area" = "Terminer l’édition de la zone";
+
+"Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection." = "Ajouter étend cette zone de correction au pinceau ; Effacer en retire une partie. Terminez l’édition pour déplacer la cible ou la source, ou toucher une autre imperfection.";

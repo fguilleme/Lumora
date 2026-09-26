@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BeautyView: View {
+    let session: EditorSession
     let settings: BeautyState
     let faceCount: Int?
     let isAnalyzing: Bool
@@ -8,6 +9,7 @@ struct BeautyView: View {
     let onPreset: (BeautyPreset) -> Void
     let onBegin: (String) -> Void
     let onChange: (BeautyControl, Double) -> Void
+    let onV2Change: (BeautyV2Control, Double) -> Void
     let onEnd: () -> Void
     let onReset: () -> Void
 
@@ -30,7 +32,7 @@ struct BeautyView: View {
                 .dimsDuringAdjustment()
                 HStack(spacing: 8) {
                     if isAnalyzing { ProgressView().controlSize(.mini) }
-                    Text(faceCount == 0 ? String(localized: "No face detected") :
+                    Text(session.beautyAnalysisError != nil ? String(localized: "Face analysis unavailable") : faceCount == 0 ? String(localized: "No face detected") :
                          faceCount == nil ? String(localized: "Analyzing faces…") :
                          String(localized: "All Faces"))
                     if let faceCount, faceCount > 0 { Text("(\(faceCount))") }
@@ -45,8 +47,12 @@ struct BeautyView: View {
 
                 slider(.amount)
                 section("Skin", [.uniformity, .texture, .blemishes])
+                v2Section("", [.skinShine])
+                ManualHealingControls(session: session)
                 section("Eyes", [.darkCircles, .eyeBrightness, .eyeDetail])
                 section("Smile", [.teeth])
+                v2Section("Lips", [.lipColor, .lipSaturation, .lipBrightness, .lipDetail])
+                v2Section("Face", [.faceBalance])
                 #if DEBUG
                 BeautyMaskDebugView(masks: debugMasks)
                 #endif
@@ -59,9 +65,27 @@ struct BeautyView: View {
 
     private func section(_ title: String, _ controls: [BeautyControl]) -> some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(title).font(.headline).foregroundStyle(.secondary)
+            Text(LocalizedStringKey(title)).font(.headline).foregroundStyle(.secondary)
                 .padding(.top, 7).dimsDuringAdjustment()
             ForEach(controls) { slider($0) }
+        }
+    }
+
+    private func v2Section(_ title: String, _ controls: [BeautyV2Control]) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            if !title.isEmpty {
+                Text(LocalizedStringKey(title)).font(.headline).foregroundStyle(.secondary)
+                    .padding(.top, 7).dimsDuringAdjustment()
+            }
+            ForEach(controls) { control in
+                AdjustmentSlider(title: control.title, range: control.range,
+                    accessibilityID: "beauty-v2-\(control.rawValue)",
+                    value: (settings.finishing ?? .init())[control],
+                    onBegin: { onBegin(control.title) },
+                    onChange: { onV2Change(control, $0) }, onEnd: onEnd,
+                    onReset: { onV2Change(control, 0) })
+                    .disabled(faceCount == 0 || isAnalyzing)
+            }
         }
     }
 
@@ -103,7 +127,8 @@ private struct BeautyMaskDebugView: View {
         guard let masks else { return [] }
         return [("Skin", masks.skin), ("Eyes", masks.eyes),
                 ("Under Eyes", masks.underEyes), ("Teeth", masks.teeth),
-                ("Blemishes", masks.blemishes)].compactMap { name, image in
+                ( "Blemishes", masks.blemishes), ("Lips", masks.v2.lips),
+                ("Inner Mouth", masks.v2.innerMouth)].compactMap { name, image in
                     image.map { (name, $0) }
                 }
     }

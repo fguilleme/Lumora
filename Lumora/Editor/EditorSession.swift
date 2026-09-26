@@ -19,6 +19,135 @@ final class EditorSession {
     #else
     var beautyDebugMasks: BeautyMasks? { nil }
     #endif
+    var healingActive = false
+    var healingPaintZone = false
+    var healingEraseZone = false
+    var healingBrushRadius = 0.006
+    private var healingDrawing = false
+    var selectedHealingID: UUID?
+    private(set) var beautyAnalysisError: String?
+    private(set) var healingPreparing = false
+    private(set) var healingAnalysis: ManualHealingAnalysis?
+    private(set) var healingCandidates: [HealingCandidate] = []
+    private(set) var healingNotice: String?
+    @ObservationIgnored private var healingTask: Task<Void, Never>?
+    @ObservationIgnored private var healingToken = 0
+    @ObservationIgnored private var healingPreparedState: EditState?
+    private var healingInputState: EditState {
+        var value = state; value.beauty = BeautyState(); return value
+    }
+    var selectedHealing: ManualBlemishCorrection? {
+        state.beauty.corrections.first { $0.id == selectedHealingID }
+    }
+    var healingGeometry: HealingGeometry? {
+        guard let result else { return nil }
+        return HealingGeometry(size: CGSize(width: result.sourceWidth, height: result.sourceHeight), settings: state.geometry)
+    }
+    func closeHealing() {
+        finishInteraction(); healingToken &+= 1; healingTask?.cancel()
+        healingActive = false; healingPaintZone = false; healingDrawing = false; healingPreparing = false; healingAnalysis = nil
+        selectedHealingID = nil; healingCandidates = []; healingNotice = nil
+    }
+    func toggleHealing() {
+        if healingActive { closeHealing(); return }
+        guard let sourceURL, let id = document?.id else { return }
+        healingActive = true; showingOriginal = false; healingPreparing = true
+        selectedHealingID = state.beauty.corrections.last?.id
+        healingToken &+= 1; let token = healingToken, snapshot = state
+        let inputSnapshot = healingInputState
+        healingTask = Task {
+            defer { if token == healingToken { healingPreparing = false } }
+            do {
+                let data = try await engine.prepareManualHealing(url: sourceURL, state: snapshot)
+                guard !Task.isCancelled, healingActive, token == healingToken, document?.id == id,
+                      healingInputState == inputSnapshot else { return }
+                healingPreparedState = inputSnapshot
+                healingAnalysis = data
+                if data.faceWidthFraction == 0 { healingNotice = String(localized: "No face detected") }
+            } catch is CancellationError {} catch {
+                if token == healingToken { healingNotice = String(localized: "Face analysis unavailable") }
+            }
+        }
+    }
+    func healingTap(_ visible: MaskPoint) {
+        guard let map = healingGeometry, !healingPreparing, let id = document?.id else { return }
+        let point = map.canonical(visible)
+        guard (0...1).contains(point.x), (0...1).contains(point.y) else { return }
+        let existing = state.beauty.corrections
+        if let hit = existing.reversed().first(where: {
+            hypot((point.x-$0.targetCenter.x)*map.inputSize.width,(point.y-$0.targetCenter.y)*map.inputSize.height)
+                <= $0.targetRadius*min(map.inputSize.width,map.inputSize.height)*1.4
+        }) { selectedHealingID = hit.id; return }
+        guard let data = healingAnalysis else { return }
+        guard healingPreparedState == healingInputState else {
+            closeHealing(); toggleHealing(); return
+        }
+        healingPreparing = true; healingNotice = nil
+        healingToken &+= 1; let token = healingToken, snapshot = state
+        healingTask = Task {
+            defer { if token == healingToken { healingPreparing = false } }
+            do {
+                let worker = Task.detached { try data.propose(at: point, existing: existing) }
+                let proposal = try await withTaskCancellationHandler(operation: { try await worker.value }, onCancel: { worker.cancel() })
+                guard !Task.isCancelled, token == healingToken, healingActive, document?.id == id,
+                      state == snapshot else { return }
+                guard let proposal else {
+                    healingNotice = String(localized: "No safe skin source here. Try a nearby skin area."); return
+                }
+                finishInteraction(); history.begin(String(localized: "Correction"), state: state)
+                state.beauty.corrections.append(proposal.correction)
+                selectedHealingID = proposal.correction.id; healingCandidates = proposal.candidates
+                history.commit(state); persist(); requestRender(.high)
+            } catch is CancellationError {} catch { self.error = error.localizedDescription }
+        }
+    }
+    func moveHealing(_ id: UUID, source: Bool, visible: MaskPoint) {
+        guard let map = healingGeometry else { return }
+        let point = map.canonical(visible).validated
+        changeHealing(id) { c in
+            if source { c.sourceCenter = point; c.confidence = 0; c.manualSource = true } else { c.moveTarget(to:point) }
+        }
+    }
+    func changeHealing(_ id: UUID, update: (inout ManualBlemishCorrection) -> Void) {
+        guard let index = state.beauty.corrections.firstIndex(where: { $0.id == id }) else { return }
+        if !interacting { history.begin(String(localized: "Correction"), state: state) }
+        update(&state.beauty.corrections[index])
+        state.beauty.corrections[index] = state.beauty.corrections[index].validated
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
+    func paintHealing(_ visible: MaskPoint) {
+        guard healingActive, healingPaintZone, let map=healingGeometry, let c=selectedHealing else {return}
+        let point=map.canonical(visible)
+        guard (0...1).contains(point.x), (0...1).contains(point.y) else {return}
+        if !healingDrawing {
+            guard (c.targetStrokes?.count ?? 0)<128 else {return}
+            beginInteraction(String(localized:"Target area"));healingDrawing=true
+            changeHealing(c.id) { value in
+                if value.targetStrokes == nil {value.targetStrokes=[]}
+                value.targetStrokes?.append(.init(points:[point],radius:healingBrushRadius,erase:healingEraseZone))
+            }
+        } else {
+            changeHealing(c.id) { value in
+                guard let index=value.targetStrokes?.indices.last,
+                      let last=value.targetStrokes?[index].points.last,
+                      (value.targetStrokes?[index].points.count ?? 0)<4096 else {return}
+                let distance=hypot((point.x-last.x)*map.inputSize.width,(point.y-last.y)*map.inputSize.height)
+                if distance>max(0.5,healingBrushRadius*min(map.inputSize.width,map.inputSize.height)*0.15) {
+                    value.targetStrokes?[index].points.append(point)
+                }
+            }
+        }
+    }
+    func endHealingStroke() {healingDrawing=false;finishInteraction()}
+    func deleteHealing(all: Bool = false) {
+        healingDrawing=false; healingPaintZone=false
+        finishInteraction(); history.begin(String(localized: "Delete correction"), state: state)
+        if all { state.beauty.corrections = [] }
+        else { state.beauty.corrections.removeAll { $0.id == selectedHealingID } }
+        selectedHealingID = nil; history.commit(state); persist(); requestRender(.high)
+    }
+
     private(set) var libraryDocuments: [LibraryDocument] = []
     private(set) var libraryFolders: [LibraryFolder] = []
     private(set) var libraryTags: [LibraryTag] = []
@@ -44,41 +173,39 @@ final class EditorSession {
     @ObservationIgnored private var didRestore = false
 
     private(set) var isAnalyzingAuto = false
-    private(set) var autoProposal: AutoProposal?
-    private var autoProposalDocument: UUID?
-    private var autoProposalLayer: UUID?
     @ObservationIgnored private var autoRequest = 0
     @ObservationIgnored private var beautyRequest = 0
 
-    func autoIsApplied(_ module: AutoModule, style: AutoCurveStyle = .balanced) -> Bool {
-        autoProposalDocument == document?.id && autoProposalLayer == selectedMaskID &&
-            autoProposal?.matches(module, style: style, state: activeState) == true
-    }
+    var coreImageAutoApplied: Bool { state.coreImageAuto != nil }
 
-    func applyAuto(_ module: AutoModule, style: AutoCurveStyle = .balanced) async {
+    func applyCoreImageAuto() async {
         finishInteraction()
-        guard let url = sourceURL, let documentID = document?.id else { return }
+        guard let url = sourceURL, let documentID = document?.id, selectedMaskID == nil else { return }
         autoRequest += 1
-        let token = autoRequest, snapshot = state, layer = selectedMaskID
-        let context = AutoRequestContext(request: token, renderGeneration: generation,
-            importGeneration: importGeneration, documentID: documentID, sourceURL: url,
-            selectedLayer: layer, state: snapshot)
+        let token = autoRequest, snapshot = state, importToken = importGeneration
         isAnalyzingAuto = true
         defer { if token == autoRequest { isAnalyzingAuto = false } }
         do {
-            let analysis = try await engine.autoAnalysis(url: url, state: snapshot, maskID: layer)
-            guard let currentID = document?.id, let currentURL = sourceURL,
-                  context.permits(AutoRequestContext(request: autoRequest, renderGeneration: generation,
-                    importGeneration: importGeneration, documentID: currentID, sourceURL: currentURL,
-                    selectedLayer: selectedMaskID, state: state)), !Task.isCancelled else { return }
-            let applied = analysis.proposal.applying(module, style: style, to: activeState)
-            history.begin("Auto · " + (module == .color ? "Color" : module == .curves ? "Curves" : "Light"), state: state)
-            if let index = selectedMaskIndex { state.masks[index].adjustments = LocalAdjustmentState(editState: applied) }
-            else { state = applied }
-            autoProposal = analysis.proposal; autoProposalDocument = documentID; autoProposalLayer = layer
+            let (capture, _, _) = try await engine.captureCoreImageAuto(url: url, state: snapshot)
+            guard token == autoRequest, importToken == importGeneration,
+                  document?.id == documentID, sourceURL == url,
+                  state.optics == snapshot.optics, state.geometry == snapshot.geometry,
+                  selectedMaskID == nil,
+                  !Task.isCancelled else { return }
+            history.begin("Core Image Auto", state: state)
+            state.coreImageAuto = capture.state
             history.commit(state); persist(); requestRender(.high)
         } catch is CancellationError { }
         catch { if token == autoRequest, document?.id == documentID { self.error = error.localizedDescription } }
+    }
+
+    func resetCoreImageAuto() {
+        finishInteraction()
+        guard state.coreImageAuto != nil else { return }
+        autoRequest &+= 1
+        history.begin("Reset Auto", state: state)
+        state.coreImageAuto = nil
+        history.commit(state); persist(); requestRender(.high)
     }
 
     func restore() async {
@@ -358,6 +485,7 @@ final class EditorSession {
         let token = beautyRequest, importToken = importGeneration
         let snapshot = state
         beautyFaceCount = nil
+        beautyAnalysisError = nil
         #if DEBUG
         beautyDebugMasks = nil
         #endif
@@ -373,7 +501,7 @@ final class EditorSession {
             beautyDebugMasks = masks
             #endif
         } catch is CancellationError { }
-        catch { if token == beautyRequest, document?.id == documentID { self.error = error.localizedDescription } }
+        catch { if token == beautyRequest, document?.id == documentID { beautyAnalysisError = error.localizedDescription } }
     }
     func setBeauty(_ control: BeautyControl, to value: Double) {
         if !interacting { history.begin(control.title, state: state) }
@@ -381,14 +509,24 @@ final class EditorSession {
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
+    func setBeautyV2(_ control: BeautyV2Control, to value: Double) {
+        if !interacting { history.begin(control.title, state: state) }
+        var finishing = state.beauty.finishing ?? BeautyV2Settings()
+        finishing[control] = value
+        state.beauty.finishing = finishing.hasStoredValues ? finishing : nil
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
     func applyBeautyPreset(_ preset: BeautyPreset) {
         finishInteraction()
         history.begin(preset.title, state: state)
+        let corrections = state.beauty.corrections
         state.beauty = preset.settings
+        state.beauty.corrections = corrections
         history.commit(state); persist(); requestRender(.high)
     }
     func resetBeauty() {
-        finishInteraction()
+        closeHealing()
         guard state.beauty != BeautyState() else { return }
         history.begin("Reset Beauty", state: state)
         state.beauty = BeautyState()

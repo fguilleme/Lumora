@@ -16,6 +16,8 @@ struct BeautyMaskFace {
     let leftBrowPoints: [CGPoint]
     let rightBrowPoints: [CGPoint]
     let lips: CGRect?
+    let outerLipPoints: [CGPoint]
+    let innerLipPoints: [CGPoint]
     let toothRegion: [CGPoint]
     let nose: CGRect?
     let down: CGPoint

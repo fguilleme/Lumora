@@ -1,63 +1,35 @@
 import SwiftUI
 
+/// Core Image Auto is one full-image baseline shared by Light, Color and Curves.
+/// Its parameters are not represented as Lumora sliders or curve points.
 struct AutoCorrectionControls: View {
     let session: EditorSession
     let module: AutoModule
-    @State private var style = AutoCurveStyle.balanced
-
-    private var resolvedStyle: AutoCurveStyle {
-        if session.autoIsApplied(.curves, style: style) { return style }
-        return AutoCurveStyle.allCases.first { session.autoIsApplied(.curves, style: $0) } ?? style
-    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Button {
-                    Task { await session.applyAuto(module, style: resolvedStyle) }
-                } label: {
-                    Label("Auto", systemImage: "wand.and.stars")
+        HStack {
+            Button {
+                Task { await session.applyCoreImageAuto() }
+            } label: {
+                Label("Auto", systemImage: "wand.and.stars")
+            }
+            .buttonStyle(CompactEditorButtonStyle(selected: session.coreImageAutoApplied))
+            .accessibilityIdentifier("auto-" + module.rawValue)
+            .disabled(session.isAnalyzingAuto || session.selectedMaskID != nil)
+            if session.isAnalyzingAuto {
+                ProgressView().controlSize(.small).accessibilityLabel("Analyzing photo")
+            }
+            if session.coreImageAutoApplied {
+                Button("Reset Auto", systemImage: "arrow.counterclockwise") {
+                    session.resetCoreImageAuto()
                 }
                 .buttonStyle(CompactEditorButtonStyle())
-                .accessibilityIdentifier("auto-" + module.rawValue)
-                .disabled(session.isAnalyzingAuto)
-                if session.isAnalyzingAuto { ProgressView().controlSize(.small).accessibilityLabel("Analyzing photo") }
-                Spacer()
-                Text(session.autoIsApplied(module, style: resolvedStyle) ? "Auto applied" : "Custom")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .accessibilityIdentifier("auto-status-" + module.rawValue)
+                .accessibilityIdentifier("auto-reset")
             }
-            if module == .curves {
-                HStack(spacing: 0) {
-                    ForEach(AutoCurveStyle.allCases) { item in
-                        Button {
-                            style = item
-                            Task { await session.applyAuto(.curves, style: item) }
-                        } label: {
-                            HStack(spacing: 3) {
-                                Text(item.title)
-                                if session.autoIsApplied(.curves, style: item) { Image(systemName: "checkmark") }
-                            }.frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(CompactEditorButtonStyle(
-                            selected: session.autoIsApplied(.curves, style: item), segment: true))
-                        .accessibilityIdentifier("auto-curve-" + item.rawValue)
-                        .accessibilityAddTraits(session.autoIsApplied(.curves, style: item) ? .isSelected : [])
-                        .disabled(session.isAnalyzingAuto)
-                    }
-                }
-                .background {
-                    RoundedRectangle(cornerRadius: 9)
-                        .fill(Color.primary.opacity(0.06))
-                        .padding(.vertical, 4)
-                }
-                .accessibilityElement(children: .contain)
-                .accessibilityLabel("Auto style")
-            }
-            if module != .color {
-                Text("Auto replaces Light settings and the RGB curve.")
-                    .font(.caption2).foregroundStyle(.secondary)
-            }
+            Spacer()
+            Text(session.coreImageAutoApplied ? "Auto base" : "Manual")
+                .font(.caption).foregroundStyle(.secondary)
+                .accessibilityIdentifier("auto-status-" + module.rawValue)
         }
     }
 }

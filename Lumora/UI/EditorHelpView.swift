@@ -227,7 +227,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Blacks", "Sets the depth of the darkest tones. Opening them slightly can retain texture; closing them adds weight.")
                 ]),
                 HelpSection("How to use it", [
-                    HelpItem("Auto", "Analyzes the photo and fills the visible sliders with a starting proposal. It is a one-time action: edit the values, undo it, or run Auto again."),
+                    HelpItem("Auto", "Applies a Core Image Auto baseline before manual edits. The sliders stay editable and do not pretend to represent Core Image filter values. Reset Auto or Undo restores the previous rendering."),
                     HelpItem("Local adjustment", "When a mask is selected, these sliders affect that layer. Select Whole photo to return to the global settings."),
                     HelpItem("Fine adjustment", "Tap a slider's numeric value for a narrower adjustment range. Double-tap the slider or use its reset arrow to restore its default value.")
                 ])
@@ -241,8 +241,8 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Vibrance", "Adjusts color more cautiously in mixed scenes. Always check skin tones and colors near the gamut boundary.")
                 ]),
                 HelpSection("Auto and local color", [
-                    HelpItem("Auto Color", "Uses the shared Auto image analysis but fills only color controls. A deliberately warm scene does not necessarily have a white-balance error."),
-                    HelpItem("With Auto Light", "Auto Color does not duplicate exposure or contrast. You can use both proposals together and refine them manually."),
+                    HelpItem("Auto Color", "Applies the same Core Image Auto baseline used in Light and Curves. It is not a separate white-balance proposal."),
+                    HelpItem("With Auto Light", "Pressing Auto in another panel refreshes the single shared baseline. It does not stack a second Auto correction."),
                     HelpItem("With a mask", "Color settings can target the active layer. Select Whole photo to adjust the image as a whole.")
                 ])
             ]
@@ -257,8 +257,8 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Delete a point", "Select an interior point and use the trash icon. Endpoints keep their horizontal position, but their output value can change.")
                 ]),
                 HelpSection("Auto and consistency", [
-                    HelpItem("Natural, Balanced, Punchy", "These three styles express the same Auto analysis with increasing tonal strength. Generated points remain editable."),
-                    HelpItem("With Auto Light", "Auto Curves is an alternative representation of a tonal correction. Lumora does not automatically stack an equivalent curve on Auto Light and double the adjustment."),
+                    HelpItem("Natural, Balanced, Punchy", "Auto applies a Core Image baseline; it does not generate editable curve points. You can edit the curve afterward."),
+                    HelpItem("With Auto Light", "The Auto button in Light, Color and Curves controls one shared Core Image baseline, applied before manual settings."),
                     HelpItem("Undo and redo", "Adding, deleting, or moving a point can be undone. Leaving Edit mode does not change the image.")
                 ])
             ]
@@ -318,6 +318,17 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Dark Circles", "Slightly lifts and warms the region below detected eyes without painting over the eyes."),
                     HelpItem("Eye Brightness and Eye Detail", "Adds restrained brightness and detail within the detected eye area. It never changes the eye shape."),
                     HelpItem("Teeth", "Works only when an open mouth and plausible teeth are detected. Closed mouths remain unchanged.")
+                ]),
+                HelpSection("Correction", [
+                    HelpItem("Edit correction area", "Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection."),
+                    HelpItem("Target and source", "Tap a small skin imperfection. Drag the turquoise target or orange source. A warning identifies low-confidence sources; inspect them at 100%."),
+                    HelpItem("Size and Strength", "Adjust the selected correction. Each drag is one Undo step. Closing Correction hides the guides but keeps the repair; guides are never exported."),
+                    HelpItem("Delete corrections", "Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them.")
+                ]),
+                HelpSection("Portrait finishing V2", [
+                    HelpItem("Lips", "Natural-color, saturation, brightness and fine-detail shifts are confined to the visible lip ring; the inner mouth is excluded."),
+                    HelpItem("Skin Shine", "Attenuates excess broad skin highlights without removing pores."),
+                    HelpItem("Face Balance", "Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure."),
                 ])
             ]
         case .optics:

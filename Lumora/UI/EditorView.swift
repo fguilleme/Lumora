@@ -11,7 +11,6 @@ struct EditorView: View {
     @State private var showFullscreenPhoto = false
     @State private var photoLoading = false
     @State private var panel: Panel = .light
-    @State private var showMetrics = false
     @State private var maskOverlayVisible = true
     @State private var clippingPressed = false
     @State private var clippingOverlay: CGImage?
@@ -28,24 +27,6 @@ struct EditorView: View {
     @State private var curveEyedropper = false
     @State private var curveSample: CurveSample?
     @State private var curveSamplingBuffer: CurveSamplingBuffer?
-    #if DEBUG
-    @State private var debugVariantA: DebugToneVariant = .off
-    @State private var debugVariantB: DebugToneVariant = .phase2C
-    @State private var debugAmount = 100
-    @State private var debugMode: DebugCompareMode = .split
-    @State private var debugHistogramSide = "B"
-    @State private var debugOverlay = "None"
-    @State private var debugHaloLayer = "Halo Map"
-    @State private var debugA: DebugToneOutput?
-    @State private var debugB: DebugToneOutput?
-    @State private var debugHistA: Histogram?
-    @State private var debugHistB: Histogram?
-    @State private var debugScene: DebugSceneResult?
-    @State private var debugMapOverlay: CGImage?
-    @State private var debugHalo: DebugHaloDiagnostics.Result?
-    @State private var debugWorking = false
-    @State private var debugError: String?
-    #endif
     @AppStorage("editor.controlsSide") private var controlsSideRaw = ControlsSide.leading.rawValue
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.layoutDirection) private var layoutDirection
@@ -54,9 +35,6 @@ struct EditorView: View {
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
         case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
-        #if DEBUG
-        case debug = "Debug"
-        #endif
         var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
         var symbol: String {
             switch self {
@@ -73,9 +51,6 @@ struct EditorView: View {
             case .masks: "circle.dashed.inset.filled"
             case .presets: "slider.horizontal.2.square"
             case .help: "questionmark.circle"
-            #if DEBUG
-            case .debug: "ladybug"
-            #endif
             }
         }
     }
@@ -86,15 +61,6 @@ struct EditorView: View {
               effect.kind == .darkenLightenCenter, effect.enabled, effect.opacity > 0 else { return nil }
         return DarkenLightenCenterSettings(effect: effect)
     }
-    #if DEBUG
-    private var debugSourceID: String {
-        session.result.map { "\(session.generation)-\(ObjectIdentifier($0.image))" } ?? "none"
-    }
-    private var debugRenderID: String {
-        "render-\(panel.rawValue)-\(debugSourceID)-\(debugVariantA.id)-\(debugVariantB.id)-\(debugAmount)-\(debugScene != nil)"
-    }
-    #endif
-
     var body: some View {
         VStack(spacing: 0) {
             header.dimsDuringAdjustment()
@@ -103,6 +69,7 @@ struct EditorView: View {
                     let landscape = available.size.width > available.size.height
                     VStack(spacing: 0) {
                         EditorWorkspaceLayout(landscape: landscape,
+                                              isPhone: UIDevice.current.userInterfaceIdiom == .phone,
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
                                               portraitControlsHeight: 252 + (showsPhotoInformation ? 28 : 0)) {
@@ -120,6 +87,18 @@ struct EditorView: View {
                             onCurveSample: { location in
                                 if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
                             },
+                            healingActive: panel == .beauty && session.healingActive,
+                            healingPaintZone: session.healingPaintZone,
+                            onHealingPaint: session.paintHealing,
+                            onHealingPaintEnd: session.endHealingStroke,
+                            healingCorrections: session.state.beauty.corrections,
+                            healingSelectedID: session.selectedHealingID,
+                            healingGeometry: session.healingGeometry,
+                            onHealingTap: session.healingTap,
+                            onHealingSelect: { session.selectedHealingID = $0 },
+                            onHealingBegin: { session.beginInteraction(String(localized: "Correction")) },
+                            onHealingMove: { session.moveHealing($0, source: $1, visible: $2) },
+                            onHealingEnd: session.finishInteraction,
                             onPhotoTap: { showFullscreenPhoto = true },
                             showingOriginal: $session.showingOriginal,
                             dlcSettings: activeDLCSettings,
@@ -163,20 +142,6 @@ struct EditorView: View {
                                       })
                             .id(session.document?.id)
                     }
-                    #if DEBUG
-                    .overlay {
-                        if panel == .debug {
-                            DebugLabCanvas(original:result.image,a:debugA?.image,b:debugB?.image,
-                                           mode:debugMode,
-                                           overlay:debugMode == .halo ? debugHalo?.overlays[debugHaloLayer] :
-                                               (debugMapOverlay ?? debugScene?.overlays[debugOverlay]))
-                            .overlay {
-                                HistogramView(histogram:debugHistogramSide == "A" ? (debugHistA ?? result.histogram) : (debugHistB ?? result.histogram),
-                                              imageSize:CGSize(width:result.image.width,height:result.image.height))
-                            }
-                        }
-                    }
-                    #endif
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
@@ -186,9 +151,6 @@ struct EditorView: View {
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
-                #if DEBUG
-                if showMetrics { metrics(result) }
-                #endif
             } else {
                 Spacer()
                 Image(systemName: "camera.aperture").font(.system(size: 64, weight: .ultraLight)).foregroundStyle(.mint)
@@ -249,19 +211,18 @@ struct EditorView: View {
         } message: { Text(session.error ?? "") }
         .onAppear { session.setMaskEditingPreview(panel == .masks) }
         .onChange(of: panel) { _, newPanel in
+            session.closeHealing()
             session.setMaskEditingPreview(newPanel == .masks)
             if newPanel == .beauty { Task { await session.analyzeBeautyFaces() } }
             if newPanel != .curve { curveEditMode = false; curveEyedropper = false
                 curveSample = nil; curveSamplingBuffer = nil }
         }
         .onChange(of: session.document?.id) { _, _ in
+            session.closeHealing()
             curveEditMode = false; curveEyedropper = false
             curveSample = nil; curveSamplingBuffer = nil
             clearClippingOverlay()
             if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
-            #if DEBUG
-            debugA=nil;debugB=nil;debugScene=nil;debugMapOverlay=nil;debugHalo=nil;debugHistA=nil;debugHistB=nil
-            #endif
         }
         .onChange(of: session.state.geometry) { _, _ in
             if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
@@ -281,56 +242,6 @@ struct EditorView: View {
             }
         }
         .onDisappear { session.setMaskEditingPreview(false) }
-        #if DEBUG
-        .task(id: "scene-\(panel.rawValue)-\(debugSourceID)") {
-            guard panel == .debug,let image=session.result?.image else{return}
-            debugScene=nil
-            do {
-                let scene=try await DebugSceneAnalyzer.shared.analyze(image)
-                if !Task.isCancelled {debugScene=scene}
-            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
-        }
-        .task(id: debugRenderID) {
-            guard panel == .debug,let image=session.result?.image else{return}
-            let request=debugRenderID
-            debugA=nil;debugB=nil;debugHistA=nil;debugHistB=nil
-            debugWorking=true;debugError=nil
-            defer {if debugRenderID == request {debugWorking=false}}
-            do {
-                let a=try await DebugAdaptiveToneLab.shared.render(image,variant:debugVariantA,amount:debugAmount,scene:debugScene)
-                guard !Task.isCancelled,debugRenderID == request else{return}
-                debugA=a;debugHistA=Histogram.compute(a.image)
-                let b=try await DebugAdaptiveToneLab.shared.render(image,variant:debugVariantB,amount:debugAmount,scene:debugScene)
-                guard !Task.isCancelled,debugRenderID == request else{return}
-                debugB=b;debugHistB=Histogram.compute(b.image)
-            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
-        }
-        .task(id: "map-\(panel.rawValue)-\(debugSourceID)-\(debugOverlay)-\(debugScene != nil)-\(debugB != nil)") {
-            debugMapOverlay=nil
-            guard panel == .debug,let image=session.result?.image,let scene=debugScene else{return}
-            do {
-                let map:CGImage
-                switch debugOverlay {
-                case "Phase 4 Spatial map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.spatial)
-                case "Phase 4 Semantic map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.semantic)
-                case "Phase 4 Combined map":map=try await DebugAdaptiveToneLab.shared.mapOverlay(image,scene:scene,variant:.combined)
-                case "Gain map B":
-                    guard let output=debugB?.image else{return}
-                    map=try await DebugAdaptiveToneLab.shared.gainOverlay(image,output)
-                default:return
-                }
-                if !Task.isCancelled,panel == .debug {debugMapOverlay=map}
-            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
-        }
-        .task(id: "halo-\(panel.rawValue)-\(debugSourceID)-\(debugB.map { ObjectIdentifier($0.image) }.map(String.init(describing:)) ?? "none")-\(debugScene != nil)") {
-            debugHalo=nil
-            guard panel == .debug,let image=session.result?.image,let output=debugB?.image else{return}
-            do {
-                let diagnostic=try await DebugHaloAnalyzer.shared.analyze(original:image,processed:output,scene:debugScene)
-                if !Task.isCancelled,panel == .debug {debugHalo=diagnostic}
-            } catch is CancellationError {} catch {if !Task.isCancelled {debugError=error.localizedDescription}}
-        }
-        #endif
         .onChange(of: scenePhase) { _, phase in if phase != .active { session.flush() } }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in session.memoryWarning() }
     }
@@ -430,7 +341,7 @@ struct EditorView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            Text("LUMORA").font(.system(.headline, design: .rounded)).tracking(3)
+            Text("LUMORA✨").font(.system(.headline, design: .rounded)).tracking(3)
             Spacer()
             if session.result != nil {
                 HStack(spacing: 0) {
@@ -454,9 +365,6 @@ struct EditorView: View {
                         Button("Export", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
                         Button("Files", systemImage: "folder") { showFiles = true }
                         Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
-                        #if DEBUG
-                        Toggle("Render metrics", isOn: $showMetrics)
-                        #endif
                     } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
                     .accessibilityLabel("Import and options")
                 }
@@ -573,13 +481,14 @@ struct EditorView: View {
                        onEnd: session.finishInteraction,
                        onReset: session.resetDetail)
         case .beauty:
-            BeautyView(settings: session.state.beauty,
+            BeautyView(session: session, settings: session.state.beauty,
                        faceCount: session.beautyFaceCount,
                        isAnalyzing: session.isAnalyzingBeauty,
                        debugMasks: session.beautyDebugMasks,
                        onPreset: session.applyBeautyPreset,
                        onBegin: session.beginInteraction,
                        onChange: session.setBeauty,
+                       onV2Change: session.setBeautyV2,
                        onEnd: session.finishInteraction,
                        onReset: session.resetBeauty)
         case .optics:
@@ -634,12 +543,6 @@ struct EditorView: View {
             PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
         case .help:
             EditorHelpView()
-        #if DEBUG
-        case .debug:
-            DebugLabControls(a:$debugVariantA,b:$debugVariantB,amount:$debugAmount,mode:$debugMode,
-                             histogramSide:$debugHistogramSide,overlay:$debugOverlay,haloLayer:$debugHaloLayer,scene:debugScene,
-                             outputA:debugA,outputB:debugB,halo:debugHalo,working:debugWorking,error:debugError)
-        #endif
         case .light, .color:
             controls
         }
@@ -710,15 +613,7 @@ struct EditorView: View {
         }
         .accessibilityIdentifier("effects-controls")
     }
-    #if DEBUG
-    private func metrics(_ result: RenderResult) -> some View {
-        Text(String(format: "%.1f ms · %@ · cache %@ · generation %d\n%d × %d preview · ≈ %.1f MB pixels · FPS: not measured",
-                    result.milliseconds, result.gpu ? "Metal" : "Core Image CPU", result.cacheHit ? "hit" : "miss", session.generation,
-                    result.image.width, result.image.height,
-                    Double(result.image.bytesPerRow * result.image.height + result.original.bytesPerRow * result.original.height) / 1_048_576))
-            .font(.system(.caption2, design: .monospaced)).foregroundStyle(.secondary).padding(8)
-    }
-    #endif
+
 }
 
 private struct FullscreenPhotoView: View {
@@ -763,6 +658,7 @@ private struct WelcomeImportButtonStyle: ButtonStyle {
 /// switches, preserving its transient zoom and pan state.
 private struct EditorWorkspaceLayout: Layout {
     let landscape: Bool
+    let isPhone: Bool
     let controlsSide: String
     let direction: LayoutDirection
     let portraitControlsHeight: CGFloat
@@ -777,7 +673,10 @@ private struct EditorWorkspaceLayout: Layout {
         if landscape {
             let desiredControlsWidth = min(640, max(460, bounds.width * 0.47))
             let minimumPhotoWidth = min(220, bounds.width * 0.32)
-            let controlsWidth = min(desiredControlsWidth, max(0, bounds.width - minimumPhotoWidth))
+            let maximumControlsWidth = isPhone ? bounds.width * 0.5 : bounds.width
+            let controlsWidth = min(desiredControlsWidth,
+                                    max(0, bounds.width - minimumPhotoWidth),
+                                    maximumControlsWidth)
             let photoWidth = max(0, bounds.width - controlsWidth)
             let leadingIsLeft = direction == .leftToRight
             let controlsOnLeft = (controlsSide != "trailing") == leadingIsLeft
