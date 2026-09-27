@@ -6,6 +6,10 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CG1000000000000000000001 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A10000000000000000000006 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -19,6 +23,7 @@
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Lumora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000001 /* LumoraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LumoraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation/CinematicGlowProductionValidation/DeviceProbe.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -54,6 +59,7 @@
 				000000000000000000000010 /* Lumora */,
 				A10000000000000000000002 /* LumoraUITests */,
 				000000000000000000000020 /* Products */,
+				0FDFB9453069589F00D2CE61 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +70,14 @@
 				A10000000000000000000001 /* LumoraUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		0FDFB9453069589F00D2CE61 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -161,6 +175,7 @@
 		000000000000000120000000 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				CG1000000000000000000001 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift in Sources */,
 			);
 		};
 		A10000000000000000000003 /* Sources */ = {

@@ -8,6 +8,12 @@ struct EffectsSettings: Codable, Sendable, Equatable {
     var dehaze = 0.0
     var vignette = 0.0
     var grain = 0.0
+    // Optional storage keeps documents written before Cinematic Glow decodable.
+    var cinematicGlow: Double?
+    var cinematicGlowIntensity: Double {
+        get { cinematicGlow ?? 0 }
+        set { cinematicGlow = newValue == 0 ? nil : newValue }
+    }
     var grainSize: Double?
     var grainIrregularity: Double?
 
@@ -37,7 +43,7 @@ struct EffectsSettings: Codable, Sendable, Equatable {
 }
 
 enum EffectAdjustment: String, CaseIterable, Sendable, Identifiable {
-    case texture, clarity, dehaze, vignette, grain
+    case texture, clarity, dehaze, vignette, grain, cinematicGlow
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -46,9 +52,10 @@ enum EffectAdjustment: String, CaseIterable, Sendable, Identifiable {
         case .dehaze: String(localized: "Dehaze")
         case .vignette: "Vignette"
         case .grain: "Grain"
+        case .cinematicGlow: "Cinematic Glow"
         }
     }
-    var range: ClosedRange<Double> { self == .grain ? 0...100 : -100...100 }
+    var range: ClosedRange<Double> { (self == .grain || self == .cinematicGlow) ? 0...100 : -100...100 }
     var keyPath: WritableKeyPath<EffectsSettings, Double> {
         switch self {
         case .texture: \.texture
@@ -56,6 +63,7 @@ enum EffectAdjustment: String, CaseIterable, Sendable, Identifiable {
         case .dehaze: \.dehaze
         case .vignette: \.vignette
         case .grain: \.grain
+        case .cinematicGlow: \.cinematicGlowIntensity
         }
     }
 }

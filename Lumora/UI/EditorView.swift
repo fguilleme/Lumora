@@ -600,7 +600,17 @@ struct EditorView: View {
     private var effectsControls: some View {
         ScrollView {
             VStack(spacing: 6) {
-                ForEach(EffectAdjustment.allCases) { adjustment in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Cinematic Glow").font(.subheadline)
+                    AdjustmentSlider(title: "Intensity", range: 0...100,
+                                     accessibilityID: "effect-cinematicGlow",
+                                     value: session.state.effects.cinematicGlowIntensity,
+                                     onBegin: { session.selectBaseLayer(); session.beginInteraction("Cinematic Glow") },
+                                     onChange: { session.setEffect(.cinematicGlow, to: $0) },
+                                     onEnd: session.finishInteraction,
+                                     onReset: { session.selectBaseLayer(); session.resetEffect(.cinematicGlow) })
+                }
+                ForEach(EffectAdjustment.allCases.filter { $0 != .cinematicGlow }) { adjustment in
                     AdjustmentSlider(title: adjustment.title, range: adjustment.range,
                                      accessibilityID: "effect-\(adjustment.rawValue)",
                                      value: session.activeState.effects[adjustment],

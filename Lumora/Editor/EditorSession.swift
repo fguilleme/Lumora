@@ -160,7 +160,12 @@ final class EditorSession {
     var selectedMaskComponentID: UUID?
     var brushMode = BrushMode.paint
     @ObservationIgnored private let engine = RenderEngine()
-    @ObservationIgnored private let store = DocumentStore()
+    @ObservationIgnored private let store:DocumentStore = {
+        #if DEBUG
+        if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
+        #endif
+        return DocumentStore()
+    }()
     @ObservationIgnored private let maskGenerator = MaskGenerator()
     @ObservationIgnored private let geometryAnalyzer = GeometryAnalyzer()
     @ObservationIgnored private var maskEditingPreview = false
@@ -211,6 +216,12 @@ final class EditorSession {
     func restore() async {
         guard !didRestore else { return }
         didRestore = true
+        #if DEBUG
+        if CommandLine.arguments.contains("--glow-ui-validation") {
+            await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("GlowValidationInput.png"))
+            return
+        }
+        #endif
         let token = importGeneration
         do {
             await loadLibrary()
@@ -448,7 +459,8 @@ final class EditorSession {
     }
     func setEffect(_ adjustment: EffectAdjustment, to value: Double) {
         if !interacting { history.begin(adjustment.title, state: state) }
-        if let index = selectedMaskIndex { state.masks[index].adjustments.effects[adjustment] = value }
+        if adjustment == .cinematicGlow { state.effects[adjustment] = value }
+        else if let index = selectedMaskIndex { state.masks[index].adjustments.effects[adjustment] = value }
         else { state.effects[adjustment] = value }
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }

@@ -24,6 +24,7 @@ enum PreviewQuality: Int, Sendable { case interactive = 960, high = 2048 }
 actor RenderEngine {
     private struct PreviewCacheKey: Hashable { let maximum: Int; let profileCorrection: Bool }
     private let context: CIContext
+    private var cinematicGlowGPU: CinematicGlowGPU?
     private let gpu: Bool
     private var sourceURL: URL?
     private var sources: [PreviewCacheKey: CGImage] = [:]
@@ -74,6 +75,7 @@ actor RenderEngine {
     }
 
     func clearCaches() {
+        cinematicGlowGPU?.releaseFrame()
         sources.removeAll()
         autoCache = nil
         coreAutoCache = nil
@@ -307,6 +309,10 @@ actor RenderEngine {
             guard let output = blend.outputImage else { throw PhotoError.renderFailed }
             image = output.cropped(to: image.extent)
         }
+        if state.effects.cinematicGlowIntensity > 0 {
+            if cinematicGlowGPU == nil { cinematicGlowGPU = try CinematicGlowGPU() }
+            image = try cinematicGlowGPU!.apply(image, intensity: state.effects.cinematicGlowIntensity)
+        }
         // Legacy grain is retained on disk but now uses the shared engine, after geometry/detail.
         var grain = state.effects.grainSettings
         image = try FilmGrainEngine.apply(image, settings: grain)
@@ -360,7 +366,7 @@ actor RenderEngine {
             guard let decoded = CIImage(contentsOf: request.sourceURL, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
             input = decoded
         }
-        defer { context.clearCaches() }
+        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame() }
         try Task.checkCancellation()
         var image = input.transformed(by: CGAffineTransform(translationX: -input.extent.minX, y: -input.extent.minY))
         progress(.rendering)
@@ -416,7 +422,7 @@ actor RenderEngine {
                                   maximum: Int = 1024, bypassCreative: Bool = false) throws -> CGImage {
         try Task.checkCancellation()
         guard [region.origin.x, region.origin.y, region.width, region.height].allSatisfy({ $0.isFinite }), region.width > 0, region.height > 0 else { throw PhotoError.renderFailed }
-        defer { context.clearCaches() }
+        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame() }
         let source: CIImage
         if let rawFilter = CIRAWFilter(imageURL: url) {
             rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported
