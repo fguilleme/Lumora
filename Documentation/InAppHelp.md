@@ -18,3 +18,7 @@ Rubrique dédiée après Détail : activation, point et plan de netteté, recent
 Préférences persistantes d’interface : histogramme flottant, visibilité des onglets et ordre par poignées. Réglages reste visible. Masquer un onglet ne désactive pas ses retouches. Rétablir les valeurs par défaut ne modifie aucune photo. Aide française et anglaise ajoutée.
 
 Les onglets Aide et Réglages occupent toute la zone centrale de l’éditeur, sans aperçu photo ni histogramme. La barre d’onglets reste accessible pour revenir aux retouches.
+
+## Éclairage expérimental
+
+Nouvel onglet Éclairage : effet désactivé par défaut, y compris lors de la migration des anciens documents. L’aide décrit la cible de profondeur, la lampe indépendante, la distance relative, les cinq curseurs, la comparaison, les réglages sauvegardés et les limites (ciel non segmenté, ombres existantes, géométrie approximative). Masquer l’onglet ne désactive pas un effet déjà activé. Aucun modèle de rééclairage génératif.

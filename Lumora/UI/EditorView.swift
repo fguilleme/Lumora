@@ -10,6 +10,7 @@ struct EditorView: View {
     @State private var showLibrary = false
     @State private var showFullscreenPhoto = false
     @State private var photoLoading = false
+    @State private var placingLightingSubject = true
     @State private var panel: Panel = .light
     @State private var maskOverlayVisible = true
     @State private var clippingPressed = false
@@ -80,6 +81,16 @@ struct EditorView: View {
                             depthFocusActive: panel == .depthLens && session.state.depthLens?.enabled == true,
                             depthFocusPoint: CGPoint(x: session.state.depthLens?.focusX ?? 0.5, y: session.state.depthLens?.focusY ?? 0.5),
                             onDepthFocus: session.focusDepthLens,
+                            lightingSettings: panel == .lighting ? session.state.depthLighting : nil,
+                            lightingSubjectMode: placingLightingSubject,
+                            onLightingBegin: { session.beginInteraction(String(localized: "Lighting")) },
+                            onLightingMove: { subject, point in
+                                session.changeDepthLighting {
+                                    if subject { $0.targetX = point.x; $0.targetY = point.y }
+                                    else { $0.lightX = point.x; $0.lightY = point.y }
+                                }
+                            },
+                            onLightingEnd: session.finishInteraction,
                             healingActive: panel == .beauty && session.healingActive,
                             healingPaintZone: session.healingPaintZone,
                             onHealingPaint: session.paintHealing,
@@ -259,7 +270,7 @@ struct EditorView: View {
     }
 
     private var showsPhotoInformation: Bool {
-        ![Panel.creative, .depthLens, .optics, .geometry, .masks, .presets, .help, .settings].contains(panel)
+        ![Panel.creative, .depthLens, .lighting, .optics, .geometry, .masks, .presets, .help, .settings].contains(panel)
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -481,6 +492,8 @@ struct EditorView: View {
             CreativeEffectsView(session: session, selected: $selectedCreativeEffectID)
         case .effects:
             effectsControls
+        case .lighting:
+            DepthLightingView(session: session, placingSubject: $placingLightingSubject)
         case .depthLens:
             DepthLensView(session: session)
         case .detail:
@@ -595,7 +608,7 @@ struct EditorView: View {
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
-        if item == .depthLens || item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
+        if item == .lighting || item == .depthLens || item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
     }

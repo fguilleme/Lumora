@@ -470,6 +470,16 @@ final class EditorSession {
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
+    func changeDepthLighting(_ change: (inout DepthLightingSettings) -> Void) {
+        if !interacting { history.begin(String(localized: "Lighting"), state: state) }
+        var settings = state.depthLighting ?? DepthLightingSettings()
+        change(&settings)
+        settings = settings.validated
+        state.depthLighting = settings == DepthLightingSettings() ? nil : settings
+        showingOriginal = false
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
     func changeDepthLens(_ change: (inout DepthLensSettings) -> Void) {
         if !interacting { history.begin(String(localized: "Depth Lens"), state: state) }
         var settings = state.depthLens ?? DepthLensSettings()

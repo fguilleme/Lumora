@@ -77,6 +77,14 @@ final class DepthLensEngine {
         low = lo; high = hi; frame = nil; inferenceCount += 1
     }
 
+    func applyLighting(_ image: CIImage, settings: DepthLightingSettings) throws -> CIImage {
+        guard settings.isActive else { return image }
+        guard let raw else { throw PhotoError.renderFailed }
+        let depth = raw.clampedToExtent().applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 2])
+            .cropped(to: raw.extent)
+        return try DepthLightingRenderer.apply(image, depth: depth, low: low, high: high, settings: settings)
+    }
+
     func apply(_ image: CIImage, settings: DepthLensSettings) throws -> CIImage {
         guard settings.enabled else { return image }
         guard let raw else { throw PhotoError.renderFailed }

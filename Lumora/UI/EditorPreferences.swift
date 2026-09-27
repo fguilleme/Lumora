@@ -2,7 +2,7 @@ import Foundation
 
 enum EditorPanel: String, CaseIterable {
         case creative = "Creative"
-        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", depthLens = "Depth Lens", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help", settings = "Settings"
+        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", depthLens = "Depth Lens", lighting = "Lighting", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help", settings = "Settings"
         var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
         var symbol: String {
             switch self {
@@ -14,6 +14,7 @@ enum EditorPanel: String, CaseIterable {
             case .effects: "camera.filters"
             case .detail: "triangle"
             case .depthLens: "camera.aperture"
+            case .lighting: "lightbulb"
             case .beauty: "face.smiling"
             case .optics: "camera.aperture"
             case .geometry: "crop.rotate"

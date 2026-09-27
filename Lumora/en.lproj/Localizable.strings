@@ -876,3 +876,39 @@
 "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo." = "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.";
 "Visible" = "Visible";
 "Hidden" = "Hidden";
+
+/* Experimental depth lighting */
+"Lighting" = "Lighting";
+"Experimental · off by default" = "Experimental · off by default";
+"Enable lighting" = "Enable lighting";
+"Choose the subject point, then place the light. Tap the photo or drag a marker." = "Choose the subject point, then place the light. Tap the photo or drag a marker.";
+"Place" = "Place";
+"Light position" = "Light position";
+"Subject point" = "Subject point";
+"Relative distance" = "Relative distance";
+"Surface relief" = "Surface relief";
+"Approximate depth-based lighting. Existing shadows remain; depth errors can affect the sky and subject edges. See Help for limits." = "Approximate depth-based lighting. Existing shadows remain; depth errors can affect the sky and subject edges. See Help for limits.";
+"Experimental depth-based lighting, off by default" = "Experimental depth-based lighting, off by default";
+"Lighting is an experimental simulation using estimated depth. It is disabled by default, including for existing photos. Enable it explicitly to try it; it does not reconstruct the real scene lighting." = "Lighting is an experimental simulation using estimated depth. It is disabled by default, including for existing photos. Enable it explicitly to try it; it does not reconstruct the real scene lighting.";
+"Place the lighting" = "Place the lighting";
+"Shape the light" = "Shape the light";
+"Experimental limitations" = "Experimental limitations";
+"Sky and background" = "Sky and background";
+"Existing light and shadows" = "Existing light and shadows";
+"Processing and comparison" = "Processing and comparison";
+"Saved settings" = "Saved settings";
+"Turn on Enable lighting in the Lighting tab. Start with a moderate intensity. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it." = "Turn on Enable lighting in the Lighting tab. Start with a moderate intensity. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it.";
+"Select Subject point and tap the subject, preferably inside a solid area rather than on an edge. The turquoise marker sets the reference depth. It does not select or cut out a person." = "Select Subject point and tap the subject, preferably inside a solid area rather than on an edge. The turquoise marker sets the reference depth. It does not select or cut out a person.";
+"Select Light position and tap where the virtual lamp should be projected. Drag either marker to move it directly. The yellow sun and turquoise target are independent; neither is exported." = "Select Light position and tap where the virtual lamp should be projected. Drag either marker to move it directly. The yellow sun and turquoise target are independent; neither is exported.";
+"Controls the added light. Zero leaves the photo unchanged by this effect. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%." = "Controls the added light. Zero leaves the photo unchanged by this effect. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%.";
+"Moves the lamp nearer to or farther from the selected depth plane. A closer lamp generally gives stronger, more concentrated illumination. These values are relative, not metres; the lamp stays in front of the subject plane." = "Moves the lamp nearer to or farther from the selected depth plane. A closer lamp generally gives stronger, more concentrated illumination. These values are relative, not metres; the lamp stays in front of the subject plane.";
+"Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo." = "Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo.";
+"Warms or cools only the added light. Zero is neutral. This is independent of the photo white balance." = "Warms or cools only the added light. Zero is neutral. This is independent of the photo white balance.";
+"Controls how strongly the estimated surface orientation shapes illumination. Lower it if depth errors create uneven shading." = "Controls how strongly the estimated surface orientation shapes illumination. Lower it if depth errors create uneven shading.";
+"Distant regions are attenuated according to estimated depth, not a semantic sky mask. If the sky or background brightens unexpectedly, move the subject point, reduce Softness or Intensity, or disable the effect. Hair, glass and reflections can have incorrect depth." = "Distant regions are attenuated according to estimated depth, not a semantic sky mask. If the sky or background brightens unexpectedly, move the subject point, reduce Softness or Intensity, or disable the effect. Hair, glass and reflections can have incorrect depth.";
+"This prototype adds light to the existing photo. It does not remove existing shadows, reconstruct hidden detail, or simulate accurate cast shadows, materials or backlighting. Faces are not regenerated." = "This prototype adds light to the existing photo. It does not remove existing shadows, reconstruct hidden detail, or simulate accurate cast shadows, materials or backlighting. Faces are not regenerated.";
+"Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original." = "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original.";
+"Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo." = "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo.";
+"When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap." = "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap.";
+
+"Intensity" = "Intensity";

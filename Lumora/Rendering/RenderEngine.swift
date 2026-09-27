@@ -101,7 +101,7 @@ actor RenderEngine {
             clearCaches()
             sourceURL = url
         }
-        let maximum = quality == .interactive && state.depthLens?.enabled == true ? 640 : quality.rawValue
+        let maximum = quality == .interactive && (state.depthLens?.enabled == true || state.depthLighting?.isActive == true) ? 640 : quality.rawValue
         let key = PreviewCacheKey(maximum: maximum, profileCorrection: state.optics.profileCorrection)
         let hit = sources[key] != nil
         let original = try preview(url: url, maximum: maximum, optics: state.optics)
@@ -317,7 +317,7 @@ actor RenderEngine {
             guard let output = blend.outputImage else { throw PhotoError.renderFailed }
             image = output.cropped(to: image.extent)
         }
-        if let settings = state.depthLens, settings.enabled {
+        if state.depthLens?.enabled == true || state.depthLighting?.isActive == true {
             if depthLensEngine == nil { depthLensEngine = try DepthLensEngine() }
             if depthLensGeometry != state.geometry || depthLensOptics != state.optics {
                 depthLensEngine?.invalidate()
@@ -331,7 +331,12 @@ actor RenderEngine {
                 let optical = try OpticsRenderer.apply(source, settings: state.optics)
                 try depthLensEngine!.estimate(GeometryRenderer.apply(optical, settings: state.geometry))
             }
-            image = try depthLensEngine!.apply(image, settings: settings)
+            if let lighting = state.depthLighting, lighting.isActive {
+                image = try depthLensEngine!.applyLighting(image, settings: lighting)
+            }
+            if let settings = state.depthLens, settings.enabled {
+                image = try depthLensEngine!.apply(image, settings: settings)
+            } else { depthLensEngine?.releaseFrame() }
         } else { depthLensEngine?.releaseFrame() }
         if state.effects.cinematicGlowIntensity > 0 {
             if cinematicGlowGPU == nil { cinematicGlowGPU = try CinematicGlowGPU() }

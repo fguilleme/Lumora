@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, beauty, optics, geometry, masks, presets, settings
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, lighting, beauty, optics, geometry, masks, presets, settings
     var id: String { rawValue }
 
     var title: String {
@@ -122,6 +122,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .effects: String(localized: "Effects")
         case .detail: String(localized: "Detail")
         case .depthLens: String(localized: "Depth Lens")
+        case .lighting: String(localized: "Lighting")
         case .beauty: String(localized: "Beauty")
         case .optics: String(localized: "Optics")
         case .geometry: String(localized: "Geometry")
@@ -142,6 +143,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .effects: "camera.filters"
         case .detail: "triangle"
         case .depthLens: "camera.aperture"
+        case .lighting: "lightbulb"
         case .beauty: "face.smiling"
         case .optics: "camera.aperture"
         case .geometry: "crop.rotate"
@@ -162,6 +164,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .effects: "Texture, clarity, dehaze, vignette, grain"
         case .detail: "Sharpening and noise reduction"
         case .depthLens: "Depth of field and focus by touch"
+        case .lighting: "Experimental depth-based lighting, off by default"
         case .beauty: "Local, restrained portrait retouching"
         case .optics: "Lens profile and manual corrections"
         case .geometry: "Horizon, perspective, and crop"
@@ -182,6 +185,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .effects: "Effects provides finishing adjustments. Texture and Clarity change local contrast; Dehaze, Vignette, and Grain serve different purposes."
         case .detail: "Detail controls sharpening and noise reduction. Examine results at 100%: a reduced preview can hide oversharpening and excessive smoothing."
         case .depthLens: "Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default."
+        case .lighting: "Lighting is an experimental simulation using estimated depth. It is disabled by default, including for existing photos. Enable it explicitly to try it; it does not reconstruct the real scene lighting."
         case .beauty: "Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%."
         case .optics: "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise."
         case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
@@ -197,6 +201,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
             return [
                 HelpSection("On the photo", [
                     HelpItem("Short tap", "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor."),
+                    HelpItem("Lighting", "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap."),
                     HelpItem("Depth Lens focus", "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap."),
                     HelpItem("Double-tap", "Double-tap the photo to reset its zoom and position."),
                     HelpItem("Touch and hold", "Hold a finger on the photo to compare with the original. Release to return to the edited preview."),
@@ -312,6 +317,27 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Luminance", "Reduces light-and-dark noise. Too much removes texture; Detail and Contrast help preserve its presence."),
                     HelpItem("Color", "Reduces colored noise blotches. Detail and Smoothing control how finely this correction is applied."),
                     HelpItem("Activation", "Secondary sharpening and noise controls become available when their primary Amount, Luminance, or Color value is above zero.")
+                ])
+            ]
+        case .lighting:
+            return [
+                HelpSection("Place the lighting", [
+                    HelpItem("Enable lighting", "Turn on Enable lighting in the Lighting tab. Start with a moderate intensity. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it."),
+                    HelpItem("Subject point", "Select Subject point and tap the subject, preferably inside a solid area rather than on an edge. The turquoise marker sets the reference depth. It does not select or cut out a person."),
+                    HelpItem("Light position", "Select Light position and tap where the virtual lamp should be projected. Drag either marker to move it directly. The yellow sun and turquoise target are independent; neither is exported.")
+                ]),
+                HelpSection("Shape the light", [
+                    HelpItem("Intensity", "Controls the added light. Zero leaves the photo unchanged by this effect. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%."),
+                    HelpItem("Relative distance", "Moves the lamp nearer to or farther from the selected depth plane. A closer lamp generally gives stronger, more concentrated illumination. These values are relative, not metres; the lamp stays in front of the subject plane."),
+                    HelpItem("Softness", "Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo."),
+                    HelpItem("Warmth", "Warms or cools only the added light. Zero is neutral. This is independent of the photo white balance."),
+                    HelpItem("Surface relief", "Controls how strongly the estimated surface orientation shapes illumination. Lower it if depth errors create uneven shading.")
+                ]),
+                HelpSection("Experimental limitations", [
+                    HelpItem("Sky and background", "Distant regions are attenuated according to estimated depth, not a semantic sky mask. If the sky or background brightens unexpectedly, move the subject point, reduce Softness or Intensity, or disable the effect. Hair, glass and reflections can have incorrect depth."),
+                    HelpItem("Existing light and shadows", "This prototype adds light to the existing photo. It does not remove existing shadows, reconstruct hidden detail, or simulate accurate cast shadows, materials or backlighting. Faces are not regenerated."),
+                    HelpItem("Processing and comparison", "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original."),
+                    HelpItem("Saved settings", "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo.")
                 ])
             ]
         case .depthLens:

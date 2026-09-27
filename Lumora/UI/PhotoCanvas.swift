@@ -12,6 +12,11 @@ struct PhotoCanvas: View {
     var depthFocusActive = false
     var depthFocusPoint = CGPoint(x: 0.5, y: 0.5)
     var onDepthFocus: (MaskPoint) -> Void = { _ in }
+    var lightingSettings: DepthLightingSettings?
+    var lightingSubjectMode = true
+    var onLightingBegin: () -> Void = {}
+    var onLightingMove: (Bool, MaskPoint) -> Void = { _, _ in }
+    var onLightingEnd: () -> Void = {}
     var healingActive = false
     var healingPaintZone = false
     var onHealingPaint: (MaskPoint) -> Void = { _ in }
@@ -120,7 +125,7 @@ struct PhotoCanvas: View {
                                 guard let point = normalized(tap.location, viewSize: geometry.size,
                                                  imageSize: imageSize, displayScale: displayScale,
                                                  displayOffset: displayOffset) else { return }
-                                if depthFocusActive { onDepthFocus(point) } else if healingActive { onHealingTap(point) } else { onPhotoTap() }
+                                if lightingSettings?.enabled == true { onLightingMove(lightingSubjectMode, point) } else if depthFocusActive { onDepthFocus(point) } else if healingActive { onHealingTap(point) } else { onPhotoTap() }
                             }
                         }
                 )
@@ -219,6 +224,17 @@ struct PhotoCanvas: View {
                               .accessibilityLabel("Target area")
                         }
                     }
+                    if let lighting = lightingSettings, lighting.enabled, !showingOriginal, !pressing {
+                        let rect = sampledImageRect(viewSize: geometry.size,
+                            imageSize: CGSize(width: result.image.width, height: result.image.height),
+                            displayScale: displayScale, displayOffset: displayOffset)
+                        LightingMarker(point: CGPoint(x: lighting.targetX, y: lighting.targetY), rect: rect,
+                            subject: true, onBegin: onLightingBegin,
+                            onChange: { onLightingMove(true, $0) }, onEnd: onLightingEnd)
+                        LightingMarker(point: CGPoint(x: lighting.lightX, y: lighting.lightY), rect: rect,
+                            subject: false, onBegin: onLightingBegin,
+                            onChange: { onLightingMove(false, $0) }, onEnd: onLightingEnd)
+                    }
                     if depthFocusActive && !showingOriginal && !pressing {
                         let rect = sampledImageRect(viewSize: geometry.size,
                             imageSize: CGSize(width: result.image.width, height: result.image.height),
@@ -282,6 +298,7 @@ struct PhotoCanvas: View {
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .coordinateSpace(name: LightingMarker.coordinateSpace)
             .contentShape(Rectangle())
             .gesture(MagnifyGesture().updating($magnification) { value, state, _ in if !healingPaintZone { state = value.magnification } }
                 .onEnded { value in
