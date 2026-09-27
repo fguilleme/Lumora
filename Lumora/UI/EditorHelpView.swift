@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, beauty, optics, geometry, masks, presets
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, beauty, optics, geometry, masks, presets, settings
     var id: String { rawValue }
 
     var title: String {
@@ -127,6 +127,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: String(localized: "Geometry")
         case .masks: String(localized: "Masks")
         case .presets: "Presets"
+        case .settings: String(localized: "Settings")
         }
     }
 
@@ -146,6 +147,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: "crop.rotate"
         case .masks: "circle.dashed.inset.filled"
         case .presets: "slider.horizontal.2.square"
+        case .settings: "gearshape"
         }
     }
 
@@ -165,6 +167,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: "Horizon, perspective, and crop"
         case .masks: "Layers and local adjustments"
         case .presets: "Save and reuse your settings"
+        case .settings: "Customize the histogram and tab bar"
         }
     }
 
@@ -184,6 +187,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
         case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
         case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
+        case .settings: "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export."
         }
     }
 
@@ -401,6 +405,13 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Photo gestures", "Pinch to zoom and double-tap to reset zoom, even while using the brush. Mask strokes update the mask visualization without rerendering the full development after every gesture.")
                 ])
             ]
+        case .settings:
+            return [HelpSection("Settings", [
+                HelpItem("Show histogram", "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves."),
+                HelpItem("Editor tabs", "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden."),
+                HelpItem("Change the order", "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again."),
+                HelpItem("Restore interface defaults", "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.")
+            ])]
         case .presets:
             return [
                 HelpSection("Create and apply", [

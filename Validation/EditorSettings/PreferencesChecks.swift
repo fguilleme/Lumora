@@ -1,0 +1,13 @@
+// Executed after concatenation with the unchanged EditorPreferences.swift source.
+let malformed = EditorTabPreferences.ordered("not json")
+assert(malformed == EditorPanel.allCases)
+let supplied = EditorTabPreferences.encode(["Depth Lens", "Depth Lens", "obsolete", "Light"])
+let ordered = EditorTabPreferences.ordered(supplied)
+assert(ordered.prefix(2) == [.depthLens, .light])
+assert(Set(ordered).count == EditorPanel.allCases.count)
+let allHidden = EditorTabPreferences.encode(EditorPanel.allCases.map(\.rawValue))
+assert(EditorTabPreferences.visible(order: supplied, hidden: allHidden) == [.settings])
+let stored = EditorTabPreferences.encode(ordered.map(\.rawValue))
+assert(EditorTabPreferences.ordered(stored) == ordered)
+assert(EditorTabPreferences.visible(order: stored, hidden: "broken") == ordered)
+print("PASS: defaults, invalid storage, duplicates, unknown/new tabs, safe visibility, order round-trip")

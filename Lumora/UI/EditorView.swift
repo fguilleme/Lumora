@@ -32,29 +32,12 @@ struct EditorView: View {
     @Environment(\.layoutDirection) private var layoutDirection
     private enum ControlsSide: String { case leading, trailing }
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
-    private enum Panel: String, CaseIterable {
-        case creative = "Creative"
-        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", depthLens = "Depth Lens", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
-        var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
-        var symbol: String {
-            switch self {
-            case .creative: "sparkles"
-            case .light: "sun.max"
-            case .color: "slider.horizontal.3"
-            case .curve: "point.topleft.down.to.point.bottomright.curvepath"
-            case .colorTools: "circle.lefthalf.filled"
-            case .effects: "camera.filters"
-            case .detail: "triangle"
-            case .depthLens: "camera.aperture"
-            case .beauty: "face.smiling"
-            case .optics: "camera.aperture"
-            case .geometry: "crop.rotate"
-            case .masks: "circle.dashed.inset.filled"
-            case .presets: "slider.horizontal.2.square"
-            case .help: "questionmark.circle"
-            }
-        }
-    }
+    private typealias Panel = EditorPanel
+    @AppStorage("editor.showHistogram") private var showHistogram = true
+    @AppStorage("editor.tabOrder") private var tabOrder = ""
+    @AppStorage("editor.hiddenTabs") private var hiddenTabs = ""
+    @State private var showSettingsSheet = false
+    private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
 
     private var activeDLCSettings: DarkenLightenCenterSettings? {
         guard panel == .creative, !session.bypassCreative,
@@ -69,6 +52,12 @@ struct EditorView: View {
                 GeometryReader { available in
                     let landscape = available.size.width > available.size.height
                     VStack(spacing: 0) {
+                        if panel == .help || panel == .settings {
+                            editorControls(result)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(.black)
+                                .accessibilityIdentifier("editor-full-page")
+                        } else {
                         EditorWorkspaceLayout(landscape: landscape,
                                               isPhone: UIDevice.current.userInterfaceIdiom == .phone,
                                               controlsSide: controlsSideRaw,
@@ -138,20 +127,22 @@ struct EditorView: View {
                     .frame(maxHeight: .infinity)
                     .background(.black)
                     .overlay {
-                        HistogramView(histogram: result.histogram,
+                        if showHistogram { HistogramView(histogram: result.histogram,
                                       imageSize: CGSize(width: result.image.width, height: result.image.height),
                                       diagnosticActivationCount: ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") ? clippingActivationCount : nil,
                                       onClippingPressChanged: { active in
                                           setClippingPress(active, image: result.image)
                                       })
                             .id(session.document?.id)
+                        }
                     }
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
                         }
                         .frame(maxHeight: .infinity)
-                        if landscape { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
+                        }
+                        if landscape && panel != .help && panel != .settings { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
@@ -162,6 +153,7 @@ struct EditorView: View {
                 Text("Import a photo to get started.\nYour original stays intact, and your edits stay local.")
                     .font(.subheadline).multilineTextAlignment(.center).foregroundStyle(.secondary).padding()
                 importButtons
+                Button("Settings", systemImage: "gearshape") { showSettingsSheet = true }.padding()
                 Spacer()
             }
         }
@@ -213,7 +205,17 @@ struct EditorView: View {
         .alert("Unable to finish", isPresented: Binding(get: { session.error != nil }, set: { if !$0 { session.error = nil } })) {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
-        .onAppear { session.setMaskEditingPreview(panel == .masks) }
+        .sheet(isPresented: $showSettingsSheet) {
+            NavigationStack { EditorSettingsView(showHistogram: $showHistogram, tabOrder: $tabOrder, hiddenTabs: $hiddenTabs).navigationTitle("Settings")
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Close") { showSettingsSheet = false } } }
+            }.preferredColorScheme(.dark)
+        }
+        .onChange(of: showHistogram) { _, shown in if !shown { clippingPressed = false; clippingRequest += 1; clippingOverlay = nil; clippingSource = nil } }
+        .onChange(of: visiblePanels) { _, tabs in if !tabs.contains(panel) { selectPanel(tabs.first ?? .settings) } }
+        .onAppear {
+            if !visiblePanels.contains(panel) { selectPanel(visiblePanels.first ?? .settings) }
+            session.setMaskEditingPreview(panel == .masks)
+        }
         .onChange(of: panel) { _, newPanel in
             session.closeHealing()
             session.setMaskEditingPreview(newPanel == .masks)
@@ -257,7 +259,7 @@ struct EditorView: View {
     }
 
     private var showsPhotoInformation: Bool {
-        ![Panel.creative, .depthLens, .optics, .geometry, .masks, .presets, .help].contains(panel)
+        ![Panel.creative, .depthLens, .optics, .geometry, .masks, .presets, .help, .settings].contains(panel)
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -364,6 +366,7 @@ struct EditorView: View {
                     Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
                         .disabled(!session.history.canRedo).accessibilityLabel("Redo")
                     Menu {
+                        Button("Settings", systemImage: "gearshape") { selectPanel(.settings) }.accessibilityIdentifier("open-editor-settings")
                         Button("Library", systemImage: "photo.stack") { showLibrary = true }
                         Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
                         Button("Export", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
@@ -549,6 +552,8 @@ struct EditorView: View {
             PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
         case .help:
             EditorHelpView()
+        case .settings:
+            EditorSettingsView(showHistogram: $showHistogram, tabOrder: $tabOrder, hiddenTabs: $hiddenTabs)
         case .light, .color:
             controls
         }
@@ -571,7 +576,7 @@ struct EditorView: View {
     private func toolBar(trailingInset: CGFloat = 0) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
-                ForEach(Panel.allCases, id: \.self) { item in
+                ForEach(visiblePanels, id: \.self) { item in
                     Button { selectPanel(item) } label: {
                         Label(item.title, systemImage: item.symbol)
                             .font(.subheadline.weight(.medium)).frame(minHeight: 44)

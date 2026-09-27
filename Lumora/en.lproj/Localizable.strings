@@ -859,3 +859,20 @@
 "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask.";
 "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible.";
 "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap.";
+
+/* Editor settings */
+"Show histogram" = "Show histogram";
+"Display" = "Display";
+"Always visible" = "Always visible";
+"Editor tabs" = "Editor tabs";
+"Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab.";
+"Restore interface defaults" = "Restore interface defaults";
+"These preferences apply to the app, not to individual photos." = "These preferences apply to the app, not to individual photos.";
+"Customize the histogram and tab bar" = "Customize the histogram and tab bar";
+"Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export." = "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export.";
+"Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves." = "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves.";
+"Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden." = "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden.";
+"Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again." = "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again.";
+"Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo." = "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.";
+"Visible" = "Visible";
+"Hidden" = "Hidden";

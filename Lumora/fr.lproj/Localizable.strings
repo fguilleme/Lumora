@@ -859,3 +859,20 @@
 "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "L’aperçu utilise une résolution réduite pendant le déplacement du curseur, puis un rendu de meilleure qualité au relâchement. L’export applique le même effet à la résolution de sortie. Le repère de mise au point n’est jamais exporté. Depth Lens agit sur toute la photo et ne peut pas être associé à un masque local.";
 "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Essayez 50 ou 85 mm à f/4, placez soigneusement le point, puis diminuez progressivement le nombre d’ouverture. Examinez l’ensemble de l’image et les contours du sujet. Un flou fort rend les erreurs d’estimation de profondeur plus visibles.";
 "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "Lorsque Depth Lens est activé et que son onglet est ouvert, un toucher bref place le point de mise au point. Passez à un autre onglet pour retrouver le toucher habituel ouvrant la vue plein écran.";
+
+/* Editor settings */
+"Show histogram" = "Afficher l’histogramme";
+"Display" = "Affichage";
+"Always visible" = "Toujours visible";
+"Editor tabs" = "Onglets de l’éditeur";
+"Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Déplacez les poignées pour réordonner les onglets. Masquer un onglet conserve ses retouches sur la photo. Réglages reste visible pour vous permettre de réafficher tous les onglets.";
+"Restore interface defaults" = "Rétablir l’interface par défaut";
+"These preferences apply to the app, not to individual photos." = "Ces préférences s’appliquent à l’application, pas à chaque photo.";
+"Customize the histogram and tab bar" = "Personnaliser l’histogramme et la barre d’onglets";
+"Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export." = "Réglages personnalise l’interface de l’éditeur. Ces préférences sont conservées sur cet appareil et s’appliquent à toutes les photos ; elles ne changent ni la photo ni son export.";
+"Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves." = "Désactivez Afficher l’histogramme pour retirer l’histogramme flottant de la photo. Réactivez cette option pour le retrouver. Cela ne change ni l’exposition ni l’histogramme affiché dans Courbes.";
+"Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden." = "Utilisez chaque bouton en forme d’œil pour afficher ou masquer un onglet. Masquer un onglet ne réinitialise ni ne désactive ses réglages : ils continuent d’agir sur la photo et les exports. Réglages ne peut pas être masqué.";
+"Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again." = "Déplacez la poignée à droite d’une ligne pour changer l’ordre des onglets. Les onglets masqués conservent aussi leur place dans cette liste : vous pouvez les organiser avant de les réafficher.";
+"Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo." = "Rétablir l’interface par défaut réaffiche l’histogramme et tous les onglets dans leur ordre initial. Cela ne réinitialise aucune retouche. Réglages est aussi accessible dans le menu d’options de l’éditeur et avant l’importation d’une photo.";
+"Visible" = "Visible";
+"Hidden" = "Masqué";
