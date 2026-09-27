@@ -162,6 +162,7 @@ final class EditorSession {
     @ObservationIgnored private let engine = RenderEngine()
     @ObservationIgnored private let store:DocumentStore = {
         #if DEBUG
+        if CommandLine.arguments.contains("--xmp-highlight-validation") { return DocumentStore(root: URL.temporaryDirectory.appendingPathComponent("XMPHighlightValidation")) }
         if CommandLine.arguments.contains("--depth-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("DepthUIValidation")) }
         if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
         #endif
@@ -218,6 +219,13 @@ final class EditorSession {
         guard !didRestore else { return }
         didRestore = true
         #if DEBUG
+        if CommandLine.arguments.contains("--xmp-highlight-validation") {
+            let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            await importPhoto(at: directory.appendingPathComponent("XMPValidationInput.png"))
+            do { applyPreset(try XMPPresetImporter.read(directory.appendingPathComponent("XMPValidation.xmp")).makePreset()) }
+            catch { self.error = error.localizedDescription }
+            return
+        }
         if CommandLine.arguments.contains("--depth-ui-validation") {
             await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("DepthLensInput.png"))
             return

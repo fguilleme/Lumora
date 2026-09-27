@@ -23,25 +23,30 @@ enum DevelopmentRenderer {
             guard let output = filter.outputImage else { throw PhotoError.renderFailed }
             image = output
         }
+        image = try HighlightRecoveryRenderer.recover(image, highlights: state.highlights)
         var colorState = state
+        if colorState.highlights < 0 { colorState.highlights = 0 }
         colorState.temperature = 0; colorState.tint = 0; colorState.exposure = 0
         colorState.effects = EffectsSettings()
         colorState.detail = DetailSettings()
         colorState.beauty = BeautyState()
         colorState.depthLens = nil
+        colorState.depthLighting = nil
         colorState.optics = OpticsSettings()
         colorState.geometry = GeometrySettings()
         colorState.coreImageAuto = nil
         colorState.masks = []
         colorState.creative = CreativeEffectStack()
         if colorState != EditState() {
+            let extended = image
+            image = try HighlightRecoveryRenderer.bounded(image)
             let data = try cube(colorState)
             guard let space = CGColorSpace(name: CGColorSpace.sRGB),
                   let filter = CIFilter(name: "CIColorCubeWithColorSpace", parameters: [
                     kCIInputImageKey: image, "inputCubeDimension": 32,
                     "inputCubeData": data, "inputColorSpace": space
                   ]), let output = filter.outputImage else { throw PhotoError.renderFailed }
-            image = output
+            image = try HighlightRecoveryRenderer.restoring(output, from: extended)
         }
         image = try EffectsRenderer.applyBeforeDetail(image, settings: state.effects)
         if deferDetail { return image }

@@ -1,0 +1,14 @@
+{
+  "ACR": {
+    "MAE_sRGB_full_blur2": 0.0,
+    "MAE_sRGB_face_blur2": 0.0
+  },
+  "Lumora avant": {
+    "MAE_sRGB_full_blur2": 0.06288624571645789,
+    "MAE_sRGB_face_blur2": 0.07658134284016636
+  },
+  "Lumora corrig\u00e9": {
+    "MAE_sRGB_full_blur2": 0.04346582675436108,
+    "MAE_sRGB_face_blur2": 0.06848455799828349
+  }
+}
