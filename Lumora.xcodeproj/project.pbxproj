@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CG1000000000000000000001 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */; };
+		DL1000000000000000000001 /* Validation/DepthLensIntegration/DepthLensDeviceProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = DL1000000000000000000002 /* Validation/DepthLensIntegration/DepthLensDeviceProbe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +25,7 @@
 		000000000000000000000120 /* Lumora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000001 /* LumoraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = LumoraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation/CinematicGlowProductionValidation/DeviceProbe.swift; sourceTree = SOURCE_ROOT; };
+		DL1000000000000000000002 /* Validation/DepthLensIntegration/DepthLensDeviceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation/DepthLensIntegration/DepthLensDeviceProbe.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -76,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				CG1000000000000000000002 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift */,
+				DL1000000000000000000002 /* Validation/DepthLensIntegration/DepthLensDeviceProbe.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 			isa = PBXSourcesBuildPhase;
 			files = (
 				CG1000000000000000000001 /* Validation/CinematicGlowProductionValidation/DeviceProbe.swift in Sources */,
+				DL1000000000000000000001 /* Validation/DepthLensIntegration/DepthLensDeviceProbe.swift in Sources */,
 			);
 		};
 		A10000000000000000000003 /* Sources */ = {

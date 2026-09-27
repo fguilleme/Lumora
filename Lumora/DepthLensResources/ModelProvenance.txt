@@ -1,0 +1,8 @@
+Depth Lens uses Depth Anything V2 Small.
+Core ML package: apple/coreml-depth-anything-v2-small, DepthAnythingV2SmallF16.mlpackage
+Source revision: cfef6f6f2a70783dedc0bfae40cecbc2052285d3
+https://huggingface.co/apple/coreml-depth-anything-v2-small
+Original architecture: https://github.com/DepthAnything/Depth-Anything-V2
+License for the Small model: Apache 2.0 (included alongside this notice).
+The Core ML weights are unchanged from the package measured in the iPhone validation.
+Lumora applies proportional resize and replicated border padding to its fixed 518 x 392 input.

@@ -19,6 +19,7 @@ struct EditState: Codable, Sendable, Equatable {
     var effects = EffectsSettings()
     var detail = DetailSettings()
     var beauty = BeautyState()
+    var depthLens: DepthLensSettings?
     var optics = OpticsSettings()
     var geometry = GeometrySettings()
     /// Frozen Core Image Auto baseline, applied before manual development controls.
@@ -31,7 +32,7 @@ struct EditState: Codable, Sendable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
-        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative, coreImageAuto
+        case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative, coreImageAuto, depthLens
     }
 
     /// Additive migration: older documents have no curve or mixer keys.
@@ -58,6 +59,7 @@ struct EditState: Codable, Sendable, Equatable {
         coreImageAuto = try values.decodeIfPresent(CoreImageAutoState.self, forKey: .coreImageAuto)
         masks = try values.decodeIfPresent([LocalMask].self, forKey: .masks) ?? []
         creative = try values.decodeIfPresent(CreativeEffectStack.self, forKey: .creative) ?? CreativeEffectStack()
+        depthLens = try values.decodeIfPresent(DepthLensSettings.self, forKey: .depthLens)
         self = validated
     }
 
@@ -73,6 +75,7 @@ struct EditState: Codable, Sendable, Equatable {
         result.effects = effects.validated
         result.detail = detail.validated
         result.beauty = beauty.validated
+        result.depthLens = depthLens?.validated
         result.optics = optics.validated
         result.geometry = geometry.validated
         result.creative = creative.validated

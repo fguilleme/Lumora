@@ -1,0 +1,5 @@
+*.log
+*.xcresult/
+Portrait/
+Native4K/
+UIAttachments*/

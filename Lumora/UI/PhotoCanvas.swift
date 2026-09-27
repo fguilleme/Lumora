@@ -9,6 +9,9 @@ struct PhotoCanvas: View {
     var curveSampling = false
     var curveSampleLocation: MaskPoint? = nil
     var onCurveSample: (MaskPoint) -> Void = { _ in }
+    var depthFocusActive = false
+    var depthFocusPoint = CGPoint(x: 0.5, y: 0.5)
+    var onDepthFocus: (MaskPoint) -> Void = { _ in }
     var healingActive = false
     var healingPaintZone = false
     var onHealingPaint: (MaskPoint) -> Void = { _ in }
@@ -117,7 +120,7 @@ struct PhotoCanvas: View {
                                 guard let point = normalized(tap.location, viewSize: geometry.size,
                                                  imageSize: imageSize, displayScale: displayScale,
                                                  displayOffset: displayOffset) else { return }
-                                if healingActive { onHealingTap(point) } else { onPhotoTap() }
+                                if depthFocusActive { onDepthFocus(point) } else if healingActive { onHealingTap(point) } else { onPhotoTap() }
                             }
                         }
                 )
@@ -215,6 +218,16 @@ struct PhotoCanvas: View {
                               }.onEnded {_ in onHealingPaintEnd()})
                               .accessibilityLabel("Target area")
                         }
+                    }
+                    if depthFocusActive && !showingOriginal && !pressing {
+                        let rect = sampledImageRect(viewSize: geometry.size,
+                            imageSize: CGSize(width: result.image.width, height: result.image.height),
+                            displayScale: displayScale, displayOffset: displayOffset)
+                        Image(systemName: "scope").font(.system(size: 26)).foregroundStyle(.mint)
+                            .position(x: rect.minX + rect.width * depthFocusPoint.x,
+                                      y: rect.minY + rect.height * depthFocusPoint.y)
+                            .allowsHitTesting(false)
+                            .accessibilityLabel("Focus point")
                     }
                     if curveSampling && !showingOriginal {
                         Color.clear.contentShape(Rectangle())

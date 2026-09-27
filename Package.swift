@@ -9,7 +9,7 @@ let package = Package(
     targets: [
         .target(name: "LumoraCore", path: "Lumora",
                 exclude: ["ContentView.swift", "MyApp.swift", "UI", "Editor/EditorSession.swift", "Editor/PresetController.swift", "Library/ImportedPhoto.swift", "Masks/MaskGenerator.swift", "Adjustments/GeometryAnalyzer.swift", "Assets.xcassets"],
-                sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Beauty", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"]),
+                sources: ["Editor/EditState.swift", "Editor/HistoryManager.swift", "Adjustments", "Masks", "Creative", "Beauty", "Presets", "Rendering", "Export", "Library/PhotoDocument.swift", "Persistence"], resources: [.copy("DepthLensResources/DA2Small.mlpackage")]),
         .testTarget(name: "LumoraCoreTests", dependencies: ["LumoraCore"], path: "Validation/Tests/LumoraCoreTests"),
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
                     path: "Validation/Tests/LumoraVisualTestLab",

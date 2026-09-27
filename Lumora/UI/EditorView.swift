@@ -34,7 +34,7 @@ struct EditorView: View {
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private enum Panel: String, CaseIterable {
         case creative = "Creative"
-        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
+        case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", depthLens = "Depth Lens", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", help = "Help"
         var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
         var symbol: String {
             switch self {
@@ -45,6 +45,7 @@ struct EditorView: View {
             case .colorTools: "circle.lefthalf.filled"
             case .effects: "camera.filters"
             case .detail: "triangle"
+            case .depthLens: "camera.aperture"
             case .beauty: "face.smiling"
             case .optics: "camera.aperture"
             case .geometry: "crop.rotate"
@@ -87,6 +88,9 @@ struct EditorView: View {
                             onCurveSample: { location in
                                 if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
                             },
+                            depthFocusActive: panel == .depthLens && session.state.depthLens?.enabled == true,
+                            depthFocusPoint: CGPoint(x: session.state.depthLens?.focusX ?? 0.5, y: session.state.depthLens?.focusY ?? 0.5),
+                            onDepthFocus: session.focusDepthLens,
                             healingActive: panel == .beauty && session.healingActive,
                             healingPaintZone: session.healingPaintZone,
                             onHealingPaint: session.paintHealing,
@@ -253,7 +257,7 @@ struct EditorView: View {
     }
 
     private var showsPhotoInformation: Bool {
-        ![Panel.creative, .optics, .geometry, .masks, .presets, .help].contains(panel)
+        ![Panel.creative, .depthLens, .optics, .geometry, .masks, .presets, .help].contains(panel)
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -474,6 +478,8 @@ struct EditorView: View {
             CreativeEffectsView(session: session, selected: $selectedCreativeEffectID)
         case .effects:
             effectsControls
+        case .depthLens:
+            DepthLensView(session: session)
         case .detail:
             DetailView(settings: session.activeState.detail,
                        onBegin: session.beginInteraction,
@@ -584,7 +590,7 @@ struct EditorView: View {
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
-        if item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
+        if item == .depthLens || item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
     }

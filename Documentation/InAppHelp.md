@@ -7,3 +7,8 @@ Common gestures explains the photo’s short tap (full-screen view), double-tap 
 The tab-specific topics are **Creative**, **Light**, **Color**, **Curves**, **Color Tools**, **Effects**, **Detail**, **Optics**, **Geometry**, **Masks**, and **Presets**. Their content lives in `Lumora/UI/EditorHelpView.swift`, alongside the interface labels. Update the relevant topic when a control is renamed, added, or removed.
 
 Help is read-only: opening and closing a topic does not create an Undo operation, change the active layer, or alter development settings. The photo information row is hidden in this tab to leave room for the topics. The topic buttons (`help-topic-*`), reading sheets (`help-detail-*`), and close button (`help-close`) have accessibility identifiers for simulator tests.
+
+
+### Depth Lens
+
+Rubrique dédiée après Détail : activation, point et plan de netteté, recentrage, ouverture, focales, exemple modéré, comparaison, réinitialisation/historique, limites des contours, calcul local, aperçu et export. Les gestes communs précisent que le toucher règle la mise au point dans cet onglet. Contenus français et anglais.

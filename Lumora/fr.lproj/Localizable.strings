@@ -823,3 +823,39 @@
 "Global" = "Global";
 
 "Import Lumora or XMP presets" = "Importer des presets Lumora ou XMP";
+
+/* Depth Lens and detailed help */
+"50, 85, and 135 mm change the simulated optical blur. At the same aperture and focus, longer focal lengths generally strengthen the blur. They do not zoom, crop, or change the perspective of the photo." = "Les focales 50, 85 et 135 mm modifient le flou optique simulé. À ouverture et mise au point identiques, une focale plus longue renforce généralement le flou. Elle ne zoome pas, ne recadre pas et ne change pas la perspective de la photo.";
+"A restrained starting point" = "Un point de départ modéré";
+"A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position." = "Un petit nombre d’ouverture, comme f/1,4, produit un flou plus fort et une zone de netteté plus étroite. Un nombre plus grand, comme f/5,6 ou f/8, réduit le flou. Si un œil ou les cheveux deviennent trop flous, augmentez ce nombre et vérifiez le point choisi.";
+"Aperture" = "Ouverture";
+"Center focus" = "Centrer la mise au point";
+"Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically." = "Centrer la mise au point ramène le repère au milieu de la photo. Cette commande ne détecte ni ne sélectionne automatiquement un visage.";
+"Compare" = "Comparer";
+"Compare and correct" = "Comparer et corriger";
+"Depth Lens" = "Depth Lens";
+"Depth Lens focus" = "Mise au point Depth Lens";
+"Depth Lens model is missing." = "Le modèle Depth Lens est introuvable.";
+"Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default." = "Depth Lens simule la profondeur de champ à partir d’une carte de profondeur estimée. Il peut flouter les zones situées devant et derrière le plan de mise au point choisi. La photo originale est conservée ; l’effet est désactivé par défaut.";
+"Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward." = "La profondeur est calculée sur l’iPhone et réutilisée pendant les réglages d’ouverture, de focale ou de mise au point. La première activation peut prendre plus de temps. Un changement de recadrage, de géométrie ou de correction optique recalcule la profondeur ; vérifiez ensuite la mise au point.";
+"Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect." = "La profondeur est estimée sur l’appareil une fois par photo ou changement de géométrie. Les contours des cheveux et des objets transparents peuvent être imparfaits. Augmenter le nombre d’ouverture atténue l’effet.";
+"Depth of field and focus by touch" = "Profondeur de champ et mise au point par toucher";
+"Disable Depth Lens to compare with the same edits without this blur; enabling it again keeps its settings. Holding the photo compares with the original, before all edits. Pinch to inspect fine details and double-tap to restore the view." = "Désactivez Depth Lens pour comparer les mêmes retouches sans ce flou ; sa réactivation conserve les réglages. Un appui prolongé sur la photo compare avec l’original, avant toutes les retouches. Pincez pour examiner les détails et touchez deux fois pour rétablir la vue.";
+"Enable Depth Lens" = "Activer Depth Lens";
+"Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view." = "Activez Depth Lens, puis touchez le sujet dans la photo lorsque cet onglet est ouvert. Le repère turquoise indique la position choisie. Pour un portrait, commencez par l’œil le plus proche. Ce toucher règle la mise au point au lieu d’ouvrir la vue plein écran.";
+"Fine edges" = "Contours fins";
+"Focal length" = "Focale";
+"Focus point" = "Point de mise au point";
+"Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail." = "Les cheveux, le verre, les reflets, les branches fines et les objets qui se chevauchent peuvent produire des contours de profondeur imparfaits. Examinez les deux yeux et les bords du sujet. Réduisez le flou ou désactivez l’effet si l’estimation convient mal ; il ne reconstitue pas les détails cachés de l’arrière-plan.";
+"Limits and rendering" = "Limites et rendu";
+"On-device processing" = "Calcul sur l’appareil";
+"Preview and export" = "Aperçu et export";
+"Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo." = "Réinitialiser désactive l’effet et rétablit f/1,4, 85 mm et la mise au point centrée. Annuler et Rétablir incluent les modifications de Depth Lens ; les réglages sont enregistrés avec la photo.";
+"Shape the blur" = "Régler le flou";
+"Start with the focus" = "Commencer par la mise au point";
+"Tap the photo to focus. A wider aperture blurs areas away from the focus plane." = "Touchez la photo pour faire le point. Une grande ouverture floute les zones éloignées du plan de netteté.";
+"The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp." = "L’effet utilise la distance estimée au point choisi, sans détourer le sujet. D’autres objets à une profondeur estimée proche peuvent rester nets. Un visage ou un corps réparti sur plusieurs plans peut ne pas être entièrement net.";
+"The focus plane" = "Le plan de netteté";
+"The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "L’aperçu utilise une résolution réduite pendant le déplacement du curseur, puis un rendu de meilleure qualité au relâchement. L’export applique le même effet à la résolution de sortie. Le repère de mise au point n’est jamais exporté. Depth Lens agit sur toute la photo et ne peut pas être associé à un masque local.";
+"Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Essayez 50 ou 85 mm à f/4, placez soigneusement le point, puis diminuez progressivement le nombre d’ouverture. Examinez l’ensemble de l’image et les contours du sujet. Un flou fort rend les erreurs d’estimation de profondeur plus visibles.";
+"When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "Lorsque Depth Lens est activé et que son onglet est ouvert, un toucher bref place le point de mise au point. Passez à un autre onglet pour retrouver le toucher habituel ouvrant la vue plein écran.";

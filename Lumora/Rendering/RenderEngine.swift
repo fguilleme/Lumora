@@ -25,6 +25,9 @@ actor RenderEngine {
     private struct PreviewCacheKey: Hashable { let maximum: Int; let profileCorrection: Bool }
     private let context: CIContext
     private var cinematicGlowGPU: CinematicGlowGPU?
+    private var depthLensEngine: DepthLensEngine?
+    private var depthLensGeometry: GeometrySettings?
+    private var depthLensOptics: OpticsSettings?
     private let gpu: Bool
     private var sourceURL: URL?
     private var sources: [PreviewCacheKey: CGImage] = [:]
@@ -74,8 +77,12 @@ actor RenderEngine {
         }
     }
 
+    func depthLensInferenceCount() -> Int { depthLensEngine?.inferenceCount ?? 0 }
+
     func clearCaches() {
         cinematicGlowGPU?.releaseFrame()
+        depthLensEngine?.invalidate()
+        depthLensGeometry = nil; depthLensOptics = nil
         sources.removeAll()
         autoCache = nil
         coreAutoCache = nil
@@ -94,12 +101,13 @@ actor RenderEngine {
             clearCaches()
             sourceURL = url
         }
-        let key = PreviewCacheKey(maximum: quality.rawValue, profileCorrection: state.optics.profileCorrection)
+        let maximum = quality == .interactive && state.depthLens?.enabled == true ? 640 : quality.rawValue
+        let key = PreviewCacheKey(maximum: maximum, profileCorrection: state.optics.profileCorrection)
         let hit = sources[key] != nil
-        let original = try preview(url: url, maximum: quality.rawValue, optics: state.optics)
+        let original = try preview(url: url, maximum: maximum, optics: state.optics)
         try Task.checkCancellation()
         let input = CIImage(cgImage: original)
-        let baseline = try previewAutoBaseline(input, state: state, maximum: quality.rawValue)
+        let baseline = try previewAutoBaseline(input, state: state, maximum: maximum)
         let image = try adjusted(input, state: state, bypassCreative: bypassCreative, autoBaseline: baseline)
         try Task.checkCancellation()
         guard let space = CGColorSpace(name: CGColorSpace.displayP3),
@@ -309,6 +317,22 @@ actor RenderEngine {
             guard let output = blend.outputImage else { throw PhotoError.renderFailed }
             image = output.cropped(to: image.extent)
         }
+        if let settings = state.depthLens, settings.enabled {
+            if depthLensEngine == nil { depthLensEngine = try DepthLensEngine() }
+            if depthLensGeometry != state.geometry || depthLensOptics != state.optics {
+                depthLensEngine?.invalidate()
+                depthLensGeometry = state.geometry; depthLensOptics = state.optics
+            }
+            if !depthLensEngine!.hasDepth {
+                // Identical analysis decode in preview, HQ, and native export.
+                let source: CIImage
+                if let sourceURL { source = CIImage(cgImage: try preview(url: sourceURL, maximum: 1024, optics: state.optics)) }
+                else { source = input }
+                let optical = try OpticsRenderer.apply(source, settings: state.optics)
+                try depthLensEngine!.estimate(GeometryRenderer.apply(optical, settings: state.geometry))
+            }
+            image = try depthLensEngine!.apply(image, settings: settings)
+        } else { depthLensEngine?.releaseFrame() }
         if state.effects.cinematicGlowIntensity > 0 {
             if cinematicGlowGPU == nil { cinematicGlowGPU = try CinematicGlowGPU() }
             image = try cinematicGlowGPU!.apply(image, intensity: state.effects.cinematicGlowIntensity)
@@ -366,7 +390,7 @@ actor RenderEngine {
             guard let decoded = CIImage(contentsOf: request.sourceURL, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
             input = decoded
         }
-        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame() }
+        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
         try Task.checkCancellation()
         var image = input.transformed(by: CGAffineTransform(translationX: -input.extent.minX, y: -input.extent.minY))
         progress(.rendering)
@@ -422,7 +446,8 @@ actor RenderEngine {
                                   maximum: Int = 1024, bypassCreative: Bool = false) throws -> CGImage {
         try Task.checkCancellation()
         guard [region.origin.x, region.origin.y, region.width, region.height].allSatisfy({ $0.isFinite }), region.width > 0, region.height > 0 else { throw PhotoError.renderFailed }
-        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame() }
+        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
+        if sourceURL != url { clearCaches(); sourceURL = url }
         let source: CIImage
         if let rawFilter = CIRAWFilter(imageURL: url) {
             rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported

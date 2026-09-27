@@ -28,6 +28,7 @@ enum DevelopmentRenderer {
         colorState.effects = EffectsSettings()
         colorState.detail = DetailSettings()
         colorState.beauty = BeautyState()
+        colorState.depthLens = nil
         colorState.optics = OpticsSettings()
         colorState.geometry = GeometrySettings()
         colorState.coreImageAuto = nil

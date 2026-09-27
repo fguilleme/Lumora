@@ -162,6 +162,7 @@ final class EditorSession {
     @ObservationIgnored private let engine = RenderEngine()
     @ObservationIgnored private let store:DocumentStore = {
         #if DEBUG
+        if CommandLine.arguments.contains("--depth-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("DepthUIValidation")) }
         if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
         #endif
         return DocumentStore()
@@ -217,6 +218,10 @@ final class EditorSession {
         guard !didRestore else { return }
         didRestore = true
         #if DEBUG
+        if CommandLine.arguments.contains("--depth-ui-validation") {
+            await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("DepthLensInput.png"))
+            return
+        }
         if CommandLine.arguments.contains("--glow-ui-validation") {
             await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("GlowValidationInput.png"))
             return
@@ -464,6 +469,19 @@ final class EditorSession {
         else { state.effects[adjustment] = value }
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
+    }
+    func changeDepthLens(_ change: (inout DepthLensSettings) -> Void) {
+        if !interacting { history.begin(String(localized: "Depth Lens"), state: state) }
+        var settings = state.depthLens ?? DepthLensSettings()
+        change(&settings)
+        state.depthLens = settings == DepthLensSettings() ? nil : settings.validated
+        showingOriginal = false
+        requestRender(interacting ? .interactive : .high)
+        if !interacting { history.commit(state); persist() }
+    }
+    func focusDepthLens(_ point: MaskPoint) {
+        guard state.depthLens?.enabled == true else { return }
+        changeDepthLens { $0.focusX = point.x; $0.focusY = point.y }
     }
     func changeCreative(_ name: String, _ change: (inout CreativeEffectStack) -> Void) {
         if !interacting { history.begin(name, state: state) }

@@ -1,0 +1,176 @@
+{
+  "os" : "27.0",
+  "rows" : [
+    {
+      "equal" : true,
+      "inferences" : 0,
+      "phase" : "bypass"
+    },
+    {
+      "edgeRequested" : 960,
+      "height" : 640,
+      "inferences" : 1,
+      "ms" : 7323.901417,
+      "phase" : "render",
+      "physicalBytes" : 198756168,
+      "thermal" : 1,
+      "width" : 400
+    },
+    {
+      "edgeRequested" : 2048,
+      "height" : 2048,
+      "inferences" : 1,
+      "ms" : 683.59204199999999,
+      "phase" : "render",
+      "physicalBytes" : 438945656,
+      "thermal" : 1,
+      "width" : 1280
+    },
+    {
+      "edgeRequested" : 960,
+      "height" : 640,
+      "inferences" : 1,
+      "ms" : 73.069084000000004,
+      "phase" : "render",
+      "physicalBytes" : 222971768,
+      "thermal" : 1,
+      "width" : 400
+    },
+    {
+      "inferences" : 1,
+      "ms" : 25.827874999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 25.435040999999998,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 24.307041999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 23.830833999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 24.900791999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 25.197666999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 25.853417,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 31.034541999999998,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 30.733042000000001,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 30.515875000000001,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 30.231000000000002,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 29.269375,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 28.863,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 28.200417000000002,
+      "phase" : "slider",
+      "physicalBytes" : 222971768
+    },
+    {
+      "inferences" : 1,
+      "ms" : 32.155875000000002,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "inferences" : 1,
+      "ms" : 30.829499999999999,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "inferences" : 1,
+      "ms" : 29.819458999999998,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "inferences" : 1,
+      "ms" : 29.623916000000001,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "inferences" : 1,
+      "ms" : 31.407042000000001,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "inferences" : 1,
+      "ms" : 32.217333000000004,
+      "phase" : "slider",
+      "physicalBytes" : 222939000
+    },
+    {
+      "height" : 4096,
+      "inferences" : 1,
+      "ms" : 2779.3419361114502,
+      "phase" : "export",
+      "physicalBytes" : 919553936,
+      "width" : 2560
+    },
+    {
+      "equal" : true,
+      "phase" : "persistence"
+    },
+    {
+      "phase" : "completed"
+    }
+  ],
+  "warnings" : 0
+}

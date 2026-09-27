@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, beauty, optics, geometry, masks, presets
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, beauty, optics, geometry, masks, presets
     var id: String { rawValue }
 
     var title: String {
@@ -121,6 +121,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: String(localized: "Color Tools")
         case .effects: String(localized: "Effects")
         case .detail: String(localized: "Detail")
+        case .depthLens: String(localized: "Depth Lens")
         case .beauty: String(localized: "Beauty")
         case .optics: String(localized: "Optics")
         case .geometry: String(localized: "Geometry")
@@ -139,6 +140,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "circle.lefthalf.filled"
         case .effects: "camera.filters"
         case .detail: "triangle"
+        case .depthLens: "camera.aperture"
         case .beauty: "face.smiling"
         case .optics: "camera.aperture"
         case .geometry: "crop.rotate"
@@ -157,6 +159,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "Color Mixer and grading"
         case .effects: "Texture, clarity, dehaze, vignette, grain"
         case .detail: "Sharpening and noise reduction"
+        case .depthLens: "Depth of field and focus by touch"
         case .beauty: "Local, restrained portrait retouching"
         case .optics: "Lens profile and manual corrections"
         case .geometry: "Horizon, perspective, and crop"
@@ -175,6 +178,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .colorTools: "Color Tools contains Color Mixer for colors in the scene and Grading for tonal regions. They change different properties."
         case .effects: "Effects provides finishing adjustments. Texture and Clarity change local contrast; Dehaze, Vignette, and Grain serve different purposes."
         case .detail: "Detail controls sharpening and noise reduction. Examine results at 100%: a reduced preview can hide oversharpening and excessive smoothing."
+        case .depthLens: "Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default."
         case .beauty: "Beauty adjusts detected faces without changing their shape. Its masks and frequency separation preserve texture; inspect skin and eyes at 100%."
         case .optics: "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise."
         case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
@@ -189,6 +193,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
             return [
                 HelpSection("On the photo", [
                     HelpItem("Short tap", "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor."),
+                    HelpItem("Depth Lens focus", "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap."),
                     HelpItem("Double-tap", "Double-tap the photo to reset its zoom and position."),
                     HelpItem("Touch and hold", "Hold a finger on the photo to compare with the original. Release to return to the edited preview."),
                     HelpItem("Pinch and pan", "Pinch to zoom in or out. When zoomed in, drag the photo to inspect another area.")
@@ -303,6 +308,28 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Luminance", "Reduces light-and-dark noise. Too much removes texture; Detail and Contrast help preserve its presence."),
                     HelpItem("Color", "Reduces colored noise blotches. Detail and Smoothing control how finely this correction is applied."),
                     HelpItem("Activation", "Secondary sharpening and noise controls become available when their primary Amount, Luminance, or Color value is above zero.")
+                ])
+            ]
+        case .depthLens:
+            return [
+                HelpSection("Start with the focus", [
+                    HelpItem("Enable Depth Lens", "Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view."),
+                    HelpItem("The focus plane", "The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp."),
+                    HelpItem("Center focus", "Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically.")
+                ]),
+                HelpSection("Shape the blur", [
+                    HelpItem("Aperture", "A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position."),
+                    HelpItem("Focal length", "50, 85, and 135 mm change the simulated optical blur. At the same aperture and focus, longer focal lengths generally strengthen the blur. They do not zoom, crop, or change the perspective of the photo."),
+                    HelpItem("A restrained starting point", "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible.")
+                ]),
+                HelpSection("Compare and correct", [
+                    HelpItem("Compare", "Disable Depth Lens to compare with the same edits without this blur; enabling it again keeps its settings. Holding the photo compares with the original, before all edits. Pinch to inspect fine details and double-tap to restore the view."),
+                    HelpItem("Reset", "Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo.")
+                ]),
+                HelpSection("Limits and rendering", [
+                    HelpItem("Fine edges", "Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail."),
+                    HelpItem("On-device processing", "Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward."),
+                    HelpItem("Preview and export", "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask.")
                 ])
             ]
         case .beauty:
