@@ -71,8 +71,9 @@ import Testing
     }
 }
 
-@Test func extremeCreativeAmountAddsVisibleHeadroomWithoutChangingPresetRange() throws {
-    #expect(CreativeEndpointGain.multiplier(95, atMaximum: 4) == 1)
+@Test func creativeAmountAddsProgressiveVisibleHeadroom() throws {
+    #expect(CreativeEndpointGain.multiplier(0, atMaximum: 4) == 1)
+    #expect(CreativeEndpointGain.multiplier(50, atMaximum: 4) == 2.5)
     #expect(CreativeEndpointGain.multiplier(100, atMaximum: 4) == 4)
 
     let width = 128, height = 128
@@ -125,7 +126,7 @@ import Testing
         let after = try CreativeStackRenderer.apply(input,
             stack: CreativeEffectStack(effects: [effect]), masks: [])
         let lower = difference(pixels(before)), upper = difference(pixels(after))
-        #expect(upper > lower * 1.2, "\(kind.rawValue): 95=\(lower), 100=\(upper)")
+        #expect(upper > lower, "\(kind.rawValue): 95=\(lower), 100=\(upper)")
     }
     for kind in [CreativeEffectKind.silverToning, .darkenLightenCenter,
                  .crossProcessing, .filmEmulation] {

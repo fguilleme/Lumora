@@ -63,9 +63,11 @@ struct GlamourGlowRenderer: CreativeEffectRendering {
         let small = diffuse(radius: photographicRadius, sampling: 1)
         let medium = diffuse(radius: photographicRadius * 3, sampling: 0.5)
         let large = diffuse(radius: photographicRadius * 10, sampling: 0.25)
+        let intensity = settings.amount / 100
+            * CreativeEndpointGain.multiplier(settings.amount, atMaximum: 2.2)
         guard let output = Self.combine?.apply(extent: image.extent, arguments: [
             image, small, medium, large,
-            CIVector(x: settings.amount / 100, y: 0.12 + 0.88 * settings.glow / 100,
+            CIVector(x: intensity, y: 0.12 + 0.88 * settings.glow / 100,
                      z: settings.warmth / 100, w: 0),
             CIVector(x: settings.highlightProtection / 100, y: settings.shadowProtection / 100)
         ]) else { throw PhotoError.renderFailed }

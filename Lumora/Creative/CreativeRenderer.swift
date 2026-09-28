@@ -53,12 +53,14 @@ enum FXBlend {
     }
 }
 
-/// Existing presets stop at or below 95. The last five points of a manual
-/// Amount slider offer a stronger endpoint without changing those looks.
+/// Gives Creative amount controls a progressive reserve instead of hiding the
+/// useful part of their range in the last few slider points. The multiplier is
+/// one at zero so identity paths remain exact, then rises smoothly.
 enum CreativeEndpointGain {
     static func multiplier(_ amount: Double, atMaximum maximum: Double) -> Double {
-        let t = min(1, max(0, (abs(amount) - 95) / 5))
-        return 1 + (maximum - 1) * t * t * (3 - 2 * t)
+        let t = min(1, max(0, abs(amount) / 100))
+        let shaped = t * t * (3 - 2 * t)
+        return 1 + (maximum - 1) * shaped
     }
 }
 
@@ -75,7 +77,7 @@ struct KeyEffectRenderer: CreativeEffectRendering {
         float shoulder = mix(1.0, 1.0 - smoothstep(0.65, 1.0, l), light);
         float standard = l * (1.0-l);
         float adaptive = mode > 0.0 ? pow(l, 0.55)*(1.0-l)*(1.0-l) : l*l*sqrt(1.0-l);
-        float shift = mix(standard, adaptive, dynamic) * 0.9 * toe * shoulder;
+        float shift = mix(standard, adaptive, dynamic) * 1.25 * toe * shoulder;
         float target = clamp(l + mode*shift, 0.0, 1.0);
         target += contrast * 0.6 * target * (1.0-target) * (2.0*target-1.0);
         // Preserve hue by scaling linear RGB; protect near-black from large amplification.
@@ -193,7 +195,7 @@ struct TonalContrastRenderer: CreativeEffectRendering {
         let small = blurred(0.5), medium = blurred(1.8), large = blurred(5)
         guard let output = Self.reconstruct?.apply(extent: image.extent, arguments: [image, small, medium, large,
             CIVector(x: s.shadows / 100, y: s.midtones / 100, z: s.highlights / 100,
-                     w: s.globalAmount / 100 * 1.5 * CreativeEndpointGain.multiplier(s.globalAmount, atMaximum: 4)),
+                     w: s.globalAmount / 100 * 1.65 * CreativeEndpointGain.multiplier(s.globalAmount, atMaximum: 5)),
             CIVector(x: s.saturation / 100, y: s.protectShadows / 100, z: s.protectHighlights / 100)])
         else { throw PhotoError.renderFailed }
         return output
@@ -236,18 +238,18 @@ struct DetailExtractorRenderer: CreativeEffectRendering {
         // Fine structure receives the strongest noise shrinkage. The automatic
         // threshold rises smoothly near black; it is not a user-facing control.
         float dark = 1.0 - smoothstep(0.01, 0.18, y);
-        float fine = retainedDetail(y - b1, 0.003 + 0.005*dark);
-        float mid = retainedDetail(b1 - b2, 0.004 + 0.002*dark);
-        float coarse = retainedDetail(b2 - b3, 0.007);
+        float fine = retainedDetail(y - b1, 0.0015 + 0.0035*dark);
+        float mid = retainedDetail(b1 - b2, 0.0022 + 0.0015*dark);
+        float coarse = retainedDetail(b2 - b3, 0.0045);
         float edge = abs(m1.r - m3.r);
         float broadEdgeGate = 1.0 / (1.0 + pow(edge / 0.16, 2.0));
         float shadowGuard = mix(1.0, smoothstep(0.012, 0.20, y), protection.x);
         float highlightGuard = mix(1.0, 1.0-smoothstep(0.78, 1.08, y), protection.y);
         float signedAmount = controls.x * protection.z * (controls.x < 0.0 ? 0.7 : 1.0);
         float delta = signedAmount * shadowGuard * highlightGuard *
-            (1.20*controls.y*fine + 0.95*controls.z*mid +
-             0.50*controls.w*coarse*broadEdgeGate);
-        delta = clamp(delta, -min(0.16, y*0.58), min(0.16, max(0.0, 1.0-y)*0.58));
+            (1.65*controls.y*fine + 1.35*controls.z*mid +
+             0.72*controls.w*coarse*broadEdgeGate);
+        delta = clamp(delta, -min(0.22, y*0.64), min(0.22, max(0.0, 1.0-y)*0.64));
         float nextY = max(0.0, y + delta);
         c.rgb = max(float3(0.0), c.rgb * (nextY / max(y, 0.00001)));
         return premultiply(c);
