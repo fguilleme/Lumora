@@ -9,6 +9,13 @@ final class DepthLightingUITests: XCTestCase {
         app.launch()
         let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
         XCTAssertTrue(canvas.waitForExistence(timeout: 45))
+        let options = app.buttons["header-options"]
+        XCTAssertTrue(options.waitForExistence(timeout: 5))
+        XCTAssertGreaterThanOrEqual(options.frame.width, 54)
+        XCTAssertGreaterThanOrEqual(options.frame.height, 48)
+        options.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.5)).tap()
+        XCTAssertTrue(app.buttons["header-option-export"].waitForExistence(timeout: 3))
+        canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
         func openTab(_ name: String) {
             let tab = app.buttons["editor-tab-\(name)"]
             let toolbar = app.scrollViews["tools-toolbar"]
@@ -29,7 +36,20 @@ final class DepthLightingUITests: XCTestCase {
         let slider = app.sliders["depth-lighting-intensity"]
         XCTAssertTrue(slider.waitForExistence(timeout: 30))
         canvas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        for value: CGFloat in [0.2, 0.8, 0.4] { slider.adjust(toNormalizedSliderPosition: value) }
+        for value: CGFloat in [0.2, 0.8, 0.4] {
+            slider.adjust(toNormalizedSliderPosition: value)
+            XCTAssertTrue(app.sliders["depth-lighting-distance"].exists)
+            XCTAssertTrue(app.scrollViews["tools-toolbar"].exists)
+        }
+        let valueBeforeInterruption = slider.value as? String
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 5))
+        app.activate()
+        XCTAssertTrue(slider.waitForExistence(timeout: 10))
+        slider.adjust(toNormalizedSliderPosition: 0.65)
+        XCTAssertNotEqual(slider.value as? String, valueBeforeInterruption)
+        XCTAssertTrue(app.sliders["depth-lighting-distance"].exists)
+        XCTAssertTrue(app.scrollViews["tools-toolbar"].exists)
         // Each marker must land under the finger in both directions, independently of rendering.
         for id in ["lighting-source-marker", "lighting-subject-marker"] {
             let marker = app.images[id]

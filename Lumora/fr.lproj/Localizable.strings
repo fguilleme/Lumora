@@ -19,7 +19,7 @@
 "Add to mask" = "Ajouter au masque";
 "Adding, deleting, or moving a point can be undone. Leaving Edit mode does not change the image." = "La création, la suppression ou le déplacement d’un point peuvent être annulés ; quitter Modifier ne change pas le rendu.";
 "Additive component" = "Composante en ajout";
-"Adds a finishing grain texture. Creative also has Film Grain; using both can compound the grain." = "Ajoute une texture de grain à la finition. Creative propose aussi Film Grain : utiliser les deux peut accumuler le grain.";
+"Adds a finishing grain texture. Creative also has Film Grain; using both can compound the grain." = "Ajoute une texture de grain à la finition. Créatif propose aussi Grain argentique : utiliser les deux peut accumuler le grain.";
 "Adjustment stack" = "Pile de modifications";
 "Adjusts color fringing along high-contrast edges. Examine silhouettes against a bright sky at 100%." = "Ajuste le décalage coloré au bord de forts contrastes. Examinez les silhouettes sur ciel clair à 100 %.";
 "Adjusts color more cautiously in mixed scenes. Always check skin tones and colors near the gamut boundary." = "Dose la couleur plus prudemment sur une scène hétérogène ; contrôlez toujours les carnations et les couleurs proches du gamut.";
@@ -62,14 +62,14 @@
 "Blending and Balance" = "Mélange et Balance";
 "Blending softens or distinguishes transitions between regions. Balance shifts the treatment toward dark or light tones." = "Mélange adoucit ou distingue les transitions entre zones ; Balance déplace la répartition du traitement vers les tons sombres ou clairs.";
 "Blue" = "Bleu";
-"Bright High Key" = "High Key lumineux";
-"Bright Low Key" = "Low Key lumineux";
+"Bright High Key" = "Tons clairs lumineux";
+"Bright Low Key" = "Tons sombres lumineux";
 "Brightens or darkens the family. Strong changes may affect separation between sky, vegetation, and subject." = "Éclaircit ou assombrit la famille. Un changement important peut modifier la séparation entre ciel, végétation et sujet.";
 "Brightness" = "Luminosité";
 "Brush" = "Pinceau";
 "Brush mode" = "Mode du pinceau";
 "Build an effect stack" = "Construire une pile";
-"Built-in looks fill only the grading controls. Move the wheel or a slider afterward; the state becomes Custom." = "Les looks proposés remplissent uniquement le grading. Vous pouvez ensuite déplacer la roue ou les curseurs ; l’état devient Personnalisé.";
+"Built-in looks fill only the grading controls. Move the wheel or a slider afterward; the state becomes Custom." = "Les styles proposés remplissent uniquement le coloration. Vous pouvez ensuite déplacer la roue ou les curseurs ; l’état devient Personnalisé.";
 "Buttons rotate by quarter-turns or flip horizontally or vertically. Reset restores the geometry controls to their initial values." = "Les boutons tournent par quarts de tour ou inversent horizontalement/verticalement. Réinitialiser remet les corrections de ce panneau à leur état initial.";
 "Cancel" = "Annuler";
 "Cancel export" = "Annuler l’export";
@@ -84,7 +84,7 @@
 "Choose a crop aspect ratio. Crop changes zoom; Horizontal and Vertical position move the visible window across the photo." = "Choisissez un ratio de recadrage. Recadrage ajuste le zoom et Position horizontale/verticale déplace la fenêtre visible dans l’image.";
 "Choose a tab to learn its controls and gestures. Help does not change the photo." = "Choisissez un onglet pour comprendre ses réglages et ses gestes. L’aide ne modifie pas la photographie.";
 "Choose from the catalog. Every effect becomes a separate step; effects run in their displayed order." = "Choisissez un effet dans le catalogue. Chaque effet devient une étape distincte de la pile ; les effets sont calculés dans leur ordre affiché.";
-"Choosing a look fills in the effect's settings. Changing a value switches to Custom; the original look remains available." = "Choisir un look remplit les paramètres de l’effet. Après une modification, le réglage devient Custom ; le look d’origine reste disponible.";
+"Choosing a look fills in the effect's settings. Changing a value switches to Custom; the original look remains available." = "Choisir un style remplit les paramètres de l’effet. Après une modification, le réglage devient Personnalisé ; le style d’origine reste disponible.";
 "Chromatic aberration" = "Aberration chromatique";
 "Cinema" = "Cinéma";
 "Clarity" = "Clarté";
@@ -93,9 +93,9 @@
 "Collapse RGB histogram" = "Réduire l’histogramme RVB";
 "Color" = "Couleur";
 "Color Mixer" = "Mélangeur";
-"Color Mixer and grading" = "Mélangeur de couleurs et grading";
+"Color Mixer and grading" = "Mélangeur de couleurs et coloration";
 "Color Tools" = "Colorimétrie";
-"Color Tools contains Color Mixer for colors in the scene and Grading for tonal regions. They change different properties." = "Colorimétrie contient deux outils : Mélangeur pour les couleurs de la scène, Grading pour colorer les zones tonales. Ils agissent sur des propriétés différentes.";
+"Color Tools contains Color Mixer for colors in the scene and Grading for tonal regions. They change different properties." = "Colorimétrie contient deux outils : Mélangeur pour les couleurs de la scène, Coloration pour colorer les zones tonales. Ils agissent sur des propriétés différentes.";
 "Color controls color cast and intensity. Careful white balance preserves the mood of a deliberately warm or cool scene." = "Couleur règle la dominante et l’intensité colorée. Une balance des blancs prudente préserve l’ambiance d’une scène volontairement chaude ou froide.";
 "Color filter" = "Filtre coloré";
 "Color grain" = "Grain couleur";
@@ -118,15 +118,15 @@
 "Corrects the green–magenta axis when Temperature alone cannot remove a lighting cast." = "Corrige l’axe vert–magenta, utile quand l’éclairage laisse une dominante que Température ne suffit pas à enlever.";
 "Create" = "Créer";
 "Create a folder to organize your edits." = "Créez un dossier pour classer vos développements.";
-"Create a preset" = "Créer un preset";
+"Create a preset" = "Créer un préréglage";
 "Create an area" = "Créer une zone";
 "Create and apply" = "Créer et appliquer";
 "Create file" = "Créer le fichier";
 "Create mask" = "Créer un masque";
 "Create tags to organize photos across folders." = "Créez des étiquettes pour croiser vos classements.";
-"Creative combines independent effects. Each has its own settings, and its position in the stack changes the result. Built-in looks are editable starting points." = "Creative assemble des effets autonomes. Chacun possède ses propres réglages ; leur ordre dans la pile change le rendu. Les looks intégrés servent de point de départ et restent modifiables.";
-"Creative detail" = "Détail Creative";
-"Creative detail at native resolution" = "Détail Creative à résolution native";
+"Creative combines independent effects. Each has its own settings, and its position in the stack changes the result. Built-in looks are editable starting points." = "Créatif assemble des effets autonomes. Chacun possède ses propres réglages ; leur ordre dans la pile change le rendu. Les styles intégrés servent de point de départ et restent modifiables.";
+"Creative detail" = "Détail créatif";
+"Creative detail at native resolution" = "Détail créatif à résolution native";
 "Crop" = "Recadrage";
 "Crop position" = "Position du recadrage";
 "Crop zoom" = "Zoom du recadrage";
@@ -161,14 +161,14 @@
 "Documentary 800" = "Reportage 800";
 "Done" = "Terminé";
 "Drag the handle on the photo to position the center." = "Déplacez la poignée sur la photo pour placer le centre.";
-"Drag the handle, or use the precise position sliders in Creative." = "Déplacez la poignée, ou utilisez les curseurs de position précise dans Creative.";
+"Drag the handle, or use the precise position sliders in Creative." = "Déplacez la poignée, ou utilisez les curseurs de position précise dans Créatif.";
 "Drag to erase" = "Faites glisser pour effacer";
 "Drag to paint" = "Faites glisser pour peindre";
 "Duplicate" = "Dupliquer";
 "Duplicate effect" = "Dupliquer un effet";
 "Dynamic" = "Dynamique";
-"Dynamic High Key" = "High Key dynamique";
-"Dynamic Low Key" = "Low Key dynamique";
+"Dynamic High Key" = "Tons clairs dynamique";
+"Dynamic Low Key" = "Tons sombres dynamique";
 "Dynamic brightness" = "Luminosité dynamique";
 "Dynamic contrast" = "Contraste dynamique";
 "Edit" = "Modifier";
@@ -178,7 +178,7 @@
 "Effects provides finishing adjustments. Texture and Clarity change local contrast; Dehaze, Vignette, and Grain serve different purposes." = "Effets rassemble des ajustements de finition. Texture et clarté modifient le contraste local ; la correction du voile, la vignette et le grain répondent à d’autres besoins.";
 "Eight ranges" = "Huit plages";
 "Empty library" = "Bibliothèque vide";
-"Enable Creative preview" = "Activer l’aperçu Creative";
+"Enable Creative preview" = "Activer l’aperçu Créatif";
 "Enable effect" = "Activer l’effet";
 "Erase" = "Effacer";
 "Erase mask" = "Effacer le masque";
@@ -198,7 +198,7 @@
 "Favorites" = "Favoris";
 "Feather" = "Contour progressif";
 "Files" = "Fichiers";
-"Film Grain adds grain. Film Emulation changes film response without generating grain. Cross Processing and Bleach Bypass alter color response." = "Film Grain ajoute du grain ; Film Emulation modifie la réponse de film sans en générer ; Cross Processing et Bleach Bypass transforment le rendu coloré.";
+"Film Grain adds grain. Film Emulation changes film response without generating grain. Cross Processing and Bleach Bypass alter color response." = "Grain argentique ajoute du grain ; Simulation de film modifie la réponse de film sans en générer ; Développement croisé et Rétention d’argent transforment le rendu coloré.";
 "Film and processes" = "Film et procédés";
 "Film response" = "Réponse film";
 "Film strength" = "Force du film";
@@ -214,16 +214,16 @@
 "Folders" = "Dossiers";
 "Geometry" = "Géométrie";
 "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file." = "Géométrie corrige l’orientation, la perspective et le cadrage. Les corrections modifient la portion de l’image visible, sans altérer le fichier source.";
-"Give it a name and choose groups to save. Light, Color, Curves, Color Mixer, Grading, Effects, Detail, and Creative can be included. Optics, Geometry, and Masks are optional." = "Donnez-lui un nom et choisissez les groupes à sauvegarder. Lumière, Couleur, Courbes, Mélangeur, Grading, Effets, Détail et Creative peuvent être inclus ; Optique, Géométrie et Masques sont optionnels.";
+"Give it a name and choose groups to save. Light, Color, Curves, Color Mixer, Grading, Effects, Detail, and Creative can be included. Optics, Geometry, and Masks are optional." = "Donnez-lui un nom et choisissez les groupes à sauvegarder. Lumière, Couleur, Courbes, Mélangeur, Coloration, Effets, Détail et Créatif peuvent être inclus ; Optique, Géométrie et Masques sont optionnels.";
 "Glow" = "Diffusion";
 "Glow radius" = "Rayon glow";
 "Glow threshold" = "Seuil glow";
 "Gradient angle" = "Angle du dégradé";
 "Gradient center" = "Centre du dégradé";
 "Gradient feather" = "Contour progressif du dégradé";
-"Grading blending" = "Grading mélange";
-"Grading hue" = "Grading teinte";
-"Grading presets" = "Presets Grading";
+"Grading blending" = "Coloration mélange";
+"Grading hue" = "Coloration teinte";
+"Grading presets" = "Préréglages Coloration";
 "Green" = "Vert";
 "Halo Map" = "Carte des halos";
 "Halo layer" = "Couche de halos";
@@ -234,7 +234,7 @@
 "Hide layer" = "Masquer le calque";
 "Hide precise position" = "Masquer la position précise";
 "Hide protections" = "Masquer les protections";
-"High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor, and Glamour Glow shape light or detail. Inspect at 100% to avoid excessive structure." = "High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor et Glamour Glow façonnent la lumière ou le détail. Comparez à 100 % pour éviter une structure excessive.";
+"High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor, and Glamour Glow shape light or detail. Inspect at 100% to avoid excessive structure." = "Tons clairs, Tons sombres, Contraste professionnel, Contraste tonal, Révélation des détails et Lueur douce façonnent la lumière ou le détail. Comparez à 100 % pour éviter une structure excessive.";
 "Highlight color" = "Couleur des lumières";
 "Highlight hue" = "Teinte des lumières";
 "Highlight roll-off" = "Compression des lumières";
@@ -291,8 +291,8 @@
 "Loading…" = "Chargement…";
 "Local adjustment" = "Réglage local";
 "Long edge" = "Grand côté";
-"Looks and Custom" = "Looks et Custom";
-"Lumora Preset" = "Preset Lumora";
+"Looks and Custom" = "Styles et réglage personnalisé";
+"Lumora Preset" = "Préréglage Lumora";
 "Lumora found no sufficiently reliable sky area in this photo." = "Lumora n’a détecté aucune zone de ciel suffisamment fiable dans cette photographie.";
 "Lumora needs at least one visible face to identify skin tones in this photo." = "Lumora a besoin d’au moins un visage visible pour identifier les teintes de peau de cette photographie.";
 "Manage and share" = "Gérer et partager";
@@ -313,7 +313,7 @@
 "Midtones" = "Tons moyens";
 "Modulates edge brightness to guide attention. It differs from Lens vignetting, which is meant to correct the lens." = "Module la luminosité des bords pour guider le regard. Ce réglage de finition diffère du Vignetage optique, destiné à corriger l’objectif.";
 "Monochrome prints" = "Argentique monochrome";
-"Move an effect earlier or later to change the result. Silver B&W before Silver Toning creates a toned print; reversing them can remove the toning color." = "Déplacez un effet avant ou après un autre pour changer le résultat. Par exemple, Silver B&W avant Silver Toning produit un tirage viré ; l’ordre inverse peut supprimer sa coloration.";
+"Move an effect earlier or later to change the result. Silver B&W before Silver Toning creates a toned print; reversing them can remove the toning color." = "Déplacez un effet avant ou après un autre pour changer le résultat. Par exemple, Noir et blanc argentique avant Virage argentique produit un tirage viré ; l’ordre inverse peut supprimer sa coloration.";
 "Move center" = "Déplacer le centre";
 "Move component earlier" = "Composante plus tôt";
 "Move component later" = "Composante plus tard";
@@ -321,7 +321,7 @@
 "Move to" = "Déplacer vers";
 "Moves the chosen color toward neighboring colors. A blue sky, for example, can shift toward aqua or purple." = "Déplace la couleur choisie vers ses voisines. Par exemple, le bleu d’un ciel peut devenir légèrement plus turquoise ou violet.";
 "Moves white balance toward a cooler or warmer appearance. Use a known gray reference only if it should actually be neutral in the scene." = "Déplace la balance des blancs entre une impression plus froide et plus chaude. Servez-vous d’un gris connu seulement s’il doit réellement être neutre dans la scène.";
-"My presets" = "Mes presets";
+"My presets" = "Mes préréglages";
 "Name" = "Nom";
 "Name, opacity, and order" = "Nom, opacité et ordre";
 "Native-resolution region…" = "Région à résolution native…";
@@ -330,7 +330,7 @@
 "Near-black and near-white areas in the SDR preview" = "Zones proches du noir et du blanc sur l’aperçu SDR";
 "New" = "Nouveau";
 "New folder" = "Nouveau dossier";
-"New preset" = "Nouveau preset";
+"New preset" = "Nouveau préréglage";
 "New structure" = "Nouvelle structure";
 "New tag" = "Nouvelle étiquette";
 "Newest first" = "Plus récentes";
@@ -339,7 +339,7 @@
 "No folder" = "Sans dossier";
 "No folders" = "Aucun dossier";
 "No photos" = "Aucune photo";
-"No presets" = "Aucun preset";
+"No presets" = "Aucun préréglage";
 "No tags" = "Aucune étiquette";
 "Noise reduction" = "Réduction du bruit";
 "None" = "Aucun";
@@ -349,7 +349,7 @@
 "Off / Original pipeline" = "Désactivé / pipeline original";
 "Oldest first" = "Plus anciennes";
 "On" = "Activé";
-"Only groups stored in the preset are replaced. Other photo settings remain as they are; application is one undoable action." = "Seuls les groupes enregistrés dans le preset sont remplacés. Les autres réglages de la photo restent tels quels ; l’application peut être annulée en une opération.";
+"Only groups stored in the preset are replaced. Other photo settings remain as they are; application is one undoable action." = "Seuls les groupes enregistrés dans le préréglage sont remplacés. Les autres réglages de la photo restent tels quels ; l’application peut être annulée en une opération.";
 "Opacity" = "Opacité";
 "Opacity and mask" = "Opacité et masque";
 "Opacity controls the effect's strength. Assign an existing mask to limit the effect to part of the photo." = "L’opacité dose l’effet. Vous pouvez lui affecter un masque existant pour limiter son action à une zone de la photo.";
@@ -375,7 +375,7 @@
 "Pan the zoomed image without painting." = "Déplacez l’image zoomée sans peindre.";
 "Paper (cool / warm)" = "Papier (froid / chaud)";
 "Person" = "Personne";
-"Personal presets" = "Presets personnels";
+"Personal presets" = "Préréglages personnels";
 "Perspective and crop" = "Perspective et cadrage";
 "Perspective corner" = "Coin de perspective";
 "Phase 1 · Bilateral" = "Phase 1 · Bilatéral";
@@ -389,7 +389,7 @@
 "Phase 5 · Shadow Budget C" = "Phase 5 · Budget ombres C";
 "Photo" = "Photographie";
 "Photo gestures" = "Gestes de la photo";
-"Photographic effects and looks in a stack" = "Pile d’effets photographiques et looks";
+"Photographic effects and looks in a stack" = "Pile d’effets photographiques et styles";
 "Photos and edits will remain in the library." = "Les photos et leurs retouches resteront dans la bibliothèque.";
 "Photos will remain in the library and simply be removed from this folder." = "Les photos resteront dans la bibliothèque et seront simplement retirées de ce dossier.";
 "Pinch to zoom and double-tap to reset zoom, even while using the brush. Mask strokes update the mask visualization without rerendering the full development after every gesture." = "Pincez pour zoomer et double-touchez pour rétablir le zoom, même avec le pinceau. Dans Masques, le tracé actualise la visualisation du masque sans relancer le développement complet à chaque geste.";
@@ -400,8 +400,8 @@
 "Precise tonal and channel control" = "Contrôle précis des tons et des canaux";
 "Preserve blacks" = "Préserver noirs";
 "Preserve highlights" = "Préserver lumières";
-"Preset name" = "Nom du preset";
-"Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one." = "Presets enregistre des groupes de réglages personnels et les applique à d’autres images. Vous choisissez les groupes inclus lors de la création.";
+"Preset name" = "Nom du préréglage";
+"Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one." = "Préréglages enregistre des groupes de réglages personnels et les applique à d’autres images. Vous choisissez les groupes inclus lors de la création.";
 "Previous hue" = "Teinte précédente";
 "Previous point" = "Point précédent";
 "Primarily affects bright regions. Lower it to retain detail in clouds, fabric, or reflections that still contain usable information." = "Agit surtout sur les parties lumineuses. Réduisez-les pour mieux préserver une robe, des nuages ou un reflet qui contiennent encore du détail.";
@@ -419,6 +419,8 @@
 "Quick actions" = "Actions rapides";
 "RAW correction off" = "Correction RAW désactivée";
 "RAW correction on" = "Correction RAW active";
+"Camera RAW files" = "Fichiers RAW d’appareil photo";
+"Lumora opens original RAW files from non-Apple cameras when the format and camera are supported by the iOS RAW decoder, including compatible files from Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax, and DNG cameras. Import from Files preserves the original file. Photos also requests the original RAW resource before a developed image. Support varies by camera model and iOS version." = "Lumora ouvre les fichiers RAW originaux des appareils autres qu’Apple lorsque le format et l’appareil sont pris en charge par le décodeur RAW d’iOS, notamment les fichiers compatibles Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax et DNG. L’import depuis Fichiers conserve le fichier original. Photos demande également la ressource RAW originale avant une image développée. La compatibilité varie selon le modèle d’appareil et la version d’iOS.";
 "RGB" = "RVB";
 "RGB and channels" = "RVB et canaux";
 "RGB controls the common tonal curve. Red, Green, and Blue adjust channels separately; differences between them can introduce a color cast." = "RVB règle la courbe tonale commune. Rouge, Vert et Bleu modifient séparément les canaux : des écarts entre eux peuvent introduire une dominante colorée.";
@@ -444,7 +446,7 @@
 "Rename a mask so you can find it, control its contribution with opacity, and move it in the stack when its interaction with other layers should change." = "Renommez un masque pour le retrouver, dosez sa contribution avec l’opacité et déplacez-le dans la pile si son interaction avec les autres calques doit changer.";
 "Rename layer" = "Renommer le calque";
 "Rename or delete" = "Renommer ou supprimer";
-"Rename preset" = "Renommer le preset";
+"Rename preset" = "Renommer le préréglage";
 "Render metrics" = "Mesures de rendu";
 "Rendering at high resolution…" = "Développement haute résolution…";
 "Reset" = "Réinitialiser";
@@ -452,8 +454,8 @@
 "Reset geometry" = "Réinitialiser la géométrie";
 "Reset settings" = "Réinitialiser les réglages";
 "Reset zoom" = "Réinitialiser le zoom";
-"Restores the current family's three values without changing the other seven." = "Le reset de la plage courante rend ses trois paramètres neutres, sans toucher aux sept autres.";
-"Reuse your development choices on other photos. Creative looks and Grading presets are built into their respective tools." = "Ils servent à réutiliser vos choix de développement. Les looks Creative et les presets de Grading sont des sélections intégrées à leurs outils respectifs.";
+"Restores the current family's three values without changing the other seven." = "La réinitialisation de la plage courante rend ses trois paramètres neutres, sans toucher aux sept autres.";
+"Reuse your development choices on other photos. Creative looks and Grading presets are built into their respective tools." = "Ils servent à réutiliser vos choix de développement. Les styles Créatif et les préréglages de Coloration sont des sélections intégrées à leurs outils respectifs.";
 "Rotate and flip" = "Rotation et miroirs";
 "Rotate left" = "Rotation gauche";
 "Rotate right" = "Rotation droite";
@@ -479,14 +481,14 @@
 "Shadow strength" = "Force des ombres";
 "Shadows" = "Ombres";
 "Shape (tall / wide)" = "Forme (haut / large)";
-"Share a preset in Lumora's JSON format. Before applying one you received, check which groups it includes, especially Geometry and Masks." = "Partagez un preset au format JSON Lumora. Avant d’appliquer un preset reçu, vérifiez quels groupes il contient, notamment Géométrie et Masques.";
+"Share a preset in Lumora's JSON format. Before applying one you received, check which groups it includes, especially Geometry and Masks." = "Partagez un préréglage au format JSON Lumora. Avant d’appliquer un préréglage reçu, vérifiez quels groupes il contient, notamment Géométrie et Masques.";
 "Share or save…" = "Partager ou enregistrer…";
 "Sharpening" = "Netteté";
 "Sharpening and noise reduction" = "Netteté et réduction du bruit";
 "Shifts overall brightness in exposure values. Raising it also brightens already light regions; watch the histogram and highlights." = "Déplace la luminosité globale en valeurs d’exposition. Une augmentation éclaire aussi les zones déjà lumineuses ; surveillez l’histogramme et les hautes lumières.";
 "Show layer" = "Afficher le calque";
 "Show the red fill or just the mask outline" = "Afficher le remplissage rouge ou seulement le contour du masque";
-"Silver B&W converts colors to gray densities. Silver Toning colors the print according to density. Add Film Grain separately if desired." = "Silver B&W convertit les couleurs en densités de gris et Silver Toning colore le tirage selon sa densité. Vous pouvez ajouter Film Grain ensuite si souhaité.";
+"Silver B&W converts colors to gray densities. Silver Toning colors the print according to density. Add Film Grain separately if desired." = "Noir et blanc argentique convertit les couleurs en densités de gris et Virage argentique colore le tirage selon sa densité. Vous pouvez ajouter Grain argentique ensuite si souhaité.";
 "Silver tone" = "Virage de l’argent";
 "Six controls" = "Les six réglages";
 "Size" = "Taille";
@@ -494,15 +496,15 @@
 "Sky" = "Ciel";
 "Smart masks" = "Masques intelligents";
 "Smoothing" = "Lissage";
-"Soft High Key" = "High Key doux";
-"Soft Low Key" = "Low Key doux";
+"Soft High Key" = "Tons clairs doux";
+"Soft Low Key" = "Tons sombres doux";
 "Soft contrast" = "Contraste doux";
 "Softness" = "Douceur";
 "Sort" = "Tri";
 "Sort by" = "Trier";
 "Special" = "Spécial";
 "Split" = "Partage";
-"Stack Pro Contrast, Bleach Bypass and other Creative effects. Each effect can target an existing mask." = "Empilez Pro Contrast, Bleach Bypass et les autres effets Creative. Chaque effet peut cibler un masque existant.";
+"Stack Pro Contrast, Bleach Bypass and other Creative effects. Each effect can target an existing mask." = "Empilez Contraste professionnel, Rétention d’argent et les autres effets créatifs. Chaque effet peut cibler un masque existant.";
 "Straighten" = "Redresser";
 "Straighten convergence in either direction. Watch the edges and subject shape after a strong correction." = "Redressent les convergences dans ces deux directions. Surveillez les bords et la forme du sujet après une forte correction.";
 "Strength" = "Intensité";
@@ -547,9 +549,9 @@
 "This image cannot be decoded. Check its format and local availability." = "Cette image ne peut pas être décodée. Vérifiez son format et sa disponibilité locale.";
 "This image has already been processed; iOS provides no adjustable manufacturer profile." = "Cette image est déjà développée ; aucun profil constructeur réglable n’est exposé par iOS.";
 "This mask is handled before instance segmentation." = "Ce masque est traité avant la segmentation d’instances.";
-"This preset exceeds the maximum allowed size." = "Ce preset dépasse la taille maximale autorisée.";
-"This preset is empty or unreadable." = "Ce preset est vide ou illisible.";
-"This preset version is not supported." = "Cette version de preset n’est pas prise en charge.";
+"This preset exceeds the maximum allowed size." = "Ce préréglage dépasse la taille maximale autorisée.";
+"This preset is empty or unreadable." = "Ce préréglage est vide ou illisible.";
+"This preset version is not supported." = "Cette version de préréglage n’est pas prise en charge.";
 "This tag no longer exists." = "Cette étiquette n’existe plus.";
 "Tint" = "Teinte";
 "Tonal range" = "Plage tonale";
@@ -559,7 +561,7 @@
 "Transform component" = "Transformer la composante";
 "Unable to encode the exported image. Try another format or smaller dimensions." = "Impossible d’encoder l’image exportée. Essayez un autre format ou des dimensions réduites.";
 "Unable to finish" = "Impossible de terminer";
-"Unable to manage preset" = "Impossible de gérer le preset";
+"Unable to manage preset" = "Impossible de gérer le préréglage";
 "Unavailable on a masked layer" = "Indisponible sur un calque masqué";
 "Undo" = "Annuler";
 "Undo and redo" = "Undo/Redo";
@@ -600,7 +602,7 @@
 "Border anomaly zones" = "Zones anormales aux bords";
 "Copy Scene Analysis JSON" = "Copier le JSON de l’analyse de scène";
 "Creative" = "Créatif";
-"Creative FX Lab" = "Laboratoire Creative FX";
+"Creative FX Lab" = "Laboratoire Créatif FX";
 "Debug" = "Débogage";
 "Details" = "Détails";
 "Dimensions" = "Dimensions";
@@ -776,7 +778,7 @@
 
 "Delete corrections" = "Supprimer des corrections";
 
-"Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them." = "Supprimer retire la correction sélectionnée. Tout supprimer demande confirmation si elles sont plusieurs. Réinitialiser Beauté efface les corrections ; les presets Beauté les conservent.";
+"Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them." = "Supprimer retire la correction sélectionnée. Tout supprimer demande confirmation si elles sont plusieurs. Réinitialiser Beauté efface les corrections ; les préréglages Beauté les conservent.";
 
 "Bring source into view" = "Ramener la source dans le cadre";
 
@@ -814,7 +816,7 @@
 "The XMP file is invalid or contains invalid settings." = "Le fichier XMP est invalide ou contient des réglages invalides.";
 "No compatible Camera Raw settings found. Proprietary Nik recipes cannot be imported." = "Aucun réglage Camera Raw compatible trouvé. Les recettes propriétaires Nik ne peuvent pas être importées.";
 "The XMP file exceeds the 2 MB limit." = "Le fichier XMP dépasse la limite de 2 Mo.";
-"The Creative stack is full (32 effects). Remove an effect before importing." = "La pile Creative est pleine (32 effets). Supprimez un effet avant d’importer.";
+"The Creative stack is full (32 effects). Remove an effect before importing." = "La pile Créatif est pleine (32 effets). Supprimez un effet avant d’importer.";
 
 "XMP import details" = "Détails de l’import XMP";
 
@@ -822,45 +824,354 @@
 
 "Global" = "Global";
 
-"Import Lumora or XMP presets" = "Importer des presets Lumora ou XMP";
+"Import Lumora or XMP presets" = "Importer des préréglages Lumora ou XMP";
 
-/* Depth Lens and detailed help */
+"Each creative filter" = "Chaque filtre créatif";
+
+"Creates a bright, airy image by lifting tones. Dynamic controls tonal shaping; Glow adds a soft luminous veil. Use it for luminous portraits or pale interiors. Preserve blacks keeps an anchor in dark tones; check white fabric and skin so they retain detail." = "Crée une image claire et aérienne en éclaircissant les tons. Dynamique module leur répartition ; Diffusion ajoute une lueur douce. Utile pour les portraits lumineux et les intérieurs clairs. Préserver les noirs maintient de la profondeur ; vérifiez les tissus blancs et la peau pour conserver leurs détails.";
+
+"Builds a darker, more dramatic mood while retaining luminous accents. Adjust Amount and Dynamic first, then Contrast. Shadow and highlight protections moderate the extremes. Useful for stage scenes or side-lit portraits; check that dark hair and clothing stay readable." = "Crée une ambiance sombre et dramatique tout en conservant les accents lumineux. Réglez d’abord Quantité et Dynamique, puis Contraste. Les protections des ombres et des hautes lumières modèrent les extrêmes. Utile pour les scènes de spectacle et les portraits éclairés de côté ; gardez les cheveux et vêtements sombres lisibles.";
+
+"Combines color-cast correction, overall contrast correction, and dynamic contrast. Use it to give a flat image more separation before a stylized effect. Increase these controls independently: a deliberate sunset cast should not necessarily be neutralized. Check skin and bright edges." = "Associe la correction de dominante, le contraste général et le contraste dynamique. Donne du relief à une image plate avant un effet plus stylisé. Dosez ces réglages séparément : une dominante de coucher de soleil mérite souvent d’être conservée. Surveillez les carnations et les contours lumineux.";
+
+"Changes local contrast separately in highlights, midtones, and shadows. Positive values bring out structure; negative values soften it. Global sets the overall strength and Radius sets the scale of detail. Useful for clouds, stone, and landscapes; protect extreme tones and avoid harsh skin or edge halos." = "Modifie le contraste local séparément dans les hautes lumières, les tons moyens et les ombres. Les valeurs positives révèlent la structure ; les valeurs négatives l’adoucissent. Global dose l’ensemble et Rayon règle l’échelle du détail. Utile pour les nuages, la pierre et les paysages ; protégez les tons extrêmes et évitez une peau dure ou des halos sur les contours.";
+
+"Emphasizes or softens fine, medium, and large structures independently. Positive Amount enhances texture; negative Amount softens it. Fine detail affects delicate textures, while larger scales emphasize broader shapes. Useful for architecture and foliage. Inspect at 100% because noise and pores can also become more visible." = "Renforce ou adoucit séparément les structures fines, moyennes et larges. Une Quantité positive accentue les textures ; une valeur négative les adoucit. Les détails fins concernent les petites textures, les grandes échelles les formes plus larges. Utile en architecture et sur les feuillages. Vérifiez à 100 %, car le bruit et les pores peuvent aussi devenir plus visibles.";
+
+"Adds a soft glow to brighter areas for a dreamy rendering. Glow sets its strength, Softness its diffusion, and Warmth its color tendency. The highlight threshold selects the luminous areas that feed the glow; protections restrain its effect on extreme tones. Use gently on portraits and inspect eyes and skin texture." = "Diffuse les zones lumineuses pour un rendu doux et onirique. Diffusion dose l’effet, Douceur sa diffusion et Chaleur sa tendance colorée. Le seuil des hautes lumières sélectionne les zones qui alimentent la lueur ; les protections limitent son action sur les tons extrêmes. Dosez avec retenue sur les portraits et vérifiez les yeux et la texture de peau.";
+
+"Adds a photographic grain texture. Amount controls its presence; Size, Hardness, Irregularity, Clumping, and Softness shape it. Separate tonal controls distribute grain across shadows, midtones, and highlights; Color grain adds chromatic variation. Inspect at 100%. Grain in Effects adds to this grain if both are enabled." = "Ajoute une texture de grain photographique. Quantité règle sa présence ; Taille, Dureté, Irrégularité, Agrégation et Douceur façonnent son aspect. Les réglages par tons répartissent le grain entre ombres, tons moyens et hautes lumières ; Grain coloré ajoute des variations de couleur. Vérifiez à 100 %. Le grain du panneau Effets s’ajoute à celui-ci si les deux sont actifs.";
+
+"Creates a dense, less colorful rendering inspired by a silver-retaining film process. Bleach strengthens the silver contribution, Contrast separates tones, and Black density adds weight to shadows. Saturation adjusts the remaining color. Useful for gritty scenes; use highlight roll-off and shadow protection to avoid harsh whites or blocked dark areas." = "Produit un rendu dense et moins coloré, inspiré d’un procédé argentique conservant l’argent au développement. Rétention d’argent renforce cette contribution, Contraste sépare les tons et Densité des noirs donne du poids aux ombres. Saturation dose la couleur restante. Utile pour une ambiance brute ; la compression des lumières et la protection des ombres limitent les blancs durs et les noirs bouchés.";
+
+"Creates deliberately shifted colors inspired by cross development. Choose a style, then adjust Style strength, Contrast, and Saturation. Shadow and highlight colors can be controlled separately; Lift blacks produces a faded base. Useful for stylized urban or fashion images. Check skin and neutral objects for unwanted color casts." = "Crée des couleurs volontairement décalées, inspirées du développement croisé. Choisissez un style, puis dosez son intensité, le contraste et la saturation. Les couleurs des ombres et des hautes lumières se règlent séparément ; Relever les noirs donne une base délavée. Utile pour les images urbaines ou de mode stylisées. Vérifiez les dominantes sur la peau et les objets neutres.";
+
+"Changes tonal and color response without adding grain. Choose a film style, then dose Film strength and Color response. Exposure, Contrast, Saturation, Highlight roll-off, and Shadow density refine it. Warm Portrait favors warmth; Vivid Chrome is more vivid; Muted Cinema is restrained; Faded Negative lifts the faded mood; Dense Slide is denser. Add Grain separately if wanted." = "Modifie la réponse tonale et colorée sans ajouter de grain. Choisissez un style de film, puis dosez Force du film et Réponse couleur. Exposition, Contraste, Saturation, Compression des lumières et Densité des ombres affinent le rendu. Portrait chaud privilégie la chaleur ; Diapositive vive les couleurs intenses ; Cinéma atténué la retenue ; Négatif délavé un aspect passé ; Diapositive dense la densité. Ajoutez Grain séparément si souhaité.";
+
+"Converts original colors into gray tones. At Amount 100 the result is monochrome; intermediate values retain some color. Film response changes tonal interpretation. The colored photographic filter changes how source colors become gray, without tinting the result. Brightness, Contrast, and Structure refine the print. Add Silver Toning afterward for a colored monochrome." = "Convertit les couleurs d’origine en gris. À Quantité 100, le résultat est monochrome ; les valeurs intermédiaires gardent une partie de la couleur. Réponse du film change l’interprétation tonale. Le filtre photographique coloré modifie la conversion des couleurs en gris sans teinter le résultat. Luminosité, Contraste et Structure affinent le tirage. Ajoutez ensuite Virage argentique pour un monochrome teinté.";
+
+"Colors the image according to tonal density; it does not itself convert a color photo to black and white. Place it after Silver B&W for a toned print. Choose selenium, sepia, copper, or another toner, then adjust Strength and Balance. Silver tone affects the image; Paper tone warms or cools light areas. Split Silver allows separate shadow and highlight hues." = "Colore l’image selon la densité des tons ; ne convertit pas à lui seul une photo couleur en noir et blanc. Placez-le après Noir et blanc argentique pour un tirage teinté. Choisissez sélénium, sépia, cuivre ou un autre virage, puis réglez Force et Balance. Virage de l’argent agit sur l’image ; Papier réchauffe ou refroidit les zones claires. Le virage séparé permet des teintes distinctes dans les ombres et les hautes lumières.";
+
+"Directs attention with independent center and outer exposure. Move the handle onto the subject; a brighter center or darker surround draws the eye. Size, Shape, Rotation, and Feather define the transition. It does not detect the subject automatically. Equal center and outer values change exposure uniformly; watch bright areas when raising either value." = "Dirige le regard grâce à des expositions indépendantes au centre et en périphérie. Déplacez la poignée sur le sujet : un centre plus clair ou un pourtour plus sombre attire l’œil. Taille, Forme, Rotation et Contour progressif définissent la transition. Le sujet n’est pas détecté automatiquement. Des valeurs identiques au centre et en périphérie changent uniformément l’exposition ; surveillez les zones claires quand vous les augmentez.";
+
+"Choose and refine a look" = "Choisir et affiner un style";
+
+"A built-in look fills the controls of one effect. Changing a value makes it Custom. Start with one effect, compare with the eye button, then add another only when needed. Opacity blends the entire step with its input; it is separate from the effect’s own Amount." = "Un style intégré remplit les réglages d’un effet. Modifier une valeur le rend Personnalisé. Commencez par un effet, comparez avec le bouton œil, puis ajoutez-en un autre si nécessaire. Opacité mélange toute l’étape avec son entrée ; elle est distincte de la Quantité propre au filtre.";
+
+"Use the 100% inspector to judge grain, halos, skin, and fine detail at source resolution. Then return to the full image to judge the overall mood. A strong detail setting can look attractive in a small preview but excessive at full size." = "Utilisez l’inspecteur 100 % pour juger le grain, les halos, la peau et les détails à la résolution source. Revenez ensuite à l’image entière pour évaluer l’ambiance. Un détail accentué peut paraître séduisant en petit aperçu mais excessif en pleine résolution.";
+
+"Diffuses bright sources into a luminous halo. Intensity 0 leaves the image unchanged; increase it gradually for a stronger cinematic glow. This control always affects the whole photo, even with a mask selected. Check windows, lamps, skin, and reflections. The upper range protects bright destinations, but the middle range can still increase SDR clipping; compare with the original and inspect the histogram. Reset returns to 0." = "Diffuse les sources lumineuses en un halo. Intensité 0 laisse l’image inchangée ; augmentez progressivement pour une lueur cinématographique plus marquée. Ce réglage agit toujours sur toute la photo, même avec un masque sélectionné. Vérifiez fenêtres, lampes, peau et reflets. La plage haute protège les zones déjà claires, mais la plage intermédiaire peut encore accentuer l’écrêtage SDR ; comparez avec l’original et contrôlez l’histogramme. Réinitialiser revient à 0.";
+
+"Texture, Clarity, Dehaze, Vignette, and Grain follow the selected layer. Cinematic Glow always applies to the whole photo." = "Texture, Clarté, Correction du voile, Vignette et Grain suivent le calque sélectionné. Lueur cinématographique agit toujours sur toute la photo.";
+
+"The same settings apply to every reliably detected face. If no face is found, no automatic face adjustment is applied." = "Les mêmes réglages s’appliquent à chaque visage détecté de manière fiable. Si aucun visage n’est trouvé, aucune correction automatique du visage n’est appliquée.";
+
+"Saturation changes the intensity of lip color, brightness lightens or darkens it, and detail defines its texture. The inner mouth is excluded. Compare at 100% to keep a natural result." = "Saturation dose la couleur des lèvres, Luminosité les éclaircit ou les assombrit et Détail précise leur texture. L’intérieur de la bouche est exclu. Comparez à 100 % pour conserver un résultat naturel.";
+
+"Import Lumora JSON or XMP presets from the preset library. XMP settings are adapted to supported Lumora controls; the result may differ from the source application. Review adapted and unsupported settings before applying. Export uses Lumora JSON. Check included groups, especially Geometry and Masks." = "Importez des préréglages Lumora JSON ou XMP depuis la bibliothèque de préréglages. Les réglages XMP sont adaptés aux outils compatibles de Lumora ; le résultat peut différer de l’application d’origine. Consultez les réglages adaptés et non importés avant d’appliquer. L’export utilise le format JSON Lumora. Vérifiez les groupes inclus, surtout Géométrie et Masques.";
+
+"Portrait finishing" = "Finition du portrait";
+
+"Portrait finishing V2" = "Finition du portrait";
+
+"Attenuates excess broad skin highlights without removing pores." = "Atténue les brillances étendues et excessives de la peau tout en préservant les pores. Comparez le front, le nez et les joues à 100 % pour garder le relief naturel du visage.";
+
+"Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure." = "Éclaircit doucement les grandes zones d’ombre du visage ou atténue ses zones très lumineuses, sans modifier l’exposition générale. Dosez progressivement pour préserver le modelé du visage.";
+
+"Intensity" = "Intensité";
+
+"Cinematic Glow" = "Lueur cinématographique";
+
+"High Key" = "Tons clairs";
+
+"Low Key" = "Tons sombres";
+
+"Glamour Glow" = "Lueur douce";
+
+"Bleach Bypass" = "Rétention d’argent";
+
+"Bleach" = "Rétention d’argent";
+
+"Pro Contrast" = "Contraste professionnel";
+
+"Cross Processing" = "Développement croisé";
+
+"Film Emulation" = "Simulation de film";
+
+"Darken / Lighten Center" = "Éclaircir / assombrir le centre";
+
+"Silver Toning" = "Virage argentique";
+
+"Silver B&W" = "Noir et blanc argentique";
+
+"Tonal Contrast" = "Contraste tonal";
+
+"Detail Extractor" = "Révélation des détails";
+
+"Film Grain" = "Grain argentique";
+
+"Subtle Detail" = "Détail discret";
+
+"Fine Texture" = "Texture fine";
+
+"Natural Detail" = "Détail naturel";
+
+"Landscape Detail" = "Détail du paysage";
+
+"Extreme Detail" = "Détail extrême";
+
+"Natural Texture" = "Texture naturelle";
+
+"Landscape Definition" = "Définition du paysage";
+
+"Soft Structure" = "Structure douce";
+
+"Strong Structure" = "Structure marquée";
+
+"Fine 50" = "Fin 50";
+
+"Classic 100" = "Classique 100";
+
+"Classic 400" = "Classique 400";
+
+"Push 1600" = "Poussé 1600";
+
+"Rough 3200" = "Grossier 3200";
+
+"Classic Bypass" = "Rétention classique";
+
+"Punch" = "Éclat";
+
+"Warm Process" = "Développement chaud";
+
+"Vivid Chrome" = "Diapositive vive";
+
+"Classic Sepia" = "Sépia classique";
+
+"Portrait Focus" = "Accent sur le portrait";
+
+"Subtle Glow" = "Lueur discrète";
+
+"Portrait Glow" = "Lueur portrait";
+
+"Warm Glow" = "Lueur chaude";
+
+"Cool Glow" = "Lueur froide";
+
+"Dreamy" = "Onirique";
+
+"Strong Glow" = "Lueur intense";
+
+"Subtle Bypass" = "Rétention discrète";
+
+"Soft Silver" = "Argent doux";
+
+"Hard Silver" = "Argent dur";
+
+"Cinematic" = "Cinématographique";
+
+"Extreme Bypass" = "Rétention extrême";
+
+"Subtle Correction" = "Correction discrète";
+
+"Natural Contrast" = "Contraste naturel";
+
+"Flat Recovery" = "Relief retrouvé";
+
+"Color Neutralize" = "Dominante neutralisée";
+
+"Strong Correction" = "Correction forte";
+
+"Subtle Cross" = "Croisé discret";
+
+"Cool Process" = "Développement froid";
+
+"Cyan Shadows" = "Ombres cyan";
+
+"Green-Magenta" = "Vert-magenta";
+
+"Vintage Process" = "Développement rétro";
+
+"Strong Cross" = "Croisé intense";
+
+"Subtle Focus" = "Accent discret";
+
+"Dark Surround" = "Pourtour sombre";
+
+"Light Center" = "Centre lumineux";
+
+"Wide Focus" = "Accent large";
+
+"Narrow Focus" = "Accent resserré";
+
+"Off-Center Drama" = "Accent dramatique décentré";
+
+"Reverse Focus" = "Accent inversé";
+
+"Neutral Print" = "Tirage neutre";
+
+"Subtle Selenium" = "Sélénium discret";
+
+"Deep Selenium" = "Sélénium profond";
+
+"Soft Sepia" = "Sépia doux";
+
+"Copper Print" = "Tirage cuivré";
+
+"Cool Gold" = "Or froid";
+
+"Platinum Print" = "Tirage platine";
+
+"Warm Silver" = "Argent chaud";
+
+"Cool Silver" = "Argent froid";
+
+"Split Warm/Cool" = "Virage chaud/froid";
+
+"Neutral Silver" = "Argent neutre";
+
+"Soft Portrait" = "Portrait doux";
+
+"Fine Art" = "Tirage d’art";
+
+"Classic Film" = "Film classique";
+
+"High Structure" = "Structure intense";
+
+"Dark Drama" = "Ambiance sombre";
+
+"Hard Documentary" = "Documentaire contrasté";
+
+"Neutral Negative" = "Négatif neutre";
+
+"Warm Portrait" = "Portrait chaud";
+
+"Muted Cinema" = "Cinéma atténué";
+
+"Faded Negative" = "Négatif délavé";
+
+"Vintage Color" = "Couleur rétro";
+
+"Dense Slide" = "Diapositive dense";
+
+"Fine Grain Response" = "Réponse à grain fin";
+
+"Portrait Silver" = "Argent portrait";
+
+"Classic Panchromatic" = "Panchromatique classique";
+
+"High Contrast Film" = "Film très contrasté";
+
+"Soft Orthochromatic" = "Orthochromatique doux";
+
+"Documentary Silver" = "Argent documentaire";
+
+"Neutral" = "Neutre";
+
+"Selenium" = "Sélénium";
+
+"Sepia" = "Sépia";
+
+"Copper" = "Cuivre";
+
+"Gold" = "Or";
+
+"Platinum" = "Platine";
+
+"Split Silver" = "Virage séparé";
+
+"Cool Portrait" = "Portrait froid";
+
+"Teal & Warm" = "Bleu-vert et chaleur";
+
+"Cool Cinema" = "Cinéma froid";
+
+"Warm Cinema" = "Cinéma chaud";
+
+"Golden Hour" = "Heure dorée";
+
+"Blue Hour" = "Heure bleue";
+
+"Moody" = "Ambiance feutrée";
+
+"Autumn" = "Automne";
+
+"Bleach Grade" = "Coloration désaturée";
+
+"Activation" = "Activation";
+
+"Auto" = "Auto";
+
+"Axes" = "Axes";
+
+"Gradients" = "Gradients";
+
+"Grain" = "Grain";
+
+"Luminance" = "Luminance";
+
+"Saturation" = "Saturation";
+
+"Vibrance" = "Vibrance";
+
+"Vignette" = "Vignette";
+
+"Simple" = "Simple";
+
+"Monochrome" = "Monochrome";
+
+"Photos" = "Photos";
+
+"Architecture" = "Architecture";
+
+"Rotation (°)" = "Rotation (°)";
+
+"Structure" = "Structure";
+
+"Balance" = "Balance";
+
+"Pastel" = "Pastel";
+
+/* Depth Lens */
+"Depth Lens" = "Depth Lens";
+"Enable Depth Lens" = "Activer Depth Lens";
+"Aperture" = "Ouverture";
+"Focal length" = "Focale";
+"Center focus" = "Centrer la mise au point";
+"Focus point" = "Point de mise au point";
+"Tap the photo to focus. A wider aperture blurs areas away from the focus plane." = "Touchez la photo pour faire le point. Une grande ouverture floute les zones éloignées du plan de netteté.";
+"Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect." = "La profondeur est estimée sur l’appareil une fois par photo ou changement de géométrie. Les contours des cheveux et des objets transparents peuvent être imparfaits. Augmenter le nombre d’ouverture atténue l’effet.";
+"Depth Lens model is missing." = "Le modèle Depth Lens est introuvable.";
+
+/* Depth Lens detailed help */
+"Depth of field and focus by touch" = "Profondeur de champ et mise au point par toucher";
+"Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default." = "Depth Lens simule la profondeur de champ à partir d’une carte de profondeur estimée. Il peut flouter les zones situées devant et derrière le plan de mise au point choisi. La photo originale est conservée ; l’effet est désactivé par défaut.";
+"Start with the focus" = "Commencer par la mise au point";
+"Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view." = "Activez Depth Lens, puis touchez le sujet dans la photo lorsque cet onglet est ouvert. Le repère turquoise indique la position choisie. Pour un portrait, commencez par l’œil le plus proche. Ce toucher règle la mise au point au lieu d’ouvrir la vue plein écran.";
+"The focus plane" = "Le plan de netteté";
+"The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp." = "L’effet utilise la distance estimée au point choisi, sans détourer le sujet. D’autres objets à une profondeur estimée proche peuvent rester nets. Un visage ou un corps réparti sur plusieurs plans peut ne pas être entièrement net.";
+"Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically." = "Centrer la mise au point ramène le repère au milieu de la photo. Cette commande ne détecte ni ne sélectionne automatiquement un visage.";
+"Shape the blur" = "Régler le flou";
+"A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position." = "Un petit nombre d’ouverture, comme f/1,4, produit un flou plus fort et une zone de netteté plus étroite. Un nombre plus grand, comme f/5,6 ou f/8, réduit le flou. Si un œil ou les cheveux deviennent trop flous, augmentez ce nombre et vérifiez le point choisi.";
 "50, 85, and 135 mm change the simulated optical blur. At the same aperture and focus, longer focal lengths generally strengthen the blur. They do not zoom, crop, or change the perspective of the photo." = "Les focales 50, 85 et 135 mm modifient le flou optique simulé. À ouverture et mise au point identiques, une focale plus longue renforce généralement le flou. Elle ne zoome pas, ne recadre pas et ne change pas la perspective de la photo.";
 "A restrained starting point" = "Un point de départ modéré";
-"A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position." = "Un petit nombre d’ouverture, comme f/1,4, produit un flou plus fort et une zone de netteté plus étroite. Un nombre plus grand, comme f/5,6 ou f/8, réduit le flou. Si un œil ou les cheveux deviennent trop flous, augmentez ce nombre et vérifiez le point choisi.";
-"Aperture" = "Ouverture";
-"Center focus" = "Centrer la mise au point";
-"Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically." = "Centrer la mise au point ramène le repère au milieu de la photo. Cette commande ne détecte ni ne sélectionne automatiquement un visage.";
-"Compare" = "Comparer";
+"Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Essayez 50 ou 85 mm à f/4, placez soigneusement le point, puis diminuez progressivement le nombre d’ouverture. Examinez l’ensemble de l’image et les contours du sujet. Un flou fort rend les erreurs d’estimation de profondeur plus visibles.";
 "Compare and correct" = "Comparer et corriger";
-"Depth Lens" = "Depth Lens";
-"Depth Lens focus" = "Mise au point Depth Lens";
-"Depth Lens model is missing." = "Le modèle Depth Lens est introuvable.";
-"Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default." = "Depth Lens simule la profondeur de champ à partir d’une carte de profondeur estimée. Il peut flouter les zones situées devant et derrière le plan de mise au point choisi. La photo originale est conservée ; l’effet est désactivé par défaut.";
-"Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward." = "La profondeur est calculée sur l’iPhone et réutilisée pendant les réglages d’ouverture, de focale ou de mise au point. La première activation peut prendre plus de temps. Un changement de recadrage, de géométrie ou de correction optique recalcule la profondeur ; vérifiez ensuite la mise au point.";
-"Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect." = "La profondeur est estimée sur l’appareil une fois par photo ou changement de géométrie. Les contours des cheveux et des objets transparents peuvent être imparfaits. Augmenter le nombre d’ouverture atténue l’effet.";
-"Depth of field and focus by touch" = "Profondeur de champ et mise au point par toucher";
 "Disable Depth Lens to compare with the same edits without this blur; enabling it again keeps its settings. Holding the photo compares with the original, before all edits. Pinch to inspect fine details and double-tap to restore the view." = "Désactivez Depth Lens pour comparer les mêmes retouches sans ce flou ; sa réactivation conserve les réglages. Un appui prolongé sur la photo compare avec l’original, avant toutes les retouches. Pincez pour examiner les détails et touchez deux fois pour rétablir la vue.";
-"Enable Depth Lens" = "Activer Depth Lens";
-"Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view." = "Activez Depth Lens, puis touchez le sujet dans la photo lorsque cet onglet est ouvert. Le repère turquoise indique la position choisie. Pour un portrait, commencez par l’œil le plus proche. Ce toucher règle la mise au point au lieu d’ouvrir la vue plein écran.";
-"Fine edges" = "Contours fins";
-"Focal length" = "Focale";
-"Focus point" = "Point de mise au point";
-"Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail." = "Les cheveux, le verre, les reflets, les branches fines et les objets qui se chevauchent peuvent produire des contours de profondeur imparfaits. Examinez les deux yeux et les bords du sujet. Réduisez le flou ou désactivez l’effet si l’estimation convient mal ; il ne reconstitue pas les détails cachés de l’arrière-plan.";
+"Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo." = "Réinitialiser désactive l’effet et rétablit f/1,4, 85 mm et la mise au point centrée. Annuler et Rétablir incluent les modifications de Depth Lens ; les réglages sont enregistrés avec la photo.";
 "Limits and rendering" = "Limites et rendu";
+"Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail." = "Les cheveux, le verre, les reflets, les branches fines et les objets qui se chevauchent peuvent produire des contours de profondeur imparfaits. Examinez les deux yeux et les bords du sujet. Réduisez le flou ou désactivez l’effet si l’estimation convient mal ; il ne reconstitue pas les détails cachés de l’arrière-plan.";
+"Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward." = "La profondeur est calculée sur l’iPhone et réutilisée pendant les réglages d’ouverture, de focale ou de mise au point. La première activation peut prendre plus de temps. Un changement de recadrage, de géométrie ou de correction optique recalcule la profondeur ; vérifiez ensuite la mise au point.";
+"The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "L’aperçu utilise une résolution réduite pendant le déplacement du curseur, puis un rendu de meilleure qualité au relâchement. L’export applique le même effet à la résolution de sortie. Le repère de mise au point n’est jamais exporté. Depth Lens agit sur toute la photo et ne peut pas être associé à un masque local.";
+"When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "Lorsque Depth Lens est activé et que son onglet est ouvert, un toucher bref place le point de mise au point. Passez à un autre onglet pour retrouver le toucher habituel ouvrant la vue plein écran.";
+"Fine edges" = "Contours fins";
 "On-device processing" = "Calcul sur l’appareil";
 "Preview and export" = "Aperçu et export";
-"Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo." = "Réinitialiser désactive l’effet et rétablit f/1,4, 85 mm et la mise au point centrée. Annuler et Rétablir incluent les modifications de Depth Lens ; les réglages sont enregistrés avec la photo.";
-"Shape the blur" = "Régler le flou";
-"Start with the focus" = "Commencer par la mise au point";
-"Tap the photo to focus. A wider aperture blurs areas away from the focus plane." = "Touchez la photo pour faire le point. Une grande ouverture floute les zones éloignées du plan de netteté.";
-"The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp." = "L’effet utilise la distance estimée au point choisi, sans détourer le sujet. D’autres objets à une profondeur estimée proche peuvent rester nets. Un visage ou un corps réparti sur plusieurs plans peut ne pas être entièrement net.";
-"The focus plane" = "Le plan de netteté";
-"The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "L’aperçu utilise une résolution réduite pendant le déplacement du curseur, puis un rendu de meilleure qualité au relâchement. L’export applique le même effet à la résolution de sortie. Le repère de mise au point n’est jamais exporté. Depth Lens agit sur toute la photo et ne peut pas être associé à un masque local.";
-"Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Essayez 50 ou 85 mm à f/4, placez soigneusement le point, puis diminuez progressivement le nombre d’ouverture. Examinez l’ensemble de l’image et les contours du sujet. Un flou fort rend les erreurs d’estimation de profondeur plus visibles.";
-"When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "Lorsque Depth Lens est activé et que son onglet est ouvert, un toucher bref place le point de mise au point. Passez à un autre onglet pour retrouver le toucher habituel ouvrant la vue plein écran.";
+"Depth Lens focus" = "Mise au point Depth Lens";
 
-/* Editor settings */
+"Compare" = "Comparer";
+
+/* Interface preferences */
 "Show histogram" = "Afficher l’histogramme";
 "Display" = "Affichage";
 "Always visible" = "Toujours visible";
@@ -868,13 +1179,17 @@
 "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Déplacez les poignées pour réordonner les onglets. Masquer un onglet conserve ses retouches sur la photo. Réglages reste visible pour vous permettre de réafficher tous les onglets.";
 "Restore interface defaults" = "Rétablir l’interface par défaut";
 "These preferences apply to the app, not to individual photos." = "Ces préférences s’appliquent à l’application, pas à chaque photo.";
+
+/* Settings help */
 "Customize the histogram and tab bar" = "Personnaliser l’histogramme et la barre d’onglets";
 "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export." = "Réglages personnalise l’interface de l’éditeur. Ces préférences sont conservées sur cet appareil et s’appliquent à toutes les photos ; elles ne changent ni la photo ni son export.";
 "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves." = "Désactivez Afficher l’histogramme pour retirer l’histogramme flottant de la photo. Réactivez cette option pour le retrouver. Cela ne change ni l’exposition ni l’histogramme affiché dans Courbes.";
 "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden." = "Utilisez chaque bouton en forme d’œil pour afficher ou masquer un onglet. Masquer un onglet ne réinitialise ni ne désactive ses réglages : ils continuent d’agir sur la photo et les exports. Réglages ne peut pas être masqué.";
 "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again." = "Déplacez la poignée à droite d’une ligne pour changer l’ordre des onglets. Les onglets masqués conservent aussi leur place dans cette liste : vous pouvez les organiser avant de les réafficher.";
 "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo." = "Rétablir l’interface par défaut réaffiche l’histogramme et tous les onglets dans leur ordre initial. Cela ne réinitialise aucune retouche. Réglages est aussi accessible dans le menu d’options de l’éditeur et avant l’importation d’une photo.";
+
 "Visible" = "Visible";
+
 "Hidden" = "Masqué";
 
 /* Experimental depth lighting */
@@ -910,5 +1225,3 @@
 "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original." = "La profondeur est calculée sur l’appareil et partagée avec Depth Lens. La première activation peut être plus lente ; modifier la géométrie ou les corrections optiques demande une nouvelle estimation. Le même éclairage est appliqué à l’aperçu et à l’export, avec un aperçu réduit pendant les manipulations. Désactivez l’éclairage pour comparer en conservant les autres retouches ; maintenez le doigt sur la photo pour voir l’original.";
 "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo." = "L’éclairage agit sur toute la photo et ne peut pas être affecté à un masque local. Ses réglages sont enregistrés avec la photo et pris en compte par Annuler et Rétablir. Masquer ou réordonner l’onglet Éclairage dans Réglages ne désactive pas un effet déjà activé sur une photo.";
 "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap." = "Lorsque l’Éclairage expérimental est activé et son onglet ouvert, un toucher bref place le repère choisi : lumière ou sujet. Déplacez directement un repère avec le doigt. Changez d’onglet pour retrouver le toucher qui ouvre la photo en plein écran.";
-
-"Intensity" = "Intensité";

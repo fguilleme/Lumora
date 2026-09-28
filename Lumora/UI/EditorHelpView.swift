@@ -114,7 +114,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .commonGestures: String(localized: "Common gestures")
-        case .creative: "Creative"
+        case .creative: String(localized: "Creative")
         case .light: String(localized: "Light")
         case .color: String(localized: "Color")
         case .curves: String(localized: "Curves")
@@ -127,7 +127,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .optics: String(localized: "Optics")
         case .geometry: String(localized: "Geometry")
         case .masks: String(localized: "Masks")
-        case .presets: "Presets"
+        case .presets: String(localized: "Presets")
         case .settings: String(localized: "Settings")
         }
     }
@@ -190,8 +190,8 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .optics: "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise."
         case .geometry: "Geometry changes orientation, perspective, and framing. It changes which part of the photo is visible without altering the source file."
         case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
-        case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
         case .settings: "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export."
+        case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
         }
     }
 
@@ -200,6 +200,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .commonGestures:
             return [
                 HelpSection("On the photo", [
+                    HelpItem("Camera RAW files", "Lumora opens original RAW files from non-Apple cameras when the format and camera are supported by the iOS RAW decoder, including compatible files from Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax, and DNG cameras. Import from Files preserves the original file. Photos also requests the original RAW resource before a developed image. Support varies by camera model and iOS version."),
                     HelpItem("Short tap", "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor."),
                     HelpItem("Lighting", "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap."),
                     HelpItem("Depth Lens focus", "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap."),
@@ -222,12 +223,24 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Quick actions", "The eye enables or disables a step. Other icons duplicate, delete, reset, or reorder the selected effect."),
                     HelpItem("Opacity and mask", "Opacity controls the effect's strength. Assign an existing mask to limit the effect to part of the photo.")
                 ]),
-                HelpSection("Effect families", [
-                    HelpItem("Tone and detail", "High Key, Low Key, Pro Contrast, Tonal Contrast, Detail Extractor, and Glamour Glow shape light or detail. Inspect at 100% to avoid excessive structure."),
-                    HelpItem("Film and processes", "Film Grain adds grain. Film Emulation changes film response without generating grain. Cross Processing and Bleach Bypass alter color response."),
-                    HelpItem("Monochrome prints", "Silver B&W converts colors to gray densities. Silver Toning colors the print according to density. Add Film Grain separately if desired."),
-                    HelpItem("Darken / Lighten Center", "Position the center on your subject, then adjust the center and outer exposure independently."),
-                    HelpItem("Looks and Custom", "Choosing a look fills in the effect's settings. Changing a value switches to Custom; the original look remains available.")
+                HelpSection("Each creative filter", [
+                    HelpItem("High Key", "Creates a bright, airy image by lifting tones. Dynamic controls tonal shaping; Glow adds a soft luminous veil. Use it for luminous portraits or pale interiors. Preserve blacks keeps an anchor in dark tones; check white fabric and skin so they retain detail."),
+                    HelpItem("Low Key", "Builds a darker, more dramatic mood while retaining luminous accents. Adjust Amount and Dynamic first, then Contrast. Shadow and highlight protections moderate the extremes. Useful for stage scenes or side-lit portraits; check that dark hair and clothing stay readable."),
+                    HelpItem("Pro Contrast", "Combines color-cast correction, overall contrast correction, and dynamic contrast. Use it to give a flat image more separation before a stylized effect. Increase these controls independently: a deliberate sunset cast should not necessarily be neutralized. Check skin and bright edges."),
+                    HelpItem("Tonal Contrast", "Changes local contrast separately in highlights, midtones, and shadows. Positive values bring out structure; negative values soften it. Global sets the overall strength and Radius sets the scale of detail. Useful for clouds, stone, and landscapes; protect extreme tones and avoid harsh skin or edge halos."),
+                    HelpItem("Detail Extractor", "Emphasizes or softens fine, medium, and large structures independently. Positive Amount enhances texture; negative Amount softens it. Fine detail affects delicate textures, while larger scales emphasize broader shapes. Useful for architecture and foliage. Inspect at 100% because noise and pores can also become more visible."),
+                    HelpItem("Glamour Glow", "Adds a soft glow to brighter areas for a dreamy rendering. Glow sets its strength, Softness its diffusion, and Warmth its color tendency. The highlight threshold selects the luminous areas that feed the glow; protections restrain its effect on extreme tones. Use gently on portraits and inspect eyes and skin texture."),
+                    HelpItem("Grain", "Adds a photographic grain texture. Amount controls its presence; Size, Hardness, Irregularity, Clumping, and Softness shape it. Separate tonal controls distribute grain across shadows, midtones, and highlights; Color grain adds chromatic variation. Inspect at 100%. Grain in Effects adds to this grain if both are enabled."),
+                    HelpItem("Bleach Bypass", "Creates a dense, less colorful rendering inspired by a silver-retaining film process. Bleach strengthens the silver contribution, Contrast separates tones, and Black density adds weight to shadows. Saturation adjusts the remaining color. Useful for gritty scenes; use highlight roll-off and shadow protection to avoid harsh whites or blocked dark areas."),
+                    HelpItem("Cross Processing", "Creates deliberately shifted colors inspired by cross development. Choose a style, then adjust Style strength, Contrast, and Saturation. Shadow and highlight colors can be controlled separately; Lift blacks produces a faded base. Useful for stylized urban or fashion images. Check skin and neutral objects for unwanted color casts."),
+                    HelpItem("Film Emulation", "Changes tonal and color response without adding grain. Choose a film style, then dose Film strength and Color response. Exposure, Contrast, Saturation, Highlight roll-off, and Shadow density refine it. Warm Portrait favors warmth; Vivid Chrome is more vivid; Muted Cinema is restrained; Faded Negative lifts the faded mood; Dense Slide is denser. Add Grain separately if wanted."),
+                    HelpItem("Silver B&W", "Converts original colors into gray tones. At Amount 100 the result is monochrome; intermediate values retain some color. Film response changes tonal interpretation. The colored photographic filter changes how source colors become gray, without tinting the result. Brightness, Contrast, and Structure refine the print. Add Silver Toning afterward for a colored monochrome."),
+                    HelpItem("Silver Toning", "Colors the image according to tonal density; it does not itself convert a color photo to black and white. Place it after Silver B&W for a toned print. Choose selenium, sepia, copper, or another toner, then adjust Strength and Balance. Silver tone affects the image; Paper tone warms or cools light areas. Split Silver allows separate shadow and highlight hues."),
+                    HelpItem("Darken / Lighten Center", "Directs attention with independent center and outer exposure. Move the handle onto the subject; a brighter center or darker surround draws the eye. Size, Shape, Rotation, and Feather define the transition. It does not detect the subject automatically. Equal center and outer values change exposure uniformly; watch bright areas when raising either value.")
+                ]),
+                HelpSection("Choose and refine a look", [
+                    HelpItem("Looks and Custom", "A built-in look fills the controls of one effect. Changing a value makes it Custom. Start with one effect, compare with the eye button, then add another only when needed. Opacity blends the entire step with its input; it is separate from the effect’s own Amount."),
+                    HelpItem("At 100%", "Use the 100% inspector to judge grain, halos, skin, and fine detail at source resolution. Then return to the full image to judge the overall mood. A strong detail setting can look attractive in a small preview but excessive at full size.")
                 ])
             ]
         case .light:
@@ -294,6 +307,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .effects:
             return [
                 HelpSection("Finishing controls", [
+                    HelpItem("Cinematic Glow", "Diffuses bright sources into a luminous halo. Intensity 0 leaves the image unchanged; increase it gradually for a stronger cinematic glow. This control always affects the whole photo, even with a mask selected. Check windows, lamps, skin, and reflections. The upper range protects bright destinations, but the middle range can still increase SDR clipping; compare with the original and inspect the histogram. Reset returns to 0."),
                     HelpItem("Texture", "Strengthens or softens fine detail such as fabric or hair. Negative values reduce detail."),
                     HelpItem("Clarity", "Affects broader local contrast than Texture. High values can harden faces or create overly visible transitions."),
                     HelpItem("Dehaze", "Increases or reduces separation in a hazy scene. It also changes global contrast and slightly affects color; inspect the shadows."),
@@ -302,7 +316,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 ]),
                 HelpSection("What to check", [
                     HelpItem("At 100%", "Inspect Texture, Clarity, and Grain at full size. A reduced preview can hide an overly strong result."),
-                    HelpItem("Active mask", "These settings follow the selected layer, like other development controls.")
+                    HelpItem("Active mask", "Texture, Clarity, Dehaze, Vignette, and Grain follow the selected layer. Cinematic Glow always applies to the whole photo.")
                 ])
             ]
         case .detail:
@@ -367,7 +381,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpSection("Portrait retouching", [
                     HelpItem("Beauty Amount", "Blends all Beauty adjustments. At zero the original pixels are preserved."),
                     HelpItem("Natural / Portrait / Beauty", "Three fixed, editable starting points. Changing any slider produces Custom."),
-                    HelpItem("All Faces", "V1 applies the same settings to every reliably detected face. If no face is found, no adjustment is applied.")
+                    HelpItem("All Faces", "The same settings apply to every reliably detected face. If no face is found, no automatic face adjustment is applied.")
                 ]),
                 HelpSection("Skin, eyes and smile", [
                     HelpItem("Uniformity and Texture", "Uniformity evens broad skin tone while retaining pores. Texture controls the fine frequency band separately."),
@@ -382,8 +396,8 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Size and Strength", "Adjust the selected correction. Each drag is one Undo step. Closing Correction hides the guides but keeps the repair; guides are never exported."),
                     HelpItem("Delete corrections", "Delete removes the selected correction. Delete all asks for confirmation when there are several. Reset Beauty clears every correction; Beauty presets preserve them.")
                 ]),
-                HelpSection("Portrait finishing V2", [
-                    HelpItem("Lips", "Saturation, brightness and detail affect the visible lips. The inner mouth is excluded. Lip Color is no longer available."),
+                HelpSection("Portrait finishing", [
+                    HelpItem("Lips", "Saturation changes the intensity of lip color, brightness lightens or darkens it, and detail defines its texture. The inner mouth is excluded. Compare at 100% to keep a natural result."),
                     HelpItem("Skin Shine", "Attenuates excess broad skin highlights without removing pores."),
                     HelpItem("Face Balance", "Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure."),
                 ])
@@ -447,7 +461,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 ]),
                 HelpSection("Manage and share", [
                     HelpItem("Rename or delete", "Organize your personal collection without changing settings already saved in a photo."),
-                    HelpItem("Import and export", "Share a preset in Lumora's JSON format. Before applying one you received, check which groups it includes, especially Geometry and Masks.")
+                    HelpItem("Import and export", "Import Lumora JSON or XMP presets from the preset library. XMP settings are adapted to supported Lumora controls; the result may differ from the source application. Review adapted and unsupported settings before applying. Export uses Lumora JSON. Check included groups, especially Geometry and Masks.")
                 ])
             ]
         }

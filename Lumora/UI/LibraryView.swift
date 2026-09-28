@@ -1,5 +1,6 @@
 import SwiftUI
 import ImageIO
+import CoreImage
 
 struct LibraryView: View {
     @Bindable var session: EditorSession
@@ -75,7 +76,7 @@ struct LibraryView: View {
             .toolbar {
                 if isSelecting {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(selection == visibleDocumentIDs ? "None" : "All") {
+                        Button(selection == visibleDocumentIDs ? String(localized: "None") : String(localized: "All")) {
                             selection = selection == visibleDocumentIDs ? [] : visibleDocumentIDs
                         }
                         .accessibilityIdentifier("library-select-all")
@@ -480,16 +481,23 @@ private struct LibraryThumbnailView: View {
 
 private actor LibraryThumbnailLoader {
     static let shared = LibraryThumbnailLoader()
+    private let context = CIContext(options: [.cacheIntermediates: false])
 
     func load(_ url: URL) -> CGImage? {
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, [
+        if let source = CGImageSourceCreateWithURL(url as CFURL, [
             kCGImageSourceShouldCache: false
-        ] as CFDictionary) else { return nil }
-        return CGImageSourceCreateThumbnailAtIndex(source, 0, [
+        ] as CFDictionary), let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceThumbnailMaxPixelSize: 240,
             kCGImageSourceShouldCacheImmediately: true
-        ] as CFDictionary)
+        ] as CFDictionary) {
+            return thumbnail
+        }
+        guard let raw = CIRAWFilter(imageURL: url) else { return nil }
+        raw.scaleFactor = Float(min(1, 240 / max(raw.nativeSize.width, raw.nativeSize.height)))
+        guard let output = raw.outputImage,
+              let space = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }
+        return context.createCGImage(output, from: output.extent, format: .RGBA8, colorSpace: space)
     }
 }

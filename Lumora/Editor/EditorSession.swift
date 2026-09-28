@@ -165,6 +165,7 @@ final class EditorSession {
         if CommandLine.arguments.contains("--xmp-highlight-validation") { return DocumentStore(root: URL.temporaryDirectory.appendingPathComponent("XMPHighlightValidation")) }
         if CommandLine.arguments.contains("--depth-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("DepthUIValidation")) }
         if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
+        if CommandLine.arguments.contains("--raw-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("ThirdPartyRAWValidation")) }
         #endif
         return DocumentStore()
     }()
@@ -232,6 +233,11 @@ final class EditorSession {
         }
         if CommandLine.arguments.contains("--glow-ui-validation") {
             await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("GlowValidationInput.png"))
+            return
+        }
+        if CommandLine.arguments.contains("--raw-ui-validation") {
+            await importPhoto(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("ThirdPartyRAWInput.dng"))
             return
         }
         #endif

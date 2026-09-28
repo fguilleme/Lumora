@@ -19,6 +19,7 @@ struct EditorView: View {
     @State private var clippingRequest = 0
     @State private var clippingActivationCount = 0
     @State private var exportRequest: ExportRequest?
+    @State private var showHeaderOptions = false
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
     @State private var focusedAdjustmentID: String?
@@ -259,7 +260,14 @@ struct EditorView: View {
             }
         }
         .onDisappear { session.setMaskEditingPreview(false) }
-        .onChange(of: scenePhase) { _, phase in if phase != .active { session.flush() } }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase != .active else { return }
+            // iOS can interrupt a UISlider without delivering touchUp/touchCancel
+            // (Control Centre, app switcher, lock, incoming system UI). Never leave
+            // the editor in its focused state, which hides the other controls.
+            focusedAdjustmentID = nil
+            session.flush()
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in session.memoryWarning() }
     }
 
@@ -300,6 +308,7 @@ struct EditorView: View {
         }
         .font(.caption2).foregroundStyle(.secondary)
         .padding(.horizontal).frame(height: 28)
+        .accessibilityElement(children: .combine)
         .accessibilityIdentifier("photo-information")
         .dimsDuringAdjustment()
     }
@@ -376,15 +385,27 @@ struct EditorView: View {
                         .disabled(!session.history.canUndo).accessibilityLabel("Undo")
                     Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
                         .disabled(!session.history.canRedo).accessibilityLabel("Redo")
-                    Menu {
-                        Button("Settings", systemImage: "gearshape") { selectPanel(.settings) }.accessibilityIdentifier("open-editor-settings")
+                    Button { showHeaderOptions = true } label: {
+                        ZStack {
+                            Rectangle().fill(Color(red: 0.055, green: 0.065, blue: 0.07))
+                            Image(systemName: "ellipsis.circle")
+                        }
+                        .frame(width: 54, height: 48)
+                        .contentShape(Rectangle())
+                    }
+                    .accessibilityLabel("Import and options")
+                    .accessibilityIdentifier("header-options")
+                    .confirmationDialog("Options", isPresented: $showHeaderOptions, titleVisibility: .hidden) {
+                        Button("Settings", systemImage: "gearshape") { selectPanel(.settings) }
+                            .accessibilityIdentifier("open-editor-settings")
                         Button("Library", systemImage: "photo.stack") { showLibrary = true }
                         Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
                         Button("Export", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
+                            .accessibilityIdentifier("header-option-export")
                         Button("Files", systemImage: "folder") { showFiles = true }
                         Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
-                    } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }
-                    .accessibilityLabel("Import and options")
+                        Button("Cancel", role: .cancel) {}
+                    }
                 }
             }
         }.padding(.horizontal)

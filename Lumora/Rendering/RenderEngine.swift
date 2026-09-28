@@ -133,8 +133,7 @@ actor RenderEngine {
         }
         try Task.checkCancellation()
         let input: CIImage
-        let type = UTType(filenameExtension: url.pathExtension)
-        if type?.conforms(to: .rawImage) == true, let raw = CIRAWFilter(imageURL: url) {
+        if let raw = CIRAWFilter(imageURL: url) {
             raw.isLensCorrectionEnabled = state.optics.profileCorrection && raw.isLensCorrectionSupported
             raw.scaleFactor = Float(min(1, Double(maximum * 2) / max(raw.nativeSize.width, raw.nativeSize.height)))
             guard let decoded = raw.outputImage else { throw PhotoError.unreadable }
@@ -379,12 +378,10 @@ actor RenderEngine {
         let settings = settings.validated
         guard ExportFormat.available.contains(settings.format) else { throw ExportError.unsupportedFormat }
         progress(.decoding)
-        guard let source = CGImageSourceCreateWithURL(request.sourceURL as CFURL, nil) else { throw PhotoError.unreadable }
-        let metadata = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
-        let type = CGImageSourceGetType(source).flatMap { UTType($0 as String) }
+        let source = CGImageSourceCreateWithURL(request.sourceURL as CFURL, nil)
+        let metadata = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] } ?? [:]
         let input: CIImage
-        if type?.conforms(to: .rawImage) == true {
-            guard let raw = CIRAWFilter(imageURL: request.sourceURL) else { throw PhotoError.unreadable }
+        if let raw = CIRAWFilter(imageURL: request.sourceURL) {
             raw.isLensCorrectionEnabled = request.state.optics.profileCorrection && raw.isLensCorrectionSupported
             if let maximum = settings.maximumDimension {
                 raw.scaleFactor = Float(min(1, Double(maximum) / max(raw.nativeSize.width, raw.nativeSize.height)))
@@ -481,12 +478,12 @@ actor RenderEngine {
     private func preview(url: URL, maximum: Int, optics: OpticsSettings) throws -> CGImage {
         let key = PreviewCacheKey(maximum: maximum, profileCorrection: optics.profileCorrection)
         if let image = sources[key] { return image }
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { throw PhotoError.unreadable }
-        let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any]
+        let source = CGImageSourceCreateWithURL(url as CFURL, nil)
+        let properties = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] }
         sourceWidth = properties?[kCGImagePropertyPixelWidth] as? Int ?? 0
         sourceHeight = properties?[kCGImagePropertyPixelHeight] as? Int ?? 0
-        let type = CGImageSourceGetType(source).flatMap { UTType($0 as String) }
-        raw = type?.conforms(to: .rawImage) == true
+        let rawFilter = CIRAWFilter(imageURL: url)
+        raw = rawFilter != nil
         let tiff = properties?[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
         let exif = properties?[kCGImagePropertyExifDictionary] as? [CFString: Any]
         let make = tiff?[kCGImagePropertyTIFFMake] as? String
@@ -496,8 +493,7 @@ actor RenderEngine {
         opticsAvailability.lens = exif?[kCGImagePropertyExifLensModel] as? String
         opticsAvailability.profileSupported = false
         let result: CGImage
-        if raw {
-            guard let filter = CIRAWFilter(imageURL: url) else { throw PhotoError.unreadable }
+        if let filter = rawFilter {
             opticsAvailability.profileSupported = filter.isLensCorrectionSupported
             filter.isLensCorrectionEnabled = optics.profileCorrection && filter.isLensCorrectionSupported
             let size = filter.nativeSize
@@ -509,6 +505,7 @@ actor RenderEngine {
             else { throw PhotoError.unreadable }
             result = rendered
         } else {
+            guard let source else { throw PhotoError.unreadable }
             let options: [CFString: Any] = [
                 kCGImageSourceCreateThumbnailFromImageAlways: true,
                 kCGImageSourceThumbnailMaxPixelSize: maximum,

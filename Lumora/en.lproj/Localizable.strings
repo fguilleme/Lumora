@@ -419,6 +419,8 @@
 "Quick actions" = "Quick actions";
 "RAW correction off" = "RAW correction off";
 "RAW correction on" = "RAW correction on";
+"Camera RAW files" = "Camera RAW files";
+"Lumora opens original RAW files from non-Apple cameras when the format and camera are supported by the iOS RAW decoder, including compatible files from Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax, and DNG cameras. Import from Files preserves the original file. Photos also requests the original RAW resource before a developed image. Support varies by camera model and iOS version." = "Lumora opens original RAW files from non-Apple cameras when the format and camera are supported by the iOS RAW decoder, including compatible files from Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax, and DNG cameras. Import from Files preserves the original file. Photos also requests the original RAW resource before a developed image. Support varies by camera model and iOS version.";
 "RGB" = "RGB";
 "RGB and channels" = "RGB and channels";
 "RGB controls the common tonal curve. Red, Green, and Blue adjust channels separately; differences between them can introduce a color cast." = "RGB controls the common tonal curve. Red, Green, and Blue adjust channels separately; differences between them can introduce a color cast.";
@@ -824,43 +826,352 @@
 
 "Import Lumora or XMP presets" = "Import Lumora or XMP presets";
 
-/* Depth Lens and detailed help */
+"Each creative filter" = "Each creative filter";
+
+"Creates a bright, airy image by lifting tones. Dynamic controls tonal shaping; Glow adds a soft luminous veil. Use it for luminous portraits or pale interiors. Preserve blacks keeps an anchor in dark tones; check white fabric and skin so they retain detail." = "Creates a bright, airy image by lifting tones. Dynamic controls tonal shaping; Glow adds a soft luminous veil. Use it for luminous portraits or pale interiors. Preserve blacks keeps an anchor in dark tones; check white fabric and skin so they retain detail.";
+
+"Builds a darker, more dramatic mood while retaining luminous accents. Adjust Amount and Dynamic first, then Contrast. Shadow and highlight protections moderate the extremes. Useful for stage scenes or side-lit portraits; check that dark hair and clothing stay readable." = "Builds a darker, more dramatic mood while retaining luminous accents. Adjust Amount and Dynamic first, then Contrast. Shadow and highlight protections moderate the extremes. Useful for stage scenes or side-lit portraits; check that dark hair and clothing stay readable.";
+
+"Combines color-cast correction, overall contrast correction, and dynamic contrast. Use it to give a flat image more separation before a stylized effect. Increase these controls independently: a deliberate sunset cast should not necessarily be neutralized. Check skin and bright edges." = "Combines color-cast correction, overall contrast correction, and dynamic contrast. Use it to give a flat image more separation before a stylized effect. Increase these controls independently: a deliberate sunset cast should not necessarily be neutralized. Check skin and bright edges.";
+
+"Changes local contrast separately in highlights, midtones, and shadows. Positive values bring out structure; negative values soften it. Global sets the overall strength and Radius sets the scale of detail. Useful for clouds, stone, and landscapes; protect extreme tones and avoid harsh skin or edge halos." = "Changes local contrast separately in highlights, midtones, and shadows. Positive values bring out structure; negative values soften it. Global sets the overall strength and Radius sets the scale of detail. Useful for clouds, stone, and landscapes; protect extreme tones and avoid harsh skin or edge halos.";
+
+"Emphasizes or softens fine, medium, and large structures independently. Positive Amount enhances texture; negative Amount softens it. Fine detail affects delicate textures, while larger scales emphasize broader shapes. Useful for architecture and foliage. Inspect at 100% because noise and pores can also become more visible." = "Emphasizes or softens fine, medium, and large structures independently. Positive Amount enhances texture; negative Amount softens it. Fine detail affects delicate textures, while larger scales emphasize broader shapes. Useful for architecture and foliage. Inspect at 100% because noise and pores can also become more visible.";
+
+"Adds a soft glow to brighter areas for a dreamy rendering. Glow sets its strength, Softness its diffusion, and Warmth its color tendency. The highlight threshold selects the luminous areas that feed the glow; protections restrain its effect on extreme tones. Use gently on portraits and inspect eyes and skin texture." = "Adds a soft glow to brighter areas for a dreamy rendering. Glow sets its strength, Softness its diffusion, and Warmth its color tendency. The highlight threshold selects the luminous areas that feed the glow; protections restrain its effect on extreme tones. Use gently on portraits and inspect eyes and skin texture.";
+
+"Adds a photographic grain texture. Amount controls its presence; Size, Hardness, Irregularity, Clumping, and Softness shape it. Separate tonal controls distribute grain across shadows, midtones, and highlights; Color grain adds chromatic variation. Inspect at 100%. Grain in Effects adds to this grain if both are enabled." = "Adds a photographic grain texture. Amount controls its presence; Size, Hardness, Irregularity, Clumping, and Softness shape it. Separate tonal controls distribute grain across shadows, midtones, and highlights; Color grain adds chromatic variation. Inspect at 100%. Grain in Effects adds to this grain if both are enabled.";
+
+"Creates a dense, less colorful rendering inspired by a silver-retaining film process. Bleach strengthens the silver contribution, Contrast separates tones, and Black density adds weight to shadows. Saturation adjusts the remaining color. Useful for gritty scenes; use highlight roll-off and shadow protection to avoid harsh whites or blocked dark areas." = "Creates a dense, less colorful rendering inspired by a silver-retaining film process. Bleach strengthens the silver contribution, Contrast separates tones, and Black density adds weight to shadows. Saturation adjusts the remaining color. Useful for gritty scenes; use highlight roll-off and shadow protection to avoid harsh whites or blocked dark areas.";
+
+"Creates deliberately shifted colors inspired by cross development. Choose a style, then adjust Style strength, Contrast, and Saturation. Shadow and highlight colors can be controlled separately; Lift blacks produces a faded base. Useful for stylized urban or fashion images. Check skin and neutral objects for unwanted color casts." = "Creates deliberately shifted colors inspired by cross development. Choose a style, then adjust Style strength, Contrast, and Saturation. Shadow and highlight colors can be controlled separately; Lift blacks produces a faded base. Useful for stylized urban or fashion images. Check skin and neutral objects for unwanted color casts.";
+
+"Changes tonal and color response without adding grain. Choose a film style, then dose Film strength and Color response. Exposure, Contrast, Saturation, Highlight roll-off, and Shadow density refine it. Warm Portrait favors warmth; Vivid Chrome is more vivid; Muted Cinema is restrained; Faded Negative lifts the faded mood; Dense Slide is denser. Add Grain separately if wanted." = "Changes tonal and color response without adding grain. Choose a film style, then dose Film strength and Color response. Exposure, Contrast, Saturation, Highlight roll-off, and Shadow density refine it. Warm Portrait favors warmth; Vivid Chrome is more vivid; Muted Cinema is restrained; Faded Negative lifts the faded mood; Dense Slide is denser. Add Grain separately if wanted.";
+
+"Converts original colors into gray tones. At Amount 100 the result is monochrome; intermediate values retain some color. Film response changes tonal interpretation. The colored photographic filter changes how source colors become gray, without tinting the result. Brightness, Contrast, and Structure refine the print. Add Silver Toning afterward for a colored monochrome." = "Converts original colors into gray tones. At Amount 100 the result is monochrome; intermediate values retain some color. Film response changes tonal interpretation. The colored photographic filter changes how source colors become gray, without tinting the result. Brightness, Contrast, and Structure refine the print. Add Silver Toning afterward for a colored monochrome.";
+
+"Colors the image according to tonal density; it does not itself convert a color photo to black and white. Place it after Silver B&W for a toned print. Choose selenium, sepia, copper, or another toner, then adjust Strength and Balance. Silver tone affects the image; Paper tone warms or cools light areas. Split Silver allows separate shadow and highlight hues." = "Colors the image according to tonal density; it does not itself convert a color photo to black and white. Place it after Silver B&W for a toned print. Choose selenium, sepia, copper, or another toner, then adjust Strength and Balance. Silver tone affects the image; Paper tone warms or cools light areas. Split Silver allows separate shadow and highlight hues.";
+
+"Directs attention with independent center and outer exposure. Move the handle onto the subject; a brighter center or darker surround draws the eye. Size, Shape, Rotation, and Feather define the transition. It does not detect the subject automatically. Equal center and outer values change exposure uniformly; watch bright areas when raising either value." = "Directs attention with independent center and outer exposure. Move the handle onto the subject; a brighter center or darker surround draws the eye. Size, Shape, Rotation, and Feather define the transition. It does not detect the subject automatically. Equal center and outer values change exposure uniformly; watch bright areas when raising either value.";
+
+"Choose and refine a look" = "Choose and refine a look";
+
+"A built-in look fills the controls of one effect. Changing a value makes it Custom. Start with one effect, compare with the eye button, then add another only when needed. Opacity blends the entire step with its input; it is separate from the effect’s own Amount." = "A built-in look fills the controls of one effect. Changing a value makes it Custom. Start with one effect, compare with the eye button, then add another only when needed. Opacity blends the entire step with its input; it is separate from the effect’s own Amount.";
+
+"Use the 100% inspector to judge grain, halos, skin, and fine detail at source resolution. Then return to the full image to judge the overall mood. A strong detail setting can look attractive in a small preview but excessive at full size." = "Use the 100% inspector to judge grain, halos, skin, and fine detail at source resolution. Then return to the full image to judge the overall mood. A strong detail setting can look attractive in a small preview but excessive at full size.";
+
+"Diffuses bright sources into a luminous halo. Intensity 0 leaves the image unchanged; increase it gradually for a stronger cinematic glow. This control always affects the whole photo, even with a mask selected. Check windows, lamps, skin, and reflections. The upper range protects bright destinations, but the middle range can still increase SDR clipping; compare with the original and inspect the histogram. Reset returns to 0." = "Diffuses bright sources into a luminous halo. Intensity 0 leaves the image unchanged; increase it gradually for a stronger cinematic glow. This control always affects the whole photo, even with a mask selected. Check windows, lamps, skin, and reflections. The upper range protects bright destinations, but the middle range can still increase SDR clipping; compare with the original and inspect the histogram. Reset returns to 0.";
+
+"Texture, Clarity, Dehaze, Vignette, and Grain follow the selected layer. Cinematic Glow always applies to the whole photo." = "Texture, Clarity, Dehaze, Vignette, and Grain follow the selected layer. Cinematic Glow always applies to the whole photo.";
+
+"The same settings apply to every reliably detected face. If no face is found, no automatic face adjustment is applied." = "The same settings apply to every reliably detected face. If no face is found, no automatic face adjustment is applied.";
+
+"Saturation changes the intensity of lip color, brightness lightens or darkens it, and detail defines its texture. The inner mouth is excluded. Compare at 100% to keep a natural result." = "Saturation changes the intensity of lip color, brightness lightens or darkens it, and detail defines its texture. The inner mouth is excluded. Compare at 100% to keep a natural result.";
+
+"Import Lumora JSON or XMP presets from the preset library. XMP settings are adapted to supported Lumora controls; the result may differ from the source application. Review adapted and unsupported settings before applying. Export uses Lumora JSON. Check included groups, especially Geometry and Masks." = "Import Lumora JSON or XMP presets from the preset library. XMP settings are adapted to supported Lumora controls; the result may differ from the source application. Review adapted and unsupported settings before applying. Export uses Lumora JSON. Check included groups, especially Geometry and Masks.";
+
+"Portrait finishing" = "Portrait finishing";
+
+"Portrait finishing V2" = "Portrait finishing V2";
+
+"Attenuates excess broad skin highlights without removing pores." = "Attenuates excess broad skin highlights without removing pores.";
+
+"Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure." = "Gently lifts broad facial shadows or restrains broad highlights; it does not change overall exposure.";
+
+"Intensity" = "Intensity";
+
+"Cinematic Glow" = "Cinematic Glow";
+
+"High Key" = "High Key";
+
+"Low Key" = "Low Key";
+
+"Glamour Glow" = "Glamour Glow";
+
+"Bleach Bypass" = "Bleach Bypass";
+
+"Bleach" = "Bleach";
+
+"Pro Contrast" = "Pro Contrast";
+
+"Cross Processing" = "Cross Processing";
+
+"Film Emulation" = "Film Emulation";
+
+"Darken / Lighten Center" = "Darken / Lighten Center";
+
+"Silver Toning" = "Silver Toning";
+
+"Silver B&W" = "Silver B&W";
+
+"Tonal Contrast" = "Tonal Contrast";
+
+"Detail Extractor" = "Detail Extractor";
+
+"Film Grain" = "Film Grain";
+
+"Subtle Detail" = "Subtle Detail";
+
+"Fine Texture" = "Fine Texture";
+
+"Natural Detail" = "Natural Detail";
+
+"Landscape Detail" = "Landscape Detail";
+
+"Extreme Detail" = "Extreme Detail";
+
+"Natural Texture" = "Natural Texture";
+
+"Landscape Definition" = "Landscape Definition";
+
+"Soft Structure" = "Soft Structure";
+
+"Strong Structure" = "Strong Structure";
+
+"Fine 50" = "Fine 50";
+
+"Classic 100" = "Classic 100";
+
+"Classic 400" = "Classic 400";
+
+"Push 1600" = "Push 1600";
+
+"Rough 3200" = "Rough 3200";
+
+"Classic Bypass" = "Classic Bypass";
+
+"Punch" = "Punch";
+
+"Warm Process" = "Warm Process";
+
+"Vivid Chrome" = "Vivid Chrome";
+
+"Classic Sepia" = "Classic Sepia";
+
+"Portrait Focus" = "Portrait Focus";
+
+"Subtle Glow" = "Subtle Glow";
+
+"Portrait Glow" = "Portrait Glow";
+
+"Warm Glow" = "Warm Glow";
+
+"Cool Glow" = "Cool Glow";
+
+"Dreamy" = "Dreamy";
+
+"Strong Glow" = "Strong Glow";
+
+"Subtle Bypass" = "Subtle Bypass";
+
+"Soft Silver" = "Soft Silver";
+
+"Hard Silver" = "Hard Silver";
+
+"Cinematic" = "Cinematic";
+
+"Extreme Bypass" = "Extreme Bypass";
+
+"Subtle Correction" = "Subtle Correction";
+
+"Natural Contrast" = "Natural Contrast";
+
+"Flat Recovery" = "Flat Recovery";
+
+"Color Neutralize" = "Color Neutralize";
+
+"Strong Correction" = "Strong Correction";
+
+"Subtle Cross" = "Subtle Cross";
+
+"Cool Process" = "Cool Process";
+
+"Cyan Shadows" = "Cyan Shadows";
+
+"Green-Magenta" = "Green-Magenta";
+
+"Vintage Process" = "Vintage Process";
+
+"Strong Cross" = "Strong Cross";
+
+"Subtle Focus" = "Subtle Focus";
+
+"Dark Surround" = "Dark Surround";
+
+"Light Center" = "Light Center";
+
+"Wide Focus" = "Wide Focus";
+
+"Narrow Focus" = "Narrow Focus";
+
+"Off-Center Drama" = "Off-Center Drama";
+
+"Reverse Focus" = "Reverse Focus";
+
+"Neutral Print" = "Neutral Print";
+
+"Subtle Selenium" = "Subtle Selenium";
+
+"Deep Selenium" = "Deep Selenium";
+
+"Soft Sepia" = "Soft Sepia";
+
+"Copper Print" = "Copper Print";
+
+"Cool Gold" = "Cool Gold";
+
+"Platinum Print" = "Platinum Print";
+
+"Warm Silver" = "Warm Silver";
+
+"Cool Silver" = "Cool Silver";
+
+"Split Warm/Cool" = "Split Warm/Cool";
+
+"Neutral Silver" = "Neutral Silver";
+
+"Soft Portrait" = "Soft Portrait";
+
+"Fine Art" = "Fine Art";
+
+"Classic Film" = "Classic Film";
+
+"High Structure" = "High Structure";
+
+"Dark Drama" = "Dark Drama";
+
+"Hard Documentary" = "Hard Documentary";
+
+"Neutral Negative" = "Neutral Negative";
+
+"Warm Portrait" = "Warm Portrait";
+
+"Muted Cinema" = "Muted Cinema";
+
+"Faded Negative" = "Faded Negative";
+
+"Vintage Color" = "Vintage Color";
+
+"Dense Slide" = "Dense Slide";
+
+"Fine Grain Response" = "Fine Grain Response";
+
+"Portrait Silver" = "Portrait Silver";
+
+"Classic Panchromatic" = "Classic Panchromatic";
+
+"High Contrast Film" = "High Contrast Film";
+
+"Soft Orthochromatic" = "Soft Orthochromatic";
+
+"Documentary Silver" = "Documentary Silver";
+
+"Neutral" = "Neutral";
+
+"Selenium" = "Selenium";
+
+"Sepia" = "Sepia";
+
+"Copper" = "Copper";
+
+"Gold" = "Gold";
+
+"Platinum" = "Platinum";
+
+"Split Silver" = "Split Silver";
+
+"Cool Portrait" = "Cool Portrait";
+
+"Teal & Warm" = "Teal & Warm";
+
+"Cool Cinema" = "Cool Cinema";
+
+"Warm Cinema" = "Warm Cinema";
+
+"Golden Hour" = "Golden Hour";
+
+"Blue Hour" = "Blue Hour";
+
+"Moody" = "Moody";
+
+"Autumn" = "Autumn";
+
+"Bleach Grade" = "Bleach Grade";
+
+"Activation" = "Activation";
+
+"Auto" = "Auto";
+
+"Axes" = "Axes";
+
+"Gradients" = "Gradients";
+
+"Grain" = "Grain";
+
+"Luminance" = "Luminance";
+
+"Saturation" = "Saturation";
+
+"Vibrance" = "Vibrance";
+
+"Vignette" = "Vignette";
+
+"Simple" = "Simple";
+
+"Monochrome" = "Monochrome";
+
+"Photos" = "Photos";
+
+"Architecture" = "Architecture";
+
+"Rotation (°)" = "Rotation (°)";
+
+"Structure" = "Structure";
+
+"Balance" = "Balance";
+
+"Pastel" = "Pastel";
+
+/* Depth Lens */
+"Depth Lens" = "Depth Lens";
+"Enable Depth Lens" = "Enable Depth Lens";
+"Aperture" = "Aperture";
+"Focal length" = "Focal length";
+"Center focus" = "Center focus";
+"Focus point" = "Focus point";
+"Tap the photo to focus. A wider aperture blurs areas away from the focus plane." = "Tap the photo to focus. A wider aperture blurs areas away from the focus plane.";
+"Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect." = "Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect.";
+"Depth Lens model is missing." = "Depth Lens model is missing.";
+
+/* Depth Lens detailed help */
+"Depth of field and focus by touch" = "Depth of field and focus by touch";
+"Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default." = "Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default.";
+"Start with the focus" = "Start with the focus";
+"Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view." = "Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view.";
+"The focus plane" = "The focus plane";
+"The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp." = "The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp.";
+"Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically." = "Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically.";
+"Shape the blur" = "Shape the blur";
+"A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position." = "A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position.";
 "50, 85, and 135 mm change the simulated optical blur. At the same aperture and focus, longer focal lengths generally strengthen the blur. They do not zoom, crop, or change the perspective of the photo." = "50, 85, and 135 mm change the simulated optical blur. At the same aperture and focus, longer focal lengths generally strengthen the blur. They do not zoom, crop, or change the perspective of the photo.";
 "A restrained starting point" = "A restrained starting point";
-"A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position." = "A small f-number, such as f/1.4, gives stronger blur and a narrower sharp region. A larger number, such as f/5.6 or f/8, reduces the blur. If an eye or hair becomes too soft, increase the number and check the focus position.";
-"Aperture" = "Aperture";
-"Center focus" = "Center focus";
-"Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically." = "Center focus returns the marker to the middle of the photo. It does not detect or select a face automatically.";
-"Compare" = "Compare";
+"Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible.";
 "Compare and correct" = "Compare and correct";
-"Depth Lens" = "Depth Lens";
-"Depth Lens focus" = "Depth Lens focus";
-"Depth Lens model is missing." = "Depth Lens model is missing.";
-"Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default." = "Depth Lens simulates depth of field from an estimated depth map. It can blur areas in front of and behind the selected focus plane. The original photo is preserved; the effect is off by default.";
-"Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward." = "Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward.";
-"Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect." = "Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect.";
-"Depth of field and focus by touch" = "Depth of field and focus by touch";
 "Disable Depth Lens to compare with the same edits without this blur; enabling it again keeps its settings. Holding the photo compares with the original, before all edits. Pinch to inspect fine details and double-tap to restore the view." = "Disable Depth Lens to compare with the same edits without this blur; enabling it again keeps its settings. Holding the photo compares with the original, before all edits. Pinch to inspect fine details and double-tap to restore the view.";
-"Enable Depth Lens" = "Enable Depth Lens";
-"Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view." = "Enable Depth Lens, then tap the subject in the photo while this tab is open. The turquoise marker shows the selected position. On a portrait, start with the nearest eye. This tap sets focus instead of opening the full-screen view.";
-"Fine edges" = "Fine edges";
-"Focal length" = "Focal length";
-"Focus point" = "Focus point";
-"Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail." = "Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail.";
+"Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo." = "Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo.";
 "Limits and rendering" = "Limits and rendering";
+"Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail." = "Hair, glass, reflections, fine branches, and overlapping objects can produce imperfect depth boundaries. Inspect both eyes and the subject edges. Reduce the blur or disable the effect when the depth estimate is unsuitable; it does not reconstruct hidden background detail.";
+"Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward." = "Depth is calculated on the iPhone and reused while adjusting aperture, focal length, or focus. The first activation may take longer. Changing crop, geometry, or optical corrections recalculates depth; check the focus again afterward.";
+"The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask.";
+"When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap.";
+"Fine edges" = "Fine edges";
 "On-device processing" = "On-device processing";
 "Preview and export" = "Preview and export";
-"Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo." = "Reset turns the effect off and restores f/1.4, 85 mm, and centered focus. Undo and Redo include Depth Lens changes; the settings are saved with the photo.";
-"Shape the blur" = "Shape the blur";
-"Start with the focus" = "Start with the focus";
-"Tap the photo to focus. A wider aperture blurs areas away from the focus plane." = "Tap the photo to focus. A wider aperture blurs areas away from the focus plane.";
-"The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp." = "The effect uses the estimated distance at the selected point, not a cutout of the subject. Other objects at a similar estimated depth can remain sharp. A face or body spanning several depths may not be entirely sharp.";
-"The focus plane" = "The focus plane";
-"The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask." = "The preview uses a reduced resolution while dragging, then a higher quality render when released. Export applies the same effect at the output resolution. The focus marker is never exported. Depth Lens affects the whole photo and cannot be assigned to a local mask.";
-"Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible." = "Try 50 or 85 mm with f/4, place the focus carefully, then lower the f-number gradually. Judge both the whole image and the edges around the subject. Strong blur makes depth-estimation errors more visible.";
-"When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap." = "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap.";
+"Depth Lens focus" = "Depth Lens focus";
 
-/* Editor settings */
+"Compare" = "Compare";
+
+/* Interface preferences */
 "Show histogram" = "Show histogram";
 "Display" = "Display";
 "Always visible" = "Always visible";
@@ -868,13 +1179,17 @@
 "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab.";
 "Restore interface defaults" = "Restore interface defaults";
 "These preferences apply to the app, not to individual photos." = "These preferences apply to the app, not to individual photos.";
+
+/* Settings help */
 "Customize the histogram and tab bar" = "Customize the histogram and tab bar";
 "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export." = "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export.";
 "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves." = "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves.";
 "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden." = "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden.";
 "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again." = "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again.";
 "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo." = "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.";
+
 "Visible" = "Visible";
+
 "Hidden" = "Hidden";
 
 /* Experimental depth lighting */
@@ -910,5 +1225,3 @@
 "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original." = "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original.";
 "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo." = "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo.";
 "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap." = "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap.";
-
-"Intensity" = "Intensity";

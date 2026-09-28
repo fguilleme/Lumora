@@ -102,6 +102,9 @@ struct AdjustmentSlider: View {
             // Undo/reset can move the value outside the currently magnified interval.
             if fine && !activeRange.contains(next) { fineOrigin = next }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            finishEditing()
+        }
         .onDisappear { finishEditing() }
     }
 
@@ -199,6 +202,12 @@ private struct TouchTrackingSlider: UIViewRepresentable {
 
     func updateUIView(_ slider: UISlider, context: Context) {
         context.coordinator.owner = self
+        // A system interruption may end UIKit tracking without sending the
+        // control event. Clear our mirror before deciding whether SwiftUI may
+        // update the thumb or a later touch may start a new interaction.
+        if context.coordinator.isTracking && !slider.isTracking {
+            context.coordinator.touchEnded()
+        }
         slider.minimumValue = Float(range.lowerBound)
         slider.maximumValue = Float(range.upperBound)
         if !context.coordinator.isTracking {
@@ -208,6 +217,10 @@ private struct TouchTrackingSlider: UIViewRepresentable {
         slider.accessibilityLabel = title
         slider.accessibilityIdentifier = accessibilityID
         slider.accessibilityValue = String(format: "%.2f", value)
+    }
+
+    static func dismantleUIView(_ slider: UISlider, coordinator: Coordinator) {
+        coordinator.touchEnded()
     }
 
     @MainActor final class Coordinator: NSObject {
