@@ -43,6 +43,14 @@ enum EditorTabPreferences {
         let excluded = self.hidden(hidden)
         return ordered(order).filter { !excluded.contains($0.rawValue) }
     }
+    static func moving(_ panel: EditorPanel, before target: EditorPanel,
+                       in order: [EditorPanel]) -> [EditorPanel] {
+        guard panel != target, order.contains(panel), order.contains(target) else { return order }
+        var result = order.filter { $0 != panel }
+        guard let destination = result.firstIndex(of: target) else { return order }
+        result.insert(panel, at: destination)
+        return result
+    }
     static func encode(_ values: [String]) -> String {
         String(data: (try? JSONEncoder().encode(values)) ?? Data(), encoding: .utf8) ?? ""
     }

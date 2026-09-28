@@ -1295,3 +1295,9 @@
 "Settings default" = "Settings default";
 "The Include metadata in exports switch in Settings chooses the default for future exports. The switch inside Export remains available for each individual file." = "The Include metadata in exports switch in Settings chooses the default for future exports. The switch inside Export remains available for each individual file.";
 "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen." = "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen.";
+
+/* Quick tab reordering */
+"Insert before this tab" = "Insert before this tab";
+"Manage tabs…" = "Manage tabs…";
+"Quick reorder from the tab bar" = "Quick reorder from the tab bar";
+"Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings." = "Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings.";

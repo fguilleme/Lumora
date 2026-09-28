@@ -10,4 +10,8 @@ assert(EditorTabPreferences.visible(order: supplied, hidden: allHidden) == [.set
 let stored = EditorTabPreferences.encode(ordered.map(\.rawValue))
 assert(EditorTabPreferences.ordered(stored) == ordered)
 assert(EditorTabPreferences.visible(order: stored, hidden: "broken") == ordered)
+let moved = EditorTabPreferences.moving(.exif, before: .light, in: ordered)
+assert(moved.first == .depthLens)
+assert(moved.firstIndex(of: .exif)! + 1 == moved.firstIndex(of: .light)!)
+assert(EditorTabPreferences.moving(.light, before: .light, in: moved) == moved)
 print("PASS: defaults, invalid storage, duplicates, unknown/new tabs, safe visibility, order round-trip")

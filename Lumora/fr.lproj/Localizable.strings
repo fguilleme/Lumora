@@ -1295,3 +1295,9 @@
 "Settings default" = "Valeur par défaut des Réglages";
 "The Include metadata in exports switch in Settings chooses the default for future exports. The switch inside Export remains available for each individual file." = "Le commutateur Inclure les métadonnées dans les exports de Réglages choisit la valeur par défaut des futurs exports. Le commutateur présent dans Export reste disponible pour chaque fichier.";
 "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen." = "Définit l’état initial de Conserver les métadonnées à chaque ouverture de l’écran d’export. Vous pouvez le modifier pour un seul export sans changer cette préférence. La localisation GPS reste retirée sauf si vous choisissez explicitement de la conserver dans l’écran d’export.";
+
+/* Quick tab reordering */
+"Insert before this tab" = "Insérer avant cet onglet";
+"Manage tabs…" = "Gérer les onglets…";
+"Quick reorder from the tab bar" = "Réorganisation rapide depuis la barre d’onglets";
+"Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des autres onglets visibles. Choisissez-en un pour le déplacer juste avant l’onglet maintenu. Un toucher normal continue d’ouvrir l’onglet ; les onglets masqués restent accessibles dans Réglages.";
