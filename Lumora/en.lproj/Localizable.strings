@@ -1225,3 +1225,23 @@
 "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original." = "Depth is calculated on device and shared with Depth Lens. First activation can take longer; geometry or optical corrections require a new estimate. The same lighting is applied in preview and export, with a reduced preview during interaction. Disable lighting to compare while retaining other edits; hold the photo to see the original.";
 "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo." = "Lighting affects the whole photo and cannot be assigned to a local mask. Its controls are saved with the photo and support Undo and Redo. Hiding or reordering the Lighting tab in Settings does not disable an effect already enabled on a photo.";
 "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap." = "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap.";
+
+/* Credits */
+"Credits" = "Credits";
+"Design, technologies, and acknowledgements" = "Design, technologies, and acknowledgements";
+"Lumora is an independent photo editor. This page identifies its creator, the Apple technologies it uses, and the model included for depth estimation." = "Lumora is an independent photo editor. This page identifies its creator, the Apple technologies it uses, and the model included for depth estimation.";
+"Lumora" = "Lumora";
+"Design and development" = "Design and development";
+"Created by François Guillemé. Lumora's interface, editing pipeline, photographic effects, and validation tools were designed and developed specifically for the application." = "Created by François Guillemé. Lumora's interface, editing pipeline, photographic effects, and validation tools were designed and developed specifically for the application.";
+"Made for Apple platforms" = "Made for Apple platforms";
+"Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation on the device." = "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation on the device.";
+"Depth estimation" = "Depth estimation";
+"Depth Anything V2 Small" = "Depth Anything V2 Small";
+"Depth Lens and experimental Lighting use Depth Anything V2 Small. The Core ML package is distributed by Apple from the original Depth Anything V2 architecture. The Small model is provided under the Apache License 2.0." = "Depth Lens and experimental Lighting use Depth Anything V2 Small. The Core ML package is distributed by Apple from the original Depth Anything V2 architecture. The Small model is provided under the Apache License 2.0.";
+"Model provenance" = "Model provenance";
+"Core ML package: apple/coreml-depth-anything-v2-small. Original project: DepthAnything/Depth-Anything-V2. The complete Apache 2.0 license and provenance notice are included with Lumora." = "Core ML package: apple/coreml-depth-anything-v2-small. Original project: DepthAnything/Depth-Anything-V2. The complete Apache 2.0 license and provenance notice are included with Lumora.";
+"Privacy and independence" = "Privacy and independence";
+"On-device processing" = "On-device processing";
+"Photo editing, face analysis, masks, depth estimation, preview, and export run on the device. Lumora does not require an online image-processing service." = "Photo editing, face analysis, masks, depth estimation, preview, and export run on the device. Lumora does not require an online image-processing service.";
+"Third-party libraries" = "Third-party libraries";
+"Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; the depth model attribution is listed separately above." = "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; the depth model attribution is listed separately above.";

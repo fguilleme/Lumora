@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, lighting, beauty, optics, geometry, masks, presets, settings
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, lighting, beauty, optics, geometry, masks, presets, settings, credits
     var id: String { rawValue }
 
     var title: String {
@@ -129,6 +129,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .masks: String(localized: "Masks")
         case .presets: String(localized: "Presets")
         case .settings: String(localized: "Settings")
+        case .credits: String(localized: "Credits")
         }
     }
 
@@ -150,6 +151,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .masks: "circle.dashed.inset.filled"
         case .presets: "slider.horizontal.2.square"
         case .settings: "gearshape"
+        case .credits: "info.circle"
         }
     }
 
@@ -171,6 +173,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .masks: "Layers and local adjustments"
         case .presets: "Save and reuse your settings"
         case .settings: "Customize the histogram and tab bar"
+        case .credits: "Design, technologies, and acknowledgements"
         }
     }
 
@@ -192,6 +195,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
         case .settings: "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export."
         case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
+        case .credits: "Lumora is an independent photo editor. This page identifies its creator, the Apple technologies it uses, and the model included for depth estimation."
         }
     }
 
@@ -462,6 +466,21 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpSection("Manage and share", [
                     HelpItem("Rename or delete", "Organize your personal collection without changing settings already saved in a photo."),
                     HelpItem("Import and export", "Import Lumora JSON or XMP presets from the preset library. XMP settings are adapted to supported Lumora controls; the result may differ from the source application. Review adapted and unsupported settings before applying. Export uses Lumora JSON. Check included groups, especially Geometry and Masks.")
+                ])
+            ]
+        case .credits:
+            return [
+                HelpSection("Lumora", [
+                    HelpItem("Design and development", "Created by François Guillemé. Lumora's interface, editing pipeline, photographic effects, and validation tools were designed and developed specifically for the application."),
+                    HelpItem("Made for Apple platforms", "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation on the device.")
+                ]),
+                HelpSection("Depth estimation", [
+                    HelpItem("Depth Anything V2 Small", "Depth Lens and experimental Lighting use Depth Anything V2 Small. The Core ML package is distributed by Apple from the original Depth Anything V2 architecture. The Small model is provided under the Apache License 2.0."),
+                    HelpItem("Model provenance", "Core ML package: apple/coreml-depth-anything-v2-small. Original project: DepthAnything/Depth-Anything-V2. The complete Apache 2.0 license and provenance notice are included with Lumora.")
+                ]),
+                HelpSection("Privacy and independence", [
+                    HelpItem("On-device processing", "Photo editing, face analysis, masks, depth estimation, preview, and export run on the device. Lumora does not require an online image-processing service."),
+                    HelpItem("Third-party libraries", "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; the depth model attribution is listed separately above.")
                 ])
             ]
         }
