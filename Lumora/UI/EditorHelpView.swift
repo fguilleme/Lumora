@@ -108,7 +108,7 @@ private struct HelpSection: Identifiable {
 }
 
 private enum EditorHelpTopic: String, CaseIterable, Identifiable {
-    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, lighting, beauty, optics, geometry, masks, presets, settings, credits
+    case commonGestures, creative, light, color, curves, colorTools, effects, detail, depthLens, lighting, beauty, optics, geometry, masks, presets, exif, settings, credits
     var id: String { rawValue }
 
     var title: String {
@@ -128,6 +128,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: String(localized: "Geometry")
         case .masks: String(localized: "Masks")
         case .presets: String(localized: "Presets")
+        case .exif: String(localized: "EXIF")
         case .settings: String(localized: "Settings")
         case .credits: String(localized: "Credits")
         }
@@ -150,6 +151,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: "crop.rotate"
         case .masks: "circle.dashed.inset.filled"
         case .presets: "slider.horizontal.2.square"
+        case .exif: "info.square"
         case .settings: "gearshape"
         case .credits: "info.circle"
         }
@@ -172,6 +174,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .geometry: "Horizon, perspective, and crop"
         case .masks: "Layers and local adjustments"
         case .presets: "Save and reuse your settings"
+        case .exif: "Camera and capture metadata"
         case .settings: "Customize the histogram and tab bar"
         case .credits: "Design, technologies, and acknowledgements"
         }
@@ -195,6 +198,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .masks: "Masks creates layers for local adjustments. Select a mask here, then use controls in other tabs to edit only its area."
         case .settings: "Settings customizes the editor interface. These preferences are saved on this device and apply to all photos; they do not change the photo or its export."
         case .presets: "Presets saves groups of personal settings for use on other photos. Choose which groups to include when creating one."
+        case .exif: "EXIF displays the metadata exposed by the original image: file information, camera and lens, capture settings, location, and authorship when available. It does not modify the photo."
         case .credits: "Lumora is an independent photo editor. This page identifies its creator, the Apple technologies it uses, and the model included for depth estimation."
         }
     }
@@ -452,10 +456,24 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .settings:
             return [HelpSection("Settings", [
                 HelpItem("Show histogram", "Turn off Show histogram to remove the floating histogram from the photo. Turn it on to show it again. This does not change exposure or the histogram inside Curves."),
+                HelpItem("Include metadata in exports", "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen."),
                 HelpItem("Editor tabs", "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden."),
                 HelpItem("Change the order", "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again."),
                 HelpItem("Restore interface defaults", "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.")
             ])]
+        case .exif:
+            return [
+                HelpSection("Displayed information", [
+                    HelpItem("Original metadata", "EXIF reads the original image and groups available values into File, Camera, Capture, Location, and Authorship. Missing fields are simply omitted; developed JPEG, PNG, HEIC, TIFF, and RAW files do not all expose the same information."),
+                    HelpItem("Location", "Coordinates appear only when the original contains GPS metadata. Treat them as private information when sharing a screenshot or an exported image."),
+                    HelpItem("Read only", "This tab does not edit metadata or the photo. Hiding or reordering the EXIF tab in Settings has no effect on the original or on export settings.")
+                ]),
+                HelpSection("Export metadata", [
+                    HelpItem("Keep metadata", "The export screen can include standard EXIF capture fields and selected TIFF fields. It updates dimensions and orientation for the exported pixels, removes proprietary Maker Notes, and does not copy XMP or IPTC blocks."),
+                    HelpItem("Remove location", "GPS metadata is removed by default even when other metadata is kept. Disable Remove location only when you deliberately want coordinates in the exported file."),
+                    HelpItem("Settings default", "The Include metadata in exports switch in Settings chooses the default for future exports. The switch inside Export remains available for each individual file.")
+                ])
+            ]
         case .presets:
             return [
                 HelpSection("Create and apply", [

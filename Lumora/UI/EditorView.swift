@@ -36,6 +36,7 @@ struct EditorView: View {
     private var controlsSide: ControlsSide { ControlsSide(rawValue: controlsSideRaw) ?? .leading }
     private typealias Panel = EditorPanel
     @AppStorage("editor.showHistogram") private var showHistogram = true
+    @AppStorage("export.includeMetadata") private var includeMetadataInExport = true
     @AppStorage("editor.tabOrder") private var tabOrder = ""
     @AppStorage("editor.hiddenTabs") private var hiddenTabs = ""
     @State private var showSettingsSheet = false
@@ -54,7 +55,7 @@ struct EditorView: View {
                 GeometryReader { available in
                     let landscape = available.size.width > available.size.height
                     VStack(spacing: 0) {
-                        if panel == .help || panel == .settings {
+                        if panel == .exif || panel == .help || panel == .settings {
                             editorControls(result)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .background(.black)
@@ -154,7 +155,7 @@ struct EditorView: View {
                         }
                         .frame(maxHeight: .infinity)
                         }
-                        if landscape && panel != .help && panel != .settings { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
+                        if landscape && panel != .exif && panel != .help && panel != .settings { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
@@ -218,7 +219,8 @@ struct EditorView: View {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
         .sheet(isPresented: $showSettingsSheet) {
-            NavigationStack { EditorSettingsView(showHistogram: $showHistogram, tabOrder: $tabOrder, hiddenTabs: $hiddenTabs).navigationTitle("Settings")
+            NavigationStack { EditorSettingsView(showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
+                                                  tabOrder: $tabOrder, hiddenTabs: $hiddenTabs).navigationTitle("Settings")
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Close") { showSettingsSheet = false } } }
             }.preferredColorScheme(.dark)
         }
@@ -278,7 +280,7 @@ struct EditorView: View {
     }
 
     private var showsPhotoInformation: Bool {
-        ![Panel.creative, .depthLens, .lighting, .optics, .geometry, .masks, .presets, .help, .settings].contains(panel)
+        ![Panel.creative, .depthLens, .lighting, .optics, .geometry, .masks, .presets, .exif, .help, .settings].contains(panel)
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -367,7 +369,7 @@ struct EditorView: View {
 
     private var header: some View {
         HStack(spacing: 8) {
-            Text("LUMORA✨").font(.system(.headline, design: .rounded)).tracking(3)
+            Text("LUMORA✨").font(.system(.subheadline, design: .rounded)).tracking(3)
             Spacer()
             if session.result != nil {
                 HStack(spacing: 0) {
@@ -400,7 +402,10 @@ struct EditorView: View {
                             .accessibilityIdentifier("open-editor-settings")
                         Button("Library", systemImage: "photo.stack") { showLibrary = true }
                         Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
-                        Button("Export", systemImage: "square.and.arrow.up") { exportRequest = session.exportRequest() }
+                        Button("Export", systemImage: "square.and.arrow.up") {
+                            exporter.settings.includeMetadata = includeMetadataInExport
+                            exportRequest = session.exportRequest()
+                        }
                             .accessibilityIdentifier("header-option-export")
                         Button("Files", systemImage: "folder") { showFiles = true }
                         Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
@@ -584,10 +589,13 @@ struct EditorView: View {
                       onEnd: session.finishInteraction)
         case .presets:
             PresetsView(controller: presetController, state: session.state, onApply: session.applyPreset)
+        case .exif:
+            EXIFMetadataView(sourceURL: session.originalURL)
         case .help:
             EditorHelpView()
         case .settings:
-            EditorSettingsView(showHistogram: $showHistogram, tabOrder: $tabOrder, hiddenTabs: $hiddenTabs)
+            EditorSettingsView(showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
+                               tabOrder: $tabOrder, hiddenTabs: $hiddenTabs)
         case .light, .color:
             controls
         }
@@ -629,7 +637,7 @@ struct EditorView: View {
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
-        if item == .lighting || item == .depthLens || item == .optics || item == .geometry || item == .beauty { session.selectBaseLayer() }
+        if item == .lighting || item == .depthLens || item == .optics || item == .geometry || item == .beauty || item == .exif { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
     }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EditorSettingsView: View {
     @Binding var showHistogram: Bool
+    @Binding var includeMetadataInExport: Bool
     @Binding var tabOrder: String
     @Binding var hiddenTabs: String
     private var tabs: [EditorPanel] { EditorTabPreferences.ordered(tabOrder) }
@@ -11,6 +12,12 @@ struct EditorSettingsView: View {
                 Toggle("Show histogram", isOn: $showHistogram)
                     .accessibilityIdentifier("settings-histogram")
             } header: { Text("Display") }
+            Section {
+                Toggle("Include metadata in exports", isOn: $includeMetadataInExport)
+                    .accessibilityIdentifier("settings-export-metadata")
+            } header: { Text("Export") } footer: {
+                Text("Sets the default for new exports. It can still be changed for an individual export; location remains removed by default.")
+            }
             Section {
                 ForEach(tabs, id: \.self) { tab in
                     HStack {
@@ -46,7 +53,7 @@ struct EditorSettingsView: View {
             }
             Section {
                 Button("Restore interface defaults") {
-                    showHistogram = true; tabOrder = ""; hiddenTabs = ""
+                    showHistogram = true; includeMetadataInExport = true; tabOrder = ""; hiddenTabs = ""
                 }.accessibilityIdentifier("settings-reset")
             } footer: { Text("These preferences apply to the app, not to individual photos.") }
         }

@@ -28,7 +28,7 @@ final class EditorHelpUITests: XCTestCase {
         XCTAssertFalse(app.descendants(matching: .any).matching(identifier: "photo-information").firstMatch.exists)
         for topic in ["commonGestures", "creative", "light", "color", "curves", "colorTools", "effects",
                       "detail", "depthLens", "lighting", "beauty", "optics", "geometry", "masks",
-                      "presets", "settings", "credits"] {
+                      "presets", "exif", "settings", "credits"] {
             XCTAssertTrue(app.buttons["help-topic-\(topic)"].exists, topic)
         }
         let gestures = app.buttons["help-topic-commonGestures"]

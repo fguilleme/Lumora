@@ -181,6 +181,7 @@ final class EditorSession {
     @ObservationIgnored private var deferredMaskRender = false
     @ObservationIgnored private var renderTask: Task<Void, Never>?
     @ObservationIgnored private var sourceURL: URL?
+    var originalURL: URL? { sourceURL }
     @ObservationIgnored private var revision = 0
     @ObservationIgnored private var importGeneration = 0
     @ObservationIgnored private var interacting = false
