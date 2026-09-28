@@ -1301,3 +1301,10 @@
 "Manage tabs…" = "Gérer les onglets…";
 "Quick reorder from the tab bar" = "Réorganisation rapide depuis la barre d’onglets";
 "Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des autres onglets visibles. Choisissez-en un pour le déplacer juste avant l’onglet maintenu. Un toucher normal continue d’ouvrir l’onglet ; les onglets masqués restent accessibles dans Réglages.";
+"On the tab bar" = "Sur la barre d’onglets";
+"Open a tab" = "Ouvrir un onglet";
+"Tap an editor tab normally to open it." = "Touchez normalement un onglet de l’éditeur pour l’ouvrir.";
+"Reorder quickly" = "Réorganiser rapidement";
+"Touch and hold the tab that should receive another tab before it. In the menu, choose the tab to move. Its new position is saved automatically." = "Maintenez le doigt sur l’onglet devant lequel vous souhaitez en placer un autre. Dans le menu, choisissez l’onglet à déplacer. Sa nouvelle position est enregistrée automatiquement.";
+"Complete organization" = "Organisation complète";
+"Choose Manage tabs… in the long-press menu, or open Settings, to show or hide tabs and reorder the complete list, including hidden tabs." = "Choisissez Gérer les onglets… dans le menu de l’appui long, ou ouvrez Réglages, pour afficher ou masquer les onglets et réordonner la liste complète, y compris les onglets masqués.";

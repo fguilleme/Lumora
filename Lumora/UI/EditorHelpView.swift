@@ -221,6 +221,11 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Touch and hold histogram", "Hold the histogram to show near-black areas in blue and near-white areas in red on the SDR preview. Release to hide this temporary overlay."),
                     HelpItem("Drag histogram", "Drag the histogram to move it over the photo. The compact and expanded views remember their positions separately."),
                     HelpItem("Placement", "By default, the compact histogram sits at the left of the photo; the expanded histogram is centered over it.")
+                ]),
+                HelpSection("On the tab bar", [
+                    HelpItem("Open a tab", "Tap an editor tab normally to open it."),
+                    HelpItem("Reorder quickly", "Touch and hold the tab that should receive another tab before it. In the menu, choose the tab to move. Its new position is saved automatically."),
+                    HelpItem("Complete organization", "Choose Manage tabs… in the long-press menu, or open Settings, to show or hide tabs and reorder the complete list, including hidden tabs.")
                 ])
             ]
         case .creative:

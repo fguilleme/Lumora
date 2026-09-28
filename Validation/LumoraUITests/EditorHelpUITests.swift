@@ -36,7 +36,8 @@ final class EditorHelpUITests: XCTestCase {
         gestures.tap()
         XCTAssertTrue(app.scrollViews["help-detail-commonGestures"].waitForExistence(timeout: 5))
         for heading in ["On the photo", "On the histogram", "Short tap", "Double-tap",
-                        "Touch and hold", "Short tap on histogram", "Touch and hold histogram", "Drag histogram"] {
+                        "Touch and hold", "Short tap on histogram", "Touch and hold histogram", "Drag histogram",
+                        "On the tab bar", "Reorder quickly"] {
             XCTAssertTrue(app.staticTexts[heading].exists, heading)
         }
         app.buttons["help-close"].tap()
