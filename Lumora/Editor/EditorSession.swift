@@ -41,7 +41,13 @@ final class EditorSession {
     }
     var healingGeometry: HealingGeometry? {
         guard let result else { return nil }
-        return HealingGeometry(size: CGSize(width: result.sourceWidth, height: result.sourceHeight), settings: state.geometry)
+        // RAW nativeSize and ImageIO metadata describe sensor orientation. The
+        // correction coordinates, however, live in the orientation-applied
+        // image used by the renderer. Using sensor dimensions here stretched a
+        // circular guide by the squared aspect ratio on portrait RAW files.
+        return HealingGeometry(
+            size: CGSize(width: result.original.width, height: result.original.height),
+            settings: state.geometry)
     }
     func closeHealing() {
         finishInteraction(); healingToken &+= 1; healingTask?.cancel()
