@@ -494,7 +494,7 @@ private actor LibraryThumbnailLoader {
         ] as CFDictionary) {
             return thumbnail
         }
-        guard let raw = CIRAWFilter(imageURL: url) else { return nil }
+        guard let raw = RAWDecoder.filter(url) else { return nil }
         raw.scaleFactor = Float(min(1, 240 / max(raw.nativeSize.width, raw.nativeSize.height)))
         guard let output = raw.outputImage,
               let space = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }

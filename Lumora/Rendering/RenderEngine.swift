@@ -133,7 +133,7 @@ actor RenderEngine {
         }
         try Task.checkCancellation()
         let input: CIImage
-        if let raw = CIRAWFilter(imageURL: url) {
+        if let raw = RAWDecoder.filter(url) {
             raw.isLensCorrectionEnabled = state.optics.profileCorrection && raw.isLensCorrectionSupported
             raw.scaleFactor = Float(min(1, Double(maximum * 2) / max(raw.nativeSize.width, raw.nativeSize.height)))
             guard let decoded = raw.outputImage else { throw PhotoError.unreadable }
@@ -202,7 +202,7 @@ actor RenderEngine {
         }
         try Task.checkCancellation()
         let source: CIImage
-        if let rawFilter = CIRAWFilter(imageURL: url) {
+        if let rawFilter = RAWDecoder.filter(url) {
             rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported
             rawFilter.scaleFactor = Float(min(1, 2048 / max(rawFilter.nativeSize.width, rawFilter.nativeSize.height)))
             guard let decoded = rawFilter.outputImage else { throw PhotoError.unreadable }
@@ -381,7 +381,7 @@ actor RenderEngine {
         let source = CGImageSourceCreateWithURL(request.sourceURL as CFURL, nil)
         let metadata = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] } ?? [:]
         let input: CIImage
-        if let raw = CIRAWFilter(imageURL: request.sourceURL) {
+        if let raw = RAWDecoder.filter(request.sourceURL) {
             raw.isLensCorrectionEnabled = request.state.optics.profileCorrection && raw.isLensCorrectionSupported
             if let maximum = settings.maximumDimension {
                 raw.scaleFactor = Float(min(1, Double(maximum) / max(raw.nativeSize.width, raw.nativeSize.height)))
@@ -451,7 +451,7 @@ actor RenderEngine {
         defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
         if sourceURL != url { clearCaches(); sourceURL = url }
         let source: CIImage
-        if let rawFilter = CIRAWFilter(imageURL: url) {
+        if let rawFilter = RAWDecoder.filter(url) {
             rawFilter.isLensCorrectionEnabled = state.optics.profileCorrection && rawFilter.isLensCorrectionSupported
             guard let decoded = rawFilter.outputImage else { throw PhotoError.unreadable }
             source = decoded
@@ -482,7 +482,7 @@ actor RenderEngine {
         let properties = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] }
         sourceWidth = properties?[kCGImagePropertyPixelWidth] as? Int ?? 0
         sourceHeight = properties?[kCGImagePropertyPixelHeight] as? Int ?? 0
-        let rawFilter = CIRAWFilter(imageURL: url)
+        let rawFilter = RAWDecoder.filter(url)
         raw = rawFilter != nil
         let tiff = properties?[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
         let exif = properties?[kCGImagePropertyExifDictionary] as? [CFString: Any]
