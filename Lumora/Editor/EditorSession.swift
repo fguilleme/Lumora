@@ -172,6 +172,8 @@ final class EditorSession {
         if CommandLine.arguments.contains("--depth-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("DepthUIValidation")) }
         if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
         if CommandLine.arguments.contains("--raw-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("ThirdPartyRAWValidation")) }
+        if CommandLine.arguments.contains("--app-store-image") { return DocumentStore(root: URL.temporaryDirectory.appendingPathComponent("AppStoreScreenshots")) }
+        if CommandLine.arguments.contains("--app-store-raw") { return DocumentStore(root: URL.temporaryDirectory.appendingPathComponent("AppStoreRAW")) }
         #endif
         return DocumentStore()
     }()
@@ -245,6 +247,17 @@ final class EditorSession {
         if CommandLine.arguments.contains("--raw-ui-validation") {
             await importPhoto(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 .appendingPathComponent("ThirdPartyRAWInput.dng"))
+            return
+        }
+        if let option = CommandLine.arguments.firstIndex(of: "--app-store-image"),
+           CommandLine.arguments.indices.contains(option + 1) {
+            await importPhoto(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent(CommandLine.arguments[option + 1]))
+            return
+        }
+        if CommandLine.arguments.contains("--app-store-raw") {
+            await importPhoto(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("AppStoreEXIF.CR2"))
             return
         }
         #endif

@@ -42,6 +42,16 @@ struct EditorView: View {
     @State private var showSettingsSheet = false
     private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
 
+    init() {
+        #if DEBUG
+        if let option = CommandLine.arguments.firstIndex(of: "--app-store-panel"),
+           CommandLine.arguments.indices.contains(option + 1),
+           let panel = Panel(rawValue: CommandLine.arguments[option + 1]) {
+            _panel = State(initialValue: panel)
+        }
+        #endif
+    }
+
     private var activeDLCSettings: DarkenLightenCenterSettings? {
         guard panel == .creative, !session.bypassCreative,
               let effect = session.state.creative.effects.first(where: { $0.id == selectedCreativeEffectID }),
