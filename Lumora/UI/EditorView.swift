@@ -626,35 +626,42 @@ struct EditorView: View {
         }
     }
     private func toolBar(trailingInset: CGFloat = 0) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(visiblePanels, id: \.self) { item in
-                    Button { selectPanel(item) } label: {
-                        Label(item.title, systemImage: item.symbol)
-                            .font(.subheadline.weight(.medium)).frame(minHeight: 44)
-                            .padding(.horizontal, 10)
-                            .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
-                    }.foregroundStyle(panel == item ? .mint : .secondary)
-                        .accessibilityAddTraits(panel == item ? .isSelected : [])
-                        .accessibilityIdentifier("editor-tab-\(item.rawValue)")
-                        .contextMenu {
-                            Section("Open a tab") {
-                                ForEach(visiblePanels, id: \.self) { candidate in
-                                    Button {
-                                        selectPanel(candidate)
-                                    } label: {
-                                        Label(candidate.title, systemImage: candidate.symbol)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(visiblePanels, id: \.self) { item in
+                        Button { selectPanel(item) } label: {
+                            Label(item.title, systemImage: item.symbol)
+                                .font(.subheadline.weight(.medium)).frame(minHeight: 44)
+                                .padding(.horizontal, 10)
+                                .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
+                        }.foregroundStyle(panel == item ? .mint : .secondary)
+                            .id(item)
+                            .accessibilityAddTraits(panel == item ? .isSelected : [])
+                            .accessibilityIdentifier("editor-tab-\(item.rawValue)")
+                            .contextMenu {
+                                Section("Open a tab") {
+                                    ForEach(visiblePanels, id: \.self) { candidate in
+                                        Button {
+                                            selectPanel(candidate)
+                                        } label: {
+                                            Label(candidate.title, systemImage: candidate.symbol)
+                                        }
+                                        .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
                                     }
-                                    .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
                                 }
+                                Divider()
+                                Button("Manage tabs…", systemImage: "list.bullet") { selectPanel(.settings) }
                             }
-                            Divider()
-                            Button("Manage tabs…", systemImage: "list.bullet") { selectPanel(.settings) }
-                        }
+                    }
                 }
+                .padding(.leading, 12)
+                .padding(.trailing, 12 + trailingInset)
             }
-            .padding(.leading, 12)
-            .padding(.trailing, 12 + trailingInset)
+            .onChange(of: panel) { _, selected in
+                guard visiblePanels.contains(selected) else { return }
+                withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(selected, anchor: .center) }
+            }
         }
         .accessibilityIdentifier("tools-toolbar")
         .padding(.vertical, 6).background(.black.opacity(0.3))
