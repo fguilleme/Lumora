@@ -225,7 +225,8 @@ struct MasksView: View {
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("brush-mode")
-            Label(brushMode == .pan ? "Pan the zoomed image without painting." : "Paint on the photo. To navigate, choose Pan.", systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
+            Label(brushInstruction(component.operation),
+                  systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
                 .font(.caption).foregroundStyle(.secondary)
             parameter(.size, brush.size); parameter(.feather, brush.feather)
             parameter(.flow, brush.flow); parameter(.opacity, brush.opacity)
@@ -241,6 +242,17 @@ struct MasksView: View {
                   systemImage: generated.kind.symbol)
                 .font(.caption).foregroundStyle(.secondary)
         }
+    }
+    private func brushInstruction(_ operation: MaskOperation) -> String {
+        if brushMode == .pan { return String(localized: "Pan the zoomed image without painting.") }
+        if operation == .subtract {
+            return brushMode == .paint
+                ? String(localized: "Paint the area to subtract from the mask.")
+                : String(localized: "Erase restores part of the subtracted area.")
+        }
+        return brushMode == .paint
+            ? String(localized: "Paint on the photo. To navigate, choose Pan.")
+            : String(localized: "Erase removes paint from the mask.")
     }
     private func parameter(_ parameter: MaskParameter, _ value: Double) -> some View {
         AdjustmentSlider(title: parameter.title, range: parameter.range,

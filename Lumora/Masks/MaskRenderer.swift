@@ -21,12 +21,22 @@ enum MaskRenderer {
     static func makeMask(_ mask: LocalMask, extent: CGRect) throws -> CIImage {
         var result = CIImage(color: .black).cropped(to: extent)
         for component in mask.components {
+            // An additive brush eraser edits the accumulated mask, including preceding
+            // Vision and gradient components. A subtractive brush still uses its own
+            // erased paint as the shape to subtract.
+            if case .brush(let rawBrush) = component.shape, component.operation == .add {
+                let brush = rawBrush.validated
+                let strength = brush.opacity / 100 * brush.flow / 100
+                let painted = try brushImage(brush, extent: extent, includeErasing: false)
+                result = try maximum(painted, result, extent: extent)
+                result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
+                    sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
+                    feather: brush.feather, strength: strength, extent: extent)
+                continue
+            }
             let shape = try shapeImage(component.shape, extent: extent)
             if component.operation == .add {
-                let maximum = CIFilter.maximumCompositing()
-                maximum.inputImage = shape; maximum.backgroundImage = result
-                guard let output = maximum.outputImage else { throw PhotoError.renderFailed }
-                result = output.cropped(to: extent)
+                result = try maximum(shape, result, extent: extent)
             } else {
                 let invert = CIFilter.colorInvert()
                 invert.inputImage = shape
@@ -52,6 +62,13 @@ enum MaskRenderer {
             result = output.cropped(to: extent)
         }
         return result
+    }
+
+    private static func maximum(_ shape: CIImage, _ background: CIImage, extent: CGRect) throws -> CIImage {
+        let maximum = CIFilter.maximumCompositing()
+        maximum.inputImage = shape; maximum.backgroundImage = background
+        guard let output = maximum.outputImage else { throw PhotoError.renderFailed }
+        return output.cropped(to: extent)
     }
 
     /// Produces the editor visualization from the exact composed matte. The matte luminance
@@ -120,23 +137,29 @@ enum MaskRenderer {
         }
     }
 
-    private static func brushImage(_ brush: BrushMask, extent: CGRect) throws -> CIImage {
+    private static func brushImage(_ brush: BrushMask, extent: CGRect, includeErasing: Bool = true) throws -> CIImage {
         var result = CIImage(color: .black).cropped(to: extent)
-        let radius = min(extent.width, extent.height) * CGFloat(brush.size / 200)
         let strength = brush.opacity / 100 * brush.flow / 100
-        let inner = radius * CGFloat(1 - brush.feather / 100)
         result = try compositeBrushStrokes(brush.strokes, onto: result, erasing: false,
-                                           radius: radius, inner: inner, strength: strength, extent: extent)
-        result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
-                                           radius: radius, inner: inner, strength: strength, extent: extent)
+                                           sizes: brush.strokeSizes, fallbackSize: brush.size,
+                                           feather: brush.feather, strength: strength, extent: extent)
+        if includeErasing {
+            result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
+                                               sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
+                                               feather: brush.feather, strength: strength, extent: extent)
+        }
         return result
     }
 
     private static func compositeBrushStrokes(_ strokes: [[MaskPoint]], onto input: CIImage,
-                                              erasing: Bool, radius: CGFloat, inner: CGFloat,
+                                              erasing: Bool, sizes: [Double], fallbackSize: Double,
+                                              feather: Double,
                                               strength: Double, extent: CGRect) throws -> CIImage {
         var result = input
-        for stroke in strokes {
+        for (index, stroke) in strokes.enumerated() {
+            let size = index < sizes.count ? sizes[index] : fallbackSize
+            let radius = min(extent.width, extent.height) * CGFloat(size / 200)
+            let inner = radius * CGFloat(1 - feather / 100)
             for point in interpolated(stroke, radius: radius, extent: extent) {
                 let gradient = CIFilter.radialGradient()
                 gradient.center = CGPoint(x: extent.minX + extent.width * point.x,

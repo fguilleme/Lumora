@@ -451,7 +451,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Invert", "Swaps the selected area with its complement. Useful for adjusting a background after isolating a subject.")
                 ]),
                 HelpSection("Create an area", [
-                    HelpItem("Brush", "Paint adds to the mask, Erase removes from it, and Pan navigates a zoomed photo. Size, Feather, Flow, and Opacity shape the stroke."),
+                    HelpItem("Brush", "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode."),
                     HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
                     HelpItem("Smart masks", "Depending on the image, Lumora can propose Subject, Background, Person, Face, Eyes, Sky, or Skin. Inspect the outline before a strong adjustment."),
                     HelpItem("Add / Subtract", "Combine several components for a more precise selection. Each can be selected, reordered, or removed."),

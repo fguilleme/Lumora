@@ -779,6 +779,7 @@ final class EditorSession {
         let component = MaskComponent(shape: kind.shape())
         let mask = LocalMask(name: "\(kind.title) \(state.masks.count + 1)", components: [component])
         state.masks.append(mask); selectedMaskID = mask.id; selectedMaskComponentID = component.id
+        if kind == .brush { brushMode = .paint }
         history.commit(state); persist(); requestRender(.high); showingOriginal = false
     }
     func addMaskComponent(_ kind: MaskKind, operation: MaskOperation) {
@@ -786,6 +787,7 @@ final class EditorSession {
         history.begin(operation == .add ? "Add to mask" : "Subtract from mask", state: state)
         let component = MaskComponent(operation: operation, shape: kind.shape())
         state.masks[index].components.append(component); selectedMaskComponentID = component.id
+        if kind == .brush { brushMode = .paint }
         history.commit(state); persist(); requestRender(.high)
     }
     func generateSmartMask(_ kind: SmartMaskKind, operation: MaskOperation? = nil) async {
@@ -904,14 +906,20 @@ final class EditorSession {
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
-    func beginBrushStroke() {
+    func beginBrushStroke(displayScale: CGFloat) {
         guard brushMode != .pan else { return }
         guard let (maskIndex, componentIndex) = selectedComponentIndex,
               case .brush(var brush) = state.masks[maskIndex].components[componentIndex].shape else { return }
         history.begin(brushMode == .paint ? "Paint mask" : "Erase mask", state: state)
         interacting = true
-        if brushMode == .paint { brush.strokes.append([]) }
-        else { brush.eraseStrokes.append([]) }
+        let effectiveSize = brush.size / Double(max(1, displayScale))
+        if brushMode == .paint {
+            brush.strokes.append([])
+            brush.strokeSizes.append(effectiveSize)
+        } else {
+            brush.eraseStrokes.append([])
+            brush.eraseStrokeSizes.append(effectiveSize)
+        }
         state.masks[maskIndex].components[componentIndex].shape = .brush(brush)
         showingOriginal = false
     }

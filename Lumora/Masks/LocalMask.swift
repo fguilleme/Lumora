@@ -12,19 +12,26 @@ struct MaskPoint: Codable, Sendable, Equatable {
 struct BrushMask: Codable, Sendable, Equatable {
     var strokes: [[MaskPoint]] = []
     var eraseStrokes: [[MaskPoint]] = []
+    /// Effective image-relative size captured when each stroke begins. Empty arrays
+    /// preserve legacy documents, where every stroke uses `size`.
+    var strokeSizes: [Double] = []
+    var eraseStrokeSizes: [Double] = []
     var size = 18.0
     var feather = 70.0
     var flow = 80.0
     var opacity = 100.0
 
     private enum CodingKeys: String, CodingKey {
-        case strokes, eraseStrokes, size, feather, flow, opacity
+        case strokes, eraseStrokes, strokeSizes, eraseStrokeSizes, size, feather, flow, opacity
     }
 
-    init(strokes: [[MaskPoint]] = [], eraseStrokes: [[MaskPoint]] = [], size: Double = 18,
+    init(strokes: [[MaskPoint]] = [], eraseStrokes: [[MaskPoint]] = [],
+         strokeSizes: [Double] = [], eraseStrokeSizes: [Double] = [], size: Double = 18,
          feather: Double = 70, flow: Double = 80, opacity: Double = 100) {
         self.strokes = strokes
         self.eraseStrokes = eraseStrokes
+        self.strokeSizes = strokeSizes
+        self.eraseStrokeSizes = eraseStrokeSizes
         self.size = size
         self.feather = feather
         self.flow = flow
@@ -35,6 +42,8 @@ struct BrushMask: Codable, Sendable, Equatable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         strokes = try values.decodeIfPresent([[MaskPoint]].self, forKey: .strokes) ?? []
         eraseStrokes = try values.decodeIfPresent([[MaskPoint]].self, forKey: .eraseStrokes) ?? []
+        strokeSizes = try values.decodeIfPresent([Double].self, forKey: .strokeSizes) ?? []
+        eraseStrokeSizes = try values.decodeIfPresent([Double].self, forKey: .eraseStrokeSizes) ?? []
         size = try values.decodeIfPresent(Double.self, forKey: .size) ?? 18
         feather = try values.decodeIfPresent(Double.self, forKey: .feather) ?? 70
         flow = try values.decodeIfPresent(Double.self, forKey: .flow) ?? 80
@@ -46,6 +55,8 @@ struct BrushMask: Codable, Sendable, Equatable {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(strokes, forKey: .strokes)
         try values.encode(eraseStrokes, forKey: .eraseStrokes)
+        try values.encode(strokeSizes, forKey: .strokeSizes)
+        try values.encode(eraseStrokeSizes, forKey: .eraseStrokeSizes)
         try values.encode(size, forKey: .size)
         try values.encode(feather, forKey: .feather)
         try values.encode(flow, forKey: .flow)
@@ -58,6 +69,12 @@ struct BrushMask: Codable, Sendable, Equatable {
         let remaining = max(0, 128 - value.strokes.count)
         value.eraseStrokes = eraseStrokes.prefix(remaining).map { $0.prefix(4096).map(\.validated) }
         value.size = Self.clamp(size, 1...100, fallback: 18)
+        value.strokeSizes = strokeSizes.prefix(value.strokes.count).map {
+            Self.clamp($0, 0.1...100, fallback: value.size)
+        }
+        value.eraseStrokeSizes = eraseStrokeSizes.prefix(value.eraseStrokes.count).map {
+            Self.clamp($0, 0.1...100, fallback: value.size)
+        }
         value.feather = Self.clamp(feather, 0...100, fallback: 70)
         value.flow = Self.clamp(flow, 1...100, fallback: 80)
         value.opacity = Self.clamp(opacity, 1...100, fallback: 100)

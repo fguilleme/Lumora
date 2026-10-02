@@ -42,6 +42,22 @@ private func halfMaskPNG() throws -> Data {
     return data as Data
 }
 
+private func rectangleMaskPNG(_ rectangle: CGRect) throws -> Data {
+    let space = try #require(CGColorSpace(name: CGColorSpace.sRGB))
+    let context = try #require(CGContext(data: nil, width: 100, height: 100, bitsPerComponent: 8,
+                                        bytesPerRow: 400, space: space,
+                                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+    context.setFillColor(CGColor(gray: 0, alpha: 1)); context.fill(maskExtent)
+    context.setFillColor(CGColor(gray: 1, alpha: 1)); context.fill(rectangle)
+    let data = NSMutableData()
+    let destination = try #require(CGImageDestinationCreateWithData(
+        data, UTType.png.identifier as CFString, 1, nil
+    ))
+    CGImageDestinationAddImage(destination, try #require(context.makeImage()), nil)
+    #expect(CGImageDestinationFinalize(destination))
+    return data as Data
+}
+
 private func solidPhotoURL() throws -> URL {
     let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -136,6 +152,66 @@ private func syntheticPortrait() throws -> CGImage {
     let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
     #expect(red(pixels, x: 30, y: 50) < 20)
     #expect(red(pixels, x: 70, y: 50) > 240)
+}
+
+@Test func additiveBrushEraserRemovesAnEarlierGeneratedSubject() throws {
+    let subject = GeneratedMask(kind: .subject, pngData: try rectangleMaskPNG(
+        CGRect(x: 10, y: 10, width: 80, height: 80)), width: 100, height: 100)
+    let eraser = BrushMask(eraseStrokes: [[MaskPoint(x: 0.5, y: 0.5)]],
+                           size: 24, feather: 10, flow: 100, opacity: 100)
+    let mask = LocalMask(name: "Sujet affiné", components: [
+        MaskComponent(operation: .add, shape: .generated(subject)),
+        MaskComponent(operation: .add, shape: .brush(eraser))
+    ])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 50, y: 50) < 20)
+    #expect(red(pixels, x: 25, y: 50) > 240)
+    #expect(red(pixels, x: 2, y: 2) < 10)
+}
+
+@Test func subjectMinusFaceMinusBodyRadialKeepsOnlyRemainingRegion() throws {
+    let subject = GeneratedMask(kind: .subject, pngData: try rectangleMaskPNG(
+        CGRect(x: 15, y: 10, width: 70, height: 80)), width: 100, height: 100)
+    let face = GeneratedMask(kind: .face, pngData: try rectangleMaskPNG(
+        CGRect(x: 35, y: 15, width: 30, height: 30)), width: 100, height: 100)
+    var body = RadialGradientMask()
+    body.center = MaskPoint(x: 0.5, y: 0.3)
+    body.radiusX = 0.27; body.radiusY = 0.18; body.feather = 5
+    let mask = LocalMask(name: "Cheveux", components: [
+        MaskComponent(operation: .add, shape: .generated(subject)),
+        MaskComponent(operation: .subtract, shape: .generated(face)),
+        MaskComponent(operation: .subtract, shape: .radial(body))
+    ])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 50, y: 70) < 20) // face
+    #expect(red(pixels, x: 50, y: 30) < 20) // body
+    #expect(red(pixels, x: 22, y: 70) > 240) // remaining subject
+    #expect(red(pixels, x: 2, y: 50) < 10) // background
+}
+
+@Test func subtractiveBrushPaintRemovesPartOfGeneratedSubject() throws {
+    let subject = GeneratedMask(kind: .subject, pngData: try rectangleMaskPNG(
+        CGRect(x: 10, y: 10, width: 80, height: 80)), width: 100, height: 100)
+    let lipsStroke = BrushMask(strokes: [[MaskPoint(x: 0.5, y: 0.5)]],
+                               size: 24, feather: 10, flow: 100, opacity: 100)
+    let mask = LocalMask(name: "Sujet sans lèvres", components: [
+        MaskComponent(operation: .add, shape: .generated(subject)),
+        MaskComponent(operation: .subtract, shape: .brush(lipsStroke))
+    ])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 50, y: 50) < 20)
+    #expect(red(pixels, x: 25, y: 50) > 240)
+}
+
+@Test func brushStoresTheEffectiveSizeOfEachZoomedStroke() throws {
+    let brush = BrushMask(
+        strokes: [[MaskPoint(x: 0.25, y: 0.5)], [MaskPoint(x: 0.75, y: 0.5)]],
+        strokeSizes: [24, 6], size: 24, feather: 1, flow: 100, opacity: 100)
+    let mask = LocalMask(name: "Tailles par trait", components: [MaskComponent(shape: .brush(brush))])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 25, y: 60) > 240)
+    #expect(red(pixels, x: 75, y: 60) < 20)
+    #expect(red(pixels, x: 75, y: 52) > 240)
 }
 
 @Test func layerManagementMigratesPersistsAndControlsRendering() async throws {

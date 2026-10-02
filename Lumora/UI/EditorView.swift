@@ -135,7 +135,7 @@ struct EditorView: View {
                             maskOutlineOnly: !maskOverlayVisible,
                             allowsMaskEditing: panel == .masks,
                             brushMode: session.brushMode,
-                            onBrushBegin: session.beginBrushStroke,
+                            onBrushBegin: { session.beginBrushStroke(displayScale: $0) },
                             onBrushPoint: session.appendBrushPoint,
                             onBrushEnd: session.finishInteraction,
                             onMaskTransformBegin: { session.beginInteraction("Transform component") },

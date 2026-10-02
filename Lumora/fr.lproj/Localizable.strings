@@ -1307,3 +1307,7 @@
 "Touch and hold any tab, then choose the tab you want to open. The tab order does not change." = "Maintenez le doigt sur n’importe quel onglet, puis choisissez celui que vous souhaitez ouvrir. L’ordre des onglets ne change pas.";
 "Quick selection from the tab bar" = "Sélection rapide depuis la barre d’onglets";
 "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des onglets visibles. Choisissez-en un pour l’ouvrir immédiatement. L’ordre ne change pas ; les onglets masqués restent accessibles dans Réglages.";
+"Paint the area to subtract from the mask." = "Peignez la zone à soustraire du masque.";
+"Erase restores part of the subtracted area." = "Effacer restaure une partie de la zone soustraite.";
+"Erase removes paint from the mask." = "Effacer retire la peinture du masque.";
+"For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "Avec un pinceau additif, Peindre ajoute au masque et Effacer retire la peinture. Avec un pinceau soustractif, Peindre indique la zone à retirer du masque et Effacer la restaure. Déplacer permet de parcourir une photo agrandie. Un nouveau pinceau démarre toujours en mode Peindre.";

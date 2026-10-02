@@ -1307,3 +1307,7 @@
 "Touch and hold any tab, then choose the tab you want to open. The tab order does not change." = "Touch and hold any tab, then choose the tab you want to open. The tab order does not change.";
 "Quick selection from the tab bar" = "Quick selection from the tab bar";
 "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings." = "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings.";
+"Paint the area to subtract from the mask." = "Paint the area to subtract from the mask.";
+"Erase restores part of the subtracted area." = "Erase restores part of the subtracted area.";
+"Erase removes paint from the mask." = "Erase removes paint from the mask.";
+"For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode.";

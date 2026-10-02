@@ -41,7 +41,7 @@ struct PhotoCanvas: View {
     var maskOutlineOnly = false
     let allowsMaskEditing: Bool
     let brushMode: BrushMode
-    let onBrushBegin: () -> Void
+    let onBrushBegin: (CGFloat) -> Void
     let onBrushPoint: (MaskPoint) -> Void
     let onBrushEnd: () -> Void
     let onMaskTransformBegin: () -> Void
@@ -61,6 +61,8 @@ struct PhotoCanvas: View {
     @State private var brushActive = false
     @State private var brushLocation: CGPoint?
     @State private var liveBrushStroke: [MaskPoint] = []
+    @State private var liveBrushPreviewVisible = false
+    @State private var liveBrushMode: BrushMode?
 
     private var activeComponent: MaskComponent? {
         activeMask?.components.first { $0.id == activeComponentID }
@@ -159,8 +161,15 @@ struct PhotoCanvas: View {
                                     displayScale: displayScale,
                                     displayOffset: displayOffset,
                                     activeComponentID: activeComponentID,
-                                    liveBrushStroke: brushActive ? liveBrushStroke : [],
-                                    liveBrushMode: brushActive ? brushMode : nil)
+                                    liveBrushStroke: liveBrushPreviewVisible ? liveBrushStroke : [],
+                                    liveBrushMode: liveBrushPreviewVisible ? liveBrushMode : nil,
+                                    liveBrushInProgress: brushActive,
+                                    onCommittedOverlayReady: {
+                                        guard !brushActive else { return }
+                                        liveBrushPreviewVisible = false
+                                        liveBrushStroke = []
+                                        liveBrushMode = nil
+                                    })
                             .opacity(showsMaskOverlay && !showingOriginal && !pressing ? 1 : 0)
                             .accessibilityHidden(!showsMaskOverlay || showingOriginal || pressing)
                             .allowsHitTesting(false)
@@ -323,8 +332,10 @@ struct PhotoCanvas: View {
             guard case .second(let value) = gesture else { return }
             if !brushActive {
                 liveBrushStroke = []
+                liveBrushMode = brushMode
+                liveBrushPreviewVisible = true
                 brushActive = true
-                onBrushBegin()
+                onBrushBegin(displayScale)
             }
             brushLocation = value.location
             if let point = normalized(value.location, viewSize: viewSize,
@@ -348,7 +359,6 @@ struct PhotoCanvas: View {
             }
             brushActive = false
             brushLocation = nil
-            liveBrushStroke = []
         }
     }
 
@@ -386,7 +396,7 @@ struct PhotoCanvas: View {
         guard imageSize.width > 0, imageSize.height > 0 else { return nil }
         let scale = min(viewSize.width / imageSize.width, viewSize.height / imageSize.height)
         let fitted = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
-        return min(fitted.width, fitted.height) * CGFloat(brush.size / 100) * displayScale
+        return min(fitted.width, fitted.height) * CGFloat(brush.size / 100)
     }
 }
 
@@ -683,7 +693,7 @@ private struct GeometryGrid: View {
     let imageSize: CGSize
 
     var body: some View {
-        Canvas { context, size in
+        return Canvas { context, size in
             let extent = fittedRect(size)
             var path = Path()
             for fraction in [1.0 / 3, 2.0 / 3] {
@@ -719,6 +729,8 @@ private struct MaskOverlay: View {
     let activeComponentID: UUID?
     let liveBrushStroke: [MaskPoint]
     let liveBrushMode: BrushMode?
+    let liveBrushInProgress: Bool
+    let onCommittedOverlayReady: () -> Void
     @State private var overlay: CGImage?
 
     private var activeBrush: BrushMask? {
@@ -734,7 +746,8 @@ private struct MaskOverlay: View {
     /// Keep the expensive Core Image matte at the stroke's starting state. The
     /// in-progress stroke is drawn by SwiftUI and the final matte renders once.
     private var committedMask: LocalMask {
-        guard let liveBrushMode, liveBrushMode != .pan, activeComponentID != nil else { return mask }
+        guard liveBrushInProgress, let liveBrushMode, liveBrushMode != .pan,
+              activeComponentID != nil else { return mask }
         var result = mask
         guard let index = result.components.firstIndex(where: { $0.id == activeComponentID }),
               case .brush(var brush) = result.components[index].shape else { return mask }
@@ -777,6 +790,7 @@ private struct MaskOverlay: View {
             let rendered = await MaskOverlayRenderer.shared.render(committedMask, imageSize: imageSize, outlineOnly: outlineOnly)
             guard !Task.isCancelled else { return }
             overlay = rendered
+            if !liveBrushInProgress, liveBrushMode != nil { onCommittedOverlayReady() }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(outlineOnly ? "Mask outline" : "Red mask overlay")
@@ -785,7 +799,15 @@ private struct MaskOverlay: View {
 
     private func liveStrokeCanvas(brush: BrushMask, mode: BrushMode,
                                   operation: MaskOperation, canvasSize: CGSize) -> some View {
-        Canvas { context, size in
+        let removesCoverage = (operation == .add && mode == .erase) ||
+            (operation == .subtract && mode == .paint)
+        let strength = brush.opacity / 100 * brush.flow / 100
+        // Encode strength directly in the pixels participating in the blend.
+        // Applying opacity to the Canvas view after `destinationOut` can make
+        // SwiftUI flatten the knockout first, so a partial-flow stroke looks
+        // fully erased until the committed Core Image matte replaces it.
+        let strokeAlpha = outlineOnly ? 0.85 : (removesCoverage ? strength : 0.55 * strength)
+        return Canvas { context, size in
             guard imageSize.width > 0, imageSize.height > 0 else { return }
             let scale = min(size.width / imageSize.width, size.height / imageSize.height)
             let fitted = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
@@ -795,28 +817,54 @@ private struct MaskOverlay: View {
                 CGPoint(x: origin.x + fitted.width * $0.x, y: origin.y + fitted.height * $0.y)
             }
             guard let first = points.first else { return }
-            let diameter = min(fitted.width, fitted.height) * CGFloat(brush.size / 100)
-            let strength = brush.opacity / 100 * brush.flow / 100
-            let path: Path
-            if points.count == 1 {
-                path = Path(ellipseIn: CGRect(x: first.x - diameter / 2, y: first.y - diameter / 2,
-                                             width: diameter, height: diameter))
-            } else {
+            let diameter = min(fitted.width, fitted.height) * CGFloat(brush.size / 100) / displayScale
+            let linePath: Path? = points.count == 1 ? nil : {
                 var line = Path()
                 line.move(to: first)
                 for point in points.dropFirst() { line.addLine(to: point) }
-                path = line
+                return line
+            }()
+            let baseColor = removesCoverage ? Color.white : Color.red
+            if outlineOnly {
+                if let linePath {
+                    context.stroke(linePath, with: .color(baseColor),
+                                   style: StrokeStyle(lineWidth: diameter, lineCap: .round,
+                                                      lineJoin: .round))
+                } else {
+                    context.fill(Path(ellipseIn: CGRect(x: first.x - diameter / 2,
+                                                        y: first.y - diameter / 2,
+                                                        width: diameter, height: diameter)),
+                                 with: .color(baseColor))
+                }
+                return
             }
-            let removesCoverage = (operation == .add && mode == .erase) ||
-                (operation == .subtract && mode == .paint)
-            context.blendMode = removesCoverage && !outlineOnly ? .destinationOut : .normal
-            let color = outlineOnly ? Color.white.opacity(0.85) :
-                Color.red.opacity((removesCoverage ? 1 : 0.55) * strength)
-            if points.count == 1 { context.fill(path, with: .color(color)) }
-            else { context.stroke(path, with: .color(color),
-                                  style: StrokeStyle(lineWidth: diameter, lineCap: .round, lineJoin: .round)) }
+            // Reproduce the matte's solid core plus linear feather while the finger
+            // moves. Copy makes each narrower layer replace the previous alpha,
+            // approximating the maximum composition used by MaskRenderer.
+            context.blendMode = .copy
+            let innerDiameter = diameter * CGFloat(1 - brush.feather / 100)
+            let steps = 16
+            for step in 1...steps {
+                let progress = CGFloat(step) / CGFloat(steps)
+                let width = diameter + (innerDiameter - diameter) * progress
+                let color = baseColor.opacity(Double(progress) * strokeAlpha)
+                if let linePath {
+                    context.stroke(linePath, with: .color(color),
+                                   style: StrokeStyle(lineWidth: max(0.5, width), lineCap: .round,
+                                                      lineJoin: .round))
+                } else {
+                    context.fill(Path(ellipseIn: CGRect(x: first.x - width / 2,
+                                                        y: first.y - width / 2,
+                                                        width: width, height: width)),
+                                 with: .color(color))
+                }
+            }
         }
         .frame(width: canvasSize.width, height: canvasSize.height)
+        // A Canvas blend mode only affects pixels already drawn inside that Canvas.
+        // Apply destinationOut to the Canvas view so a subtractive live stroke punches
+        // through the sibling red-overlay image in the surrounding compositing group.
+        .blendMode(removesCoverage && !outlineOnly ? .destinationOut : .normal)
         .allowsHitTesting(false)
     }
 }
