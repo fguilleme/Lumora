@@ -1296,15 +1296,14 @@
 "The Include metadata in exports switch in Settings chooses the default for future exports. The switch inside Export remains available for each individual file." = "Le commutateur Inclure les métadonnées dans les exports de Réglages choisit la valeur par défaut des futurs exports. Le commutateur présent dans Export reste disponible pour chaque fichier.";
 "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen." = "Définit l’état initial de Conserver les métadonnées à chaque ouverture de l’écran d’export. Vous pouvez le modifier pour un seul export sans changer cette préférence. La localisation GPS reste retirée sauf si vous choisissez explicitement de la conserver dans l’écran d’export.";
 
-/* Quick tab reordering */
-"Insert before this tab" = "Insérer avant cet onglet";
+/* Quick tab selection */
 "Manage tabs…" = "Gérer les onglets…";
-"Quick reorder from the tab bar" = "Réorganisation rapide depuis la barre d’onglets";
-"Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des autres onglets visibles. Choisissez-en un pour le déplacer juste avant l’onglet maintenu. Un toucher normal continue d’ouvrir l’onglet ; les onglets masqués restent accessibles dans Réglages.";
 "On the tab bar" = "Sur la barre d’onglets";
 "Open a tab" = "Ouvrir un onglet";
 "Tap an editor tab normally to open it." = "Touchez normalement un onglet de l’éditeur pour l’ouvrir.";
-"Reorder quickly" = "Réorganiser rapidement";
-"Touch and hold the tab that should receive another tab before it. In the menu, choose the tab to move. Its new position is saved automatically." = "Maintenez le doigt sur l’onglet devant lequel vous souhaitez en placer un autre. Dans le menu, choisissez l’onglet à déplacer. Sa nouvelle position est enregistrée automatiquement.";
 "Complete organization" = "Organisation complète";
 "Choose Manage tabs… in the long-press menu, or open Settings, to show or hide tabs and reorder the complete list, including hidden tabs." = "Choisissez Gérer les onglets… dans le menu de l’appui long, ou ouvrez Réglages, pour afficher ou masquer les onglets et réordonner la liste complète, y compris les onglets masqués.";
+"Quick tab selection" = "Sélection rapide d’un onglet";
+"Touch and hold any tab, then choose the tab you want to open. The tab order does not change." = "Maintenez le doigt sur n’importe quel onglet, puis choisissez celui que vous souhaitez ouvrir. L’ordre des onglets ne change pas.";
+"Quick selection from the tab bar" = "Sélection rapide depuis la barre d’onglets";
+"Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des onglets visibles. Choisissez-en un pour l’ouvrir immédiatement. L’ordre ne change pas ; les onglets masqués restent accessibles dans Réglages.";

@@ -224,7 +224,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 ]),
                 HelpSection("On the tab bar", [
                     HelpItem("Open a tab", "Tap an editor tab normally to open it."),
-                    HelpItem("Reorder quickly", "Touch and hold the tab that should receive another tab before it. In the menu, choose the tab to move. Its new position is saved automatically."),
+                    HelpItem("Quick tab selection", "Touch and hold any tab, then choose the tab you want to open. The tab order does not change."),
                     HelpItem("Complete organization", "Choose Manage tabs… in the long-press menu, or open Settings, to show or hide tabs and reorder the complete list, including hidden tabs.")
                 ])
             ]
@@ -464,7 +464,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpItem("Include metadata in exports", "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen."),
                 HelpItem("Editor tabs", "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden."),
                 HelpItem("Change the order", "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again."),
-                HelpItem("Quick reorder from the tab bar", "Touch and hold a tab to open the list of other visible tabs. Choose one to move it immediately before the tab you held. A normal tap still opens the tab; hidden tabs remain available in Settings."),
+                HelpItem("Quick selection from the tab bar", "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings."),
                 HelpItem("Restore interface defaults", "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.")
             ])]
         case .exif:

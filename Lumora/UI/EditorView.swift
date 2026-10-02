@@ -638,14 +638,14 @@ struct EditorView: View {
                         .accessibilityAddTraits(panel == item ? .isSelected : [])
                         .accessibilityIdentifier("editor-tab-\(item.rawValue)")
                         .contextMenu {
-                            Section("Insert before this tab") {
-                                ForEach(visiblePanels.filter { $0 != item }, id: \.self) { candidate in
+                            Section("Open a tab") {
+                                ForEach(visiblePanels, id: \.self) { candidate in
                                     Button {
-                                        movePanel(candidate, before: item)
+                                        selectPanel(candidate)
                                     } label: {
                                         Label(candidate.title, systemImage: candidate.symbol)
                                     }
-                                    .accessibilityIdentifier("tab-insert-\(candidate.rawValue)-before-\(item.rawValue)")
+                                    .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
                                 }
                             }
                             Divider()
@@ -664,11 +664,6 @@ struct EditorView: View {
         if item == .lighting || item == .depthLens || item == .optics || item == .geometry || item == .beauty || item == .exif { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
-    }
-    private func movePanel(_ candidate: Panel, before target: Panel) {
-        let order = EditorTabPreferences.moving(candidate, before: target,
-                                                in: EditorTabPreferences.ordered(tabOrder))
-        tabOrder = EditorTabPreferences.encode(order.map(\.rawValue))
     }
     private var isAdjustingSelectedMask: Bool {
         guard session.selectedMaskID != nil, let id = focusedAdjustmentID else { return false }
