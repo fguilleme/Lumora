@@ -27,6 +27,7 @@ actor MaskGenerator {
 
     func generate(_ kind: SmartMaskKind, from image: CGImage) async throws -> GeneratedMask {
         try Task.checkCancellation()
+        precondition(kind != .magic, "Magic Selection uses its interactive engine.")
         if kind == .sky {
             guard let bitmap = SkyMaskGenerator.makeMask(from: image) else {
                 throw MaskGenerationError.noSky
@@ -78,7 +79,7 @@ actor MaskGenerator {
             result = try await handler.perform(GenerateForegroundInstanceMaskRequest())
         case .person:
             result = try await handler.perform(GeneratePersonInstanceMaskRequest())
-        case .face, .eyes, .sky, .skin:
+        case .face, .eyes, .sky, .skin, .magic:
             preconditionFailure("This mask is handled before instance segmentation.")
         }
         try Task.checkCancellation()

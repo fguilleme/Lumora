@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MasksView: View {
+    let sourceImage: CGImage?
     let masks: [LocalMask]
     let selectedMaskID: UUID?
     let selectedComponentID: UUID?
@@ -15,6 +16,7 @@ struct MasksView: View {
     let onCreate: (MaskKind) -> Void
     let onAddComponent: (MaskKind, MaskOperation) -> Void
     let onGenerate: (SmartMaskKind, MaskOperation?) -> Void
+    let onMagicMask: (GeneratedMask, MaskOperation?) -> Void
     let isGenerating: Bool
     let onDelete: () -> Void
     let onRename: (String) -> Void
@@ -28,6 +30,12 @@ struct MasksView: View {
     let onEnd: () -> Void
     @State private var showingRename = false
     @State private var renameName = ""
+    @State private var magicRequest: MagicSelectionRequest?
+
+    private struct MagicSelectionRequest: Identifiable {
+        let id = UUID()
+        let operation: MaskOperation?
+    }
 
     private var mask: LocalMask? { masks.first { $0.id == selectedMaskID } }
     private var maskIndex: Int? { masks.firstIndex { $0.id == selectedMaskID } }
@@ -91,14 +99,27 @@ struct MasksView: View {
             Button("Rename") { onRename(renameName) }
                 .disabled(renameName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
+        .fullScreenCover(item: $magicRequest) { request in
+            if let sourceImage {
+                MagicSelectionView(source: sourceImage,
+                                   onCancel: { magicRequest = nil },
+                                   onValidate: { generated in
+                                       onMagicMask(generated, request.operation)
+                                       magicRequest = nil
+                                   })
+            }
+        }
     }
 
     private var newMaskMenu: some View {
         Menu {
             ForEach(MaskKind.allCases) { kind in Button(kind.title) { onCreate(kind) } }
             Divider()
-            ForEach(SmartMaskKind.allCases) { kind in
+            ForEach(SmartMaskKind.automaticCases) { kind in
                 Button(kind.title, systemImage: kind.symbol) { onGenerate(kind, nil) }
+            }
+            Button("Magic Selection", systemImage: "wand.and.stars") {
+                magicRequest = MagicSelectionRequest(operation: nil)
             }
         } label: { Label("New", systemImage: "plus.circle").frame(minHeight: 44) }
         .accessibilityIdentifier("mask-new")
@@ -160,8 +181,11 @@ struct MasksView: View {
         Menu(title) {
             ForEach(MaskKind.allCases) { kind in Button(kind.title) { onAddComponent(kind, operation) } }
             Divider()
-            ForEach(SmartMaskKind.allCases) { kind in
+            ForEach(SmartMaskKind.automaticCases) { kind in
                 Button(kind.title, systemImage: kind.symbol) { onGenerate(kind, operation) }
+            }
+            Button("Magic Selection", systemImage: "wand.and.stars") {
+                magicRequest = MagicSelectionRequest(operation: operation)
             }
         }
         .buttonStyle(.bordered)
@@ -169,9 +193,12 @@ struct MasksView: View {
     }
     private func smartMaskMenu(_ title: String, operation: MaskOperation?) -> some View {
         Menu(title) {
-            ForEach(SmartMaskKind.allCases) { kind in
+            ForEach(SmartMaskKind.automaticCases) { kind in
                 Button(kind.title, systemImage: kind.symbol) { onGenerate(kind, operation) }
                     .accessibilityIdentifier("mask-smart-\(kind.rawValue)")
+            }
+            Button("Magic Selection", systemImage: "wand.and.stars") {
+                magicRequest = MagicSelectionRequest(operation: operation)
             }
         }
         .buttonStyle(.bordered)

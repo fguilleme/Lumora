@@ -1311,3 +1311,29 @@
 "Erase restores part of the subtracted area." = "Effacer restaure une partie de la zone soustraite.";
 "Erase removes paint from the mask." = "Effacer retire la peinture du masque.";
 "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "Avec un pinceau additif, Peindre ajoute au masque et Effacer retire la peinture. Avec un pinceau soustractif, Peindre indique la zone à retirer du masque et Effacer la restaure. Déplacer permet de parcourir une photo agrandie. Un nouveau pinceau démarre toujours en mode Peindre.";
+
+/* Magic Selection */
+"Magic Selection" = "Sélection magique";
+"Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touchez l’élément à sélectionner. Ajoutez des points pour étendre la sélection, ou retirez-en pour exclure une zone.";
+"Point mode" = "Mode des points";
+"Add a point" = "Ajouter un point";
+"Remove a point" = "Retirer un point";
+"Refine edges" = "Affiner les contours";
+"Clear points" = "Effacer les points";
+"Preparing Magic Selection…" = "Préparation de la sélection magique…";
+"Ready" = "Prêt";
+"Updating selection…" = "Mise à jour de la sélection…";
+"Selection updated" = "Sélection mise à jour";
+"Refining edges…" = "Affinage des contours…";
+"Preparing mask…" = "Préparation du masque…";
+"The Magic Selection model is unavailable." = "Le modèle de sélection magique n’est pas disponible.";
+"Magic Selection could not produce a mask." = "La sélection magique n’a pas pu produire de masque.";
+"The refined mask could not be saved." = "Le masque affiné n’a pas pu être enregistré.";
+"Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment." = "Lumora peut proposer automatiquement Sujet, Arrière-plan, Personne ou Yeux. Vérifiez le contour avant d’appliquer un réglage important.";
+"Touch an element to select it, then add points to extend the selection or remove points to exclude unwanted areas. Clear points restarts the selection without changing the photo." = "Touchez un élément pour le sélectionner, puis ajoutez des points pour étendre la sélection ou retirez-en pour exclure les zones indésirables. Effacer les points recommence la sélection sans modifier la photo.";
+"Enable this before validating Magic Selection to guide the mask at full resolution with the original image. It improves difficult borders such as hair, branches, foliage, and horizons, and may take a little longer." = "Activez cette option avant de valider la sélection magique afin de guider le masque en pleine résolution avec l’image originale. Elle améliore les contours difficiles comme les cheveux, les branches, les feuillages et les horizons, et peut demander un peu plus de temps.";
+"Selection variation" = "Variante de sélection";
+"Selection 1" = "Sélection 1";
+"Selection 2" = "Sélection 2";
+"Selection 3" = "Sélection 3";
+"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image." = "Touchez un élément, puis choisissez l’une des trois sélections proposées. Ajoutez des points pour l’étendre ou retirez-en pour exclure les zones indésirables. Pincez pour zoomer, déplacez l’image agrandie et touchez deux fois pour revenir à l’image entière.";

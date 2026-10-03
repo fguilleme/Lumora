@@ -570,7 +570,8 @@ struct EditorView: View {
                          onResetAdjustment: session.resetGeometry,
                          onResetAll: session.resetGeometry)
         case .masks:
-            MasksView(masks: session.state.masks,
+            MasksView(sourceImage: session.result?.image,
+                      masks: session.state.masks,
                       selectedMaskID: session.selectedMaskID,
                       selectedComponentID: session.selectedMaskComponentID,
                       brushMode: session.brushMode,
@@ -586,6 +587,7 @@ struct EditorView: View {
                       onGenerate: { kind, operation in
                           Task { await session.generateSmartMask(kind, operation: operation) }
                       },
+                      onMagicMask: session.commitMagicMask,
                       isGenerating: session.isGeneratingMask,
                       onDelete: session.deleteSelectedMask,
                       onRename: session.renameSelectedLayer,

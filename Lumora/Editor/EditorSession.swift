@@ -816,6 +816,24 @@ final class EditorSession {
             self.error = error.localizedDescription
         }
     }
+    func commitMagicMask(_ generated: GeneratedMask, operation: MaskOperation? = nil) {
+        finishInteraction()
+        history.begin(operation == nil ? "Magic Selection" : "Edit with Magic Selection", state: state)
+        let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated))
+        if operation != nil, let index = selectedMaskIndex {
+            state.masks[index].components.append(component)
+            selectedMaskComponentID = component.id
+        } else {
+            let mask = LocalMask(name: String(localized: "Magic Selection"), components: [component])
+            state.masks.append(mask)
+            selectedMaskID = mask.id
+            selectedMaskComponentID = component.id
+        }
+        history.commit(state)
+        persist()
+        requestRender(.high)
+        showingOriginal = false
+    }
     func deleteSelectedMask() {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         history.begin("Delete layer", state: state)

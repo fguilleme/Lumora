@@ -121,7 +121,9 @@ struct RadialGradientMask: Codable, Sendable, Equatable {
 }
 
 enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
-    case subject, background, person, face, eyes, sky, skin
+    case subject, background, person, face, eyes, sky, skin, magic
+
+    static let automaticCases: [Self] = [.subject, .background, .person, .eyes]
 
     var id: String { rawValue }
     var title: String {
@@ -133,6 +135,7 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
         case .eyes: String(localized: "Eyes")
         case .sky: String(localized: "Sky")
         case .skin: String(localized: "Skin")
+        case .magic: String(localized: "Magic Selection")
         }
     }
     var symbol: String {
@@ -144,6 +147,7 @@ enum SmartMaskKind: String, CaseIterable, Codable, Sendable, Identifiable {
         case .eyes: "eye"
         case .sky: "cloud.sun"
         case .skin: "hand.raised"
+        case .magic: "wand.and.stars"
         }
     }
 }

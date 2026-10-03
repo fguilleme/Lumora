@@ -1311,3 +1311,29 @@
 "Erase restores part of the subtracted area." = "Erase restores part of the subtracted area.";
 "Erase removes paint from the mask." = "Erase removes paint from the mask.";
 "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode.";
+
+/* Magic Selection */
+"Magic Selection" = "Magic Selection";
+"Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touch the element to select. Add points to extend the selection, or remove points to exclude an area.";
+"Point mode" = "Point mode";
+"Add a point" = "Add a point";
+"Remove a point" = "Remove a point";
+"Refine edges" = "Refine edges";
+"Clear points" = "Clear points";
+"Preparing Magic Selection…" = "Preparing Magic Selection…";
+"Ready" = "Ready";
+"Updating selection…" = "Updating selection…";
+"Selection updated" = "Selection updated";
+"Refining edges…" = "Refining edges…";
+"Preparing mask…" = "Preparing mask…";
+"The Magic Selection model is unavailable." = "The Magic Selection model is unavailable.";
+"Magic Selection could not produce a mask." = "Magic Selection could not produce a mask.";
+"The refined mask could not be saved." = "The refined mask could not be saved.";
+"Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment." = "Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment.";
+"Touch an element to select it, then add points to extend the selection or remove points to exclude unwanted areas. Clear points restarts the selection without changing the photo." = "Touch an element to select it, then add points to extend the selection or remove points to exclude unwanted areas. Clear points restarts the selection without changing the photo.";
+"Enable this before validating Magic Selection to guide the mask at full resolution with the original image. It improves difficult borders such as hair, branches, foliage, and horizons, and may take a little longer." = "Enable this before validating Magic Selection to guide the mask at full resolution with the original image. It improves difficult borders such as hair, branches, foliage, and horizons, and may take a little longer.";
+"Selection variation" = "Selection variation";
+"Selection 1" = "Selection 1";
+"Selection 2" = "Selection 2";
+"Selection 3" = "Selection 3";
+"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image." = "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image.";
