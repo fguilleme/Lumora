@@ -498,15 +498,19 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
             return [
                 HelpSection("Lumora", [
                     HelpItem("Design and development", "Created by François Guillemé. Lumora's interface, editing pipeline, photographic effects, and validation tools were designed and developed specifically for the application."),
-                    HelpItem("Made for Apple platforms", "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation on the device.")
+                    HelpItem("Made for Apple platforms", "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation and Magic Selection on the device.")
                 ]),
                 HelpSection("Depth estimation", [
                     HelpItem("Depth Anything V2 Small", "Depth Lens and experimental Lighting use Depth Anything V2 Small. The Core ML package is distributed by Apple from the original Depth Anything V2 architecture. The Small model is provided under the Apache License 2.0."),
                     HelpItem("Model provenance", "Core ML package: apple/coreml-depth-anything-v2-small. Original project: DepthAnything/Depth-Anything-V2. The complete Apache 2.0 license and provenance notice are included with Lumora.")
                 ]),
+                HelpSection("Magic Selection", [
+                    HelpItem("MobileSAM", "Magic Selection uses MobileSAM, the lightweight Segment Anything architecture by Chaoning Zhang, Dongshen Han, Yu Qiao, Jung Uk Kim, Sung Ho Bae, Seungkyu Lee, and Choong Seon Hong."),
+                    HelpItem("Model provenance", "Project: ChaoningZhang/MobileSAM. MobileSAM builds on Segment Anything and TinyViT. The model is provided under the Apache License 2.0 and was converted to Core ML for on-device use in Lumora.")
+                ]),
                 HelpSection("Privacy and independence", [
                     HelpItem("On-device processing", "Photo editing, face analysis, masks, depth estimation, preview, and export run on the device. Lumora does not require an online image-processing service."),
-                    HelpItem("Third-party libraries", "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; the depth model attribution is listed separately above.")
+                    HelpItem("Third-party libraries", "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; model attributions are listed separately above.")
                 ])
             ]
         }
