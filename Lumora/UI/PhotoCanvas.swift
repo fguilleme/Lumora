@@ -16,6 +16,7 @@ struct PhotoCanvas: View {
     var lightingSubjectMode = true
     var onLightingBegin: () -> Void = {}
     var onLightingMove: (Bool, MaskPoint) -> Void = { _, _ in }
+    var onLightingAngles: (Double, Double) -> Void = { _, _ in }
     var onLightingEnd: () -> Void = {}
     var healingActive = false
     var healingPaintZone = false
@@ -237,12 +238,11 @@ struct PhotoCanvas: View {
                         let rect = sampledImageRect(viewSize: geometry.size,
                             imageSize: CGSize(width: result.image.width, height: result.image.height),
                             displayScale: displayScale, displayOffset: displayOffset)
-                        LightingMarker(point: CGPoint(x: lighting.targetX, y: lighting.targetY), rect: rect,
-                            subject: true, onBegin: onLightingBegin,
-                            onChange: { onLightingMove(true, $0) }, onEnd: onLightingEnd)
-                        LightingMarker(point: CGPoint(x: lighting.lightX, y: lighting.lightY), rect: rect,
-                            subject: false, onBegin: onLightingBegin,
-                            onChange: { onLightingMove(false, $0) }, onEnd: onLightingEnd)
+                        LightingRigOverlay(settings: lighting, rect: rect,
+                            onBegin: onLightingBegin,
+                            onTarget: { onLightingMove(true, $0) },
+                            onAngles: onLightingAngles,
+                            onEnd: onLightingEnd)
                     }
                     if depthFocusActive && !showingOriginal && !pressing {
                         let rect = sampledImageRect(viewSize: geometry.size,
@@ -307,7 +307,7 @@ struct PhotoCanvas: View {
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .coordinateSpace(name: LightingMarker.coordinateSpace)
+            .coordinateSpace(name: LightingRigOverlay.coordinateSpace)
             .contentShape(Rectangle())
             .gesture(MagnifyGesture().updating($magnification) { value, state, _ in if !healingPaintZone { state = value.magnification } }
                 .onEnded { value in

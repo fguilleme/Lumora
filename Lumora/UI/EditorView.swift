@@ -99,7 +99,11 @@ struct EditorView: View {
                             onLightingMove: { subject, point in
                                 session.changeDepthLighting {
                                     if subject { $0.targetX = point.x; $0.targetY = point.y }
-                                    else { $0.lightX = point.x; $0.lightY = point.y }
+                                }
+                            },
+                            onLightingAngles: { azimuth, elevation in
+                                session.changeDepthLighting {
+                                    $0.azimuth = azimuth; $0.elevation = elevation
                                 }
                             },
                             onLightingEnd: session.finishInteraction,

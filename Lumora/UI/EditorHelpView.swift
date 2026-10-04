@@ -210,7 +210,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpSection("On the photo", [
                     HelpItem("Camera RAW files", "Lumora opens original RAW files from non-Apple cameras when the format and camera are supported by the iOS RAW decoder, including compatible files from Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Pentax, and DNG cameras. Import from Files preserves the original file. Photos also requests the original RAW resource before a developed image. Support varies by camera model and iOS version."),
                     HelpItem("Short tap", "Tap the photo once to show it alone full screen. Tap the full-screen photo once to return to the editor."),
-                    HelpItem("Lighting", "When experimental Lighting is enabled and its tab is open, a short tap positions the selected light or subject marker. Drag a marker to move it directly. Switch tabs to restore the usual full-screen tap."),
+                    HelpItem("Lighting", "When experimental Lighting is enabled and its tab is open, a short tap positions the turquoise target on the subject. Move the bulb across the photo to set the light side and height together. Switch tabs to restore the usual full-screen tap."),
                     HelpItem("Depth Lens focus", "When Depth Lens is enabled and its tab is open, a short tap sets the focus point. Switch to another tab to use the usual full-screen tap."),
                     HelpItem("Double-tap", "Double-tap the photo to reset its zoom and position."),
                     HelpItem("Touch and hold", "Hold a finger on the photo to compare with the original. Release to return to the edited preview."),
@@ -349,16 +349,16 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .lighting:
             return [
                 HelpSection("Place the lighting", [
-                    HelpItem("Enable lighting", "Turn on Enable lighting in the Lighting tab. Start with a moderate intensity. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it."),
-                    HelpItem("Subject point", "Select Subject point and tap the subject, preferably inside a solid area rather than on an edge. The turquoise marker sets the reference depth. It does not select or cut out a person."),
-                    HelpItem("Light position", "Select Light position and tap where the virtual lamp should be projected. Drag either marker to move it directly. The yellow sun and turquoise target are independent; neither is exported.")
+                    HelpItem("Enable lighting", "Turn on Enable lighting in the Lighting tab. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it."),
+                    HelpItem("Subject point", "Tap the face or drag the turquoise target onto it, preferably inside a solid area rather than on an edge. The target supplies the reference depth and is the centre of the lighting rig."),
+                    HelpItem("Light position", "Move the colored bulb across the photo. Its horizontal position sets the side of the light and its vertical position sets the height. The bulb is only a control and is never exported.")
                 ]),
                 HelpSection("Shape the light", [
-                    HelpItem("Intensity", "Controls the added light. Zero leaves the photo unchanged by this effect. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%."),
-                    HelpItem("Relative distance", "Moves the lamp nearer to or farther from the selected depth plane. A closer lamp generally gives stronger, more concentrated illumination. These values are relative, not metres; the lamp stays in front of the subject plane."),
+                    HelpItem("Power", "Controls the added light from zero to a deliberately strong maximum. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%."),
+                    HelpItem("Light distance", "Moves the virtual point light progressively in depth. This changes its spread and can shift the strongest illumination between the face, chin, and neck. The shortened range is intended for portraits; the values are relative, not metres."),
                     HelpItem("Softness", "Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo."),
-                    HelpItem("Warmth", "Warms or cools only the added light. Zero is neutral. This is independent of the photo white balance."),
-                    HelpItem("Surface relief", "Controls how strongly the estimated surface orientation shapes illumination. Lower it if depth errors create uneven shading.")
+                    HelpItem("Light color", "Chooses the RGB color of the added light without changing the photo white balance."),
+                    HelpItem("Surface relief", "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading.")
                 ]),
                 HelpSection("Experimental limitations", [
                     HelpItem("Sky and background", "Distant regions are attenuated according to estimated depth, not a semantic sky mask. If the sky or background brightens unexpectedly, move the subject point, reduce Softness or Intensity, or disable the effect. Hair, glass and reflections can have incorrect depth."),
