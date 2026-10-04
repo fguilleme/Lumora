@@ -16,22 +16,38 @@ struct BrushMask: Codable, Sendable, Equatable {
     /// preserve legacy documents, where every stroke uses `size`.
     var strokeSizes: [Double] = []
     var eraseStrokeSizes: [Double] = []
+    /// Feather captured when each stroke begins, so changing the control only
+    /// affects the next stroke rather than rewriting earlier brush work.
+    var strokeFeathers: [Double] = []
+    var eraseStrokeFeathers: [Double] = []
+    /// Combined flow and opacity captured for each stroke. Older documents use
+    /// the component's current flow and opacity as their fallback.
+    var strokeStrengths: [Double] = []
+    var eraseStrokeStrengths: [Double] = []
     var size = 18.0
     var feather = 70.0
     var flow = 80.0
     var opacity = 100.0
 
     private enum CodingKeys: String, CodingKey {
-        case strokes, eraseStrokes, strokeSizes, eraseStrokeSizes, size, feather, flow, opacity
+        case strokes, eraseStrokes, strokeSizes, eraseStrokeSizes
+        case strokeFeathers, eraseStrokeFeathers, size, feather, flow, opacity
+        case strokeStrengths, eraseStrokeStrengths
     }
 
     init(strokes: [[MaskPoint]] = [], eraseStrokes: [[MaskPoint]] = [],
          strokeSizes: [Double] = [], eraseStrokeSizes: [Double] = [], size: Double = 18,
+         strokeFeathers: [Double] = [], eraseStrokeFeathers: [Double] = [],
+         strokeStrengths: [Double] = [], eraseStrokeStrengths: [Double] = [],
          feather: Double = 70, flow: Double = 80, opacity: Double = 100) {
         self.strokes = strokes
         self.eraseStrokes = eraseStrokes
         self.strokeSizes = strokeSizes
         self.eraseStrokeSizes = eraseStrokeSizes
+        self.strokeFeathers = strokeFeathers
+        self.eraseStrokeFeathers = eraseStrokeFeathers
+        self.strokeStrengths = strokeStrengths
+        self.eraseStrokeStrengths = eraseStrokeStrengths
         self.size = size
         self.feather = feather
         self.flow = flow
@@ -44,6 +60,10 @@ struct BrushMask: Codable, Sendable, Equatable {
         eraseStrokes = try values.decodeIfPresent([[MaskPoint]].self, forKey: .eraseStrokes) ?? []
         strokeSizes = try values.decodeIfPresent([Double].self, forKey: .strokeSizes) ?? []
         eraseStrokeSizes = try values.decodeIfPresent([Double].self, forKey: .eraseStrokeSizes) ?? []
+        strokeFeathers = try values.decodeIfPresent([Double].self, forKey: .strokeFeathers) ?? []
+        eraseStrokeFeathers = try values.decodeIfPresent([Double].self, forKey: .eraseStrokeFeathers) ?? []
+        strokeStrengths = try values.decodeIfPresent([Double].self, forKey: .strokeStrengths) ?? []
+        eraseStrokeStrengths = try values.decodeIfPresent([Double].self, forKey: .eraseStrokeStrengths) ?? []
         size = try values.decodeIfPresent(Double.self, forKey: .size) ?? 18
         feather = try values.decodeIfPresent(Double.self, forKey: .feather) ?? 70
         flow = try values.decodeIfPresent(Double.self, forKey: .flow) ?? 80
@@ -57,6 +77,10 @@ struct BrushMask: Codable, Sendable, Equatable {
         try values.encode(eraseStrokes, forKey: .eraseStrokes)
         try values.encode(strokeSizes, forKey: .strokeSizes)
         try values.encode(eraseStrokeSizes, forKey: .eraseStrokeSizes)
+        try values.encode(strokeFeathers, forKey: .strokeFeathers)
+        try values.encode(eraseStrokeFeathers, forKey: .eraseStrokeFeathers)
+        try values.encode(strokeStrengths, forKey: .strokeStrengths)
+        try values.encode(eraseStrokeStrengths, forKey: .eraseStrokeStrengths)
         try values.encode(size, forKey: .size)
         try values.encode(feather, forKey: .feather)
         try values.encode(flow, forKey: .flow)
@@ -75,6 +99,18 @@ struct BrushMask: Codable, Sendable, Equatable {
         value.eraseStrokeSizes = eraseStrokeSizes.prefix(value.eraseStrokes.count).map {
             Self.clamp($0, 0.1...100, fallback: value.size)
         }
+        value.strokeFeathers = strokeFeathers.prefix(value.strokes.count).map {
+            Self.clamp($0, 0...100, fallback: value.feather)
+        }
+        value.eraseStrokeFeathers = eraseStrokeFeathers.prefix(value.eraseStrokes.count).map {
+            Self.clamp($0, 0...100, fallback: value.feather)
+        }
+        value.strokeStrengths = strokeStrengths.prefix(value.strokes.count).map {
+            Self.clamp($0, 0.0001...1, fallback: value.flow / 100 * value.opacity / 100)
+        }
+        value.eraseStrokeStrengths = eraseStrokeStrengths.prefix(value.eraseStrokes.count).map {
+            Self.clamp($0, 0.0001...1, fallback: value.flow / 100 * value.opacity / 100)
+        }
         value.feather = Self.clamp(feather, 0...100, fallback: 70)
         value.flow = Self.clamp(flow, 1...100, fallback: 80)
         value.opacity = Self.clamp(opacity, 1...100, fallback: 100)
@@ -88,7 +124,8 @@ struct BrushMask: Codable, Sendable, Equatable {
 enum BrushMode: String, CaseIterable, Sendable {
     case paint, erase, pan
 
-    var title: String { switch self { case .paint: String(localized: "Paint"); case .erase: String(localized: "Erase"); case .pan: String(localized: "Pan") } }
+    var title: String { switch self { case .paint: String(localized: "Trace"); case .erase: String(localized: "Erase"); case .pan: String(localized: "Pan") } }
+    static let editingCases: [Self] = [.paint, .pan]
 }
 
 struct LinearGradientMask: Codable, Sendable, Equatable {

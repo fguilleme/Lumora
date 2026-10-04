@@ -1310,7 +1310,7 @@
 "Paint the area to subtract from the mask." = "Peignez la zone à soustraire du masque.";
 "Erase restores part of the subtracted area." = "Effacer restaure une partie de la zone soustraite.";
 "Erase removes paint from the mask." = "Effacer retire la peinture du masque.";
-"For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "Avec un pinceau additif, Peindre ajoute au masque et Effacer retire la peinture. Avec un pinceau soustractif, Peindre indique la zone à retirer du masque et Effacer la restaure. Déplacer permet de parcourir une photo agrandie. Un nouveau pinceau démarre toujours en mode Peindre.";
+"Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn." = "Choisissez Ajouter ou Soustraire, puis Pinceau. Tracer applique cette opération ; Déplacer permet de parcourir la photo agrandie. La taille et le contour progressif sont mémorisés pour chaque nouveau trait : les modifier ne change pas les traits déjà dessinés.";
 
 /* Magic Selection */
 "Magic Selection" = "Sélection magique";
@@ -1325,6 +1325,11 @@
 "Sensitivity" = "Sensibilité";
 "Show mask only" = "Afficher le masque seul";
 "Show photo and mask" = "Afficher la photo et le masque";
+"Trace" = "Tracer";
+"Adds to mask" = "Ajoute au masque";
+"Subtracts from mask" = "Soustrait du masque";
+"Trace the area to add to the mask." = "Tracez la zone à ajouter au masque.";
+"Trace the area to subtract from the mask." = "Tracez la zone à soustraire du masque.";
 "Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touchez l’élément à sélectionner. Ajoutez des points pour étendre la sélection, ou retirez-en pour exclure une zone.";
 "Point mode" = "Mode des points";
 "Add a point" = "Ajouter un point";

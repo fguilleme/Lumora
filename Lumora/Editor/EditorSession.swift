@@ -769,7 +769,9 @@ final class EditorSession {
         if !interacting { history.begin("Transform component", state: state) }
         var component = state.masks[maskIndex].components[componentIndex]
         component.shape = shape
-        state.masks[maskIndex].components[componentIndex] = component.validated
+        var mask = state.masks[maskIndex]
+        mask.components[componentIndex] = component.validated
+        state.masks[maskIndex] = mask
         showingOriginal = false
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
@@ -920,7 +922,9 @@ final class EditorSession {
         case .generated:
             return
         }
-        state.masks[maskIndex].components[componentIndex].shape = shape
+        var mask = state.masks[maskIndex]
+        mask.components[componentIndex].shape = shape
+        state.masks[maskIndex] = mask
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
@@ -932,11 +936,27 @@ final class EditorSession {
         interacting = true
         let effectiveSize = brush.size / Double(max(1, displayScale))
         if brushMode == .paint {
+            while brush.strokeFeathers.count < brush.strokes.count {
+                brush.strokeFeathers.append(brush.feather)
+            }
             brush.strokes.append([])
             brush.strokeSizes.append(effectiveSize)
+            brush.strokeFeathers.append(brush.feather)
+            while brush.strokeStrengths.count < brush.strokes.count - 1 {
+                brush.strokeStrengths.append(brush.flow / 100 * brush.opacity / 100)
+            }
+            brush.strokeStrengths.append(brush.flow / 100 * brush.opacity / 100)
         } else {
+            while brush.eraseStrokeFeathers.count < brush.eraseStrokes.count {
+                brush.eraseStrokeFeathers.append(brush.feather)
+            }
             brush.eraseStrokes.append([])
             brush.eraseStrokeSizes.append(effectiveSize)
+            brush.eraseStrokeFeathers.append(brush.feather)
+            while brush.eraseStrokeStrengths.count < brush.eraseStrokes.count - 1 {
+                brush.eraseStrokeStrengths.append(brush.flow / 100 * brush.opacity / 100)
+            }
+            brush.eraseStrokeStrengths.append(brush.flow / 100 * brush.opacity / 100)
         }
         state.masks[maskIndex].components[componentIndex].shape = .brush(brush)
         showingOriginal = false
@@ -949,6 +969,30 @@ final class EditorSession {
         else { brush.eraseStrokes[brush.eraseStrokes.count - 1].append(point.validated) }
         state.masks[maskIndex].components[componentIndex].shape = .brush(brush)
         requestRender(.interactive)
+    }
+    func finishBrushStroke() {
+        guard interacting, let (maskIndex, componentIndex) = selectedComponentIndex,
+              case .brush(var brush) = state.masks[maskIndex].components[componentIndex].shape else {
+            finishInteraction()
+            return
+        }
+        if brushMode == .paint, brush.strokes.last?.isEmpty == true {
+            brush.strokes.removeLast()
+            if !brush.strokeSizes.isEmpty { brush.strokeSizes.removeLast() }
+            if !brush.strokeFeathers.isEmpty { brush.strokeFeathers.removeLast() }
+            if !brush.strokeStrengths.isEmpty { brush.strokeStrengths.removeLast() }
+        } else if brushMode == .erase, brush.eraseStrokes.last?.isEmpty == true {
+            brush.eraseStrokes.removeLast()
+            if !brush.eraseStrokeSizes.isEmpty { brush.eraseStrokeSizes.removeLast() }
+            if !brush.eraseStrokeFeathers.isEmpty { brush.eraseStrokeFeathers.removeLast() }
+            if !brush.eraseStrokeStrengths.isEmpty { brush.eraseStrokeStrengths.removeLast() }
+        }
+        // Assign the completed value as a whole so Observation publishes the final
+        // stroke independently from the transient overlay used while the finger moves.
+        var mask = state.masks[maskIndex]
+        mask.components[componentIndex].shape = .brush(brush.validated)
+        state.masks[maskIndex] = mask
+        finishInteraction()
     }
     func finishInteraction() {
         guard interacting else { return }

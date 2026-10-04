@@ -203,6 +203,50 @@ private func syntheticPortrait() throws -> CGImage {
     #expect(red(pixels, x: 25, y: 50) > 240)
 }
 
+@Test func subtractiveLinearGradientRemovesOnlyItsBrightSide() throws {
+    let subject = GeneratedMask(kind: .subject, pngData: try rectangleMaskPNG(
+        CGRect(x: 0, y: 0, width: 100, height: 100)), width: 100, height: 100)
+    var linear = LinearGradientMask()
+    linear.center = MaskPoint(x: 0.5, y: 0.5)
+    linear.angle = 0
+    linear.feather = 20
+    let mask = LocalMask(name: "Dégradé soustractif", components: [
+        MaskComponent(operation: .add, shape: .generated(subject)),
+        MaskComponent(operation: .subtract, shape: .linear(linear))
+    ])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 20, y: 50) < 20)
+    #expect(red(pixels, x: 80, y: 50) > 235)
+}
+
+@Test func subtractiveRadialGradientRemovesItsCenter() throws {
+    let subject = GeneratedMask(kind: .subject, pngData: try rectangleMaskPNG(
+        CGRect(x: 0, y: 0, width: 100, height: 100)), width: 100, height: 100)
+    var radial = RadialGradientMask()
+    radial.center = MaskPoint(x: 0.5, y: 0.5)
+    radial.radiusX = 0.22
+    radial.radiusY = 0.22
+    radial.feather = 10
+    let mask = LocalMask(name: "Radial soustractif", components: [
+        MaskComponent(operation: .add, shape: .generated(subject)),
+        MaskComponent(operation: .subtract, shape: .radial(radial))
+    ])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 50, y: 50) < 20)
+    #expect(red(pixels, x: 15, y: 50) > 235)
+}
+
+@Test func brushFlowIsCapturedPerStroke() throws {
+    let brush = BrushMask(
+        strokes: [[MaskPoint(x: 0.25, y: 0.5)], [MaskPoint(x: 0.75, y: 0.5)]],
+        strokeStrengths: [1, 0.1], feather: 0, flow: 100, opacity: 100)
+    let mask = LocalMask(name: "Débit par trait", components: [MaskComponent(shape: .brush(brush))])
+    let pixels = try maskBytes(MaskRenderer.makeMask(mask, extent: maskExtent))
+    #expect(red(pixels, x: 25, y: 50) > 240)
+    #expect(red(pixels, x: 75, y: 50) > 15)
+    #expect(red(pixels, x: 75, y: 50) < 40)
+}
+
 @Test func brushStoresTheEffectiveSizeOfEachZoomedStroke() throws {
     let brush = BrushMask(
         strokes: [[MaskPoint(x: 0.25, y: 0.5)], [MaskPoint(x: 0.75, y: 0.5)]],

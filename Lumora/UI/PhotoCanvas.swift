@@ -751,8 +751,17 @@ private struct MaskOverlay: View {
         var result = mask
         guard let index = result.components.firstIndex(where: { $0.id == activeComponentID }),
               case .brush(var brush) = result.components[index].shape else { return mask }
-        if liveBrushMode == .paint { if !brush.strokes.isEmpty { brush.strokes.removeLast() } }
-        else { if !brush.eraseStrokes.isEmpty { brush.eraseStrokes.removeLast() } }
+        if liveBrushMode == .paint {
+            if !brush.strokes.isEmpty { brush.strokes.removeLast() }
+            if !brush.strokeSizes.isEmpty { brush.strokeSizes.removeLast() }
+            if !brush.strokeFeathers.isEmpty { brush.strokeFeathers.removeLast() }
+            if !brush.strokeStrengths.isEmpty { brush.strokeStrengths.removeLast() }
+        } else {
+            if !brush.eraseStrokes.isEmpty { brush.eraseStrokes.removeLast() }
+            if !brush.eraseStrokeSizes.isEmpty { brush.eraseStrokeSizes.removeLast() }
+            if !brush.eraseStrokeFeathers.isEmpty { brush.eraseStrokeFeathers.removeLast() }
+            if !brush.eraseStrokeStrengths.isEmpty { brush.eraseStrokeStrengths.removeLast() }
+        }
         result.components[index].shape = .brush(brush)
         return result
     }

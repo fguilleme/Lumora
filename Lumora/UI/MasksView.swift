@@ -221,15 +221,9 @@ struct MasksView: View {
     private func componentControls(_ component: MaskComponent, in mask: LocalMask) -> some View {
         let index = mask.components.firstIndex { $0.id == component.id }
         return HStack(spacing: 8) {
-            Picker("Operation", selection: Binding(
-                get: { component.operation },
-                set: { operation in onComponentOperation(operation) }
-            )) {
-                Text("Add").tag(MaskOperation.add)
-                Text("Subtract").tag(MaskOperation.subtract)
-            }
-            .pickerStyle(.segmented)
-            .accessibilityIdentifier("mask-component-operation")
+            Label(component.operation == .add ? "Adds to mask" : "Subtracts from mask",
+                  systemImage: component.operation == .add ? "plus.circle" : "minus.circle")
+                .font(.caption).foregroundStyle(.secondary)
             Button { onMoveComponent(-1) } label: { Image(systemName: "arrow.left") }
                 .buttonStyle(.bordered).disabled(index == 0)
                 .accessibilityLabel("Move component earlier")
@@ -248,7 +242,7 @@ struct MasksView: View {
         switch component.shape {
         case .brush(let brush):
             Picker("Brush mode", selection: Binding(get: { brushMode }, set: { onBrushMode($0) })) {
-                ForEach(BrushMode.allCases, id: \.self) { mode in Text(mode.title).tag(mode) }
+                ForEach(BrushMode.editingCases, id: \.self) { mode in Text(mode.title).tag(mode) }
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("brush-mode")
@@ -272,14 +266,9 @@ struct MasksView: View {
     }
     private func brushInstruction(_ operation: MaskOperation) -> String {
         if brushMode == .pan { return String(localized: "Pan the zoomed image without painting.") }
-        if operation == .subtract {
-            return brushMode == .paint
-                ? String(localized: "Paint the area to subtract from the mask.")
-                : String(localized: "Erase restores part of the subtracted area.")
-        }
-        return brushMode == .paint
-            ? String(localized: "Paint on the photo. To navigate, choose Pan.")
-            : String(localized: "Erase removes paint from the mask.")
+        return operation == .subtract
+            ? String(localized: "Trace the area to subtract from the mask.")
+            : String(localized: "Trace the area to add to the mask.")
     }
     private func parameter(_ parameter: MaskParameter, _ value: Double) -> some View {
         AdjustmentSlider(title: parameter.title, range: parameter.range,

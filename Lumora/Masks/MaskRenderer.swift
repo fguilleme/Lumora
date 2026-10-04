@@ -31,25 +31,23 @@ enum MaskRenderer {
                 result = try maximum(painted, result, extent: extent)
                 result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
                     sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
-                    feather: brush.feather, strength: strength, extent: extent)
+                    feathers: brush.eraseStrokeFeathers, fallbackFeather: brush.feather,
+                    strengths: brush.eraseStrokeStrengths, fallbackStrength: strength, extent: extent)
                 continue
             }
             let shape = try shapeImage(component.shape, extent: extent)
             if component.operation == .add {
                 result = try maximum(shape, result, extent: extent)
             } else {
-                let invert = CIFilter.colorInvert()
-                invert.inputImage = shape
                 let minimum = CIFilter.minimumCompositing()
-                minimum.inputImage = invert.outputImage; minimum.backgroundImage = result
+                minimum.inputImage = try invertedMatte(shape, extent: extent)
+                minimum.backgroundImage = result
                 guard let output = minimum.outputImage else { throw PhotoError.renderFailed }
                 result = output.cropped(to: extent)
             }
         }
         if mask.inverted {
-            let invert = CIFilter.colorInvert(); invert.inputImage = result
-            guard let output = invert.outputImage else { throw PhotoError.renderFailed }
-            result = output.cropped(to: extent)
+            result = try invertedMatte(result, extent: extent)
         }
         if mask.opacity < 100 {
             let factor = CGFloat(mask.opacity / 100)
@@ -62,6 +60,21 @@ enum MaskRenderer {
             result = output.cropped(to: extent)
         }
         return result
+    }
+
+    /// Invert mask luminance while keeping the matte opaque. `CIColorInvert`
+    /// also changes alpha on some Core Image paths; minimum compositing then
+    /// treats a subtractive gradient as transparent black and clears the mask.
+    private static func invertedMatte(_ input: CIImage, extent: CGRect) throws -> CIImage {
+        let matrix = CIFilter.colorMatrix()
+        matrix.inputImage = input
+        matrix.rVector = CIVector(x: -1, y: 0, z: 0, w: 0)
+        matrix.gVector = CIVector(x: 0, y: -1, z: 0, w: 0)
+        matrix.bVector = CIVector(x: 0, y: 0, z: -1, w: 0)
+        matrix.aVector = CIVector(x: 0, y: 0, z: 0, w: 0)
+        matrix.biasVector = CIVector(x: 1, y: 1, z: 1, w: 1)
+        guard let output = matrix.outputImage else { throw PhotoError.renderFailed }
+        return output.cropped(to: extent)
     }
 
     private static func maximum(_ shape: CIImage, _ background: CIImage, extent: CGRect) throws -> CIImage {
@@ -142,22 +155,31 @@ enum MaskRenderer {
         let strength = brush.opacity / 100 * brush.flow / 100
         result = try compositeBrushStrokes(brush.strokes, onto: result, erasing: false,
                                            sizes: brush.strokeSizes, fallbackSize: brush.size,
-                                           feather: brush.feather, strength: strength, extent: extent)
+                                           feathers: brush.strokeFeathers,
+                                           fallbackFeather: brush.feather,
+                                           strengths: brush.strokeStrengths,
+                                           fallbackStrength: strength, extent: extent)
         if includeErasing {
             result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
                                                sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
-                                               feather: brush.feather, strength: strength, extent: extent)
+                                               feathers: brush.eraseStrokeFeathers,
+                                               fallbackFeather: brush.feather,
+                                               strengths: brush.eraseStrokeStrengths,
+                                               fallbackStrength: strength, extent: extent)
         }
         return result
     }
 
     private static func compositeBrushStrokes(_ strokes: [[MaskPoint]], onto input: CIImage,
                                               erasing: Bool, sizes: [Double], fallbackSize: Double,
-                                              feather: Double,
-                                              strength: Double, extent: CGRect) throws -> CIImage {
+                                              feathers: [Double], fallbackFeather: Double,
+                                              strengths: [Double], fallbackStrength: Double,
+                                              extent: CGRect) throws -> CIImage {
         var result = input
         for (index, stroke) in strokes.enumerated() {
             let size = index < sizes.count ? sizes[index] : fallbackSize
+            let feather = index < feathers.count ? feathers[index] : fallbackFeather
+            let strength = index < strengths.count ? strengths[index] : fallbackStrength
             let radius = min(extent.width, extent.height) * CGFloat(size / 200)
             let inner = radius * CGFloat(1 - feather / 100)
             for point in interpolated(stroke, radius: radius, extent: extent) {

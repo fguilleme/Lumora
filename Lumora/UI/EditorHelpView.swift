@@ -451,7 +451,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Invert", "Swaps the selected area with its complement. Useful for adjusting a background after isolating a subject.")
                 ]),
                 HelpSection("Create an area", [
-                    HelpItem("Brush", "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode."),
+                    HelpItem("Brush", "Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn."),
                     HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
                     HelpItem("Smart masks", "Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment."),
                     HelpItem("Magic Selection", "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay."),

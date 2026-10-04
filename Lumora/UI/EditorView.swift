@@ -141,7 +141,7 @@ struct EditorView: View {
                             brushMode: session.brushMode,
                             onBrushBegin: { session.beginBrushStroke(displayScale: $0) },
                             onBrushPoint: session.appendBrushPoint,
-                            onBrushEnd: session.finishInteraction,
+                            onBrushEnd: session.finishBrushStroke,
                             onMaskTransformBegin: { session.beginInteraction("Transform component") },
                             onMaskShapeChange: session.setSelectedMaskShape,
                             onMaskTransformEnd: session.finishInteraction,

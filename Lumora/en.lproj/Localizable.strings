@@ -1310,7 +1310,7 @@
 "Paint the area to subtract from the mask." = "Paint the area to subtract from the mask.";
 "Erase restores part of the subtracted area." = "Erase restores part of the subtracted area.";
 "Erase removes paint from the mask." = "Erase removes paint from the mask.";
-"For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode." = "For an additive brush, Paint adds to the mask and Erase removes paint. For a subtractive brush, Paint marks the area to remove from the mask and Erase restores it. Pan navigates a zoomed photo. A newly created brush always starts in Paint mode.";
+"Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn." = "Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn.";
 
 /* Magic Selection */
 "Magic Selection" = "Magic Selection";
@@ -1325,6 +1325,11 @@
 "Sensitivity" = "Sensitivity";
 "Show mask only" = "Show mask only";
 "Show photo and mask" = "Show photo and mask";
+"Trace" = "Trace";
+"Adds to mask" = "Adds to mask";
+"Subtracts from mask" = "Subtracts from mask";
+"Trace the area to add to the mask." = "Trace the area to add to the mask.";
+"Trace the area to subtract from the mask." = "Trace the area to subtract from the mask.";
 "Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touch the element to select. Add points to extend the selection, or remove points to exclude an area.";
 "Point mode" = "Point mode";
 "Add a point" = "Add a point";
