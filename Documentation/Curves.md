@@ -5,6 +5,7 @@
 Le nouvel outil **Courbes** propose RVB, Rouge, Vert et Bleu. L’histogramme du canal sélectionné apparaît derrière la courbe.
 
 - Le graphique démarre en **consultation** : un défilement commencé sur la courbe ne change aucun point. **Modifier** active le mode édition ; **Terminé** revient à la consultation et désactive la pipette.
+- En édition, la pipette, l’ajout et la suppression se trouvent dans une rangée sous le graphe, sans recouvrir l’histogramme ou la courbe.
 - En édition, un vrai toucher sur le graphique ajoute un point. Glisser depuis une zone vide fait défiler le panneau ; glisser un point existant le déplace. Les points visibles gardent une cible tactile de 44 pt.
 - Les points restent ordonnés horizontalement. Les deux extrémités gardent leur abscisse 0 et 1, mais leur valeur de sortie est modifiable.
 - Le bouton **+** ajoute un point au milieu du plus grand intervalle, sur la courbe existante.
