@@ -1,3 +1,15 @@
+# Auto Core Image — fonctionnement actuel
+
+Le bouton Auto des panneaux Lumière, Couleur et Courbes applique **une seule base commune** calculée par `CIImage.autoAdjustmentFilters(options:)`. Les options désactivent crop et red-eye ; seuls les filtres photométriques autorisés sont conservés. La chaîne choisie et ses paramètres sont enregistrés dans le document avec la version du moteur et la version d’iOS. Ouvrir le document ne relance pas l’analyse.
+
+Pipeline d’un document Auto : source orientée → optique → géométrie/crop → filtres Core Image Auto enregistrés → réglages manuels Lumière/Couleur/Courbes/effets → masques → Creative FX. Sans Auto, l’ordre historique du pipeline reste inchangé. La capture analyse au plus 2048 px dans l’espace de travail extended linear sRGB ; le rendu preview/HQ/export rejoue les filtres sur chaque résolution. La chaîne Auto ne correspond pas nécessairement aux curseurs Lumora : ceux-ci restent disponibles pour les retouches supplémentaires.
+
+Une nouvelle pression sur Auto réanalyse uniquement la source orientée après optique et géométrie. Les modifications manuelles en aval ne provoquent ni réanalyse ni empilement Auto. Reset Auto, Annuler/Rétablir et Reset settings sont des opérations réversibles sur le document. Un document ancien sans recette Auto charge avec `coreImageAuto = nil` et garde ses anciens réglages.
+
+Les prototypes historiques restent documentés ci-dessous à titre de R&D ; ils ne sont plus le moteur Auto de production. Voir [CoreImageAutoIntegrationReport.md](../Validation/Reports/CoreImageAutoIntegrationReport.md) pour les mesures de la campagne actuelle.
+
+## Ancien moteur Auto — archive R&D
+
 # Auto — Lumière, Couleur et Courbes
 
 Auto propose une base de développement locale, déterministe et éditable. Les trois panneaux partagent une analyse ; Auto n’est ni un Creative FX ni un mode permanent.
@@ -34,7 +46,7 @@ Le corpus de stress a révélé un écart Light→Curve HDR important sur ses im
 
 Un seul cache d’analyse/proposition est détenu par l’acteur RenderEngine. Sa clé inclut l’identité/version de source, les réglages amont, le crop et la matte cible pertinente. Changer de panneau ne l’invalide pas ; changer de cadrage, de source ou de pixels amont l’invalide. Les buffers d’analyse ne sont pas conservés.
 
-Le Visual Test Lab produit [AutoCorrectionValidationReport.md](../Validation/TestArtifacts/AutoCorrectionValidationReport.md), les métriques et les planches sous `TestArtifacts/Auto/`. Commencer l’inspection par [la planche des huit photos](../Validation/TestArtifacts/Auto/real_photos_contact_sheet.png), puis les planches nuit, high-key, contre-jour, WB et équivalence Lumière/Courbe. Les WARN photographiques restent soumis à validation humaine. Aucun Golden Master Auto n’est créé.
+Le Visual Test Lab produit [AutoCorrectionValidationReport.md](../Validation/TestArtifacts/AutoCorrectionValidationReport.md), les métriques et les planches sous `Validation/TestArtifacts/Auto/`. Commencer l’inspection par [la planche des huit photos](../Validation/TestArtifacts/Auto/real_photos_contact_sheet.png), puis les planches nuit, high-key, contre-jour, WB et équivalence Lumière/Courbe. Les WARN photographiques restent soumis à validation humaine. Aucun Golden Master Auto n’est créé.
 
 ## État de validation
 
