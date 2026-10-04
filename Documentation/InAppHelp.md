@@ -8,10 +8,24 @@ The tab-specific topics are **Creative**, **Light**, **Color**, **Curves**, **Co
 
 Help is read-only: opening and closing a topic does not create an Undo operation, change the active layer, or alter development settings. The photo information row is hidden in this tab to leave room for the topics. The topic buttons (`help-topic-*`), reading sheets (`help-detail-*`), and close button (`help-close`) have accessibility identifiers for simulator tests.
 
+## Expanded guide and French localization — 27 September 2026
+
+Creative now describes all 13 catalog effects individually: visual result, main controls,
+useful subjects, and details to inspect. It also explains stack order, opacity versus
+Amount, editable styles, and native-resolution inspection. Beauty finishing uses a
+reader-facing title and fully translated explanations. Effects documents Cinematic Glow
+and its global scope; Presets explains XMP adaptation and Lumora JSON export.
+
+French localization covers filter names, built-in styles, film responses, silver toners,
+and all help content. Runtime strings in creative pickers, help headings, Auto status,
+library selection, and export cancellation now use explicit localization. Stored effect
+IDs, preset recipes, and rendering are unchanged.
+
 
 ### Depth Lens
 
 Rubrique dédiée après Détail : activation, point et plan de netteté, recentrage, ouverture, focales, exemple modéré, comparaison, réinitialisation/historique, limites des contours, calcul local, aperçu et export. Les gestes communs précisent que le toucher règle la mise au point dans cet onglet. Contenus français et anglais.
+
 
 ### Réglages
 
