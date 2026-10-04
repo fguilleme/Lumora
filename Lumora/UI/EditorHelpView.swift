@@ -455,7 +455,6 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
                     HelpItem("Smart masks", "Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment."),
                     HelpItem("Magic Selection", "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image."),
-                    HelpItem("Refine edges", "Enable this before validating Magic Selection to guide the mask at full resolution with the original image. It improves difficult borders such as hair, branches, foliage, and horizons, and may take a little longer."),
                     HelpItem("Add / Subtract", "Combine several components for a more precise selection. Each can be selected, reordered, or removed."),
                     HelpItem("Photo gestures", "Pinch to zoom and double-tap to reset zoom, even while using the brush. Mask strokes update the mask visualization without rerendering the full development after every gesture.")
                 ])

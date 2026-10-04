@@ -18,7 +18,7 @@ enum MagicSelectionError: LocalizedError {
         switch self {
         case .modelMissing: String(localized: "The Magic Selection model is unavailable.")
         case .invalidOutput: String(localized: "Magic Selection could not produce a mask.")
-        case .encodingFailed: String(localized: "The refined mask could not be saved.")
+        case .encodingFailed: String(localized: "The mask could not be saved.")
         }
     }
 }
@@ -121,23 +121,14 @@ actor MagicSelectionEngine {
         return preview
     }
 
-    func finalizedMask(refineEdges: Bool) throws -> GeneratedMask {
+    func finalizedMask() throws -> GeneratedMask {
         guard let latestMask,
               let small = makeMaskCIImage(latestMask, candidate: latestCandidate) else {
             throw MagicSelectionError.invalidOutput
         }
         let sourceImage = CIImage(cgImage: source)
         let fullExtent = sourceImage.extent
-        let output: CIImage
-        if refineEdges, let filter = CIFilter(name: "CIEdgePreserveUpsampleFilter") {
-            filter.setValue(sourceImage, forKey: kCIInputImageKey)
-            filter.setValue(small, forKey: "inputSmallImage")
-            filter.setValue(3.0, forKey: "inputSpatialSigma")
-            filter.setValue(0.12, forKey: "inputLumaSigma")
-            output = (filter.outputImage ?? scaled(small, to: fullExtent)).cropped(to: fullExtent)
-        } else {
-            output = scaled(small, to: fullExtent).cropped(to: fullExtent)
-        }
+        let output = scaled(small, to: fullExtent).cropped(to: fullExtent)
         guard let gray = CGColorSpace(name: CGColorSpace.linearGray),
               let image = context.createCGImage(output, from: fullExtent, format: .L8, colorSpace: gray)
         else { throw MagicSelectionError.encodingFailed }

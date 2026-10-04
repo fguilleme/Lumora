@@ -10,7 +10,6 @@ struct MagicSelectionView: View {
     @State private var preview: CGImage?
     @State private var includes = true
     @State private var candidate = 0
-    @State private var refineEdges = true
     @State private var busy = true
     @State private var status = String(localized: "Preparing Magic Selection…")
     @State private var zoom: CGFloat = 1
@@ -98,7 +97,6 @@ struct MagicSelectionView: View {
                     .pickerStyle(.segmented)
                     .onChange(of: candidate) { _, _ in showCandidate() }
                 }
-                Toggle("Refine edges", isOn: $refineEdges)
                 HStack {
                     Button("Clear points") { points = []; preview = nil }
                         .disabled(points.isEmpty || busy)
@@ -155,9 +153,9 @@ struct MagicSelectionView: View {
 
     private func validate() {
         busy = true
-        status = refineEdges ? String(localized: "Refining edges…") : String(localized: "Preparing mask…")
+        status = String(localized: "Preparing mask…")
         Task {
-            do { onValidate(try await engine.finalizedMask(refineEdges: refineEdges)) }
+            do { onValidate(try await engine.finalizedMask()) }
             catch { status = error.localizedDescription; busy = false }
         }
     }
