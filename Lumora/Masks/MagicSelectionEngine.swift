@@ -71,7 +71,22 @@ actor MagicSelectionEngine {
         }
         let prior = try MLMultiArray(shape: [1, 1, 256, 256], dataType: .float32)
         let hasPrior = try MLMultiArray(shape: [1], dataType: .float32)
-        hasPrior[0] = 0
+        // MobileSAM supports iterative refinement through mask_input. Reusing
+        // the currently displayed proposal prevents a new positive point from
+        // reinterpreting the prompt as a different fragment of the same object.
+        // A first point (including the first point after Clear) still starts
+        // from an empty mask.
+        if points.count > 1, let latestMask {
+            for y in 0..<256 {
+                for x in 0..<256 {
+                    prior[[0, 0, y, x] as [NSNumber]] =
+                        latestMask[[0, latestCandidate, y, x] as [NSNumber]]
+                }
+            }
+            hasPrior[0] = 1
+        } else {
+            hasPrior[0] = 0
+        }
         let provider = try MLDictionaryFeatureProvider(dictionary: [
             "image_embedding": MLFeatureValue(multiArray: embedding),
             "point_coords": MLFeatureValue(multiArray: coordinates),
