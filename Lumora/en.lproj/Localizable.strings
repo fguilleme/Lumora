@@ -1314,6 +1314,17 @@
 
 /* Magic Selection */
 "Magic Selection" = "Magic Selection";
+"Refine with brush" = "Refine with brush";
+"Back to points" = "Back to points";
+"Undo brush stroke" = "Undo brush stroke";
+"Paint or erase the mask" = "Paint or erase the mask";
+"Mask updated" = "Mask updated";
+"Refine edges" = "Refine edges";
+"Draw over an edge to refine it" = "Draw over an edge to refine it";
+"Press and hold the photo to view the mask alone." = "Press and hold the photo to view the mask alone.";
+"Sensitivity" = "Sensitivity";
+"Show mask only" = "Show mask only";
+"Show photo and mask" = "Show photo and mask";
 "Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touch the element to select. Add points to extend the selection, or remove points to exclude an area.";
 "Point mode" = "Point mode";
 "Add a point" = "Add a point";
@@ -1333,7 +1344,7 @@
 "Selection 1" = "Selection 1";
 "Selection 2" = "Selection 2";
 "Selection 3" = "Selection 3";
-"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image." = "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image.";
+"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay." = "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay.";
 
 /* MobileSAM credits */
 "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation and Magic Selection on the device." = "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation and Magic Selection on the device.";

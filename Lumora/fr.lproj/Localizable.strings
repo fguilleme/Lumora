@@ -1314,6 +1314,17 @@
 
 /* Magic Selection */
 "Magic Selection" = "Sélection magique";
+"Refine with brush" = "Retoucher au pinceau";
+"Back to points" = "Revenir aux points";
+"Undo brush stroke" = "Annuler le trait";
+"Paint or erase the mask" = "Peignez ou effacez le masque";
+"Mask updated" = "Masque mis à jour";
+"Refine edges" = "Recaler le contour";
+"Draw over an edge to refine it" = "Passez sur un bord pour le recaler";
+"Press and hold the photo to view the mask alone." = "Maintenez le doigt sur la photo pour afficher uniquement le masque.";
+"Sensitivity" = "Sensibilité";
+"Show mask only" = "Afficher le masque seul";
+"Show photo and mask" = "Afficher la photo et le masque";
 "Touch the element to select. Add points to extend the selection, or remove points to exclude an area." = "Touchez l’élément à sélectionner. Ajoutez des points pour étendre la sélection, ou retirez-en pour exclure une zone.";
 "Point mode" = "Mode des points";
 "Add a point" = "Ajouter un point";
@@ -1333,7 +1344,7 @@
 "Selection 1" = "Sélection 1";
 "Selection 2" = "Sélection 2";
 "Selection 3" = "Sélection 3";
-"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image." = "Touchez un élément, puis choisissez l’une des trois sélections proposées. Ajoutez des points pour l’étendre ou retirez-en pour exclure les zones indésirables. Pincez pour zoomer, déplacez l’image agrandie et touchez deux fois pour revenir à l’image entière.";
+"Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay." = "Touchez un élément, puis choisissez l’une des trois sélections proposées. Ajoutez des points pour l’étendre ou retirez-en pour exclure les zones indésirables. Pincez pour zoomer, déplacez l’image agrandie et touchez deux fois pour revenir à l’image entière. Retoucher au pinceau permet de passer sur un bord imprécis ; Lumora compare les couleurs des deux côtés et recalcule uniquement ce contour local. La sensibilité détermine jusqu’à quel niveau une différence de couleur peut déplacer le bord. Utilisez le bouton œil pour alterner entre le masque seul et la superposition sur la photo.";
 
 /* MobileSAM credits */
 "Lumora is written in Swift and SwiftUI. Image rendering uses Core Image and Metal; Vision supports image analysis and masks; Core ML runs depth estimation and Magic Selection on the device." = "Lumora est écrit en Swift et SwiftUI. Le rendu des images utilise Core Image et Metal ; Vision participe à l’analyse des images et aux masques ; Core ML exécute l’estimation de profondeur et la Sélection magique sur l’appareil.";
