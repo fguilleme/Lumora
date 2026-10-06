@@ -64,6 +64,7 @@ struct PhotoCanvas: View {
     @State private var liveBrushStroke: [MaskPoint] = []
     @State private var liveBrushPreviewVisible = false
     @State private var liveBrushMode: BrushMode?
+    @State private var lightingGuidesVisible = true
 
     private var activeComponent: MaskComponent? {
         activeMask?.components.first { $0.id == activeComponentID }
@@ -128,7 +129,10 @@ struct PhotoCanvas: View {
                                 guard let point = normalized(tap.location, viewSize: geometry.size,
                                                  imageSize: imageSize, displayScale: displayScale,
                                                  displayOffset: displayOffset) else { return }
-                                if lightingSettings?.enabled == true { onLightingMove(lightingSubjectMode, point) } else if depthFocusActive { onDepthFocus(point) } else if healingActive { onHealingTap(point) } else { onPhotoTap() }
+                                if lightingSettings?.enabled == true {
+                                    if lightingGuidesVisible { onLightingMove(lightingSubjectMode, point) }
+                                    else { lightingGuidesVisible = true }
+                                } else if depthFocusActive { onDepthFocus(point) } else if healingActive { onHealingTap(point) } else { onPhotoTap() }
                             }
                         }
                 )
@@ -239,6 +243,7 @@ struct PhotoCanvas: View {
                             imageSize: CGSize(width: result.image.width, height: result.image.height),
                             displayScale: displayScale, displayOffset: displayOffset)
                         LightingRigOverlay(settings: lighting, rect: rect,
+                            guidesVisible: $lightingGuidesVisible,
                             onBegin: onLightingBegin,
                             onTarget: { onLightingMove(true, $0) },
                             onAngles: onLightingAngles,

@@ -21,7 +21,7 @@ struct CreativePresetSelector<HeaderActions: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 8) {
-                Text(presets.isEmpty ? "Imported XMP" : "Styles").font(.subheadline.weight(.semibold))
+                Text(presets.isEmpty ? String(localized: "Imported XMP") : String(localized: "Styles")).font(.subheadline.weight(.semibold))
                 Spacer(minLength: 4)
                 headerActions
             }

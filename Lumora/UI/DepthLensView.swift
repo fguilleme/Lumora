@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DepthLensView: View {
     let session: EditorSession
+    @State private var selectedID = "aperture"
     private var settings: DepthLensSettings { session.state.depthLens ?? .init() }
     var body: some View {
         ScrollView {
@@ -11,12 +12,15 @@ struct DepthLensView: View {
                 })).accessibilityIdentifier("depth-lens-enable")
                 Text("Tap the photo to focus. A wider aperture blurs areas away from the focus plane.")
                     .font(.caption).foregroundStyle(.secondary)
-                AdjustmentSlider(title: String(localized: "Aperture"), range: 1.2...8, step: 0.1, precision: 1,
-                    accessibilityID: "depth-lens-aperture", value: settings.aperture,
-                    onBegin: { session.beginInteraction(String(localized: "Depth Lens")) },
-                    onChange: { value in session.changeDepthLens { $0.aperture = value } },
+                LinearAdjustmentControl(parameters: [LinearAdjustmentParameter(id: "aperture",
+                    title: String(localized: "Aperture"), value: settings.aperture, range: 1.2...8,
+                    step: 0.1, precision: 1, unit: "", resetValue: 1.4, isEnabled: settings.enabled)],
+                    selectedID: $selectedID,
+                    onBegin: { _ in session.beginInteraction(String(localized: "Depth Lens")) },
+                    onChange: { _, value in session.changeDepthLens { $0.aperture = value } },
                     onEnd: session.finishInteraction,
-                    onReset: { session.changeDepthLens { $0.aperture = 1.4 } })
+                    onReset: { _ in session.changeDepthLens { $0.aperture = 1.4 } })
+                    .padding(.horizontal, -22)
                     .disabled(!settings.enabled)
                 Picker("Focal length", selection: Binding(get: { settings.focal }, set: { value in
                     session.changeDepthLens { $0.focal = value }

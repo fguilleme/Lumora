@@ -77,13 +77,12 @@ struct DepthLightingView: View {
                     onEnd: session.finishInteraction,
                     onReset: { parameter in set(parameter.id, value: parameter.resetValue) }) {
                         ColorPicker(selection: colorBinding, supportsOpacity: false) {
-                            VStack(spacing: 1) {
-                                Text("Temperature").font(.caption2).lineLimit(1)
-                                Circle().fill(colorBinding.wrappedValue).frame(width: 15, height: 15)
-                            }
-                            .padding(.horizontal, 10).frame(minWidth: 84, minHeight: 44)
-                            .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 10))
+                            Image(systemName: "thermometer.medium")
+                                .font(.system(size: 19, weight: .medium))
+                                .foregroundStyle(colorBinding.wrappedValue)
+                                .frame(width: 44, height: 44)
                         }
+                        .accessibilityLabel("Temperature")
                         .accessibilityIdentifier("depth-lighting-temperature")
                     }
                     .disabled(!settings.enabled)

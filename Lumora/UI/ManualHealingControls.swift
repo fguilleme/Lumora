@@ -3,6 +3,7 @@ import SwiftUI
 struct ManualHealingControls: View {
   let session: EditorSession
   @State private var confirmDelete = false
+  @State private var selectedParameterID = "healing-size"
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack {
@@ -45,26 +46,16 @@ struct ManualHealingControls: View {
             Picker("Brush operation",selection:Binding(get:{session.healingEraseZone},set:{session.endHealingStroke();session.healingEraseZone=$0})) {
               Text("Add").tag(false);Text("Erase").tag(true)
             }.pickerStyle(.segmented)
-            AdjustmentSlider(title:String(localized:"Brush size"),range:0.1...5,accessibilityID:"healing-zone-size",value:session.healingBrushRadius*100,
-              onBegin:{},onChange:{session.healingBrushRadius=$0/100},onEnd:{},onReset:{session.healingBrushRadius=0.006})
-            AdjustmentSlider(title:String(localized:"Feather"),range:15...90,accessibilityID:"healing-zone-feather",value:c.feather*100,
-              onBegin:{session.beginInteraction(String(localized:"Feather"))},onChange:{v in session.changeHealing(c.id){$0.feather=v/100}},onEnd:session.finishInteraction,onReset:{session.changeHealing(c.id){$0.feather=0.45}})
             Text("Add paints more of this correction area; Erase removes part of it. Finish editing to move the target or source, or tap another imperfection.").font(.caption)
           }
-          AdjustmentSlider(
-            title: String(localized: "Size"), range: 0.1...5,
-            accessibilityID: "healing-size", value: c.targetRadius * 100,
-            onBegin: { session.beginInteraction(String(localized: "Size")) },
-            onChange: { v in session.changeHealing(c.id) { $0.resizeTarget(to: v / 100) } },
-            onEnd: session.finishInteraction,
-            onReset: { session.changeHealing(c.id) { $0.resizeTarget(to: 0.008) } })
-          AdjustmentSlider(
-            title: String(localized: "Strength"), range: 0...100,
-            accessibilityID: "healing-strength", value: c.strength,
-            onBegin: { session.beginInteraction(String(localized: "Strength")) },
-            onChange: { v in session.changeHealing(c.id) { $0.strength = v } },
-            onEnd: session.finishInteraction,
-            onReset: { session.changeHealing(c.id) { $0.strength = 100 } })
+          LinearAdjustmentControl(parameters: parameters(c), selectedID: $selectedParameterID,
+            onBegin: { parameter in
+              if parameter.id != "healing-zone-size" { session.beginInteraction(parameter.title) }
+            }, onChange: { parameter, value in set(parameter.id, value, correction: c) },
+            onEnd: {
+              if selectedParameterID != "healing-zone-size" { session.finishInteraction() }
+            }, onReset: { parameter in set(parameter.id, parameter.resetValue, correction: c) })
+            .padding(.horizontal, -18)
           Button("Delete correction", systemImage: "trash", role: .destructive) {
             session.deleteHealing()
           }
@@ -93,5 +84,28 @@ struct ManualHealingControls: View {
       .onChange(of:session.selectedHealing?.id) { _, id in
         if id == nil { session.endHealingStroke(); session.healingPaintZone=false }
       }
+  }
+  private func parameters(_ correction: ManualBlemishCorrection) -> [LinearAdjustmentParameter] {
+    var result: [LinearAdjustmentParameter] = []
+    if session.healingPaintZone {
+      result += [
+        .init(id: "healing-zone-size", title: String(localized: "Brush size"), value: session.healingBrushRadius * 100, range: 0.1...5, step: 0.1, precision: 1, resetValue: 0.6),
+        .init(id: "healing-zone-feather", title: String(localized: "Feather"), value: correction.feather * 100, range: 15...90, step: 1, precision: 0, resetValue: 45)
+      ]
+    }
+    result += [
+      .init(id: "healing-size", title: String(localized: "Size"), value: correction.targetRadius * 100, range: 0.1...5, step: 0.1, precision: 1, resetValue: 0.8),
+      .init(id: "healing-strength", title: String(localized: "Strength"), value: correction.strength, range: 0...100, step: 1, precision: 0, resetValue: 100)
+    ]
+    return result
+  }
+  private func set(_ id: String, _ value: Double, correction: ManualBlemishCorrection) {
+    switch id {
+    case "healing-zone-size": session.healingBrushRadius = value / 100
+    case "healing-zone-feather": session.changeHealing(correction.id) { $0.feather = value / 100 }
+    case "healing-size": session.changeHealing(correction.id) { $0.resizeTarget(to: value / 100) }
+    case "healing-strength": session.changeHealing(correction.id) { $0.strength = value }
+    default: break
+    }
   }
 }

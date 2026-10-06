@@ -9,6 +9,7 @@ struct OpticsView: View {
     let onChange: (OpticsAdjustment, Double) -> Void
     let onEnd: () -> Void
     let onReset: (OpticsAdjustment) -> Void
+    @State private var selectedID = OpticsAdjustment.distortion.rawValue
 
     var body: some View {
         ScrollView {
@@ -37,16 +38,23 @@ struct OpticsView: View {
                 }
                 Divider().padding(.vertical, 4)
                 Text("Manual corrections").font(.headline)
-                ForEach(OpticsAdjustment.allCases) { adjustment in
-                    AdjustmentSlider(title: adjustment.title, range: adjustment.range,
-                                     accessibilityID: "optics-\(adjustment.rawValue)",
-                                     value: settings[adjustment],
-                                     onBegin: { onBegin(adjustment.title) },
-                                     onChange: { onChange(adjustment, $0) }, onEnd: onEnd,
-                                     onReset: { onReset(adjustment) })
-                }
+                LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
+                    onBegin: { onBegin($0.title) },
+                    onChange: { parameter, value in
+                        if let adjustment = OpticsAdjustment(rawValue: parameter.id) { onChange(adjustment, value) }
+                    }, onEnd: onEnd,
+                    onReset: { parameter in
+                        if let adjustment = OpticsAdjustment(rawValue: parameter.id) { onReset(adjustment) }
+                    })
+                    .padding(.horizontal, -22)
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }
         .accessibilityIdentifier("optics-controls")
+    }
+    private var parameters: [LinearAdjustmentParameter] {
+        OpticsAdjustment.allCases.map { adjustment in
+            LinearAdjustmentParameter(id: adjustment.rawValue, title: adjustment.title,
+                value: settings[adjustment], range: adjustment.range, step: 1, precision: 0, resetValue: 0)
+        }
     }
 }

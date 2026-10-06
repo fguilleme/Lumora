@@ -31,6 +31,7 @@ struct MasksView: View {
     @State private var showingRename = false
     @State private var renameName = ""
     @State private var magicRequest: MagicSelectionRequest?
+    @State private var selectedScalarID = "layer-opacity"
 
     private struct MagicSelectionRequest: Identifiable {
         let id = UUID()
@@ -70,11 +71,6 @@ struct MasksView: View {
                     }
                 } else if let mask {
                         layerControls(mask)
-                        AdjustmentSlider(title: "Layer opacity", range: 0...100,
-                                         accessibilityID: "layer-opacity", value: mask.opacity,
-                                         onBegin: { onBegin("Layer opacity") },
-                                         onChange: onOpacity, onEnd: onEnd,
-                                         onReset: { onOpacity(100) })
                         Divider()
                         HStack {
                             componentMenu("Add", operation: .add)
@@ -88,6 +84,13 @@ struct MasksView: View {
                             componentControls(component, in: mask)
                             shapeControls(component)
                         }
+                        LinearAdjustmentControl(parameters: scalarParameters(mask: mask, component: component),
+                            selectedID: $selectedScalarID,
+                            onBegin: { onBegin("Mask · \($0.title)") },
+                            onChange: { parameter, value in setScalar(parameter.id, value) },
+                            onEnd: onEnd,
+                            onReset: { parameter in setScalar(parameter.id, parameter.resetValue) })
+                            .padding(.horizontal, -18)
 
                 }
             }.padding(.horizontal, 18).padding(.bottom, 12)
@@ -249,15 +252,10 @@ struct MasksView: View {
             Label(brushInstruction(component.operation),
                   systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
                 .font(.caption).foregroundStyle(.secondary)
-            parameter(.size, brush.size); parameter(.feather, brush.feather)
-            parameter(.flow, brush.flow); parameter(.opacity, brush.opacity)
         case .linear(let linear):
-            parameter(.angle, linear.angle); parameter(.centerX, linear.center.x * 100)
-            parameter(.centerY, linear.center.y * 100); parameter(.feather, linear.feather)
+            EmptyView()
         case .radial(let radial):
-            parameter(.centerX, radial.center.x * 100); parameter(.centerY, radial.center.y * 100)
-            parameter(.radiusX, radial.radiusX * 100); parameter(.radiusY, radial.radiusY * 100)
-            parameter(.feather, radial.feather)
+            EmptyView()
         case .generated(let generated):
             Label("Vision detected \(generated.kind.title.lowercased()) mask",
                   systemImage: generated.kind.symbol)
@@ -270,12 +268,29 @@ struct MasksView: View {
             ? String(localized: "Trace the area to subtract from the mask.")
             : String(localized: "Trace the area to add to the mask.")
     }
-    private func parameter(_ parameter: MaskParameter, _ value: Double) -> some View {
-        AdjustmentSlider(title: parameter.title, range: parameter.range,
-                         accessibilityID: "mask-parameter-\(parameter.rawValue)", value: value,
-                         onBegin: { onBegin("Mask · \(parameter.title)") },
-                         onChange: { onParameter(parameter, $0) }, onEnd: onEnd,
-                         onReset: { onParameter(parameter, defaultValue(parameter)) })
+    private func scalarParameters(mask: LocalMask, component: MaskComponent?) -> [LinearAdjustmentParameter] {
+        var result = [LinearAdjustmentParameter(id: "layer-opacity", title: String(localized: "Layer opacity"),
+            value: mask.opacity, range: 0...100, step: 1, precision: 0, resetValue: 100)]
+        guard let component else { return result }
+        let values: [(MaskParameter, Double)]
+        switch component.shape {
+        case .brush(let brush): values = [(.size, brush.size), (.feather, brush.feather), (.flow, brush.flow), (.opacity, brush.opacity)]
+        case .linear(let linear): values = [(.angle, linear.angle), (.centerX, linear.center.x * 100), (.centerY, linear.center.y * 100), (.feather, linear.feather)]
+        case .radial(let radial): values = [(.centerX, radial.center.x * 100), (.centerY, radial.center.y * 100), (.radiusX, radial.radiusX * 100), (.radiusY, radial.radiusY * 100), (.feather, radial.feather)]
+        case .generated: values = []
+        }
+        result += values.map { parameter, value in
+            LinearAdjustmentParameter(id: "mask-\(parameter.rawValue)", title: parameter.title,
+                value: value, range: parameter.range, step: 1, precision: 0,
+                resetValue: defaultValue(parameter))
+        }
+        return result
+    }
+    private func setScalar(_ id: String, _ value: Double) {
+        if id == "layer-opacity" { onOpacity(value); return }
+        guard id.hasPrefix("mask-"),
+              let parameter = MaskParameter(rawValue: String(id.dropFirst("mask-".count))) else { return }
+        onParameter(parameter, value)
     }
     private func defaultValue(_ parameter: MaskParameter) -> Double {
         switch parameter {

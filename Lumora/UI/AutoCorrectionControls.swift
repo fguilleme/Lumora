@@ -27,7 +27,7 @@ struct AutoCorrectionControls: View {
                 .accessibilityIdentifier("auto-reset")
             }
             Spacer()
-            Text(session.coreImageAutoApplied ? "Auto base" : "Manual")
+            Text(session.coreImageAutoApplied ? String(localized: "Auto base") : String(localized: "Manual"))
                 .font(.caption).foregroundStyle(.secondary)
                 .accessibilityIdentifier("auto-status-" + module.rawValue)
         }

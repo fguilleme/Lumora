@@ -24,6 +24,7 @@ struct EditorView: View {
     @State private var presetController = PresetController()
     @State private var focusedAdjustmentID: String?
     @State private var selectedCreativeEffectID: UUID?
+    @State private var selectedEffectParameter = EffectAdjustment.cinematicGlow.rawValue
     @State private var curveChannel: CurveChannel = .rgb
     @State private var curveEditMode = false
     @State private var curveEyedropper = false
@@ -78,7 +79,7 @@ struct EditorView: View {
                                               isPhone: UIDevice.current.userInterfaceIdiom == .phone,
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
-                                              portraitControlsHeight: (panel == .curve ? 180 : 252) + (showsPhotoInformation ? 28 : 0),
+                                              portraitControlsHeight: portraitControlContentHeight + (showsPhotoInformation ? 28 : 0),
                                               overlayOnly: false) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
@@ -307,12 +308,22 @@ struct EditorView: View {
         ![Panel.creative, .depthLens, .lighting, .optics, .geometry, .masks, .presets, .exif, .help, .settings].contains(panel)
     }
 
+    private var portraitControlContentHeight: CGFloat {
+        switch panel {
+        case .effects: 118
+        case .light, .color: 170
+        case .detail: 190
+        case .curve: 180
+        default: 252
+        }
+    }
+
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
         VStack(spacing: 0) {
             if showsPhotoInformation { photoInformation(result) }
             editorControls(result)
                 .environment(\.usesSideControlLayout, landscape)
-                .frame(height: landscape ? nil : (panel == .curve ? 180 : 252))
+                .frame(height: landscape ? nil : portraitControlContentHeight)
                 .frame(maxHeight: landscape ? .infinity : nil)
                 .background(.black)
                 .clipped()
@@ -726,29 +737,29 @@ struct EditorView: View {
     }
     private var effectsControls: some View {
         ScrollView {
-            VStack(spacing: 6) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Cinematic Glow").font(.subheadline)
-                    AdjustmentSlider(title: "Intensity", range: 0...100,
-                                     accessibilityID: "effect-cinematicGlow",
-                                     value: session.state.effects.cinematicGlowIntensity,
-                                     onBegin: { session.selectBaseLayer(); session.beginInteraction("Cinematic Glow") },
-                                     onChange: { session.setEffect(.cinematicGlow, to: $0) },
-                                     onEnd: session.finishInteraction,
-                                     onReset: { session.selectBaseLayer(); session.resetEffect(.cinematicGlow) })
-                }
-                ForEach(EffectAdjustment.allCases.filter { $0 != .cinematicGlow }) { adjustment in
-                    AdjustmentSlider(title: adjustment.title, range: adjustment.range,
-                                     accessibilityID: "effect-\(adjustment.rawValue)",
-                                     value: session.activeState.effects[adjustment],
-                                     onBegin: { session.beginInteraction(adjustment.title) },
-                                     onChange: { session.setEffect(adjustment, to: $0) },
-                                     onEnd: session.finishInteraction,
-                                     onReset: { session.resetEffect(adjustment) })
-                }
-            }.padding(.horizontal, 22).padding(.bottom, 12)
+            LinearAdjustmentControl(parameters: effectParameters, selectedID: $selectedEffectParameter,
+                onBegin: { parameter in
+                    if parameter.id == EffectAdjustment.cinematicGlow.rawValue { session.selectBaseLayer() }
+                    session.beginInteraction(parameter.title)
+                },
+                onChange: { parameter, value in
+                    if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.setEffect(adjustment, to: value) }
+                }, onEnd: session.finishInteraction,
+                onReset: { parameter in
+                    if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.resetEffect(adjustment) }
+                })
+                .padding(.bottom, 12)
         }
         .accessibilityIdentifier("effects-controls")
+    }
+    private var effectParameters: [LinearAdjustmentParameter] {
+        EffectAdjustment.allCases.map { adjustment in
+            let value = adjustment == .cinematicGlow
+                ? session.state.effects.cinematicGlowIntensity
+                : session.activeState.effects[adjustment]
+            return LinearAdjustmentParameter(id: adjustment.rawValue, title: adjustment.title,
+                value: value, range: adjustment.range, step: 1, precision: 0, resetValue: 0)
+        }
     }
 
 }

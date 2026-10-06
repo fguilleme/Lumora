@@ -9,6 +9,8 @@ final class CurvesInteractionUITests: XCTestCase {
             XCTAssertTrue(photo.waitForExistence(timeout: 20)); photo.tap()
             XCTAssertTrue(canvas.waitForExistence(timeout: 30))
         }
+        app.buttons["Import and options"].tap()
+        app.buttons["Reset settings"].tap()
         let tools = app.scrollViews["tools-toolbar"]
         for _ in 0..<8 where !app.buttons["Curves"].isHittable { tools.swipeRight() }
         for _ in 0..<8 where !app.buttons["Curves"].isHittable { tools.swipeLeft() }
@@ -18,6 +20,30 @@ final class CurvesInteractionUITests: XCTestCase {
     @MainActor private func capture(_ name: String, app: XCUIApplication) {
         let shot = XCTAttachment(screenshot: app.screenshot())
         shot.name = name; shot.lifetime = .keepAlways; add(shot)
+    }
+
+    @MainActor func testEditToolbarSitsBelowCurveHistogram() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication(); app.launch()
+        openCurves(app)
+        let controls = app.scrollViews["curve-controls-scroll"]
+        XCTAssertTrue(controls.waitForExistence(timeout: 5))
+        controls.swipeUp()
+        controls.swipeUp()
+        let chart = app.descendants(matching: .any).matching(identifier: "tone-curve-chart").firstMatch
+        XCTAssertTrue(chart.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.descendants(matching: .any).matching(identifier: "curve-edit-toolbar").firstMatch.exists)
+        app.buttons["curve-edit-mode"].tap()
+        let toolbar = app.descendants(matching: .any).matching(identifier: "curve-edit-toolbar").firstMatch
+        XCTAssertTrue(toolbar.waitForExistence(timeout: 5))
+        XCTAssertGreaterThanOrEqual(toolbar.frame.minY, chart.frame.maxY - 2)
+        XCTAssertFalse(toolbar.frame.intersects(chart.frame))
+        let add = app.buttons["curve-add-point"]
+        if !add.isHittable { controls.swipeUp() }
+        XCTAssertTrue(add.isHittable)
+        add.tap()
+        XCTAssertTrue((chart.value as? String)?.hasPrefix("3 points") == true)
+        capture("curve_toolbar_below_histogram", app: app)
     }
 
     @MainActor func testViewModeScrollEditAndEyedropper() throws {

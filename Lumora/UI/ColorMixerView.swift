@@ -6,6 +6,7 @@ struct ColorMixerView: View {
     let onChange: (MixerChannel, MixerAdjustment) -> Void
     let onEnd: () -> Void
     @State private var channel: MixerChannel = .red
+    @State private var selectedID = MixerComponent.hue.rawValue
 
     var body: some View {
         VStack(spacing: 5) {
@@ -44,22 +45,24 @@ struct ColorMixerView: View {
                     .accessibilityLabel(String(format: NSLocalizedString("Reset %@ range", comment: "Color mixer"), channel.title))
             }
             .dimsDuringAdjustment()
-            ForEach(MixerComponent.allCases) { component in
-                AdjustmentSlider(title: component.title, accessibilityID: "mixer-\(component.rawValue)",
-                                 value: mixer[channel][component],
-                                 onBegin: { onBegin("\(channel.title) · \(component.title)") },
-                                 onChange: { value in
-                                     var updated = mixer[channel]; updated[component] = value
-                                     onChange(channel, updated)
-                                 }, onEnd: onEnd,
-                                 onReset: {
-                                     onEnd()
-                                     var updated = mixer[channel]; updated[component] = 0
-                                     onChange(channel, updated)
-                                 })
-            }
-            .id(channel)
+            LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
+                onBegin: { onBegin("\(channel.title) · \($0.title)") },
+                onChange: { parameter, value in
+                    guard let component = MixerComponent(rawValue: parameter.id) else { return }
+                    var updated = mixer[channel]; updated[component] = value; onChange(channel, updated)
+                }, onEnd: onEnd,
+                onReset: { parameter in
+                    guard let component = MixerComponent(rawValue: parameter.id) else { return }
+                    var updated = mixer[channel]; updated[component] = 0; onChange(channel, updated)
+                })
+                .id(channel)
         }.padding(.horizontal, 14).padding(.bottom, 8)
             .onDisappear(perform: onEnd)
+    }
+    private var parameters: [LinearAdjustmentParameter] {
+        MixerComponent.allCases.map { component in
+            LinearAdjustmentParameter(id: component.rawValue, title: component.title,
+                value: mixer[channel][component], range: -100...100, step: 1, precision: 0, resetValue: 0)
+        }
     }
 }

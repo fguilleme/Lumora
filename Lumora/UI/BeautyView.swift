@@ -12,6 +12,7 @@ struct BeautyView: View {
     let onV2Change: (BeautyV2Control, Double) -> Void
     let onEnd: () -> Void
     let onReset: () -> Void
+    @State private var selectedID = "beauty-amount"
 
     var body: some View {
         ScrollView {
@@ -45,14 +46,13 @@ struct BeautyView: View {
                 .font(.caption).foregroundStyle(.secondary)
                 .dimsDuringAdjustment()
 
-                slider(.amount)
-                section("Skin", [.uniformity, .texture, .blemishes])
-                v2Section("", [.skinShine])
+                LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
+                    onBegin: { onBegin($0.title) },
+                    onChange: { parameter, value in set(parameter.id, value) },
+                    onEnd: onEnd,
+                    onReset: { parameter in set(parameter.id, parameter.resetValue) })
+                    .padding(.horizontal, -18)
                 ManualHealingControls(session: session)
-                section("Eyes", [.darkCircles, .eyeBrightness, .eyeDetail])
-                section("Smile", [.teeth])
-                v2Section("Lips", [.lipSaturation, .lipBrightness, .lipDetail])
-                v2Section("Face", [.faceBalance])
                 #if DEBUG
                 BeautyMaskDebugView(masks: debugMasks)
                 #endif
@@ -63,41 +63,27 @@ struct BeautyView: View {
         .accessibilityIdentifier("beauty-controls")
     }
 
-    private func section(_ title: String, _ controls: [BeautyControl]) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(LocalizedStringKey(title)).font(.headline).foregroundStyle(.secondary)
-                .padding(.top, 7).dimsDuringAdjustment()
-            ForEach(controls) { slider($0) }
+    private var parameters: [LinearAdjustmentParameter] {
+        let enabled = faceCount != 0 && !isAnalyzing
+        let classic = BeautyControl.allCases.map { control in
+            LinearAdjustmentParameter(id: "beauty-\(control.rawValue)", title: control.title,
+                value: settings[control], range: control.range, step: 1, precision: 0,
+                resetValue: control == .amount ? 100 : 0, isEnabled: enabled)
         }
-    }
-
-    private func v2Section(_ title: String, _ controls: [BeautyV2Control]) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            if !title.isEmpty {
-                Text(LocalizedStringKey(title)).font(.headline).foregroundStyle(.secondary)
-                    .padding(.top, 7).dimsDuringAdjustment()
-            }
-            ForEach(controls) { control in
-                AdjustmentSlider(title: control.title, range: control.range,
-                    accessibilityID: "beauty-v2-\(control.rawValue)",
-                    value: (settings.finishing ?? .init())[control],
-                    onBegin: { onBegin(control.title) },
-                    onChange: { onV2Change(control, $0) }, onEnd: onEnd,
-                    onReset: { onV2Change(control, 0) })
-                    .disabled(faceCount == 0 || isAnalyzing)
-            }
+        let finishing = BeautyV2Control.productionCases.map { control in
+            LinearAdjustmentParameter(id: "beauty-v2-\(control.rawValue)", title: control.title,
+                value: (settings.finishing ?? .init())[control], range: control.range, step: 1,
+                precision: 0, resetValue: 0, isEnabled: enabled)
         }
+        return classic + finishing
     }
-
-    private func slider(_ control: BeautyControl) -> some View {
-        AdjustmentSlider(title: control.title, range: control.range,
-                         accessibilityID: "beauty-\(control.rawValue)",
-                         value: settings[control],
-                         onBegin: { onBegin(control.title) },
-                         onChange: { onChange(control, $0) }, onEnd: onEnd,
-                         onReset: { onChange(control, control == .amount ? 100 : 0) })
-            .disabled(faceCount == 0 || isAnalyzing)
-            .opacity(faceCount == 0 ? 0.4 : 1)
+    private func set(_ id: String, _ value: Double) {
+        if id.hasPrefix("beauty-v2-"),
+           let control = BeautyV2Control(rawValue: String(id.dropFirst("beauty-v2-".count))) {
+            onV2Change(control, value)
+        } else if let control = BeautyControl(rawValue: String(id.dropFirst("beauty-".count))) {
+            onChange(control, value)
+        }
     }
 }
 

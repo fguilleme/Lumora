@@ -8,6 +8,7 @@ struct CreativeEffectsView: View {
     @State private var advanced = false
     @State private var showsTile = false
     @State private var presetFeedback = 0
+    @State private var selectedParameterID = "opacity"
     #if DEBUG
     @State private var showsLab = false
     #endif
@@ -145,22 +146,21 @@ struct CreativeEffectsView: View {
                     }.font(.caption).dimsDuringAdjustment()
 
                     Text("Settings").font(.subheadline.weight(.semibold)).dimsDuringAdjustment()
-                    slider("opacity", "Opacity", 0...100, effect.opacity, 100) { value in update { $0.opacity = value } }
                     if effect.kind == .grain {
                         Picker("Mode", selection: $advanced) {
                             Text("Simple").tag(false); Text("Advanced").tag(true)
                         }.pickerStyle(.segmented).dimsDuringAdjustment()
                     }
                     if effect.kind == .tonalContrast {
-                        Button(advanced ? "Hide protections" : "Advanced protections") { advanced.toggle() }
+                        Button(NSLocalizedString(advanced ? "Hide protections" : "Advanced protections", comment: "Creative advanced controls")) { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .detailExtractor {
-                        Button(advanced ? "Hide protections" : "Advanced protections") { advanced.toggle() }
+                        Button(NSLocalizedString(advanced ? "Hide protections" : "Advanced protections", comment: "Creative advanced controls")) { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .glamourGlow || effect.kind == .bleachBypass || effect.kind == .proContrast || effect.kind == .crossProcessing || effect.kind == .filmEmulation || effect.kind == .silverBW || effect.kind == .silverToning {
-                        Button(advanced ? "Hide advanced settings" : "Advanced settings") { advanced.toggle() }
+                        Button(NSLocalizedString(advanced ? "Hide advanced settings" : "Advanced settings", comment: "Creative advanced controls")) { advanced.toggle() }
                             .font(.caption).dimsDuringAdjustment()
                     }
                     if effect.kind == .silverBW {
@@ -168,13 +168,13 @@ struct CreativeEffectsView: View {
                             update { $0["filmResponse"] = Double(value) }
                         })) {
                             ForEach(SilverFilmResponse.allCases, id: \.rawValue) { response in
-                                Text(response.title).tag(response.rawValue)
+                                Text(NSLocalizedString(response.title, comment: "Film response")).tag(response.rawValue)
                             }
                         }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-film-response")
                         Menu("Color filter") {
                             Button("None") { update { $0["filterStrength"] = 0 } }
                             ForEach(["Yellow", "Orange", "Red", "Green", "Blue"].indices, id: \.self) { index in
-                                Button(["Yellow", "Orange", "Red", "Green", "Blue"][index]) {
+                                Button(NSLocalizedString(["Yellow", "Orange", "Red", "Green", "Blue"][index], comment: "Photographic filter color")) {
                                     update {
                                         $0["filterHue"] = [60,30,0,120,240][index]
                                         if $0["filterStrength"] == 0 { $0["filterStrength"] = 50 }
@@ -188,57 +188,22 @@ struct CreativeEffectsView: View {
                             update { $0["toner"] = Double(value) }
                         })) {
                             ForEach(SilverToner.allCases, id: \.rawValue) { toner in
-                                Text(toner.title).tag(toner.rawValue)
+                                Text(NSLocalizedString(toner.title, comment: "Silver toner")).tag(toner.rawValue)
                             }
                         }.dimsDuringAdjustment().accessibilityIdentifier("creative-silver-toner")
                     }
                     if effect.kind == .darkenLightenCenter {
                         Text("Drag the handle on the photo to position the center.")
                             .font(.caption).foregroundStyle(.secondary)
-                        Button(advanced ? "Hide precise position" : "Precise X / Y position") { advanced.toggle() }
+                        Button(NSLocalizedString(advanced ? "Hide precise position" : "Precise X / Y position", comment: "Creative advanced controls")) { advanced.toggle() }
                             .buttonStyle(.bordered).accessibilityIdentifier("creative-dlc-position")
                     }
-                    ForEach(effect.kind.descriptor.parameters.filter { spec in
-                        if effect.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(spec.id) { return advanced }
-                        if effect.kind == .silverToning {
-                            if spec.id == "toner" { return false }
-                            let split = Int(effect["toner"].rounded()) == SilverToner.split.rawValue
-                            if ["shadowHue", "highlightHue"].contains(spec.id) { return split }
-                            if !advanced {
-                                return ["amount", "strength", "balance"].contains(spec.id)
-                                    || (split && ["shadowStrength", "highlightStrength"].contains(spec.id))
-                            }
-                        }
-                        if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
-                        if (effect.kind == .tonalContrast || effect.kind == .detailExtractor) && !advanced {
-                            return !spec.id.hasPrefix("protect")
-                        }
-                        if effect.kind == .glamourGlow && !advanced {
-                            return !["threshold", "highlightProtection", "shadowProtection"].contains(spec.id)
-                        }
-                        if effect.kind == .bleachBypass && !advanced {
-                            return !["blackDensity", "highlightRollOff", "shadowProtection"].contains(spec.id)
-                        }
-                        if effect.kind == .proContrast && !advanced {
-                            return !["shadowProtection", "highlightProtection"].contains(spec.id)
-                        }
-                        if effect.kind == .crossProcessing {
-                            if spec.id == "style" { return false }
-                            if !advanced { return !["shadowHue", "shadowStrength", "highlightHue",
-                                                   "highlightStrength", "blackLift"].contains(spec.id) }
-                        }
-                        if effect.kind == .silverBW {
-                            if spec.id == "filmResponse" { return false }
-                            if !advanced { return !["dynamicBrightness", "softContrast", "blacks", "whites"].contains(spec.id) }
-                        }
-                        if effect.kind == .filmEmulation {
-                            if spec.id == "style" { return false }
-                            if !advanced { return !["highlightRollOff", "shadowDensity", "colorResponse"].contains(spec.id) }
-                        }
-                        return true
-                    }) { spec in
-                        slider(spec.id, NSLocalizedString(spec.title, comment: "Creative effect parameter"), spec.range, effect[spec.id], spec.defaultValue) { value in update { $0[spec.id] = value } }
-                    }
+                    LinearAdjustmentControl(parameters: parameters(for: effect), selectedID: $selectedParameterID,
+                        onBegin: { session.beginInteraction("Creative · \($0.title)") },
+                        onChange: { parameter, value in set(parameter.id, value) },
+                        onEnd: session.finishInteraction,
+                        onReset: { parameter in set(parameter.id, parameter.resetValue) })
+                        .padding(.horizontal, -18)
                     if effect.kind == .grain && advanced {
                         Toggle("Monochrome", isOn: Binding(get: { effect.monochromatic }, set: { v in update { $0.monochromatic = v } }))
                             .dimsDuringAdjustment()
@@ -295,14 +260,53 @@ struct CreativeEffectsView: View {
         }.buttonStyle(.plain).accessibilityLabel(title)
             .accessibilityIdentifier("creative-action-" + id)
     }
-    private func slider(_ id: String, _ title: String, _ range: ClosedRange<Double>, _ value: Double,
-                        _ reset: Double, change: @escaping (Double) -> Void) -> some View {
-        let preciseCenter = effect?.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(id)
-        let preciseEV = effect?.kind == .darkenLightenCenter && ["centerEV", "borderEV"].contains(id)
-        return AdjustmentSlider(title: title, range: range, step: preciseCenter ? 0.001 : preciseEV ? 0.01 : 1,
-            precision: preciseCenter ? 3 : preciseEV ? 2 : 0, accessibilityID: "creative-\(id)", value: value,
-            onBegin: { session.beginInteraction("Creative · \(title)") }, onChange: change,
-            onEnd: session.finishInteraction, onReset: { session.finishInteraction(); change(reset) })
+    private func parameters(for effect: CreativeEffect) -> [LinearAdjustmentParameter] {
+        var result = [LinearAdjustmentParameter(id: "opacity", title: String(localized: "Opacity"),
+            value: effect.opacity, range: 0...100, step: 1, precision: 0, resetValue: 100)]
+        result += visibleSpecs(for: effect).map { spec in
+            let preciseCenter = effect.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(spec.id)
+            let preciseEV = effect.kind == .darkenLightenCenter && ["centerEV", "borderEV"].contains(spec.id)
+            return LinearAdjustmentParameter(id: spec.id,
+                title: NSLocalizedString(spec.title, comment: "Creative effect parameter"),
+                value: effect[spec.id], range: spec.range,
+                step: preciseCenter ? 0.001 : preciseEV ? 0.01 : 1,
+                precision: preciseCenter ? 3 : preciseEV ? 2 : 0,
+                resetValue: spec.defaultValue)
+        }
+        return result
+    }
+    private func set(_ id: String, _ value: Double) {
+        if id == "opacity" { update { $0.opacity = value } }
+        else { update { $0[id] = value } }
+    }
+    private func visibleSpecs(for effect: CreativeEffect) -> [FXParameter] {
+        effect.kind.descriptor.parameters.filter { spec in
+            if effect.kind == .darkenLightenCenter && ["centerX", "centerY"].contains(spec.id) { return advanced }
+            if effect.kind == .silverToning {
+                if spec.id == "toner" { return false }
+                let split = Int(effect["toner"].rounded()) == SilverToner.split.rawValue
+                if ["shadowHue", "highlightHue"].contains(spec.id) { return split }
+                if !advanced { return ["amount", "strength", "balance"].contains(spec.id) || (split && ["shadowStrength", "highlightStrength"].contains(spec.id)) }
+            }
+            if effect.kind == .grain { return advanced || ["amount", "size", "hardness"].contains(spec.id) }
+            if (effect.kind == .tonalContrast || effect.kind == .detailExtractor) && !advanced { return !spec.id.hasPrefix("protect") }
+            if effect.kind == .glamourGlow && !advanced { return !["threshold", "highlightProtection", "shadowProtection"].contains(spec.id) }
+            if effect.kind == .bleachBypass && !advanced { return !["blackDensity", "highlightRollOff", "shadowProtection"].contains(spec.id) }
+            if effect.kind == .proContrast && !advanced { return !["shadowProtection", "highlightProtection"].contains(spec.id) }
+            if effect.kind == .crossProcessing {
+                if spec.id == "style" { return false }
+                if !advanced { return !["shadowHue", "shadowStrength", "highlightHue", "highlightStrength", "blackLift"].contains(spec.id) }
+            }
+            if effect.kind == .silverBW {
+                if spec.id == "filmResponse" { return false }
+                if !advanced { return !["dynamicBrightness", "softContrast", "blacks", "whites"].contains(spec.id) }
+            }
+            if effect.kind == .filmEmulation {
+                if spec.id == "style" { return false }
+                if !advanced { return !["highlightRollOff", "shadowDensity", "colorResponse"].contains(spec.id) }
+            }
+            return true
+        }
     }
 }
 

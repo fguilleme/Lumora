@@ -56,11 +56,18 @@ struct EditorHelpView: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(section.title).font(.headline)
                                 ForEach(section.items) { item in
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(item.name).font(.subheadline.weight(.semibold))
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: item.symbol)
+                                            .font(.system(size: 17, weight: .medium))
                                             .foregroundStyle(.mint)
-                                        Text(item.explanation).font(.subheadline)
-                                            .fixedSize(horizontal: false, vertical: true)
+                                            .frame(width: 24, height: 24)
+                                            .accessibilityHidden(true)
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(item.name).font(.subheadline.weight(.semibold))
+                                                .foregroundStyle(.mint)
+                                            Text(item.explanation).font(.subheadline)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }
                                     }
                                 }
                             }
@@ -90,10 +97,93 @@ struct EditorHelpView: View {
 private struct HelpItem: Identifiable {
     let name: String
     let explanation: String
+    let symbol: String
     var id: String { name }
-    init(_ name: String, _ explanation: String) {
+    init(_ name: String, _ explanation: String, symbol: String? = nil) {
         self.name = NSLocalizedString(name, comment: "Help item")
         self.explanation = NSLocalizedString(explanation, comment: "Help explanation")
+        self.symbol = symbol ?? Self.inferredSymbol(for: name)
+    }
+
+    private static func inferredSymbol(for name: String) -> String {
+        switch name {
+        case "Camera RAW files", "Original metadata": "camera"
+        case "Short tap", "Short tap on histogram": "hand.tap"
+        case "Double-tap": "hand.tap.fill"
+        case "Touch and hold", "Touch and hold histogram", "Quick tab selection", "Quick selection from the tab bar": "hand.point.up.left"
+        case "Pinch and pan", "Photo gestures": "hand.pinch"
+        case "Drag histogram", "Placement", "Change the order": "arrow.up.and.down.and.arrow.left.and.right"
+        case "Open a tab", "Editor tabs": "rectangle.stack"
+        case "Complete organization", "Selection and settings", "Settings default": "gearshape"
+        case "Add an effect", "Creative", "Looks and Custom": "sparkles"
+        case "Quick actions": "ellipsis.circle"
+        case "Opacity and mask", "Active mask", "With a mask", "Masking": "circle.lefthalf.filled"
+        case "High Key", "Whites", "Highlights": "sun.max"
+        case "Low Key", "Blacks", "Shadows": "moon"
+        case "Pro Contrast", "Tonal Contrast", "Contrast": "circle.righthalf.filled"
+        case "Detail Extractor", "Detail", "Texture", "Eye Brightness and Eye Detail": "triangle"
+        case "Glamour Glow", "Cinematic Glow", "Skin Shine": "wand.and.stars"
+        case "Grain", "Film Emulation": "camera.filters"
+        case "Bleach Bypass", "Silver B&W", "Silver Toning": "circle.lefthalf.striped.horizontal"
+        case "Cross Processing", "Color", "Saturation", "Vibrance", "Auto Color": "paintpalette"
+        case "Darken / Lighten Center", "Face Balance": "circle.dotted"
+        case "At 100%", "Fine adjustment", "Fine edges": "magnifyingglass"
+        case "Exposure", "Intensity": "sun.max.fill"
+        case "Auto", "With Auto Light", "Auto horizon", "Auto perspective": "wand.and.rays"
+        case "Local adjustment", "Brush", "Edit correction area": "paintbrush"
+        case "Temperature": "thermometer.medium"
+        case "Tint", "Hue", "Light position": "eyedropper"
+        case "Axes", "RGB and channels", "Tonal regions": "point.topleft.down.to.point.bottomright.curvepath"
+        case "View mode", "Visible / Outline", "Show histogram": "eye"
+        case "Edit mode": "pencil"
+        case "Eyedropper": "eyedropper.halffull"
+        case "Delete a point", "Delete corrections", "Rename or delete": "trash"
+        case "Natural, Balanced, Punchy", "Grading presets", "Lighting presets", "Natural / Portrait / Beauty", "Personal presets": "square.grid.2x2"
+        case "Undo and redo": "arrow.uturn.backward"
+        case "Eight ranges": "circle.grid.3x3"
+        case "Luminance": "sun.min"
+        case "Reset a range", "Reset", "Restore interface defaults": "arrow.counterclockwise"
+        case "Blending and Balance": "circle.lefthalf.filled"
+        case "Clarity", "Radius", "Softness": "circle.dotted"
+        case "Dehaze": "cloud.fog"
+        case "Vignette": "circle.inset.filled"
+        case "Amount", "Size and Strength", "Beauty Amount": "dial.medium"
+        case "Activation", "Enable lighting", "Enable Depth Lens": "power"
+        case "Subject point", "Depth Lens focus", "Center focus", "Target and source": "scope"
+        case "Distance", "Focal length": "arrow.left.and.right"
+        case "Surface relief": "mountain.2"
+        case "Sky and background": "cloud.sun"
+        case "Existing light and shadows": "sun.and.horizon"
+        case "Processing and comparison", "Compare": "rectangle.on.rectangle"
+        case "Saved settings", "Create a preset": "square.and.arrow.down"
+        case "The focus plane", "Aperture": "camera.aperture"
+        case "A restrained starting point": "slider.horizontal.3"
+        case "On-device processing": "iphone"
+        case "Preview and export", "Import and export": "square.and.arrow.up"
+        case "All Faces", "Blemishes", "Dark Circles", "Teeth", "Lips": "face.smiling"
+        case "Uniformity and Texture": "circle.grid.cross"
+        case "When available": "checkmark.circle"
+        case "When unavailable": "xmark.circle"
+        case "Distortion", "Chromatic aberration", "Lens vignetting": "camera.aperture"
+        case "Rotate and flip": "rotate.right"
+        case "Straighten": "rotate.left"
+        case "Vertical and horizontal": "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left"
+        case "Aspect, scale, and offsets", "Format": "aspectratio"
+        case "Whole photo": "photo"
+        case "Name, opacity, and order": "list.bullet"
+        case "Invert": "circle.lefthalf.filled.inverse"
+        case "Gradients": "circle.lefthalf.filled"
+        case "Smart masks", "Magic Selection": "wand.and.stars"
+        case "Add / Subtract": "plusminus"
+        case "Include metadata in exports", "Keep metadata": "doc.text"
+        case "Location", "Remove location": "location.slash"
+        case "Read only": "lock"
+        case "Apply": "checkmark"
+        case "Design and development", "Made for Apple platforms": "hammer"
+        case "Depth Anything V2 Small", "MobileSAM": "cpu"
+        case "Model provenance", "Third-party libraries": "doc.text.magnifyingglass"
+        default: "info.circle"
+        }
     }
 }
 
@@ -349,16 +439,17 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
         case .lighting:
             return [
                 HelpSection("Place the lighting", [
-                    HelpItem("Enable lighting", "Turn on Enable lighting in the Lighting tab. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it."),
-                    HelpItem("Subject point", "Tap the face or drag the turquoise target onto it, preferably inside a solid area rather than on an edge. The target supplies the reference depth and is the centre of the lighting rig."),
-                    HelpItem("Light position", "Move the colored bulb across the photo. Its horizontal position sets the side of the light and its vertical position sets the height. The bulb is only a control and is never exported.")
+                    HelpItem("Enable lighting", "Turn on Enable lighting in the Lighting tab. Turning it off preserves the controls but removes the effect; Reset restores the initial controls and disables it.", symbol: "power"),
+                    HelpItem("Lighting presets", "Studio, Window and Golden Hour set only the visible Lighting controls and the source position. Any manual adjustment switches the preset indicator to Manual.", symbol: "square.grid.2x2"),
+                    HelpItem("Subject point", "Tap the photo or drag the turquoise target onto the area to illuminate, preferably inside a solid area rather than on an edge. The target supplies the reference depth.", symbol: "scope"),
+                    HelpItem("Light position", "Drag the small source handle around the photo. The thin line points from the source toward the target. Both guides fade automatically and are never exported.", symbol: "sun.max")
                 ]),
                 HelpSection("Shape the light", [
-                    HelpItem("Power", "Controls the added light from zero to a deliberately strong maximum. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%."),
-                    HelpItem("Light distance", "Moves the virtual point light progressively in depth. This changes its spread and can shift the strongest illumination between the face, chin, and neck. The shortened range is intended for portraits; the values are relative, not metres."),
-                    HelpItem("Softness", "Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo."),
-                    HelpItem("Light color", "Chooses the RGB color of the added light without changing the photo white balance."),
-                    HelpItem("Surface relief", "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading.")
+                    HelpItem("Intensity", "Controls the added light from zero to a deliberately strong maximum. Strong values can expose noise already present in dark areas; inspect skin and eyes at 100%.", symbol: "sun.max.fill"),
+                    HelpItem("Softness", "Controls the spatial reach of the added light. Increasing it spreads illumination over a larger area near the selected depth. It does not blur the photo.", symbol: "circle.dotted"),
+                    HelpItem("Distance", "Moves the virtual point light progressively in depth. This changes its spread and can shift the strongest illumination between the face, chin, and neck. The range is intended for portraits; the values are relative, not metres.", symbol: "arrow.left.and.right"),
+                    HelpItem("Temperature", "The colored thermometer shows the selected light color. Tap the single color button beside it to open the selector. This changes the added light without changing the photo white balance.", symbol: "thermometer.medium"),
+                    HelpItem("Surface relief", "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading.", symbol: "mountain.2")
                 ]),
                 HelpSection("Experimental limitations", [
                     HelpItem("Sky and background", "Distant regions are attenuated according to estimated depth, not a semantic sky mask. If the sky or background brightens unexpectedly, move the subject point, reduce Softness or Intensity, or disable the effect. Hair, glass and reflections can have incorrect depth."),

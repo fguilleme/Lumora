@@ -10,6 +10,7 @@ struct LinearAdjustmentParameter: Identifiable, Equatable {
     let precision: Int
     var unit: String = ""
     let resetValue: Double
+    var isEnabled: Bool = true
 
     var formattedValue: String {
         value.formatted(.number.precision(.fractionLength(precision))) + unit
@@ -46,23 +47,27 @@ struct LinearAdjustmentControl<Accessory: View>: View {
     }
 
     private var selected: LinearAdjustmentParameter? {
-        parameters.first(where: { $0.id == selectedID }) ?? parameters.first
+        parameters.first(where: { $0.id == selectedID && $0.isEnabled })
+            ?? parameters.first(where: \.isEnabled)
+            ?? parameters.first
     }
 
     var body: some View {
         VStack(spacing: 4) {
-            ScrollViewReader { proxy in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(parameters) { parameter in
-                            parameterButton(parameter).id(parameter.id)
+            if parameters.count > 1 {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(parameters) { parameter in
+                                parameterButton(parameter).id(parameter.id)
+                            }
+                            accessory()
                         }
-                        accessory()
+                        .padding(.horizontal, 12)
                     }
-                    .padding(.horizontal, 12)
-                }
-                .onChange(of: selectedID) { _, id in
-                    withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .center) }
+                    .onChange(of: selectedID) { _, id in
+                        withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .center) }
+                    }
                 }
             }
             if let selected {
@@ -71,14 +76,26 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                         entryText = selected.value.formatted(.number.precision(.fractionLength(selected.precision)))
                         entryPresented = true
                     } label: {
-                        Text(selected.formattedValue)
-                            .font(.system(.body, design: .monospaced).weight(.semibold))
-                            .monospacedDigit()
-                            .frame(minWidth: 74, minHeight: 44)
+                        if parameters.count == 1 {
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(selected.title).font(.caption2).lineLimit(1)
+                                Text(selected.formattedValue)
+                                    .font(.system(.body, design: .monospaced).weight(.semibold))
+                                    .monospacedDigit()
+                            }
+                            .frame(minWidth: 94, minHeight: 44, alignment: .leading)
                             .contentShape(Rectangle())
+                        } else {
+                            Text(selected.formattedValue)
+                                .font(.system(.body, design: .monospaced).weight(.semibold))
+                                .monospacedDigit()
+                                .frame(minWidth: 74, minHeight: 44)
+                                .contentShape(Rectangle())
+                        }
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.primary)
+                    .disabled(!selected.isEnabled)
                     .accessibilityLabel(String(format: NSLocalizedString("Enter %@ value", comment: "Numeric adjustment entry"), selected.title))
                     .accessibilityIdentifier("adjustment-value-entry")
 
@@ -96,6 +113,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.secondary)
+                    .disabled(!selected.isEnabled)
                     .accessibilityLabel(String(format: NSLocalizedString("Reset %@", comment: "Adjustment reset"), selected.title))
                     .accessibilityIdentifier("adjustment-reset")
                 }
@@ -132,6 +150,8 @@ struct LinearAdjustmentControl<Accessory: View>: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .disabled(!parameter.isEnabled)
+        .opacity(parameter.isEnabled ? 1 : 0.35)
         .accessibilityLabel(parameter.title)
         .accessibilityValue(parameter.formattedValue)
         .accessibilityAddTraits(active ? .isSelected : [])
@@ -139,7 +159,8 @@ struct LinearAdjustmentControl<Accessory: View>: View {
     }
 
     private func repairSelection() {
-        if !parameters.contains(where: { $0.id == selectedID }), let first = parameters.first {
+        if !parameters.contains(where: { $0.id == selectedID && $0.isEnabled }),
+           let first = parameters.first(where: \.isEnabled) ?? parameters.first {
             selectedID = first.id
         }
     }

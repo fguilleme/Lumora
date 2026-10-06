@@ -50,7 +50,7 @@ struct ExportView: View {
                 Section {
                     if controller.isExporting {
                         ProgressView(value: controller.stage.fraction) {
-                            Text(controller.isCancelling ? "Cancelling…" : controller.stage.title)
+                            Text(controller.isCancelling ? String(localized: "Cancelling…") : controller.stage.title)
                         }
                         Text("Progress is reported by stage. A running GPU operation or encoding step must finish before cancellation.")
                             .font(.caption).foregroundStyle(.secondary)

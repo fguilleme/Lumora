@@ -270,7 +270,7 @@ struct ToneCurveEditor: View {
                                      y: size.height * (1 - Double(bins[index]) / Double(peak))))
         }
         path.addLine(to: CGPoint(x: size.width, y: size.height)); path.closeSubpath()
-        context.fill(path, with: .color(accent.opacity(0.12)))
+        context.fill(path, with: .color(accent.opacity(dragging == nil ? 0.14 : 0.42)))
     }
 }
 
@@ -382,7 +382,7 @@ struct CurveOverlayCard: View {
         GeometryReader { geometry in
             let cardWidth = min(370, max(280, geometry.size.width - 20))
             let expandedHeight = min(270, max(210, geometry.size.height - 20))
-            let cardSize = CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight)
+            let cardSize = CGSize(width: cardWidth, height: collapsed ? 52 : expandedHeight)
             VStack(spacing: 0) {
                 HStack(spacing: 8) {
                     HStack(spacing: 8) {
@@ -390,7 +390,7 @@ struct CurveOverlayCard: View {
                         Text("Curves").font(.subheadline.weight(.semibold))
                         Spacer(minLength: 8)
                     }
-                    .frame(maxWidth: .infinity, minHeight: 46)
+                    .frame(maxWidth: .infinity, minHeight: 52)
                     .contentShape(Rectangle())
                     .gesture(DragGesture(minimumDistance: 3)
                         .onChanged { gesture in
@@ -410,7 +410,9 @@ struct CurveOverlayCard: View {
                         withTransaction(transaction) { collapsed.toggle() }
                     } label: {
                         Image(systemName: collapsed ? "chevron.down" : "chevron.up")
-                            .frame(width: 44, height: 44)
+                            .font(.system(size: 18, weight: .semibold))
+                            .frame(width: 56, height: 52)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(collapsed ? "Expand curves" : "Collapse curves")
@@ -418,7 +420,7 @@ struct CurveOverlayCard: View {
                     .zIndex(1)
                 }
                 .padding(.leading, 12)
-                .frame(height: 46)
+                .frame(height: 52)
                 .background(.white.opacity(0.025))
 
                 if !collapsed {
@@ -432,12 +434,12 @@ struct CurveOverlayCard: View {
                                         onChange: onChange, onEnd: onEnd)
                     }
                     .accessibilityIdentifier("curve-controls-scroll")
-                    .frame(height: expandedHeight - 46, alignment: .top)
+                    .frame(height: expandedHeight - 52, alignment: .top)
                     .background(.clear)
                     .clipped()
                 }
             }
-            .frame(width: cardWidth, height: collapsed ? 46 : expandedHeight, alignment: .top)
+            .frame(width: cardWidth, height: collapsed ? 52 : expandedHeight, alignment: .top)
             .background {
                 RoundedRectangle(cornerRadius: 15)
                     .fill(.black.opacity(0.40))
@@ -448,11 +450,11 @@ struct CurveOverlayCard: View {
             .transaction { transaction in transaction.disablesAnimations = true }
             .onChange(of: geometry.size) { _, size in
                 offset = clamped(offset, in: size,
-                                 card: CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight))
+                                 card: CGSize(width: cardWidth, height: collapsed ? 52 : expandedHeight))
             }
             .onChange(of: collapsed) { _, _ in
                 offset = clamped(offset, in: geometry.size,
-                                 card: CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight))
+                                 card: CGSize(width: cardWidth, height: collapsed ? 52 : expandedHeight))
             }
         }
     }

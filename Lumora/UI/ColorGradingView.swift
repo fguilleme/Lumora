@@ -6,7 +6,7 @@ struct ColorGradingView: View {
     let onChange: (ColorGrading) -> Void
     let onEnd: () -> Void
     @State private var selected: GradingRange = .shadows
-    @State private var precise = false
+    @State private var selectedID = "luminance"
 
     var body: some View {
         VStack(spacing: 6) {
@@ -55,43 +55,38 @@ struct ColorGradingView: View {
                     .accessibilityLabel(String(format: NSLocalizedString("Reset grading for %@", comment: "Color grading"), selected.title))
                     .dimsDuringAdjustment()
             }
-            AdjustmentSlider(title: "Luminance", accessibilityID: "grading-luminance", value: grading[selected].luminance,
-                             onBegin: { onBegin("Grading luminance") }, onChange: { value in
-                                 var updated = grading; updated[selected].luminance = value; onChange(updated)
-                             }, onEnd: onEnd, onReset: {
-                                 onEnd(); var updated = grading; updated[selected].luminance = 0; onChange(updated)
-                             }).id(selected)
-            DisclosureGroup("Precise hue and saturation", isExpanded: $precise) {
-                AdjustmentSlider(title: "Hue", range: 0...360, accessibilityID: "grading-hue", value: grading[selected].hue,
-                                 onBegin: { onBegin("Grading hue") }, onChange: { value in
-                                     var updated = grading; updated[selected].hue = value; onChange(updated)
-                                 }, onEnd: onEnd, onReset: {
-                                     onEnd(); var updated = grading; updated[selected].hue = 0; onChange(updated)
-                                 }).id(selected)
-                AdjustmentSlider(title: "Saturation", range: 0...100, accessibilityID: "grading-saturation", value: grading[selected].saturation,
-                                 onBegin: { onBegin("Grading saturation") }, onChange: { value in
-                                     var updated = grading; updated[selected].saturation = value; onChange(updated)
-                                 }, onEnd: onEnd, onReset: {
-                                     onEnd(); var updated = grading; updated[selected].saturation = 0; onChange(updated)
-                                 }).id(selected)
-            }.font(.caption).padding(.vertical, 3)
-            AdjustmentSlider(title: "Blending", range: 0...100, accessibilityID: "grading-blending", value: grading.blending,
-                             onBegin: { onBegin("Grading blending") }, onChange: { value in
-                                 var updated = grading; updated.blending = value; onChange(updated)
-                             }, onEnd: onEnd, onReset: {
-                                 onEnd(); var updated = grading; updated.blending = 50; onChange(updated)
-                             })
-            AdjustmentSlider(title: "Balance", accessibilityID: "grading-balance", value: grading.balance,
-                             onBegin: { onBegin("Grading balance") }, onChange: { value in
-                                 var updated = grading; updated.balance = value; onChange(updated)
-                             }, onEnd: onEnd, onReset: {
-                                 onEnd(); var updated = grading; updated.balance = 0; onChange(updated)
-                             })
+            LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
+                onBegin: { onBegin("Grading · \($0.title)") },
+                onChange: { parameter, value in update(parameter.id, value) },
+                onEnd: onEnd,
+                onReset: { parameter in update(parameter.id, parameter.resetValue) })
+                .id(selected)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 14).padding(.bottom, 8)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("grading-content")
         .onDisappear(perform: onEnd)
+    }
+    private var parameters: [LinearAdjustmentParameter] {
+        [
+            .init(id: "luminance", title: String(localized: "Luminance"), value: grading[selected].luminance, range: -100...100, step: 1, precision: 0, resetValue: 0),
+            .init(id: "hue", title: String(localized: "Hue"), value: grading[selected].hue, range: 0...360, step: 1, precision: 0, unit: "°", resetValue: 0),
+            .init(id: "saturation", title: String(localized: "Saturation"), value: grading[selected].saturation, range: 0...100, step: 1, precision: 0, resetValue: 0),
+            .init(id: "blending", title: String(localized: "Blending"), value: grading.blending, range: 0...100, step: 1, precision: 0, resetValue: 50),
+            .init(id: "balance", title: String(localized: "Balance"), value: grading.balance, range: -100...100, step: 1, precision: 0, resetValue: 0)
+        ]
+    }
+    private func update(_ id: String, _ value: Double) {
+        var updated = grading
+        switch id {
+        case "luminance": updated[selected].luminance = value
+        case "hue": updated[selected].hue = value
+        case "saturation": updated[selected].saturation = value
+        case "blending": updated.blending = value
+        case "balance": updated.balance = value
+        default: return
+        }
+        onChange(updated)
     }
 }

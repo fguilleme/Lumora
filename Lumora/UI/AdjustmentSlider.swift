@@ -49,6 +49,8 @@ struct AdjustmentSlider: View {
     let onChange: (Double) -> Void
     let onEnd: () -> Void
     let onReset: () -> Void
+    let compact: Bool
+    let showsReset: Bool
     init(adjustment: Adjustment, value: Double, onBegin: @escaping () -> Void,
          onChange: @escaping (Double) -> Void, onEnd: @escaping () -> Void, onReset: @escaping () -> Void) {
         self.init(title: adjustment.title, range: adjustment.range, step: adjustment.step,
@@ -57,10 +59,12 @@ struct AdjustmentSlider: View {
     }
     init(title: String, range: ClosedRange<Double> = -100...100, step: Double = 1,
          precision: Int = 0, accessibilityID: String, value: Double, onBegin: @escaping () -> Void,
-         onChange: @escaping (Double) -> Void, onEnd: @escaping () -> Void, onReset: @escaping () -> Void) {
+         onChange: @escaping (Double) -> Void, onEnd: @escaping () -> Void, onReset: @escaping () -> Void,
+         compact: Bool = false, showsReset: Bool = true) {
         self.title = title; self.range = range; self.step = step; self.precision = precision
         self.accessibilityID = accessibilityID; self.value = value
         self.onBegin = onBegin; self.onChange = onChange; self.onEnd = onEnd; self.onReset = onReset
+        self.compact = compact; self.showsReset = showsReset
     }
     @State private var fine = false
     @State private var zeroFeedback = 0
@@ -76,13 +80,13 @@ struct AdjustmentSlider: View {
     }
     var body: some View {
         Group {
-            if usesSideControlLayout {
+            if usesSideControlLayout && !compact {
                 VStack(spacing: 0) {
                     HStack(spacing: 4) {
                         titleLabel
                         Spacer(minLength: 4)
                         fineButton
-                        resetButton
+                        if showsReset { resetButton }
                     }
                     slider
                 }
@@ -91,9 +95,9 @@ struct AdjustmentSlider: View {
                     titleLabel.frame(width: 82, alignment: .leading)
                     slider
                     fineButton
-                    resetButton
+                    if showsReset { resetButton }
                 }
-                .frame(minHeight: 42)
+                .frame(minHeight: compact ? 36 : 42)
             }
         }
         .opacity(focus.activeID == nil || focus.activeID == accessibilityID ? 1 : 0)
@@ -136,7 +140,7 @@ struct AdjustmentSlider: View {
                 Text(value, format: .number.precision(.fractionLength(fine ? precision + 1 : precision)))
                     .font(.system(.caption, design: .monospaced)).monospacedDigit()
                     .foregroundStyle(fine ? Color.mint : Color.secondary)
-                    .frame(width: 48, height: 40)
+                    .frame(width: 48, height: compact ? 34 : 40)
             }
             .accessibilityLabel(String(format: NSLocalizedString("%@, fine adjustment", comment: "Slider accessibility"), title))
             .accessibilityValue(fine ? "On" : "Off")
