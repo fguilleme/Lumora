@@ -37,8 +37,12 @@ actor PresetStore {
     }
 
     func importPreset(from source: URL) throws -> Preset {
-        if source.pathExtension.lowercased() == "xmp" {
+        let fileExtension = source.pathExtension.lowercased()
+        if fileExtension == "xmp" {
             return try save(XMPPresetImporter.read(source).makePreset())
+        }
+        guard fileExtension == "json" || fileExtension == "lumorapreset" else {
+            throw PresetError.unsupported
         }
         let scoped = source.startAccessingSecurityScopedResource()
         defer { if scoped { source.stopAccessingSecurityScopedResource() } }

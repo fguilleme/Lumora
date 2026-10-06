@@ -5,6 +5,8 @@ import Observation
 final class PresetController {
     private(set) var presets: [Preset] = []
     private(set) var isLoading = false
+    private(set) var isImporting = false
+    private(set) var lastImportedPresetName: String?
     var error: String?
     @ObservationIgnored private let store: PresetStore
 
@@ -33,9 +35,15 @@ final class PresetController {
         catch { self.error = error.localizedDescription }
     }
     func importPreset(from url: URL) async {
+        isImporting = true
+        lastImportedPresetName = nil
+        defer { isImporting = false }
         do {
             let preset = try await store.importPreset(from: url)
             presets.insert(preset, at: 0)
-        } catch { self.error = error.localizedDescription }
+            lastImportedPresetName = preset.name
+        } catch {
+            self.error = error.localizedDescription
+        }
     }
 }

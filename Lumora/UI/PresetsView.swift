@@ -21,12 +21,27 @@ struct PresetsView: View {
                 HStack {
                     Text("My presets").font(.headline)
                     Spacer()
-                    Button { showingImporter = true } label: { Label("Import", systemImage: "square.and.arrow.down") }
+                    Button { showingImporter = true } label: {
+                        if controller.isImporting {
+                            ProgressView().accessibilityLabel("Importing preset…")
+                        } else {
+                            Label("Import", systemImage: "square.and.arrow.down")
+                        }
+                    }
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                        .disabled(controller.isImporting)
                         .accessibilityIdentifier("preset-import")
                         .accessibilityLabel("Import Lumora or XMP presets")
                     Button { createName = ""; selectedSections = PresetSection.photographicDefaults; showingCreate = true } label: {
                         Label("Create", systemImage: "plus.circle")
                     }.accessibilityIdentifier("preset-create")
+                }
+                if let name = controller.lastImportedPresetName {
+                    Label(String(format: String(localized: "Preset “%@” imported."), name), systemImage: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.mint)
+                        .accessibilityIdentifier("preset-import-success")
                 }
                 if controller.isLoading { ProgressView("Loading…") }
                 else if controller.presets.isEmpty {
@@ -52,7 +67,13 @@ struct PresetsView: View {
         .alert("Unable to manage preset", isPresented: Binding(get: { controller.error != nil }, set: { if !$0 { controller.error = nil } })) {
             Button("OK") { controller.error = nil }
         } message: { Text(controller.error ?? "") }
-        .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.json, UTType(filenameExtension: "lumorapreset") ?? .data, UTType(filenameExtension: "xmp") ?? .xml], allowsMultipleSelection: false) { result in
+        .fileImporter(isPresented: $showingImporter,
+                      // XMP is a dynamic UTI on iOS and some Files providers expose the
+                      // same file as XML or generic data. Filtering with that dynamic UTI
+                      // can make the document picker fail to present without an error.
+                      // The store still validates the extension, size and file contents.
+                      allowedContentTypes: [.data],
+                      allowsMultipleSelection: false) { result in
             if case .success(let urls) = result, let url = urls.first { Task { await controller.importPreset(from: url) } }
             else if case .failure(let error) = result { controller.error = error.localizedDescription }
         }
