@@ -14,7 +14,8 @@ let package = Package(
         .testTarget(name: "LumoraVisualTestLab", dependencies: ["LumoraCore"],
                     path: "Validation/Tests/LumoraVisualTestLab",
                     exclude: ["LOW_KEY_CONTRACT.md", "AdaptiveToneMetalPrototype", "SpatialImportancePrototype",
-                              "ShadowBudgetPrototype", "adaptive_tone_phase2.py", "adaptive_tone_prototype.py", "__pycache__"],
+                              "ShadowBudgetPrototype", "adaptive_tone_phase2.py", "adaptive_tone_prototype.py",
+                              "debug_halo_contact_sheets.py", "debug_halo_summary.py", "__pycache__"],
                     resources: [.copy("Baselines"), .copy("Fixtures")])
     ]
 )
