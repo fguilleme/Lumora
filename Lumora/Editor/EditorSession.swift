@@ -253,6 +253,7 @@ final class EditorSession {
            CommandLine.arguments.indices.contains(option + 1) {
             await importPhoto(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 .appendingPathComponent(CommandLine.arguments[option + 1]))
+            configureAppStoreDemoIfNeeded()
             return
         }
         if CommandLine.arguments.contains("--app-store-raw") {
@@ -269,6 +270,36 @@ final class EditorSession {
             }
         } catch { self.error = error.localizedDescription }
     }
+
+    #if DEBUG
+    private func configureAppStoreDemoIfNeeded() {
+        guard let option = CommandLine.arguments.firstIndex(of: "--app-store-panel"),
+              CommandLine.arguments.indices.contains(option + 1) else { return }
+        switch CommandLine.arguments[option + 1] {
+        case "Depth Lens":
+            changeDepthLens {
+                $0.enabled = true; $0.aperture = 1.4; $0.focal = 85
+                $0.focusX = 0.46; $0.focusY = 0.38
+            }
+        case "Lighting":
+            changeDepthLighting {
+                $0.enabled = true; $0.intensity = 161; $0.distance = 0; $0.softness = 77
+                $0.relief = 80; $0.azimuth = 68; $0.elevation = 20
+                $0.red = 0.03; $0.green = 0.32; $0.blue = 1
+                $0.targetX = 0.48; $0.targetY = 0.40
+            }
+        case "Beauty":
+            // The App Store simulator cannot always create Vision's inference context.
+            // Populate the controls without requesting a render; device captures and the
+            // production path continue to use the normal face-analysis pipeline.
+            state.beauty = BeautyPreset.portrait.settings
+        case "Masks":
+            createMask(.radial)
+        default:
+            break
+        }
+    }
+    #endif
 
     func loadLibrary() async {
         isLoadingLibrary = true
@@ -554,6 +585,16 @@ final class EditorSession {
         if !interacting { history.commit(state); persist() }
     }
     func analyzeBeautyFaces() async {
+        #if DEBUG
+        if let option = CommandLine.arguments.firstIndex(of: "--app-store-panel"),
+           CommandLine.arguments.indices.contains(option + 1),
+           CommandLine.arguments[option + 1] == "Beauty" {
+            beautyFaceCount = 1
+            beautyAnalysisError = nil
+            isAnalyzingBeauty = false
+            return
+        }
+        #endif
         guard let sourceURL, let documentID = document?.id else { return }
         beautyRequest &+= 1
         let token = beautyRequest, importToken = importGeneration
@@ -714,7 +755,7 @@ final class EditorSession {
         selectFirstMaskIfNeeded(); history.commit(state); persist(); requestRender(.high)
     }
     var selectedMask: LocalMask? { state.masks.first { $0.id == selectedMaskID } }
-    var activeLayerName: String { selectedMask?.name ?? "Whole photo" }
+    var activeLayerName: String { selectedMask?.name ?? String(localized: "Whole photo") }
     var activeState: EditState {
         guard let index = selectedMaskIndex else { return state }
         var projected = state.masks[index].adjustments.editState

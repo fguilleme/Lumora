@@ -10,10 +10,11 @@ IPHONE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-13-Pro-Max"
 IPAD_TYPE="com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB"
 BUNDLE_ID="com.guilleme.Lumora"
 RAW_SOURCE="${LUMORA_EXIF_RAW:-/Volumes/XTRA/Pictures/IMG_9908.CR2}"
-PANELS=(Light Color Effects Beauty EXIF)
-NAMES=(01-development 02-color 03-creative 04-beauty 05-exif)
-IMAGES=(PortraitEyes.jpg PortraitDarkSkin.jpg PortraitBeard.jpg PortraitPores.jpg "")
+PANELS=(Light Color Effects Beauty EXIF "Depth Lens" Beauty Lighting Masks)
+NAMES=(01-development 02-color 03-creative 04-beauty 05-exif 06-depth-lens 07-beauty-portrait 08-lighting 09-masks)
+IMAGES=(PortraitEyes.jpg PortraitDarkSkin.jpg PortraitBeard.jpg PortraitPores.jpg "" PortraitDepth.jpg PortraitBeauty.jpg PortraitLighting.jpg PortraitMasks.jpg)
 TARGET="${1:-all}"
+MODE="${2:-all}"
 
 mkdir -p "$OUTPUT" "$DERIVED"
 
@@ -41,15 +42,24 @@ prepare_device() {
   cp "$ROOT/Validation/BeautyValidation/Sources/02_dark_skin_texture.jpg" "$container/Documents/PortraitDarkSkin.jpg"
   cp "$ROOT/Validation/BeautyValidation/Sources/06_beard_moustache.jpg" "$container/Documents/PortraitBeard.jpg"
   cp "$ROOT/Validation/BeautyValidation/Sources/01_light_skin_pores.jpg" "$container/Documents/PortraitPores.jpg"
+  cp "$ROOT/Validation/BeautyValidation/Sources/11_45_degree_face.jpg" "$container/Documents/PortraitDepth.jpg"
+  cp "$ROOT/Validation/BeautyValidation/Sources/03_acne_redness.jpg" "$container/Documents/PortraitBeauty.jpg"
+  magick "$ROOT/Validation/BeautyValidation/Sources/08_open_smile_teeth.jpg" \
+    -colorspace RGB -evaluate multiply 0.125 -colorspace sRGB \
+    "$container/Documents/PortraitLighting.jpg"
+  cp "$ROOT/Validation/BeautyValidation/Sources/07_glasses.jpg" "$container/Documents/PortraitMasks.jpg"
 }
 
 capture_locale() {
   local id="$1" family="$2" language="$3" region="$4" expected="$5"
   local directory="$OUTPUT/$language/$family"
-  rm -rf "$directory"
+  if [[ "$MODE" == "all" ]]; then rm -rf "$directory"; fi
   mkdir -p "$directory"
 
-  for index in {1..5}; do
+  local indices="$(seq 1 9)"
+  if [[ "$MODE" == "extras" ]]; then indices="$(seq 6 9)"; fi
+  if [[ "$MODE" == "beauty" ]]; then indices="4 7"; fi
+  for index in ${=indices}; do
     local panel="${PANELS[$index]}" name="${NAMES[$index]}" image="${IMAGES[$index]}"
     local temporary="/tmp/lumora-${family}-${language}-${name}.png"
     if [[ "$panel" == "EXIF" ]]; then
@@ -61,7 +71,7 @@ capture_locale() {
       xcrun simctl launch --terminate-running-process "$id" "$BUNDLE_ID" \
         --app-store-image "$image" --app-store-panel "$panel" \
         -AppleLanguages "($language)" -AppleLocale "${language}_${region}" >/dev/null
-      sleep 7
+      if [[ "$panel" == "Depth Lens" || "$panel" == "Lighting" ]]; then sleep 14; else sleep 7; fi
     fi
     xcrun simctl io "$id" screenshot "$temporary" >/dev/null
     cp "$temporary" "$directory/$name.png"

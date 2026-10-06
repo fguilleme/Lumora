@@ -5,7 +5,10 @@ from pathlib import Path
 
 directory = Path(sys.argv[1])
 expected = tuple(map(int, sys.argv[2].split("x")))
-names = ("01-development", "02-color", "03-creative", "04-beauty", "05-exif")
+names = (
+    "01-development", "02-color", "03-creative", "04-beauty", "05-exif",
+    "06-depth-lens", "07-beauty-portrait", "08-lighting", "09-masks",
+)
 
 for name in names:
     path = directory / f"{name}.png"
