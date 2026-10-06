@@ -27,8 +27,11 @@ struct EditorView: View {
     @State private var curveChannel: CurveChannel = .rgb
     @State private var curveEditMode = false
     @State private var curveEyedropper = false
+    @State private var curveSelectedPoint: Int?
     @State private var curveSample: CurveSample?
     @State private var curveSamplingBuffer: CurveSamplingBuffer?
+    @State private var selectedLightParameter = Adjustment.exposure.rawValue
+    @State private var selectedColorParameter = Adjustment.temperature.rawValue
     @AppStorage("editor.controlsSide") private var controlsSideRaw = ControlsSide.leading.rawValue
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.layoutDirection) private var layoutDirection
@@ -75,7 +78,8 @@ struct EditorView: View {
                                               isPhone: UIDevice.current.userInterfaceIdiom == .phone,
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
-                                              portraitControlsHeight: 252 + (showsPhotoInformation ? 28 : 0)) {
+                                              portraitControlsHeight: (panel == .curve ? 180 : 252) + (showsPhotoInformation ? 28 : 0),
+                                              overlayOnly: false) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
                                 // Test-only accessibility counter: proves the photo overlay
@@ -85,7 +89,7 @@ struct EditorView: View {
                                 }
                             },
                             diagnosticGeneration: ProcessInfo.processInfo.arguments.contains("-ui-testing-landscape") ? session.generation : nil,
-                            curveSampling: panel == .curve && curveEditMode && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
+                            curveSampling: panel == .curve && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
                             curveSampleLocation: curveSample?.location,
                             onCurveSample: { location in
                                 if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
@@ -162,6 +166,9 @@ struct EditorView: View {
                                       })
                             .id(session.document?.id)
                         }
+                    }
+                    .overlay {
+                        if panel == .curve { curveOverlay(result) }
                     }
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
@@ -242,18 +249,21 @@ struct EditorView: View {
         .onChange(of: visiblePanels) { _, tabs in if !tabs.contains(panel) { selectPanel(tabs.first ?? .settings) } }
         .onAppear {
             if !visiblePanels.contains(panel) { selectPanel(visiblePanels.first ?? .settings) }
+            if panel == .curve { curveEditMode = true }
             session.setMaskEditingPreview(panel == .masks)
         }
         .onChange(of: panel) { _, newPanel in
             session.closeHealing()
             session.setMaskEditingPreview(newPanel == .masks)
             if newPanel == .beauty { Task { await session.analyzeBeautyFaces() } }
-            if newPanel != .curve { curveEditMode = false; curveEyedropper = false
-                curveSample = nil; curveSamplingBuffer = nil }
+            if newPanel == .curve { curveEditMode = true }
+            else { curveEditMode = false; curveEyedropper = false
+                curveSelectedPoint = nil; curveSample = nil; curveSamplingBuffer = nil }
         }
         .onChange(of: session.document?.id) { _, _ in
             session.closeHealing()
-            curveEditMode = false; curveEyedropper = false
+            curveEditMode = panel == .curve; curveEyedropper = false
+            curveSelectedPoint = nil
             curveSample = nil; curveSamplingBuffer = nil
             clearClippingOverlay()
             if panel == .beauty { Task { await session.analyzeBeautyFaces() } }
@@ -302,7 +312,7 @@ struct EditorView: View {
             if showsPhotoInformation { photoInformation(result) }
             editorControls(result)
                 .environment(\.usesSideControlLayout, landscape)
-                .frame(height: landscape ? nil : 252)
+                .frame(height: landscape ? nil : (panel == .curve ? 180 : 252))
                 .frame(maxHeight: landscape ? .infinity : nil)
                 .background(.black)
                 .clipped()
@@ -503,24 +513,20 @@ struct EditorView: View {
     @ViewBuilder private func editorControls(_ result: RenderResult) -> some View {
         switch panel {
         case .curve:
-            ScrollView {
-                AutoCorrectionControls(session: session, module: .curves).padding(.horizontal)
-                ToneCurveEditor(curves: session.activeState.curves, histogram: result.histogram,
-                                channel: $curveChannel, editMode: $curveEditMode,
-                                eyedropper: $curveEyedropper, sample: curveSample,
-                                eyedropperAvailable: session.selectedMaskID == nil,
-                                onClearSample: { curveSample = nil },
-                                onBegin: { session.beginInteraction($0) },
-                                onChange: session.setCurve, onEnd: session.finishInteraction)
-                    .task(id: curveEyedropper ? session.generation : -1) {
-                        guard curveEditMode, curveEyedropper, session.selectedMaskID == nil else {
-                            curveSamplingBuffer = nil; curveSample = nil; return
-                        }
-                        curveSamplingBuffer = try? CurveSamplingBuffer.prepare(
-                            original: result.original, state: session.state)
-                    }
+            VStack(spacing: 4) {
+                AutoCorrectionControls(session: session, module: .curves)
+                CurvePointControls(curves: session.activeState.curves,
+                                   channel: curveChannel,
+                                   selected: $curveSelectedPoint,
+                                   eyedropper: $curveEyedropper,
+                                   eyedropperAvailable: session.selectedMaskID == nil,
+                                   onClearSample: { curveSample = nil },
+                                   onBegin: session.beginInteraction,
+                                   onChange: session.setCurve,
+                                   onEnd: session.finishInteraction)
             }
-            .accessibilityIdentifier("curve-controls-scroll")
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
         case .colorTools:
             ColorToolsView(mixer: session.activeState.colorMixer,
                            grading: session.activeState.colorGrading,
@@ -618,17 +624,48 @@ struct EditorView: View {
     }
 
     private var controls: some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                AutoCorrectionControls(session: session, module: panel == .light ? .light : .color)
-                ForEach(panel == .light ? Adjustment.light : Adjustment.color) { adjustment in
-                    AdjustmentSlider(adjustment: adjustment, value: session.activeState[adjustment],
-                                     onBegin: { session.beginInteraction(adjustment) },
-                                     onChange: { session.set(adjustment, to: $0) },
-                                     onEnd: session.finishInteraction,
-                                     onReset: { session.reset(adjustment) })
-                }
-            }.padding(.horizontal, 22).padding(.bottom, 12)
+        VStack(spacing: 5) {
+            AutoCorrectionControls(session: session, module: panel == .light ? .light : .color)
+                .padding(.horizontal, 12)
+            LinearAdjustmentControl(parameters: scalarParameters,
+                                    selectedID: panel == .light ? $selectedLightParameter : $selectedColorParameter,
+                                    onBegin: { parameter in
+                                        if let adjustment = Adjustment(rawValue: parameter.id) { session.beginInteraction(adjustment) }
+                                    },
+                                    onChange: { parameter, value in
+                                        if let adjustment = Adjustment(rawValue: parameter.id) { session.set(adjustment, to: value) }
+                                    },
+                                    onEnd: session.finishInteraction,
+                                    onReset: { parameter in
+                                        if let adjustment = Adjustment(rawValue: parameter.id) { session.reset(adjustment) }
+                                    })
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 4)
+    }
+
+    private var scalarParameters: [LinearAdjustmentParameter] {
+        (panel == .light ? Adjustment.light : Adjustment.color).map { adjustment in
+            LinearAdjustmentParameter(id: adjustment.rawValue, title: adjustment.title,
+                                      value: session.activeState[adjustment], range: adjustment.range,
+                                      step: adjustment.step, precision: adjustment == .exposure ? 2 : 0,
+                                      unit: adjustment == .exposure ? " EV" : "", resetValue: 0)
+        }
+    }
+
+    private func curveOverlay(_ result: RenderResult) -> some View {
+        CurveOverlayCard(curves: session.activeState.curves, histogram: result.histogram,
+                         channel: $curveChannel, eyedropper: $curveEyedropper,
+                         selectedPoint: $curveSelectedPoint, sample: curveSample,
+                         eyedropperAvailable: session.selectedMaskID == nil,
+                         onClearSample: { curveSample = nil },
+                         onBegin: { session.beginInteraction($0) },
+                         onChange: session.setCurve, onEnd: session.finishInteraction)
+        .task(id: curveEyedropper ? session.generation : -1) {
+            guard curveEyedropper, session.selectedMaskID == nil else {
+                curveSamplingBuffer = nil; curveSample = nil; return
+            }
+            curveSamplingBuffer = try? CurveSamplingBuffer.prepare(original: result.original, state: session.state)
         }
     }
     private func toolBar(trailingInset: CGFloat = 0) -> some View {
@@ -762,6 +799,7 @@ private struct EditorWorkspaceLayout: Layout {
     let controlsSide: String
     let direction: LayoutDirection
     let portraitControlsHeight: CGFloat
+    let overlayOnly: Bool
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         CGSize(width: proposal.width ?? 0, height: proposal.height ?? 0)
@@ -770,6 +808,13 @@ private struct EditorWorkspaceLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize,
                        subviews: Subviews, cache: inout ()) {
         guard subviews.count == 2 else { return }
+        if overlayOnly {
+            subviews[0].place(at: bounds.origin,
+                              proposal: ProposedViewSize(width: bounds.width, height: bounds.height))
+            subviews[1].place(at: CGPoint(x: bounds.minX, y: bounds.maxY),
+                              proposal: ProposedViewSize(width: bounds.width, height: 0))
+            return
+        }
         if landscape {
             let desiredControlsWidth = min(640, max(460, bounds.width * 0.47))
             let minimumPhotoWidth = min(220, bounds.width * 0.32)

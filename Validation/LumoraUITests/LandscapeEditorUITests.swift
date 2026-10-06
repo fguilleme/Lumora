@@ -23,7 +23,8 @@ final class LandscapeEditorUITests: XCTestCase {
         XCTAssertLessThanOrEqual(tabs.frame.minX, app.frame.minX + 2)
         XCTAssertGreaterThanOrEqual(tabs.frame.maxX, app.frame.maxX - 50)
         XCTAssertGreaterThanOrEqual(tabs.frame.minY, max(canvas.frame.maxY, controls.frame.maxY) - 2)
-        XCTAssertGreaterThanOrEqual(controls.frame.width, 420)
+        XCTAssertLessThanOrEqual(controls.frame.width, app.frame.width * 0.5 + 2)
+        XCTAssertGreaterThan(canvas.frame.width, 200)
 
         selectPanel("Creative", in: app)
         for identifier in ["creative-add", "creative-presets"] {
@@ -98,11 +99,16 @@ final class LandscapeEditorUITests: XCTestCase {
         XCTAssertFalse(app.images["clipping-warning-overlay"].exists)
         XCTAssertEqual(canvas.value as? String, generation)
 
-        let exposure = app.sliders["exposure"]
-        XCTAssertTrue(exposure.waitForExistence(timeout: 10))
-        let initial = exposure.value as? String
-        exposure.adjust(toNormalizedSliderPosition: 0.65)
-        XCTAssertNotEqual(exposure.value as? String, initial)
+        let exposure = app.buttons["parameter-exposure"]
+        XCTAssertTrue(exposure.waitForExistence(timeout: 10)); exposure.tap()
+        let ruler = app.descendants(matching: .any).matching(identifier: "adjustment-ruler").firstMatch
+        XCTAssertTrue(ruler.waitForExistence(timeout: 5))
+        let initial = ruler.value as? String
+        ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.58, dy: 0.5))
+            .press(forDuration: 0.08,
+                   thenDragTo: ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.42, dy: 0.5)),
+                   withVelocity: .slow, thenHoldForDuration: 0.05)
+        XCTAssertNotEqual(ruler.value as? String, initial)
         XCTAssertTrue(app.buttons["Undo"].isEnabled)
         XCUIDevice.shared.orientation = .portrait
     }
@@ -158,7 +164,7 @@ final class LandscapeEditorUITests: XCTestCase {
         if side.value as? String == "Trailing" { side.tap() }
         XCTAssertEqual(side.value as? String, "Leading")
         XCTAssertLessThan(controls.frame.midX, canvas.frame.midX)
-        XCTAssertGreaterThanOrEqual(controls.frame.width, 420)
+        XCTAssertLessThanOrEqual(controls.frame.width, app.frame.width * 0.5 + 2)
         XCTAssertGreaterThanOrEqual(canvas.frame.width, 220)
         XCTAssertGreaterThan(canvas.frame.height, 180)
         print("LANDSCAPE_FRAME", canvas.frame, "CONTROLS_FRAME", controls.frame)

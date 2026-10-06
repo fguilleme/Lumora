@@ -6,13 +6,14 @@ struct ToneCurveEditor: View {
     @Binding var channel: CurveChannel
     @Binding var editMode: Bool
     @Binding var eyedropper: Bool
+    @Binding var selected: Int?
+    let graphOnly: Bool
     let sample: CurveSample?
     let eyedropperAvailable: Bool
     let onClearSample: () -> Void
     let onBegin: (String) -> Void
     let onChange: (CurveChannel, ToneCurve) -> Void
     let onEnd: () -> Void
-    @State private var selected: Int?
     @State private var dragging: Int?
 
     private var curve: ToneCurve { curves[channel] }
@@ -33,16 +34,18 @@ struct ToneCurveEditor: View {
                 }
                 .pickerStyle(.segmented)
                 .onChange(of: channel) { _, _ in finishGesture(); selected = nil }
-                Button {
-                    finishGesture()
-                    editMode.toggle()
-                    if !editMode { eyedropper = false; onClearSample(); selected = nil }
-                } label: {
-                    Image(systemName: editMode ? "checkmark" : "pencil")
+                if !graphOnly {
+                    Button {
+                        finishGesture()
+                        editMode.toggle()
+                        if !editMode { eyedropper = false; onClearSample(); selected = nil }
+                    } label: {
+                        Image(systemName: editMode ? "checkmark" : "pencil")
+                    }
+                    .buttonStyle(CompactEditorButtonStyle(selected: editMode))
+                    .accessibilityLabel(editMode ? "Done" : "Edit")
+                    .accessibilityIdentifier("curve-edit-mode")
                 }
-                .buttonStyle(CompactEditorButtonStyle(selected: editMode))
-                .accessibilityLabel(editMode ? "Done" : "Edit")
-                .accessibilityIdentifier("curve-edit-mode")
             }
             GeometryReader { geometry in
                 ZStack {
@@ -116,34 +119,6 @@ struct ToneCurveEditor: View {
                     }
                 }
                 .contentShape(Rectangle())
-                .overlay(alignment: .topTrailing) {
-                    if editMode {
-                        HStack(spacing: 4) {
-                            Button {
-                                eyedropper.toggle()
-                                onClearSample()
-                            } label: { Image(systemName: "eyedropper") }
-                                .buttonStyle(CompactEditorButtonStyle(selected: eyedropper))
-                                .accessibilityLabel("Eyedropper")
-                                .accessibilityIdentifier("curve-eyedropper")
-                                .accessibilityAddTraits(eyedropper ? .isSelected : [])
-                                .disabled(!eyedropperAvailable)
-                                .accessibilityHint(eyedropperAvailable ? "Tap the photo to locate its tone" : "Unavailable on a masked layer")
-                            Button(action: addPoint) { Image(systemName: "plus") }
-                                .buttonStyle(CompactEditorButtonStyle())
-                                .accessibilityLabel(sample == nil ? "Add point" : "Add point from eyedropper")
-                                .accessibilityIdentifier("curve-add-point")
-                                .disabled(curve.points.count >= ToneCurve.maximumPoints)
-                            Button(action: deletePoint) { Image(systemName: "trash") }
-                                .buttonStyle(CompactEditorButtonStyle())
-                                .accessibilityLabel("Delete point")
-                                .accessibilityIdentifier("curve-delete-point")
-                                .disabled(!canDelete)
-                        }
-                        .padding(3)
-                        .background(.black.opacity(0.82), in: Capsule())
-                    }
-                }
                 .overlay(alignment: .topLeading) {
                     if editMode, eyedropper, let sample {
                         Text(String(format: NSLocalizedString("Sample %d %%", comment: "Curve eyedropper"), Int((sample.value(for: channel) * 100).rounded())))
@@ -159,8 +134,6 @@ struct ToneCurveEditor: View {
                 .coordinateSpace(name: "curve-plot")
                 .simultaneousGesture(SpatialTapGesture(coordinateSpace: .named("curve-plot")).onEnded { value in
                     guard editMode else { return }
-                    // The compact controls occupy the upper-right corner of the plot.
-                    if value.location.y < 48 && value.location.x > geometry.size.width - 150 { return }
                     createPoint(at: value.location, size: geometry.size)
                 }, including: editMode ? .all : .none)
                 .accessibilityElement(children: .contain)
@@ -170,7 +143,33 @@ struct ToneCurveEditor: View {
                     curve.points.map { String(format: "%.4f:%.4f", $0.x, $0.y) }.joined(separator: ","))
             }
             .frame(height: 155).padding(.horizontal, 8).padding(.vertical, 8)
-            if editMode {
+            if editMode && !graphOnly {
+                HStack(spacing: 4) {
+                    Spacer(minLength: 0)
+                    Button {
+                        eyedropper.toggle()
+                        onClearSample()
+                    } label: { Image(systemName: "eyedropper") }
+                        .buttonStyle(CompactEditorButtonStyle(selected: eyedropper))
+                        .accessibilityLabel("Eyedropper")
+                        .accessibilityIdentifier("curve-eyedropper")
+                        .accessibilityAddTraits(eyedropper ? .isSelected : [])
+                        .disabled(!eyedropperAvailable)
+                        .accessibilityHint(eyedropperAvailable ? "Tap the photo to locate its tone" : "Unavailable on a masked layer")
+                    Button(action: addPoint) { Image(systemName: "plus") }
+                        .buttonStyle(CompactEditorButtonStyle())
+                        .accessibilityLabel(sample == nil ? "Add point" : "Add point from eyedropper")
+                        .accessibilityIdentifier("curve-add-point")
+                        .disabled(curve.points.count >= ToneCurve.maximumPoints)
+                    Button(action: deletePoint) { Image(systemName: "trash") }
+                        .buttonStyle(CompactEditorButtonStyle())
+                        .accessibilityLabel("Delete point")
+                        .accessibilityIdentifier("curve-delete-point")
+                        .disabled(!canDelete)
+                }
+                .padding(.horizontal, 8)
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("curve-edit-toolbar")
                 HStack {
                     Button { selected = max(0, selectedIndex - 1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }
                         .disabled(selectedIndex == 0).accessibilityLabel("Previous point")
@@ -188,8 +187,8 @@ struct ToneCurveEditor: View {
                     .font(.caption2).foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, 16)
-        .onDisappear { finishGesture(); eyedropper = false; editMode = false; onClearSample() }
+        .padding(.horizontal, graphOnly ? 8 : 16)
+        .onDisappear { finishGesture() }
         .onChange(of: curves) { _, _ in
             selected = selected.flatMap { $0 < curve.points.count ? $0 : nil }
             onClearSample()
@@ -272,5 +271,194 @@ struct ToneCurveEditor: View {
         }
         path.addLine(to: CGPoint(x: size.width, y: size.height)); path.closeSubpath()
         context.fill(path, with: .color(accent.opacity(0.12)))
+    }
+}
+
+/// Fixed controls shown below the photo while the curve graph remains on it.
+/// Keeping these controls outside the floating card prevents the graph overlay
+/// from being rebuilt when a slider or Auto changes the rendered preview.
+struct CurvePointControls: View {
+    let curves: ToneCurves
+    let channel: CurveChannel
+    @Binding var selected: Int?
+    @Binding var eyedropper: Bool
+    let eyedropperAvailable: Bool
+    let onClearSample: () -> Void
+    let onBegin: (String) -> Void
+    let onChange: (CurveChannel, ToneCurve) -> Void
+    let onEnd: () -> Void
+
+    private var curve: ToneCurve { curves[channel] }
+    private var selectedIndex: Int { min(max(selected ?? 0, 0), max(0, curve.points.count - 1)) }
+    private var canDelete: Bool { selectedIndex > 0 && selectedIndex < curve.points.count - 1 }
+
+    var body: some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 6) {
+                Text("Point \(selectedIndex + 1) / \(curve.points.count)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+                Button {
+                    eyedropper.toggle()
+                    onClearSample()
+                } label: {
+                    Image(systemName: "eyedropper").frame(width: 44, height: 44)
+                }
+                .buttonStyle(CompactEditorButtonStyle(selected: eyedropper))
+                .accessibilityLabel("Eyedropper")
+                .accessibilityIdentifier("curve-eyedropper")
+                .disabled(!eyedropperAvailable)
+                Button {
+                    guard canDelete else { return }
+                    var updated = curve
+                    updated.remove(index: selectedIndex)
+                    onChange(channel, updated)
+                    selected = nil
+                } label: {
+                    Image(systemName: "trash").frame(width: 44, height: 44)
+                }
+                .buttonStyle(CompactEditorButtonStyle())
+                .accessibilityLabel("Delete point")
+                .accessibilityIdentifier("curve-delete-point")
+                .disabled(!canDelete)
+            }
+            coordinateControl("Input", horizontal: true)
+            coordinateControl("Output", horizontal: false)
+        }
+        .onChange(of: curves) { _, _ in
+            if selectedIndex >= curve.points.count { selected = nil }
+            onClearSample()
+        }
+    }
+
+    private func coordinateControl(_ title: LocalizedStringKey, horizontal: Bool) -> some View {
+        let point = curve.points[selectedIndex]
+        return HStack(spacing: 8) {
+            Text(title).font(.caption).frame(width: 48, alignment: .leading)
+            Slider(value: Binding(
+                get: { (horizontal ? point.x : point.y) * 100 },
+                set: { value in
+                    var updated = curve
+                    updated.move(index: selectedIndex,
+                                 x: horizontal ? value / 100 : point.x,
+                                 y: horizontal ? point.y : value / 100)
+                    onChange(channel, updated)
+                }), in: 0...100, step: 0.1,
+                onEditingChanged: { editing in
+                    if editing { onBegin("\(channel.title) curve") } else { onEnd() }
+                })
+                .disabled(horizontal && (selectedIndex == 0 || selectedIndex == curve.points.count - 1))
+                .accessibilityLabel(title)
+            Text((horizontal ? point.x : point.y) * 100,
+                 format: .number.precision(.fractionLength(1)))
+                .font(.caption.monospacedDigit())
+                .frame(width: 42, alignment: .trailing)
+        }
+        .frame(minHeight: 36)
+    }
+}
+
+/// Floating curve card. It never participates in workspace layout, so opening,
+/// collapsing, or moving it leaves the photo canvas unchanged.
+struct CurveOverlayCard: View {
+    let curves: ToneCurves
+    let histogram: Histogram
+    @Binding var channel: CurveChannel
+    @Binding var eyedropper: Bool
+    @Binding var selectedPoint: Int?
+    let sample: CurveSample?
+    let eyedropperAvailable: Bool
+    let onClearSample: () -> Void
+    let onBegin: (String) -> Void
+    let onChange: (CurveChannel, ToneCurve) -> Void
+    let onEnd: () -> Void
+
+    @State private var collapsed = false
+    @State private var offset = CGSize(width: 10, height: 10)
+    @State private var dragOrigin: CGSize?
+
+    var body: some View {
+        GeometryReader { geometry in
+            let cardWidth = min(370, max(280, geometry.size.width - 20))
+            let expandedHeight = min(270, max(210, geometry.size.height - 20))
+            let cardSize = CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight)
+            VStack(spacing: 0) {
+                HStack(spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "point.topleft.down.to.point.bottomright.curvepath")
+                        Text("Curves").font(.subheadline.weight(.semibold))
+                        Spacer(minLength: 8)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 46)
+                    .contentShape(Rectangle())
+                    .gesture(DragGesture(minimumDistance: 3)
+                        .onChanged { gesture in
+                            if dragOrigin == nil { dragOrigin = offset }
+                            let origin = dragOrigin ?? offset
+                            offset = clamped(
+                                CGSize(width: origin.width + gesture.translation.width,
+                                       height: origin.height + gesture.translation.height),
+                                in: geometry.size,
+                                card: cardSize
+                            )
+                        }
+                        .onEnded { _ in dragOrigin = nil })
+                    Button {
+                        var transaction = Transaction()
+                        transaction.disablesAnimations = true
+                        withTransaction(transaction) { collapsed.toggle() }
+                    } label: {
+                        Image(systemName: collapsed ? "chevron.down" : "chevron.up")
+                            .frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(collapsed ? "Expand curves" : "Collapse curves")
+                    .accessibilityIdentifier("curve-card-collapse")
+                    .zIndex(1)
+                }
+                .padding(.leading, 12)
+                .frame(height: 46)
+                .background(.white.opacity(0.025))
+
+                if !collapsed {
+                    VStack(spacing: 5) {
+                        ToneCurveEditor(curves: curves, histogram: histogram,
+                                        channel: $channel, editMode: .constant(true),
+                                        eyedropper: $eyedropper, selected: $selectedPoint,
+                                        graphOnly: true, sample: sample,
+                                        eyedropperAvailable: eyedropperAvailable,
+                                        onClearSample: onClearSample, onBegin: onBegin,
+                                        onChange: onChange, onEnd: onEnd)
+                    }
+                    .accessibilityIdentifier("curve-controls-scroll")
+                    .frame(height: expandedHeight - 46, alignment: .top)
+                    .background(.clear)
+                    .clipped()
+                }
+            }
+            .frame(width: cardWidth, height: collapsed ? 46 : expandedHeight, alignment: .top)
+            .background {
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(.black.opacity(0.40))
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .overlay(RoundedRectangle(cornerRadius: 15).stroke(.white.opacity(0.18), lineWidth: 0.7))
+            .offset(offset)
+            .transaction { transaction in transaction.disablesAnimations = true }
+            .onChange(of: geometry.size) { _, size in
+                offset = clamped(offset, in: size,
+                                 card: CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight))
+            }
+            .onChange(of: collapsed) { _, _ in
+                offset = clamped(offset, in: geometry.size,
+                                 card: CGSize(width: cardWidth, height: collapsed ? 46 : expandedHeight))
+            }
+        }
+    }
+
+    private func clamped(_ proposed: CGSize, in bounds: CGSize, card: CGSize) -> CGSize {
+        CGSize(width: min(max(0, proposed.width), max(0, bounds.width - card.width)),
+               height: min(max(0, proposed.height), max(0, bounds.height - card.height)))
     }
 }

@@ -810,6 +810,8 @@
 // Creative XMP import
 "Import XMP…" = "Import XMP…";
 "Imported XMP" = "Imported XMP";
+"Importing preset…" = "Importing preset…";
+"Preset “%@” imported." = "Preset “%@” imported.";
 "Unable to import XMP" = "Unable to import XMP";
 "Settings not imported:" = "Settings not imported:";
 "XMP settings are interpreted by Lumora; rendering may differ from the source application." = "XMP settings are interpreted by Lumora; rendering may differ from the source application.";
@@ -1358,6 +1360,21 @@
 "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; model attributions are listed separately above." = "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; model attributions are listed separately above.";
 
 /* Lighting rig V2 */
+"Window lighting" = "Window";
+"Manual lighting" = "Manual";
+"Lighting preset" = "Lighting preset";
+"Lighting presets" = "Lighting presets";
+"Reset lighting" = "Reset lighting";
+"Distance" = "Distance";
+"Enter %@ value" = "Enter %@ value";
+"%@ value" = "%@ value";
+"Value" = "Value";
+"Apply" = "Apply";
+"Swipe horizontally to adjust" = "Swipe horizontally to adjust";
+"Expand curves" = "Expand curves";
+"Collapse curves" = "Collapse curves";
+"Move curves card" = "Move curves card";
+"Drag this banner to move the card" = "Drag this banner to move the card";
 "Place the target on the face. Drag the two arc handles to set side and height." = "Place the target on the face. Drag the two arc handles to set side and height.";
 "Power" = "Power";
 "Light distance" = "Light distance";

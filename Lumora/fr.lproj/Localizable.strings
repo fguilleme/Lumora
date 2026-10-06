@@ -810,6 +810,8 @@
 // Creative XMP import
 "Import XMP…" = "Importer un XMP…";
 "Imported XMP" = "XMP importé";
+"Importing preset…" = "Importation du préréglage…";
+"Preset “%@” imported." = "Préréglage « %@ » importé.";
 "Unable to import XMP" = "Impossible d’importer le XMP";
 "Settings not imported:" = "Réglages non importés :";
 "XMP settings are interpreted by Lumora; rendering may differ from the source application." = "Les réglages XMP sont interprétés par Lumora ; le rendu peut différer de celui de l’application d’origine.";
@@ -1358,6 +1360,27 @@
 "Lumora does not embed a third-party software library. Apple frameworks are part of the operating system; model attributions are listed separately above." = "Lumora n’intègre aucune bibliothèque logicielle tierce. Les frameworks Apple font partie du système d’exploitation ; les attributions des modèles sont indiquées séparément ci-dessus.";
 
 /* Lighting rig V2 */
+"Window lighting" = "Fenêtre";
+"Manual lighting" = "Manuel";
+"Lighting preset" = "Préréglage d’éclairage";
+"Lighting presets" = "Préréglages d’éclairage";
+"Reset lighting" = "Réinitialiser l’éclairage";
+"Distance" = "Distance";
+"Enter %@ value" = "Saisir la valeur de %@";
+"%@ value" = "Valeur de %@";
+"Value" = "Valeur";
+"Apply" = "Appliquer";
+"Swipe horizontally to adjust" = "Balayez horizontalement pour régler";
+"Expand curves" = "Déplier les courbes";
+"Collapse curves" = "Replier les courbes";
+"Move curves card" = "Déplacer la carte Courbes";
+"Drag this banner to move the card" = "Faites glisser ce bandeau pour déplacer la carte";
+"Subject point" = "Point visé";
+"Studio, Window and Golden Hour set only the visible Lighting controls and the source position. Any manual adjustment switches the preset indicator to Manual." = "Studio, Fenêtre et Heure dorée règlent uniquement les contrôles visibles d’Éclairage et la position de la source. Toute modification manuelle fait passer l’indicateur de préréglage sur Manuel.";
+"Tap the photo or drag the turquoise target onto the area to illuminate, preferably inside a solid area rather than on an edge. The target supplies the reference depth." = "Touchez la photo ou déplacez la cible turquoise sur la zone à éclairer, de préférence dans une zone pleine plutôt que sur un contour. La cible fournit la profondeur de référence.";
+"Drag the small source handle around the photo. The thin line points from the source toward the target. Both guides fade automatically and are never exported." = "Déplacez la petite poignée de source sur la photo. La ligne fine relie la source à la cible et indique la direction. Les deux repères s’effacent automatiquement et ne sont jamais exportés.";
+"Moves the virtual point light progressively in depth. This changes its spread and can shift the strongest illumination between the face, chin, and neck. The range is intended for portraits; the values are relative, not metres." = "Déplace progressivement la source ponctuelle virtuelle en profondeur. Cela modifie son étendue et peut déplacer la zone la plus éclairée entre le visage, le menton et le cou. La plage est adaptée aux portraits ; les valeurs sont relatives et ne correspondent pas à des mètres.";
+"Opens the light color selector. It changes the color of the added light without changing the photo white balance." = "Ouvre le sélecteur de couleur de la lumière. Il modifie la couleur de la lumière ajoutée sans changer la balance des blancs de la photo.";
 "Place the target on the face. Drag the two arc handles to set side and height." = "Placez la cible sur le visage. Déplacez les deux poignées sur les arcs pour régler le côté et la hauteur.";
 "Power" = "Puissance";
 "Light distance" = "Distance de la lumière";
