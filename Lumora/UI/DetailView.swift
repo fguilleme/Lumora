@@ -10,7 +10,7 @@ struct DetailView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 8) {
+            LazyVStack(alignment: .leading, spacing: 4) {
                 LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
                     onBegin: { onBegin($0.title) },
                     onChange: { parameter, value in
@@ -19,11 +19,6 @@ struct DetailView: View {
                     onReset: { parameter in
                         if let adjustment = DetailAdjustment(rawValue: parameter.id) { onReset(adjustment) }
                     })
-                ForEach(Array(DetailAdjustment.groups.enumerated()), id: \.offset) { index, _ in
-                    if let requirement = requirement(for: index) {
-                        Text(requirement).font(.caption2).foregroundStyle(.secondary)
-                    }
-                }
             }.padding(.bottom, 12)
         }
         .accessibilityIdentifier("detail-controls")
@@ -47,18 +42,6 @@ struct DetailView: View {
             settings.colorNoiseReduction.color > 0
         default:
             true
-        }
-    }
-
-    private func requirement(for group: Int) -> String? {
-        switch group {
-        case 0 where settings.sharpening.amount == 0:
-            String(localized: "Increase Amount to enable sharpening controls.")
-        case 1 where settings.noiseReduction.luminance == 0:
-            String(localized: "Increase Luminance to enable Detail and Contrast.")
-        case 2 where settings.colorNoiseReduction.color == 0:
-            String(localized: "Increase Color to enable Detail and Smoothing.")
-        default: nil
         }
     }
 }

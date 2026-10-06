@@ -33,16 +33,16 @@ struct ColorMixerView: View {
                         .accessibilityIdentifier("mixer-band-\(item.rawValue)")
                         .accessibilityAddTraits(item == channel ? .isSelected : [])
                     }
-                }.padding(.horizontal, 2)
-            }
-            .dimsDuringAdjustment()
-            HStack {
-                Text(String(format: NSLocalizedString("Color Mixer · %@", comment: "Color mixer"), channel.title)).font(.subheadline.weight(.medium))
-                Spacer()
-                Button {
-                    onEnd(); onChange(channel, MixerAdjustment())
-                } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
+                    Button {
+                        onEnd(); onChange(channel, MixerAdjustment())
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise")
+                            .frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(CompactEditorButtonStyle())
                     .accessibilityLabel(String(format: NSLocalizedString("Reset %@ range", comment: "Color mixer"), channel.title))
+                    .accessibilityIdentifier("mixer-range-reset")
+                }.padding(.horizontal, 2)
             }
             .dimsDuringAdjustment()
             LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
@@ -56,7 +56,7 @@ struct ColorMixerView: View {
                     var updated = mixer[channel]; updated[component] = 0; onChange(channel, updated)
                 })
                 .id(channel)
-        }.padding(.horizontal, 14).padding(.bottom, 8)
+        }.padding(.horizontal, 10).padding(.bottom, 6)
             .onDisappear(perform: onEnd)
     }
     private var parameters: [LinearAdjustmentParameter] {

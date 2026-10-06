@@ -1366,6 +1366,8 @@
 "Lighting presets" = "Lighting presets";
 "Reset lighting" = "Reset lighting";
 "Distance" = "Distance";
+"Adjustments" = "Adjustments";
+"Geometry mode" = "Geometry mode";
 "The colored thermometer shows the selected light color. Tap the single color button beside it to open the selector. This changes the added light without changing the photo white balance." = "The colored thermometer shows the selected light color. Tap the single color button beside it to open the selector. This changes the added light without changing the photo white balance.";
 "Enter %@ value" = "Enter %@ value";
 "%@ value" = "%@ value";

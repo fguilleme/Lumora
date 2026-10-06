@@ -79,7 +79,7 @@ struct EditorView: View {
                                               isPhone: UIDevice.current.userInterfaceIdiom == .phone,
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
-                                              portraitControlsHeight: portraitControlContentHeight + (showsPhotoInformation ? 28 : 0),
+                                              portraitControlsHeight: portraitControlContentHeight + (showsPhotoInformation ? 24 : 0),
                                               overlayOnly: false) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
@@ -310,10 +310,11 @@ struct EditorView: View {
 
     private var portraitControlContentHeight: CGFloat {
         switch panel {
-        case .effects: 118
-        case .light, .color: 170
-        case .detail: 190
-        case .curve: 180
+        case .effects: 112
+        case .light, .color: 154
+        case .detail: 118
+        case .curve: 224
+        case .geometry: 220
         default: 252
         }
     }
@@ -340,11 +341,10 @@ struct EditorView: View {
             activeLayerMenu
             Spacer(minLength: 0)
             if session.isRendering { ProgressView().controlSize(.mini) }
-            Text(sourceFormat(result)).fixedSize()
-            Text("\(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
+            Text("\(sourceFormat(result)) · \(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
         }
         .font(.caption2).foregroundStyle(.secondary)
-        .padding(.horizontal).frame(height: 28)
+        .padding(.horizontal, 12).frame(height: 24)
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("photo-information")
         .dimsDuringAdjustment()
@@ -637,7 +637,7 @@ struct EditorView: View {
     private var controls: some View {
         VStack(spacing: 5) {
             AutoCorrectionControls(session: session, module: panel == .light ? .light : .color)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 8)
             LinearAdjustmentControl(parameters: scalarParameters,
                                     selectedID: panel == .light ? $selectedLightParameter : $selectedColorParameter,
                                     onBegin: { parameter in
@@ -687,8 +687,8 @@ struct EditorView: View {
                         Button { selectPanel(item) } label: {
                             Label(item.title, systemImage: item.symbol)
                                 .font(.subheadline.weight(.medium)).frame(minHeight: 44)
-                                .padding(.horizontal, 10)
-                                .background(panel == item ? Color.mint.opacity(0.12) : .clear, in: Capsule())
+                                .padding(.horizontal, 8)
+                                .background(panel == item ? Color.mint.opacity(0.09) : .clear, in: Capsule())
                         }.foregroundStyle(panel == item ? .mint : .secondary)
                             .id(item)
                             .accessibilityAddTraits(panel == item ? .isSelected : [])
@@ -718,7 +718,7 @@ struct EditorView: View {
             }
         }
         .accessibilityIdentifier("tools-toolbar")
-        .padding(.vertical, 6).background(.black.opacity(0.3))
+        .padding(.vertical, 4).background(.black.opacity(0.3))
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil

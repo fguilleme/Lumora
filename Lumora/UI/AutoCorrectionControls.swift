@@ -7,7 +7,7 @@ struct AutoCorrectionControls: View {
     let module: AutoModule
 
     var body: some View {
-        HStack {
+        HStack(spacing: 6) {
             Button {
                 Task { await session.applyCoreImageAuto() }
             } label: {
@@ -20,10 +20,11 @@ struct AutoCorrectionControls: View {
                 ProgressView().controlSize(.small).accessibilityLabel("Analyzing photo")
             }
             if session.coreImageAutoApplied {
-                Button("Reset Auto", systemImage: "arrow.counterclockwise") {
+                Button {
                     session.resetCoreImageAuto()
-                }
+                } label: { Image(systemName: "arrow.counterclockwise").frame(width: 44, height: 44) }
                 .buttonStyle(CompactEditorButtonStyle())
+                .accessibilityLabel("Reset Auto")
                 .accessibilityIdentifier("auto-reset")
             }
             Spacer()
@@ -31,5 +32,6 @@ struct AutoCorrectionControls: View {
                 .font(.caption).foregroundStyle(.secondary)
                 .accessibilityIdentifier("auto-status-" + module.rawValue)
         }
+        .frame(minHeight: 44)
     }
 }

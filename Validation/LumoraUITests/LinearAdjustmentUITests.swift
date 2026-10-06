@@ -41,6 +41,7 @@ final class LinearAdjustmentUITests: XCTestCase {
         continueAfterFailure = false
         XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)"]
         app.launch()
         openDocument(app)
 
@@ -48,8 +49,25 @@ final class LinearAdjustmentUITests: XCTestCase {
         XCTAssertTrue(exposure.waitForExistence(timeout: 10))
         let ruler = app.descendants(matching: .any).matching(identifier: "adjustment-ruler").firstMatch
         XCTAssertTrue(ruler.waitForExistence(timeout: 5))
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+
+        let auto = app.buttons["auto-light"]
+        XCTAssertTrue(auto.isHittable)
+        let autoReset = app.buttons["auto-reset"]
+        if autoReset.exists { autoReset.tap() }
+        auto.tap()
+        let autoStatus = app.staticTexts["auto-status-light"]
+        let autoApplied = NSPredicate(format: "label == %@", "Auto base")
+        expectation(for: autoApplied, evaluatedWith: autoStatus)
+        waitForExpectations(timeout: 20)
+        XCTAssertTrue(app.buttons["arrow.uturn.backward"].isEnabled)
+        app.buttons["arrow.uturn.backward"].tap()
+
         app.buttons["adjustment-reset"].tap()
         let initial = ruler.value as? String
+        canvas.pinch(withScale: 1.25, velocity: 1.0)
+        canvas.swipeUp(velocity: .slow)
+        XCTAssertEqual(ruler.value as? String, initial, "Photo zoom and pan must not adjust the selected parameter")
         ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertEqual(ruler.value as? String, initial, "First contact must not jump")
         let start = ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.54, dy: 0.5))
@@ -84,27 +102,111 @@ final class LinearAdjustmentUITests: XCTestCase {
         capture("03-lighting-linear-ruler", app)
 
         selectPanel("Curves", in: app)
-        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
         let originalCanvas = canvas.frame
-        let chart = app.descendants(matching: .any).matching(identifier: "tone-curve-chart").firstMatch
-        XCTAssertTrue(chart.waitForExistence(timeout: 8))
-        let before = chart.value as? String
-        chart.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertNotEqual(chart.value as? String, before)
-        XCTAssertTrue(app.sliders["Input"].exists)
-        XCTAssertTrue(app.sliders["Output"].exists)
+        let disclosure = app.buttons["curve-card-collapse"]
+        XCTAssertTrue(disclosure.waitForExistence(timeout: 5))
+        if disclosure.label == "Expand curves" { disclosure.tap() }
+        let curveControls = app.descendants(matching: .any).matching(identifier: "curve-controls-scroll").firstMatch
+        XCTAssertTrue(curveControls.waitForExistence(timeout: 8))
+        curveControls.coordinate(withNormalizedOffset: CGVector(dx: 0.50, dy: 0.68)).tap()
+        XCTAssertTrue(app.buttons["parameter-input"].exists)
+        XCTAssertTrue(app.buttons["parameter-output"].exists)
+        XCTAssertTrue(ruler.exists)
+        let eyedropper = app.buttons["curve-eyedropper"]
+        XCTAssertTrue(eyedropper.isHittable)
+        eyedropper.tap()
+        let samplingSurface = app.descendants(matching: .any).matching(identifier: "curve-photo-sampling").firstMatch
+        XCTAssertTrue(samplingSurface.waitForExistence(timeout: 5))
+        samplingSurface.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.45)).tap()
+        eyedropper.tap()
         capture("04-curves-overlay-direct-edit", app)
-        app.buttons["curve-card-collapse"].tap()
+        disclosure.tap()
         XCTAssertEqual(canvas.frame, originalCanvas)
         capture("05-curves-overlay-collapsed", app)
-        app.buttons["curve-card-collapse"].tap()
+        disclosure.tap()
         XCTAssertFalse(app.buttons["curve-edit-mode"].exists)
         capture("06-curves-overlay-expanded", app)
+
+        app.terminate()
+        app.launchArguments = ["-AppleLanguages", "(en)", "--app-store-panel", "Geometry"]
+        app.launch()
+        openDocument(app)
+        let geometryMode = app.segmentedControls["geometry-mode"]
+        XCTAssertTrue(geometryMode.waitForExistence(timeout: 8))
+        let geometryCanvasFrame = canvas.frame
+        let geometryCanvasValue = canvas.value as? String
+        let undoBeforeModeChange = app.buttons["Undo"].isEnabled
+        geometryMode.buttons["Adjustments"].tap()
+        XCTAssertEqual(canvas.frame, geometryCanvasFrame)
+        XCTAssertEqual(canvas.value as? String, geometryCanvasValue)
+        XCTAssertEqual(app.buttons["Undo"].isEnabled, undoBeforeModeChange)
+        XCTAssertTrue(app.buttons["parameter-straighten"].exists)
+        capture("07-geometry-adjustments", app)
 
         XCUIDevice.shared.orientation = .landscapeLeft
         XCTAssertTrue(app.buttons["controls-side-switch"].waitForExistence(timeout: 10))
         XCTAssertGreaterThan(canvas.frame.width, 300)
-        capture("07-landscape-curves-overlay", app)
+        capture("08-landscape-geometry", app)
+        XCUIDevice.shared.orientation = .portrait
+    }
+
+    @MainActor func testCurvesGeometryAndLandscapeFinishing() throws {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        app.launchArguments += ["-AppleLanguages", "(en)", "--app-store-panel", "Curves"]
+        app.launch()
+        openDocument(app)
+
+        let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
+        let originalCanvas = canvas.frame
+        let disclosure = app.buttons["curve-card-collapse"]
+        XCTAssertTrue(disclosure.waitForExistence(timeout: 8))
+        if disclosure.label == "Expand curves" { disclosure.tap() }
+        let curveControls = app.descendants(matching: .any).matching(identifier: "curve-controls-scroll").firstMatch
+        XCTAssertTrue(curveControls.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["parameter-input"].exists)
+        XCTAssertTrue(app.buttons["parameter-output"].exists)
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "adjustment-ruler").firstMatch.exists)
+
+        let eyedropper = app.buttons["curve-eyedropper"]
+        XCTAssertTrue(eyedropper.isHittable)
+        eyedropper.tap()
+        let samplingSurface = app.descendants(matching: .any).matching(identifier: "curve-photo-sampling").firstMatch
+        XCTAssertTrue(samplingSurface.waitForExistence(timeout: 5))
+        samplingSurface.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.45)).tap()
+        eyedropper.tap()
+        capture("09-curves-common-ruler-and-eyedropper", app)
+
+        disclosure.tap()
+        XCTAssertEqual(canvas.frame, originalCanvas)
+        disclosure.tap()
+        XCTAssertEqual(canvas.frame, originalCanvas)
+
+        app.terminate()
+        app.launchArguments = ["-AppleLanguages", "(en)", "--app-store-panel", "Geometry"]
+        app.launch()
+        openDocument(app)
+        let geometryMode = app.segmentedControls["geometry-mode"]
+        XCTAssertTrue(geometryMode.waitForExistence(timeout: 8))
+        let geometryCanvasFrame = canvas.frame
+        let geometryCanvasValue = canvas.value as? String
+        let undoBeforeModeChange = app.buttons["Undo"].isEnabled
+        geometryMode.buttons["Adjustments"].tap()
+        XCTAssertEqual(canvas.frame, geometryCanvasFrame)
+        XCTAssertEqual(canvas.value as? String, geometryCanvasValue)
+        XCTAssertEqual(app.buttons["Undo"].isEnabled, undoBeforeModeChange)
+        XCTAssertTrue(app.buttons["parameter-straighten"].exists)
+        capture("10-geometry-adjustments", app)
+
+        XCUIDevice.shared.orientation = .landscapeLeft
+        let sideSwitch = app.buttons["controls-side-switch"]
+        XCTAssertTrue(sideSwitch.waitForExistence(timeout: 10))
+        XCTAssertGreaterThan(canvas.frame.width, 300)
+        let canvasOriginBeforeSideSwitch = canvas.frame.minX
+        sideSwitch.tap()
+        XCTAssertNotEqual(canvas.frame.minX, canvasOriginBeforeSideSwitch)
+        capture("11-landscape-geometry", app)
         XCUIDevice.shared.orientation = .portrait
     }
 }

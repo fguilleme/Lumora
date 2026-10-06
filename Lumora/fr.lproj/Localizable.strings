@@ -127,7 +127,7 @@
 "Creative combines independent effects. Each has its own settings, and its position in the stack changes the result. Built-in looks are editable starting points." = "Créatif assemble des effets autonomes. Chacun possède ses propres réglages ; leur ordre dans la pile change le rendu. Les styles intégrés servent de point de départ et restent modifiables.";
 "Creative detail" = "Détail créatif";
 "Creative detail at native resolution" = "Détail créatif à résolution native";
-"Crop" = "Recadrage";
+"Crop" = "Cadrage";
 "Crop position" = "Position du recadrage";
 "Crop zoom" = "Zoom du recadrage";
 "Curve channel" = "Canal de la courbe";
@@ -1366,6 +1366,8 @@
 "Lighting presets" = "Préréglages d’éclairage";
 "Reset lighting" = "Réinitialiser l’éclairage";
 "Distance" = "Distance";
+"Adjustments" = "Ajustements";
+"Geometry mode" = "Mode de géométrie";
 "Enter %@ value" = "Saisir la valeur de %@";
 "%@ value" = "Valeur de %@";
 "Value" = "Valeur";

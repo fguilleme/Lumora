@@ -6,7 +6,7 @@ struct DepthLensView: View {
     private var settings: DepthLensSettings { session.state.depthLens ?? .init() }
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
                 Toggle("Enable Depth Lens", isOn: Binding(get: { settings.enabled }, set: { enabled in
                     session.changeDepthLens { $0.enabled = enabled }
                 })).accessibilityIdentifier("depth-lens-enable")
@@ -33,8 +33,6 @@ struct DepthLensView: View {
                     Spacer()
                     Button("Reset") { session.changeDepthLens { $0 = .init() } }
                 }.font(.caption)
-                Text("Depth is estimated on device once per photo or geometry change. Hair and transparent objects can have imperfect edges. Increasing the aperture number softens the effect.")
-                    .font(.caption2).foregroundStyle(.secondary)
             }.padding(.horizontal, 22).padding(.bottom, 12)
         }.accessibilityIdentifier("depth-lens-controls")
     }

@@ -26,6 +26,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
     let onChange: (LinearAdjustmentParameter, Double) -> Void
     let onEnd: () -> Void
     let onReset: (LinearAdjustmentParameter) -> Void
+    let showsReset: Bool
     @ViewBuilder let accessory: () -> Accessory
 
     @State private var entryPresented = false
@@ -36,6 +37,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
          onChange: @escaping (LinearAdjustmentParameter, Double) -> Void,
          onEnd: @escaping () -> Void,
          onReset: @escaping (LinearAdjustmentParameter) -> Void,
+         showsReset: Bool = true,
          @ViewBuilder accessory: @escaping () -> Accessory) {
         self.parameters = parameters
         _selectedID = selectedID
@@ -43,6 +45,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
         self.onChange = onChange
         self.onEnd = onEnd
         self.onReset = onReset
+        self.showsReset = showsReset
         self.accessory = accessory
     }
 
@@ -63,7 +66,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                             }
                             accessory()
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 8)
                     }
                     .onChange(of: selectedID) { _, id in
                         withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .center) }
@@ -89,7 +92,10 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                             Text(selected.formattedValue)
                                 .font(.system(.body, design: .monospaced).weight(.semibold))
                                 .monospacedDigit()
-                                .frame(minWidth: 74, minHeight: 44)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.78)
+                                .frame(width: 92)
+                                .frame(minHeight: 44)
                                 .contentShape(Rectangle())
                         }
                     }
@@ -105,19 +111,25 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                                   onEnd: onEnd)
                         .id(selected.id)
 
-                    Button { onReset(selected) } label: {
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.caption)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
+                    Group {
+                        if showsReset {
+                            Button { onReset(selected) } label: {
+                                Image(systemName: "arrow.counterclockwise")
+                                    .font(.caption)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.secondary)
+                            .disabled(!selected.isEnabled)
+                            .accessibilityLabel(String(format: NSLocalizedString("Reset %@", comment: "Adjustment reset"), selected.title))
+                            .accessibilityIdentifier("adjustment-reset")
+                        } else {
+                            Color.clear.frame(width: 44, height: 44).allowsHitTesting(false)
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                    .disabled(!selected.isEnabled)
-                    .accessibilityLabel(String(format: NSLocalizedString("Reset %@", comment: "Adjustment reset"), selected.title))
-                    .accessibilityIdentifier("adjustment-reset")
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 8)
             }
         }
         .alert(selected.map { String(format: NSLocalizedString("%@ value", comment: "Numeric adjustment entry title"), $0.title) } ?? "",
@@ -139,12 +151,13 @@ struct LinearAdjustmentControl<Accessory: View>: View {
         return Button { selectedID = parameter.id } label: {
             VStack(spacing: 1) {
                 Text(parameter.title).font(.caption2).lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                 Text(parameter.formattedValue)
                     .font(.caption.monospacedDigit()).monospacedDigit()
                     .foregroundStyle(active ? Color.mint : Color.secondary)
             }
-            .padding(.horizontal, 10)
-            .frame(minWidth: 72, minHeight: 44)
+            .padding(.horizontal, 8)
+            .frame(minWidth: 70, minHeight: 44)
             .background(active ? Color.mint.opacity(0.14) : Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(active ? Color.mint.opacity(0.65) : .white.opacity(0.08), lineWidth: 0.7))
             .contentShape(Rectangle())
@@ -182,9 +195,11 @@ extension LinearAdjustmentControl where Accessory == EmptyView {
          onBegin: @escaping (LinearAdjustmentParameter) -> Void,
          onChange: @escaping (LinearAdjustmentParameter, Double) -> Void,
          onEnd: @escaping () -> Void,
-         onReset: @escaping (LinearAdjustmentParameter) -> Void) {
+         onReset: @escaping (LinearAdjustmentParameter) -> Void,
+         showsReset: Bool = true) {
         self.init(parameters: parameters, selectedID: selectedID, onBegin: onBegin,
-                  onChange: onChange, onEnd: onEnd, onReset: onReset) { EmptyView() }
+                  onChange: onChange, onEnd: onEnd, onReset: onReset,
+                  showsReset: showsReset) { EmptyView() }
     }
 }
 
@@ -205,7 +220,7 @@ private struct RelativeRuler: View {
                 }
                 Rectangle()
                     .fill(Color.mint)
-                    .frame(width: 2, height: 27)
+                    .frame(width: 2.5, height: 28)
                     .shadow(color: .black.opacity(0.55), radius: 1)
                     .allowsHitTesting(false)
             }
@@ -269,7 +284,7 @@ private struct RelativeRuler: View {
             var path = Path()
             path.move(to: CGPoint(x: x, y: size.height - 7))
             path.addLine(to: CGPoint(x: x, y: size.height - 7 - height))
-            context.stroke(path, with: .color(.white.opacity(isMajor ? 0.52 : 0.23)), lineWidth: isMajor ? 1 : 0.7)
+            context.stroke(path, with: .color(.white.opacity(isMajor ? 0.62 : 0.30)), lineWidth: isMajor ? 1 : 0.7)
         }
     }
 

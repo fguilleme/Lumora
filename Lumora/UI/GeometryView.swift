@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct GeometryView: View {
+    private enum Mode: String, CaseIterable, Identifiable {
+        case crop = "Crop"
+        case adjustments = "Adjustments"
+        var id: Self { self }
+        var title: LocalizedStringKey { LocalizedStringKey(rawValue) }
+    }
     let settings: GeometrySettings
     let onRotate: (Bool) -> Void
     let onFlip: (Bool) -> Void
@@ -14,57 +20,66 @@ struct GeometryView: View {
     let onResetAdjustment: (GeometryAdjustment) -> Void
     let onResetAll: () -> Void
     @State private var selectedID = GeometryAdjustment.straighten.rawValue
+    @State private var mode = Mode.crop
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 5) {
-                    toolButton("Rotate left", "rotate.left") { onRotate(false) }
-                    toolButton("Rotate right", "rotate.right") { onRotate(true) }
-                    toolButton("Flip horizontally", "arrow.left.and.right") {
-                        onFlip(true)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Picker("Geometry mode", selection: $mode) {
+                        ForEach(Mode.allCases) { item in Text(item.title).tag(item) }
                     }
-                    toolButton("Flip vertically", "arrow.up.and.down") {
-                        onFlip(false)
-                    }
-                    autoToolButton("Auto horizon", "level",
-                                   identifier: "geometry-auto-straighten", action: onAutoStraighten)
-                    autoToolButton("Auto perspective", "viewfinder.rectangular",
-                                   identifier: "geometry-auto-perspective", action: onAutoPerspective)
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("geometry-mode")
                     if isAnalyzing { ProgressView().controlSize(.small) }
-                    toolButton("Reset", "arrow.counterclockwise", identifier: "geometry-reset", action: onResetAll)
+                    toolButton("Reset", "arrow.counterclockwise", identifier: "geometry-reset",
+                               expands: false, action: onResetAll)
                 }
 
-                HStack(spacing: 6) {
-                    ForEach(CropAspect.allCases) { aspect in
-                        Button { onAspect(aspect) } label: {
-                            if aspect == .original {
-                                Image(systemName: "photo")
-                                    .font(.system(size: 17, weight: .medium))
-                                    .frame(minHeight: 22)
-                            } else {
-                                Text(aspect.title).lineLimit(1)
+                if mode == .crop {
+                    HStack(spacing: 5) {
+                        toolButton("Rotate left", "rotate.left") { onRotate(false) }
+                        toolButton("Rotate right", "rotate.right") { onRotate(true) }
+                        toolButton("Flip horizontally", "arrow.left.and.right") { onFlip(true) }
+                        toolButton("Flip vertically", "arrow.up.and.down") { onFlip(false) }
+                    }
+                    HStack(spacing: 6) {
+                        ForEach(CropAspect.allCases) { aspect in
+                            Button { onAspect(aspect) } label: {
+                                if aspect == .original {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 17, weight: .medium))
+                                        .frame(minHeight: 22)
+                                } else {
+                                    Text(aspect.title).lineLimit(1)
+                                }
                             }
-                        }
                             .buttonStyle(.bordered)
                             .tint(settings.aspect == aspect ? .mint : .secondary)
                             .frame(maxWidth: .infinity)
                             .accessibilityLabel(aspect.title)
                             .accessibilityIdentifier("geometry-aspect-\(aspect.rawValue)")
                             .accessibilityAddTraits(settings.aspect == aspect ? .isSelected : [])
+                        }
                     }
+                } else {
+                    HStack(spacing: 5) {
+                        autoToolButton("Auto horizon", "level",
+                                       identifier: "geometry-auto-straighten", action: onAutoStraighten)
+                        autoToolButton("Auto perspective", "viewfinder.rectangular",
+                                       identifier: "geometry-auto-perspective", action: onAutoPerspective)
+                    }
+                    LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
+                        onBegin: { onBegin($0.title) },
+                        onChange: { parameter, value in
+                            if let adjustment = GeometryAdjustment(rawValue: parameter.id) { onChange(adjustment, value) }
+                        }, onEnd: onEnd,
+                        onReset: { parameter in
+                            if let adjustment = GeometryAdjustment(rawValue: parameter.id) { onResetAdjustment(adjustment) }
+                        })
+                        .padding(.horizontal, -14)
                 }
-
-                LinearAdjustmentControl(parameters: parameters, selectedID: $selectedID,
-                    onBegin: { onBegin($0.title) },
-                    onChange: { parameter, value in
-                        if let adjustment = GeometryAdjustment(rawValue: parameter.id) { onChange(adjustment, value) }
-                    }, onEnd: onEnd,
-                    onReset: { parameter in
-                        if let adjustment = GeometryAdjustment(rawValue: parameter.id) { onResetAdjustment(adjustment) }
-                    })
-                    .padding(.horizontal, -22)
-            }.padding(.horizontal, 22).padding(.bottom, 12)
+            }.padding(.horizontal, 14).padding(.bottom, 8)
         }
         .accessibilityIdentifier("geometry-controls")
     }
@@ -78,6 +93,7 @@ struct GeometryView: View {
     }
 
     private func toolButton(_ label: String, _ symbol: String, identifier: String? = nil,
+                            expands: Bool = true,
                             action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
@@ -89,7 +105,7 @@ struct GeometryView: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(.mint)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: expands ? .infinity : 44)
         .accessibilityLabel(label)
         .accessibilityIdentifier(identifier ?? "")
     }

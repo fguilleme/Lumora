@@ -69,6 +69,7 @@ struct ToneCurveEditor: View {
                             let point = CGPoint(x: x * size.width, y: (1 - curve.evaluate(x)) * size.height)
                             if index == 0 { path.move(to: point) } else { path.addLine(to: point) }
                         }
+                        context.stroke(path, with: .color(.black), lineWidth: 3.25)
                         context.stroke(path, with: .color(accent), lineWidth: 2)
                         for (index, point) in curve.points.enumerated() {
                             let center = CGPoint(x: point.x * size.width, y: (1 - point.y) * size.height)
@@ -76,7 +77,8 @@ struct ToneCurveEditor: View {
                             let circle = Path(ellipseIn: CGRect(x: center.x - radius, y: center.y - radius,
                                                                 width: radius * 2, height: radius * 2))
                             context.fill(circle, with: .color(index == selected && editMode ? accent : .black))
-                            context.stroke(circle, with: .color(accent.opacity(editMode ? 1 : 0.6)), lineWidth: 2)
+                            context.stroke(circle, with: .color(.black), lineWidth: 3)
+                            context.stroke(circle, with: .color(accent), lineWidth: 2)
                         }
                         if editMode, eyedropper, let sample {
                             let x = sample.value(for: channel) * size.width
@@ -293,6 +295,7 @@ struct CurvePointControls: View {
     let onBegin: (String) -> Void
     let onChange: (CurveChannel, ToneCurve) -> Void
     let onEnd: () -> Void
+    @State private var selectedCoordinateID = "output"
 
     private var curve: ToneCurve { curves[channel] }
     private var selectedIndex: Int { min(max(selected ?? 0, 0), max(0, curve.points.count - 1)) }
@@ -329,8 +332,13 @@ struct CurvePointControls: View {
                 .accessibilityIdentifier("curve-delete-point")
                 .disabled(!canDelete)
             }
-            coordinateControl("Input", horizontal: true)
-            coordinateControl("Output", horizontal: false)
+            LinearAdjustmentControl(parameters: coordinateParameters,
+                                    selectedID: $selectedCoordinateID,
+                                    onBegin: { _ in onBegin("\(channel.title) curve") },
+                                    onChange: { parameter, value in setCoordinate(parameter.id, value: value) },
+                                    onEnd: onEnd,
+                                    onReset: { _ in },
+                                    showsReset: false)
         }
         .onChange(of: curves) { _, _ in
             if selectedIndex >= curve.points.count { selected = nil }
@@ -338,30 +346,24 @@ struct CurvePointControls: View {
         }
     }
 
-    private func coordinateControl(_ title: LocalizedStringKey, horizontal: Bool) -> some View {
+    private var coordinateParameters: [LinearAdjustmentParameter] {
         let point = curve.points[selectedIndex]
-        return HStack(spacing: 8) {
-            Text(title).font(.caption).frame(width: 48, alignment: .leading)
-            Slider(value: Binding(
-                get: { (horizontal ? point.x : point.y) * 100 },
-                set: { value in
-                    var updated = curve
-                    updated.move(index: selectedIndex,
-                                 x: horizontal ? value / 100 : point.x,
-                                 y: horizontal ? point.y : value / 100)
-                    onChange(channel, updated)
-                }), in: 0...100, step: 0.1,
-                onEditingChanged: { editing in
-                    if editing { onBegin("\(channel.title) curve") } else { onEnd() }
-                })
-                .disabled(horizontal && (selectedIndex == 0 || selectedIndex == curve.points.count - 1))
-                .accessibilityLabel(title)
-            Text((horizontal ? point.x : point.y) * 100,
-                 format: .number.precision(.fractionLength(1)))
-                .font(.caption.monospacedDigit())
-                .frame(width: 42, alignment: .trailing)
-        }
-        .frame(minHeight: 36)
+        return [
+            .init(id: "input", title: String(localized: "Input"), value: point.x * 100,
+                  range: 0...100, step: 0.1, precision: 1, resetValue: point.x * 100,
+                  isEnabled: selectedIndex > 0 && selectedIndex < curve.points.count - 1),
+            .init(id: "output", title: String(localized: "Output"), value: point.y * 100,
+                  range: 0...100, step: 0.1, precision: 1, resetValue: point.y * 100)
+        ]
+    }
+
+    private func setCoordinate(_ id: String, value: Double) {
+        let point = curve.points[selectedIndex]
+        var updated = curve
+        updated.move(index: selectedIndex,
+                     x: id == "input" ? value / 100 : point.x,
+                     y: id == "output" ? value / 100 : point.y)
+        if updated != curve { onChange(channel, updated) }
     }
 }
 
