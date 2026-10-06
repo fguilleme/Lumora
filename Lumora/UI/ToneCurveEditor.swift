@@ -264,13 +264,19 @@ struct ToneCurveEditor: View {
         case .blue: bins = histogram.blue
         }
         let peak = max(1, bins.max() ?? 1)
-        var path = Path(); path.move(to: CGPoint(x: 0, y: size.height))
+        var fill = Path(); fill.move(to: CGPoint(x: 0, y: size.height))
+        var profile = Path()
         for index in bins.indices {
-            path.addLine(to: CGPoint(x: Double(index) / 255 * size.width,
-                                     y: size.height * (1 - Double(bins[index]) / Double(peak))))
+            let point = CGPoint(x: Double(index) / 255 * size.width,
+                                y: size.height * (1 - Double(bins[index]) / Double(peak)))
+            fill.addLine(to: point)
+            if index == bins.startIndex { profile.move(to: point) }
+            else { profile.addLine(to: point) }
         }
-        path.addLine(to: CGPoint(x: size.width, y: size.height)); path.closeSubpath()
-        context.fill(path, with: .color(accent.opacity(dragging == nil ? 0.14 : 0.42)))
+        fill.addLine(to: CGPoint(x: size.width, y: size.height)); fill.closeSubpath()
+        context.fill(fill, with: .color(accent.opacity(dragging == nil ? 0.14 : 1)))
+        context.stroke(profile, with: .color(.black), lineWidth: 2.5)
+        context.stroke(profile, with: .color(accent), lineWidth: 1.25)
     }
 }
 
