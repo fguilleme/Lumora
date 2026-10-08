@@ -18,6 +18,9 @@ private enum LightingPreset: String, CaseIterable, Identifiable {
         let r = values(enabled: s.enabled, targetX: s.targetX, targetY: s.targetY)
         return abs(s.intensity-r.intensity)<0.01 && abs(s.distance-r.distance)<0.01
             && abs(s.softness-r.softness)<0.01 && abs(s.relief-r.relief)<0.01
+            && abs(s.originalLighting-r.originalLighting)<0.01
+            && s.surfaceNormals == r.surfaceNormals && abs(s.portraitShading-r.portraitShading)<0.01
+            && abs(s.shadowStrength-r.shadowStrength)<0.01
             && abs(s.azimuth-r.azimuth)<0.01 && abs(s.elevation-r.elevation)<0.01
             && abs(s.red-r.red)<0.001 && abs(s.green-r.green)<0.001 && abs(s.blue-r.blue)<0.001
     }
@@ -98,8 +101,13 @@ struct DepthLightingView: View {
                 }
                 .buttonStyle(.plain).disabled(!settings.enabled)
                 .accessibilityIdentifier("depth-lighting-advanced")
-                if advancedExpanded { Text("Surface relief").font(.caption2).foregroundStyle(.secondary)
-                        .padding(.horizontal, 12).id("lighting-relief-control") }
+                if advancedExpanded {
+                    Toggle("Detailed surfaces", isOn:Binding(get:{settings.surfaceNormals},set:{ value in
+                        session.changeDepthLighting { $0.surfaceNormals=value }
+                    })).font(.caption).controlSize(.small)
+                        .accessibilityIdentifier("depth-lighting-surfaces")
+                        .id("lighting-relief-control")
+                }
                 }.padding(.horizontal,16).padding(.vertical,4)
             }
             .onChange(of: advancedExpanded) { _, expanded in
@@ -131,6 +139,9 @@ struct DepthLightingView: View {
         ]
         if advancedExpanded {
             result.append(LinearAdjustmentParameter(id:"relief",title:String(localized:"Surface relief"),value:settings.relief,range:0...100,step:1,precision:0,resetValue:80))
+            result.append(LinearAdjustmentParameter(id:"portrait-shading",title:String(localized:"Portrait shading"),value:settings.portraitShading,range:0...100,step:1,precision:0,unit:"%",resetValue:0))
+            result.append(LinearAdjustmentParameter(id:"shadows",title:String(localized:"Cast shadows"),value:settings.shadowStrength,range:0...100,step:1,precision:0,unit:"%",resetValue:0))
+            result.append(LinearAdjustmentParameter(id:"original-lighting",title:String(localized:"Original light"),value:settings.originalLighting,range:0...100,step:1,precision:0,unit:"%",resetValue:100))
         }
         return result
     }
@@ -142,6 +153,9 @@ struct DepthLightingView: View {
             case "softness": $0.softness = value
             case "distance": $0.distance = value
             case "relief": $0.relief = value
+            case "portrait-shading": $0.portraitShading = value
+            case "shadows": $0.shadowStrength = value
+            case "original-lighting": $0.originalLighting = value
             default: break
             }
         }

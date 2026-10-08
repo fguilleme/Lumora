@@ -77,6 +77,7 @@ actor RenderEngine {
         }
     }
 
+    func lightingNormalInferenceCount() -> Int { depthLensEngine?.normalInferenceCount ?? 0 }
     func depthLensInferenceCount() -> Int { depthLensEngine?.inferenceCount ?? 0 }
 
     func clearCaches() {
@@ -331,7 +332,18 @@ actor RenderEngine {
                 try depthLensEngine!.estimate(GeometryRenderer.apply(optical, settings: state.geometry))
             }
             if let lighting = state.depthLighting, lighting.isActive {
-                image = try depthLensEngine!.applyLighting(image, settings: lighting)
+                if lighting.surfaceNormals {
+                    let source: CIImage
+                    if let sourceURL { source = CIImage(cgImage: try preview(url: sourceURL, maximum:1024, optics:state.optics)) }
+                    else { source = input }
+                    let optical = try OpticsRenderer.apply(source, settings: state.optics)
+                    try depthLensEngine!.prepareNormals(GeometryRenderer.apply(optical, settings:state.geometry))
+                }
+                let materials: DepthLightingMaterials?
+                if lighting.portraitShading > 0 {
+                    materials = DepthLightingMaterials(masks: try beautyMasks(for:input,state:state))
+                } else { materials = nil }
+                image = try depthLensEngine!.applyLighting(image, settings: lighting, materials:materials)
             }
             if let settings = state.depthLens, settings.enabled {
                 image = try depthLensEngine!.apply(image, settings: settings)

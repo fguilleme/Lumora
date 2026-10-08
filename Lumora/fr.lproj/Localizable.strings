@@ -1196,6 +1196,7 @@
 
 /* Experimental depth lighting */
 "Lighting" = "Éclairage";
+"Original light" = "Lumière originale";
 "Experimental · off by default" = "Expérimental · désactivé par défaut";
 "Enable lighting" = "Activer l’éclairage";
 "Choose the subject point, then place the light. Tap the photo or drag a marker." = "Choisissez le point sur le sujet, puis placez la lumière. Touchez la photo ou déplacez un repère.";
@@ -1414,3 +1415,25 @@
 "The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices." = "Le dossier Lumora est stocké dans Documents. La synchronisation iCloud est désactivée par défaut ; l’activer déplace la bibliothèque dans iCloud Drive afin de la retrouver sur vos autres appareils.";
 "iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device." = "iCloud Drive est indisponible. Vérifiez qu’iCloud Drive est activé sur cet appareil.";
 "Lumora can open image, RAW and XMP preset files." = "Lumora peut ouvrir les images, les fichiers RAW et les préréglages XMP.";
+
+"Detailed surfaces" = "Surfaces détaillées";
+
+"Portrait shading" = "Modelé du portrait";
+
+"Cast shadows" = "Ombres portées";
+
+"Surface lighting model is missing." = "Le modèle d’éclairage des surfaces est absent.";
+
+"In Advanced, reduce the light already present in the photograph before adding the virtual source. At 100%, existing lighting is retained. This is not albedo reconstruction and cannot recover clipped or hidden detail." = "Dans Avancé, réduisez la lumière déjà présente dans la photographie avant d’ajouter la source virtuelle. À 100 %, l’éclairage existant est conservé. Ce réglage ne reconstruit pas l’albédo et ne récupère pas les détails écrêtés ou cachés.";
+
+"In Advanced, enable a separate on-device MoGe-2 surface orientation estimate. It is cached for the photo and shared by preview and export; changing lighting controls does not rerun the model. Invalid areas retain the depth-based orientation." = "Dans Avancé, activez une estimation indépendante de l’orientation des surfaces par MoGe-2, sur l’appareil. Elle est mise en cache pour la photo et partagée entre aperçu et export ; les réglages d’éclairage ne relancent pas le modèle. Les zones non valides conservent l’orientation issue de la profondeur.";
+
+"In Advanced, use the existing face and eye masks for a restrained skin response and less illumination on the eyes. Zero retains the original response. This does not regenerate faces, paint reflections, or identify hair materials." = "Dans Avancé, utilisez les masques existants du visage et des yeux pour un modelé discret de la peau et moins d’éclairage sur les yeux. Zéro conserve la réponse initiale. Aucun visage ni reflet n’est recréé ; les cheveux ne sont pas identifiés comme un matériau distinct.";
+
+"In Advanced, attenuate the added source where estimated depth obstructs its path. Softness also softens this shadow transition. Shadows are approximate: the depth map cannot describe hidden surfaces or transparent objects. Zero disables them." = "Dans Avancé, atténuez la source ajoutée lorsque la profondeur estimée bloque son trajet. Douceur adoucit aussi cette transition. Les ombres sont approximatives : la profondeur ne décrit ni les surfaces cachées ni les objets transparents. Zéro les désactive.";
+
+"The default response adds light to the existing photo. Advanced controls can reduce existing illumination and add estimated surface shading and depth shadows. Existing shadows are not separated from surface colors; hidden detail and accurate backlighting are not reconstructed. Faces are not regenerated." = "Par défaut, l’outil ajoute de la lumière à la photo existante. Les réglages avancés peuvent réduire l’éclairage existant et ajouter un modelé des surfaces et des ombres estimées. Les ombres initiales ne sont pas séparées des couleurs ; les détails cachés et le contre-jour réel ne sont pas reconstruits. Les visages ne sont pas régénérés.";
+
+"Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora." = "Surfaces détaillées utilise le modèle MoGe-2 ViT-S de Microsoft, converti en Core ML par ebowwa. Le modèle FP16 inclus fonctionne localement. Les licences MIT et Apache 2.0 de DINOv2 et la provenance de la conversion sont fournies avec Lumora.";
+
+"MoGe-2 Small" = "MoGe-2 Small";

@@ -7,13 +7,19 @@ final class DepthLensEngine {
     private var model: MLModel?
     private let renderer: DepthLensRenderer
     private var raw: CIImage?
+    private var normals: CIImage?
+    private let normalEstimator = MoGeNormalEstimator()
     private var low: Float = 0
     private var high: Float = 1
     private var frame: LensFrame?
     private(set) var inferenceCount = 0
     init() throws { renderer = try DepthLensRenderer(optimized: true) }
     func releaseFrame() { frame = nil }
-    func invalidate() { raw = nil; frame = nil }
+    func invalidate() { raw = nil; normals = nil; frame = nil }
+    var normalInferenceCount: Int { normalEstimator.inferenceCount }
+    func prepareNormals(_ source: CIImage) throws {
+        if normals == nil { normals = try normalEstimator.estimate(source, context: renderer.context) }
+    }
     var hasDepth: Bool { raw != nil }
 
     func estimate(_ source: CIImage) throws {
@@ -77,12 +83,12 @@ final class DepthLensEngine {
         low = lo; high = hi; frame = nil; inferenceCount += 1
     }
 
-    func applyLighting(_ image: CIImage, settings: DepthLightingSettings) throws -> CIImage {
+    func applyLighting(_ image: CIImage, settings: DepthLightingSettings, materials: DepthLightingMaterials? = nil) throws -> CIImage {
         guard settings.isActive else { return image }
         guard let raw else { throw PhotoError.renderFailed }
         let depth = raw.clampedToExtent().applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 2])
             .cropped(to: raw.extent)
-        return try DepthLightingRenderer.apply(image, depth: depth, low: low, high: high, settings: settings)
+        return try DepthLightingRenderer.apply(image, depth: depth, low: low, high: high, settings: settings, normals: normals, materials: materials)
     }
 
     func apply(_ image: CIImage, settings: DepthLensSettings) throws -> CIImage {

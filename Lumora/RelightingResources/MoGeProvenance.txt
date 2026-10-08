@@ -1,0 +1,15 @@
+MoGe-2 ViT-S Normal — FP16 weights, Core ML MLProgram.
+Original architecture and checkpoint: Microsoft/MoGe / Ruicheng/moge-2-vits-normal.
+https://github.com/microsoft/MoGe
+Core ML converter/publisher: ebowwa.
+https://huggingface.co/ebowwa/moge-2-vits-normal-coreml
+Conversion source commit: 925b8ed835a7a9cdb7578ba15c658a0afc969030
+Artifact revision: e01dfc7e5148e57fbad3b72fee832f8e9d6fdbda
+Bundled weight.bin SHA256: 70033c0566f60d6ae5318023083ef632e3cffe2619b88436022ef8941467185d
+No model graph or weights modified; package folder renamed MoGeNormals.mlpackage.
+Input: RGB Float32 NCHW [1,3,512,768], sRGB 0..1.
+Outputs: normal [1,512,768,3], mask [1,512,768], points, metric_scale.
+Lumora uses only normals and validity. DA2 remains the depth source.
+Portraits are aspect-fit with replicated borders, with padding cropped from outputs.
+MIT license (Microsoft) and DINOv2 Apache 2.0 notices: MoGe-LICENSE.txt.
+Full original conversion metadata: MoGeConversionProvenance.json.

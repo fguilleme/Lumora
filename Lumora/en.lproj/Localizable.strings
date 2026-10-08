@@ -1196,6 +1196,7 @@
 
 /* Experimental depth lighting */
 "Lighting" = "Lighting";
+"Original light" = "Original light";
 "Experimental · off by default" = "Experimental · off by default";
 "Enable lighting" = "Enable lighting";
 "Choose the subject point, then place the light. Tap the photo or drag a marker." = "Choose the subject point, then place the light. Tap the photo or drag a marker.";
@@ -1408,3 +1409,25 @@
 "The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices." = "The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices.";
 "iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device." = "iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device.";
 "Lumora can open image, RAW and XMP preset files." = "Lumora can open image, RAW and XMP preset files.";
+
+"Detailed surfaces" = "Detailed surfaces";
+
+"Portrait shading" = "Portrait shading";
+
+"Cast shadows" = "Cast shadows";
+
+"Surface lighting model is missing." = "Surface lighting model is missing.";
+
+"In Advanced, reduce the light already present in the photograph before adding the virtual source. At 100%, existing lighting is retained. This is not albedo reconstruction and cannot recover clipped or hidden detail." = "In Advanced, reduce the light already present in the photograph before adding the virtual source. At 100%, existing lighting is retained. This is not albedo reconstruction and cannot recover clipped or hidden detail.";
+
+"In Advanced, enable a separate on-device MoGe-2 surface orientation estimate. It is cached for the photo and shared by preview and export; changing lighting controls does not rerun the model. Invalid areas retain the depth-based orientation." = "In Advanced, enable a separate on-device MoGe-2 surface orientation estimate. It is cached for the photo and shared by preview and export; changing lighting controls does not rerun the model. Invalid areas retain the depth-based orientation.";
+
+"In Advanced, use the existing face and eye masks for a restrained skin response and less illumination on the eyes. Zero retains the original response. This does not regenerate faces, paint reflections, or identify hair materials." = "In Advanced, use the existing face and eye masks for a restrained skin response and less illumination on the eyes. Zero retains the original response. This does not regenerate faces, paint reflections, or identify hair materials.";
+
+"In Advanced, attenuate the added source where estimated depth obstructs its path. Softness also softens this shadow transition. Shadows are approximate: the depth map cannot describe hidden surfaces or transparent objects. Zero disables them." = "In Advanced, attenuate the added source where estimated depth obstructs its path. Softness also softens this shadow transition. Shadows are approximate: the depth map cannot describe hidden surfaces or transparent objects. Zero disables them.";
+
+"The default response adds light to the existing photo. Advanced controls can reduce existing illumination and add estimated surface shading and depth shadows. Existing shadows are not separated from surface colors; hidden detail and accurate backlighting are not reconstructed. Faces are not regenerated." = "The default response adds light to the existing photo. Advanced controls can reduce existing illumination and add estimated surface shading and depth shadows. Existing shadows are not separated from surface colors; hidden detail and accurate backlighting are not reconstructed. Faces are not regenerated.";
+
+"Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora." = "Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora.";
+
+"MoGe-2 Small" = "MoGe-2 Small";

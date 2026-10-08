@@ -1,0 +1,164 @@
+{
+  "device" : "iPhone",
+  "memoryWarnings" : 0,
+  "os" : "27.0.1",
+  "rows" : [
+    {
+      "depthInferences" : 0,
+      "ms" : 46.688583999999999,
+      "normalInferences" : 0,
+      "phase" : "source",
+      "physicalBytes" : 57706240,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 8373.9520420000008,
+      "normalInferences" : 0,
+      "phase" : "legacy",
+      "physicalBytes" : 162858872,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 6.0648340000000003,
+      "normalInferences" : 0,
+      "phase" : "original75",
+      "physicalBytes" : 164677496,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 4057.7933330000001,
+      "normalInferences" : 1,
+      "phase" : "normals",
+      "physicalBytes" : 887736880,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 379.79670800000002,
+      "normalInferences" : 1,
+      "phase" : "portrait",
+      "physicalBytes" : 934906512,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 7.1512500000000001,
+      "normalInferences" : 1,
+      "phase" : "shadows",
+      "physicalBytes" : 934955664,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 6.6912500000000001,
+      "normalInferences" : 1,
+      "phase" : "slider",
+      "physicalBytes" : 936839824,
+      "sample" : "01_portrait_simple",
+      "thermal" : 0
+    },
+    {
+      "equal" : true,
+      "phase" : "persistence",
+      "sample" : "01_portrait_simple"
+    },
+    {
+      "height" : 1152,
+      "ms" : 77.379941940307617,
+      "normalInferences" : 1,
+      "phase" : "export",
+      "physicalBytes" : 940935824,
+      "sample" : "01_portrait_simple",
+      "width" : 768
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 24.062750000000001,
+      "normalInferences" : 1,
+      "phase" : "source",
+      "physicalBytes" : 921782928,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 144.44458299999999,
+      "normalInferences" : 1,
+      "phase" : "legacy",
+      "physicalBytes" : 931318416,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 5.7784170000000001,
+      "normalInferences" : 1,
+      "phase" : "original75",
+      "physicalBytes" : 931236496,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 590.48837500000002,
+      "normalInferences" : 2,
+      "phase" : "normals",
+      "physicalBytes" : 927189648,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 241.22108299999999,
+      "normalInferences" : 2,
+      "phase" : "portrait",
+      "physicalBytes" : 935266960,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 6.3885829999999997,
+      "normalInferences" : 2,
+      "phase" : "shadows",
+      "physicalBytes" : 935283344,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 2,
+      "ms" : 6.3309160000000002,
+      "normalInferences" : 2,
+      "phase" : "slider",
+      "physicalBytes" : 935217808,
+      "sample" : "03_glasses",
+      "thermal" : 0
+    },
+    {
+      "equal" : true,
+      "phase" : "persistence",
+      "sample" : "03_glasses"
+    },
+    {
+      "height" : 1152,
+      "ms" : 48.009991645812988,
+      "normalInferences" : 2,
+      "phase" : "export",
+      "physicalBytes" : 940378768,
+      "sample" : "03_glasses",
+      "width" : 768
+    },
+    {
+      "phase" : "completed"
+    }
+  ]
+}

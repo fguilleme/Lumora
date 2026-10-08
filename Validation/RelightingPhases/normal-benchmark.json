@@ -1,0 +1,22 @@
+[
+  {
+    "normalMS" : 379.17399406433105,
+    "sample" : "01_portrait_simple",
+    "validFraction" : 0.99707602339181289
+  },
+  {
+    "normalMS" : 151.78489685058594,
+    "sample" : "02_hair_bright",
+    "validFraction" : 0.75472290752923976
+  },
+  {
+    "normalMS" : 147.73893356323242,
+    "sample" : "03_glasses",
+    "validFraction" : 0.95262815241228072
+  },
+  {
+    "normalMS" : 153.86390686035156,
+    "sample" : "08_landscape",
+    "validFraction" : 0.50410899653979235
+  }
+]

@@ -171,6 +171,7 @@ final class EditorSession {
     @ObservationIgnored private let store:DocumentStore = {
         #if DEBUG
         if CommandLine.arguments.contains("--xmp-highlight-validation") { return DocumentStore(root: URL.temporaryDirectory.appendingPathComponent("XMPHighlightValidation")) }
+        if CommandLine.arguments.contains("--relight-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("RelightUIValidation")) }
         if CommandLine.arguments.contains("--depth-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("DepthUIValidation")) }
         if CommandLine.arguments.contains("--glow-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("GlowUIValidation")) }
         if CommandLine.arguments.contains("--raw-ui-validation") { return DocumentStore(root:URL.temporaryDirectory.appendingPathComponent("ThirdPartyRAWValidation")) }
@@ -271,6 +272,10 @@ final class EditorSession {
             await importPhoto(at: directory.appendingPathComponent("XMPValidationInput.png"))
             do { applyPreset(try XMPPresetImporter.read(directory.appendingPathComponent("XMPValidation.xmp")).makePreset()) }
             catch { self.error = error.localizedDescription }
+            return
+        }
+        if CommandLine.arguments.contains("--relight-ui-validation") {
+            await importPhoto(at:FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("RelightUIInput.png"))
             return
         }
         if CommandLine.arguments.contains("--depth-ui-validation") {

@@ -8,6 +8,12 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
     var distance = 0.0
     var softness = 55.0
     var relief = 80.0
+    /// Percentage of the photograph's existing illumination retained before the
+    /// synthetic source is added. The identity value keeps legacy documents pixel-identical.
+    var originalLighting = 100.0
+    var surfaceNormals = false
+    var portraitShading = 0.0
+    var shadowStrength = 0.0
     var azimuth = -35.0
     var elevation = 30.0
     var red = 1.0
@@ -16,7 +22,10 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
     var targetX = 0.5
     var targetY = 0.5
 
-    var isActive: Bool { enabled && validated.intensity > 0 }
+    var isActive: Bool {
+        let s = validated
+        return enabled && (s.intensity > 0 || s.originalLighting < 100)
+    }
 
     var validated: Self {
         var s = self
@@ -27,6 +36,9 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
         s.distance = bounded(distance, 0...40, 0)
         s.softness = bounded(softness, 10...100, 55)
         s.relief = bounded(relief, 0...100, 80)
+        s.originalLighting = bounded(originalLighting, 0...100, 100)
+        s.portraitShading = bounded(portraitShading, 0...100, 0)
+        s.shadowStrength = bounded(shadowStrength, 0...100, 0)
         s.azimuth = bounded(azimuth, -90...90, -35)
         s.elevation = bounded(elevation, -45...80, 30)
         s.red = bounded(red, 0...1, 1); s.green = bounded(green, 0...1, 0.86)
@@ -36,8 +48,8 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case enabled, intensity, distance, softness, relief, azimuth, elevation
-        case red, green, blue, targetX, targetY
+        case enabled, intensity, distance, softness, relief, originalLighting, azimuth, elevation
+        case red, green, blue, targetX, targetY, surfaceNormals, portraitShading, shadowStrength
         // V1 migration only.
         case warmth, lightX, lightY
     }
@@ -51,6 +63,10 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
         distance = try values.decodeIfPresent(Double.self, forKey: .distance) ?? 0
         softness = try values.decodeIfPresent(Double.self, forKey: .softness) ?? 55
         relief = try values.decodeIfPresent(Double.self, forKey: .relief) ?? 80
+        originalLighting = try values.decodeIfPresent(Double.self, forKey: .originalLighting) ?? 100
+        surfaceNormals = try values.decodeIfPresent(Bool.self, forKey: .surfaceNormals) ?? false
+        portraitShading = try values.decodeIfPresent(Double.self, forKey: .portraitShading) ?? 0
+        shadowStrength = try values.decodeIfPresent(Double.self, forKey: .shadowStrength) ?? 0
         targetX = try values.decodeIfPresent(Double.self, forKey: .targetX) ?? 0.5
         targetY = try values.decodeIfPresent(Double.self, forKey: .targetY) ?? 0.5
         if let storedAzimuth = try values.decodeIfPresent(Double.self, forKey: .azimuth) {
@@ -86,6 +102,10 @@ struct DepthLightingSettings: Codable, Sendable, Equatable {
         try values.encode(distance, forKey: .distance)
         try values.encode(softness, forKey: .softness)
         try values.encode(relief, forKey: .relief)
+        try values.encode(originalLighting, forKey: .originalLighting)
+        try values.encode(surfaceNormals, forKey: .surfaceNormals)
+        try values.encode(portraitShading, forKey: .portraitShading)
+        try values.encode(shadowStrength, forKey: .shadowStrength)
         try values.encode(azimuth, forKey: .azimuth)
         try values.encode(elevation, forKey: .elevation)
         try values.encode(red, forKey: .red)

@@ -68,6 +68,7 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                         }
                         .padding(.horizontal, 8)
                     }
+                    .accessibilityIdentifier("adjustment-parameters")
                     .onChange(of: selectedID) { _, id in
                         withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .center) }
                     }
@@ -184,6 +185,9 @@ struct LinearAdjustmentControl<Accessory: View>: View {
         guard let raw = Double(normalized) else { return }
         let clamped = min(selected.range.upperBound, max(selected.range.lowerBound, raw))
         let rounded = selected.range.lowerBound + ((clamped - selected.range.lowerBound) / selected.step).rounded() * selected.step
+        // Close before changing observable editor state; an asynchronous render
+        // can rebuild the control during UIKit's automatic alert dismissal.
+        entryPresented = false
         onBegin(selected)
         onChange(selected, rounded)
         onEnd()

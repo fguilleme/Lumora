@@ -1,0 +1,147 @@
+{
+ "source": "Microsoft/MoGe",
+ "source_commit": "925b8ed835a7a9cdb7578ba15c658a0afc969030",
+ "checkpoint_sha256": "79a16621928c2bf0ed04659218c55c01075e950507f40bb3332fb4c873d3e1dc",
+ "parity": {
+  "int8": {
+   "worst": 0.0318,
+   "mask_iou": 0.9989,
+   "rows": [
+    {
+     "scene": "01_HouseIndoor",
+     "median_rel_depth_err": 0.03184692003493975,
+     "mask_iou": 1.0,
+     "fov_x": 89.79613100659438,
+     "fov_y": 67.19207694119218,
+     "fov_x_ref": 89.57,
+     "fov_y_ref": 66.98
+    },
+    {
+     "scene": "02_Office",
+     "median_rel_depth_err": 0.027495873359496832,
+     "mask_iou": 1.0,
+     "fov_x": 71.51716675996411,
+     "fov_y": 51.28973898610465,
+     "fov_x_ref": 71.23,
+     "fov_y_ref": 50.88
+    },
+    {
+     "scene": "03_Traffic",
+     "median_rel_depth_err": 0.025247026052093818,
+     "mask_iou": 0.9989,
+     "fov_x": 50.27740518545711,
+     "fov_y": 34.74341547987982,
+     "fov_x_ref": 50.2,
+     "fov_y_ref": 34.63
+    }
+   ]
+  },
+  "int4": {
+   "worst": 0.1664,
+   "mask_iou": 0.9971,
+   "rows": [
+    {
+     "scene": "01_HouseIndoor",
+     "median_rel_depth_err": 0.038784332091615366,
+     "mask_iou": 1.0,
+     "fov_x": 92.93565273710465,
+     "fov_y": 70.11701898494667,
+     "fov_x_ref": 89.57,
+     "fov_y_ref": 66.98
+    },
+    {
+     "scene": "02_Office",
+     "median_rel_depth_err": 0.1664276216257898,
+     "mask_iou": 1.0,
+     "fov_x": 66.86248348534284,
+     "fov_y": 47.509301798899806,
+     "fov_x_ref": 71.23,
+     "fov_y_ref": 50.88
+    },
+    {
+     "scene": "03_Traffic",
+     "median_rel_depth_err": 0.11638955920001243,
+     "mask_iou": 0.9971,
+     "fov_x": 55.18761809973189,
+     "fov_y": 38.42006530918566,
+     "fov_x_ref": 50.2,
+     "fov_y_ref": 34.63
+    }
+   ]
+  },
+  "int4-sym": {
+   "worst": 0.2104,
+   "mask_iou": 0.9974,
+   "rows": [
+    {
+     "scene": "01_HouseIndoor",
+     "median_rel_depth_err": 0.1482518857629903,
+     "mask_iou": 1.0,
+     "fov_x": 90.769376028441,
+     "fov_y": 68.09216857757852,
+     "fov_x_ref": 89.57,
+     "fov_y_ref": 66.98
+    },
+    {
+     "scene": "02_Office",
+     "median_rel_depth_err": 0.04959785326215589,
+     "mask_iou": 1.0,
+     "fov_x": 71.03665751397835,
+     "fov_y": 50.894933993340416,
+     "fov_x_ref": 71.23,
+     "fov_y_ref": 50.88
+    },
+    {
+     "scene": "03_Traffic",
+     "median_rel_depth_err": 0.21041211029443663,
+     "mask_iou": 0.9974,
+     "fov_x": 62.93369866767596,
+     "fov_y": 44.39126011504672,
+     "fov_x_ref": 50.2,
+     "fov_y_ref": 34.63
+    }
+   ]
+  },
+  "pal8": {
+   "worst": 0.0336,
+   "mask_iou": 0.999,
+   "rows": [
+    {
+     "scene": "01_HouseIndoor",
+     "median_rel_depth_err": 0.03068935560304054,
+     "mask_iou": 1.0,
+     "fov_x": 89.82246154352578,
+     "fov_y": 67.21635097775156,
+     "fov_x_ref": 89.57,
+     "fov_y_ref": 66.98
+    },
+    {
+     "scene": "02_Office",
+     "median_rel_depth_err": 0.03356869961723909,
+     "mask_iou": 1.0,
+     "fov_x": 71.98774117262667,
+     "fov_y": 51.677425862222506,
+     "fov_x_ref": 71.23,
+     "fov_y_ref": 50.88
+    },
+    {
+     "scene": "03_Traffic",
+     "median_rel_depth_err": 0.0200861274329995,
+     "mask_iou": 0.999,
+     "fov_x": 50.27382422117896,
+     "fov_y": 34.74076217280267,
+     "fov_x_ref": 50.2,
+     "fov_y_ref": 34.63
+    }
+   ]
+  }
+ },
+ "bench_ms": {
+  "fp16": 112.0,
+  "int8": 114.0,
+  "int4": 151.0,
+  "int4-sym": 155.0,
+  "pal8": 124.0
+ },
+ "date": "2026-08-06"
+}
