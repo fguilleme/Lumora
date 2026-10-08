@@ -1408,3 +1408,9 @@
 "Moves the lamp from near to far along the direction set by the arcs. A near lamp is stronger and more concentrated; a far lamp is broader and more even. The values are relative, not metres." = "Éloigne la lampe dans la direction définie par les arcs. Une lampe proche est plus forte et concentrée ; une lampe éloignée est plus large et régulière. Les valeurs sont relatives et ne correspondent pas à des mètres.";
 "Chooses the RGB color of the added light without changing the photo white balance." = "Choisit la couleur RVB de la lumière ajoutée sans modifier la balance des blancs de la photo.";
 "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading." = "Lumora dérive une normal map des gradients horizontaux et verticaux de profondeur. Relief contrôle la force avec laquelle cette orientation estimée modèle l’éclairage ; réduisez-le si les erreurs de profondeur créent des irrégularités.";
+"Library" = "Bibliothèque";
+"Sync library with iCloud Drive" = "Synchroniser la bibliothèque avec iCloud Drive";
+"On My iPhone or iPad" = "Sur mon iPhone ou iPad";
+"The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices." = "Le dossier Lumora est stocké dans Documents. La synchronisation iCloud est désactivée par défaut ; l’activer déplace la bibliothèque dans iCloud Drive afin de la retrouver sur vos autres appareils.";
+"iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device." = "iCloud Drive est indisponible. Vérifiez qu’iCloud Drive est activé sur cet appareil.";
+"Lumora can open image, RAW and XMP preset files." = "Lumora peut ouvrir les images, les fichiers RAW et les préréglages XMP.";

@@ -2,16 +2,32 @@ import Foundation
 
 /// Owns one private, immutable original per import, plus a small atomic JSON sidecar.
 actor DocumentStore {
-    private let root: URL
+    private var root: URL
+    private var needsDefaultPreparation: Bool
     private var revisions: [UUID: Int] = [:]
     private var deleted: Set<UUID> = []
-    init(root: URL = URL.applicationSupportDirectory.appendingPathComponent("Lumora", isDirectory: true)) {
-        self.root = root
+    init(root: URL? = nil) {
+        if let root {
+            self.root = root
+            needsDefaultPreparation = false
+        } else {
+            self.root = DocumentStorage.activeRoot()
+            needsDefaultPreparation = true
+        }
     }
+    func switchRoot(to root: URL) throws {
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        self.root = root
+        needsDefaultPreparation = false
+        revisions.removeAll()
+        deleted.removeAll()
+    }
+    func rootURL() -> URL { root }
     func originalURL(for document: PhotoDocument) -> URL {
         root.appendingPathComponent(document.id.uuidString).appendingPathComponent(document.originalFilename)
     }
     func importPhoto(at source: URL) throws -> PhotoDocument {
+        try prepareDefaultStorageIfNeeded()
         let scoped = source.startAccessingSecurityScopedResource()
         defer { if scoped { source.stopAccessingSecurityScopedResource() } }
         let id = UUID()
@@ -29,6 +45,7 @@ actor DocumentStore {
         return document
     }
     func save(_ document: PhotoDocument, revision: Int) throws {
+        try prepareDefaultStorageIfNeeded()
         guard !deleted.contains(document.id) else { return }
         guard revision >= (revisions[document.id] ?? 0) else { return }
         let url = root.appendingPathComponent(document.id.uuidString).appendingPathComponent("edits.json")
@@ -36,10 +53,12 @@ actor DocumentStore {
         revisions[document.id] = revision
     }
     func select(_ document: PhotoDocument) throws {
+        try prepareDefaultStorageIfNeeded()
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         try Data(document.id.uuidString.utf8).write(to: root.appendingPathComponent("last.txt"), options: .atomic)
     }
     func list() throws -> [PhotoDocument] {
+        try prepareDefaultStorageIfNeeded()
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         let urls = try FileManager.default.contentsOfDirectory(
             at: root, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
@@ -56,6 +75,7 @@ actor DocumentStore {
         }
     }
     func load(_ id: UUID) throws -> PhotoDocument {
+        try prepareDefaultStorageIfNeeded()
         let url = root.appendingPathComponent(id.uuidString).appendingPathComponent("edits.json")
         var document = try JSONDecoder().decode(PhotoDocument.self, from: Data(contentsOf: url))
         guard document.id == id, document.schemaVersion == 1 else { throw PhotoError.incompatibleDocument }
@@ -234,5 +254,15 @@ actor DocumentStore {
     }
     private func sorted(_ ids: Set<UUID>) -> [UUID] {
         ids.sorted { $0.uuidString < $1.uuidString }
+    }
+    private func prepareDefaultStorageIfNeeded() throws {
+        guard needsDefaultPreparation else { return }
+        try DocumentStorage.migrateLegacyLibraryIfNeeded()
+        let destination = DocumentStorage.activeRoot()
+        if destination.standardizedFileURL != DocumentStorage.localRoot.standardizedFileURL {
+            try DocumentStorage.moveLibrary(from: DocumentStorage.localRoot, into: destination)
+        }
+        root = destination
+        needsDefaultPreparation = false
     }
 }

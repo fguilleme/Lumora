@@ -158,6 +158,8 @@ final class EditorSession {
     private(set) var libraryFolders: [LibraryFolder] = []
     private(set) var libraryTags: [LibraryTag] = []
     private(set) var isLoadingLibrary = false
+    private(set) var iCloudSyncEnabled = UserDefaults.standard.bool(forKey: DocumentStorage.iCloudEnabledKey)
+    private(set) var isChangingDocumentStorage = false
     private(set) var generation = 0
     var error: String?
     var showingOriginal = false
@@ -194,6 +196,41 @@ final class EditorSession {
     @ObservationIgnored private var beautyRequest = 0
 
     var coreImageAutoApplied: Bool { state.coreImageAuto != nil }
+
+    func setICloudSyncEnabled(_ enabled: Bool) async {
+        guard enabled != iCloudSyncEnabled, !isChangingDocumentStorage else { return }
+        isChangingDocumentStorage = true
+        defer { isChangingDocumentStorage = false }
+        do {
+            finishInteraction()
+            if var current = document {
+                current.state = state
+                revision += 1
+                try await store.save(current, revision: revision)
+                document = current
+            }
+
+            let source = await store.rootURL()
+            let destination = enabled ? try DocumentStorage.iCloudRoot() : DocumentStorage.localRoot
+            try await Task.detached {
+                try DocumentStorage.moveLibrary(from: source, into: destination)
+            }.value
+            try await store.switchRoot(to: destination)
+            UserDefaults.standard.set(enabled, forKey: DocumentStorage.iCloudEnabledKey)
+            iCloudSyncEnabled = enabled
+
+            let currentID = document?.id
+            await loadLibrary()
+            if let currentID {
+                importGeneration += 1
+                let token = importGeneration
+                let saved = try await store.load(currentID)
+                try await activate(saved, token: token)
+            }
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
 
     func applyCoreImageAuto() async {
         finishInteraction()

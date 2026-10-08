@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct EditorSettingsView: View {
+    let session: EditorSession
     @Binding var showHistogram: Bool
     @Binding var includeMetadataInExport: Bool
     @Binding var tabOrder: String
@@ -17,6 +18,25 @@ struct EditorSettingsView: View {
                     .accessibilityIdentifier("settings-export-metadata")
             } header: { Text("Export") } footer: {
                 Text("Sets the default for new exports. It can still be changed for an individual export; location remains removed by default.")
+            }
+            Section {
+                Toggle(isOn: Binding(
+                    get: { session.iCloudSyncEnabled },
+                    set: { enabled in Task { await session.setICloudSyncEnabled(enabled) } }
+                )) {
+                    Label("Sync library with iCloud Drive", systemImage: "icloud")
+                }
+                .disabled(session.isChangingDocumentStorage)
+                .accessibilityIdentifier("settings-icloud-sync")
+                HStack {
+                    Label(session.iCloudSyncEnabled ? "iCloud Drive" : "On My iPhone or iPad",
+                          systemImage: session.iCloudSyncEnabled ? "icloud.fill" : "iphone")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    if session.isChangingDocumentStorage { ProgressView().controlSize(.small) }
+                }
+            } header: { Text("Library") } footer: {
+                Text("The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices.")
             }
             Section {
                 ForEach(tabs, id: \.self) { tab in

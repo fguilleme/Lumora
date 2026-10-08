@@ -1402,3 +1402,9 @@
 "Moves the lamp from near to far along the direction set by the arcs. A near lamp is stronger and more concentrated; a far lamp is broader and more even. The values are relative, not metres." = "Moves the lamp from near to far along the direction set by the arcs. A near lamp is stronger and more concentrated; a far lamp is broader and more even. The values are relative, not metres.";
 "Chooses the RGB color of the added light without changing the photo white balance." = "Chooses the RGB color of the added light without changing the photo white balance.";
 "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading." = "Lumora derives a normal map from the horizontal and vertical depth gradients. Surface relief controls how strongly this estimated orientation shapes the illumination; lower it if depth errors create uneven shading.";
+"Library" = "Library";
+"Sync library with iCloud Drive" = "Sync library with iCloud Drive";
+"On My iPhone or iPad" = "On My iPhone or iPad";
+"The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices." = "The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices.";
+"iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device." = "iCloud Drive is unavailable. Check that iCloud Drive is enabled for this device.";
+"Lumora can open image, RAW and XMP preset files." = "Lumora can open image, RAW and XMP preset files.";

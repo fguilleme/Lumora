@@ -241,12 +241,13 @@ struct EditorView: View {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
         .sheet(isPresented: $showSettingsSheet) {
-            NavigationStack { EditorSettingsView(showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
+            NavigationStack { EditorSettingsView(session: session, showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
                                                   tabOrder: $tabOrder, hiddenTabs: $hiddenTabs).navigationTitle("Settings")
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Close") { showSettingsSheet = false } } }
             }.preferredColorScheme(.dark)
         }
         .onChange(of: showHistogram) { _, shown in if !shown { clippingPressed = false; clippingRequest += 1; clippingOverlay = nil; clippingSource = nil } }
+        .onOpenURL { url in Task { await importSharedItem(at: url) } }
         .onChange(of: visiblePanels) { _, tabs in if !tabs.contains(panel) { selectPanel(tabs.first ?? .settings) } }
         .onAppear {
             if !visiblePanels.contains(panel) { selectPanel(visiblePanels.first ?? .settings) }
@@ -288,7 +289,10 @@ struct EditorView: View {
         }
         .onDisappear { session.setMaskEditingPreview(false) }
         .onChange(of: scenePhase) { _, phase in
-            guard phase != .active else { return }
+            if phase == .active {
+                if session.iCloudSyncEnabled { Task { await session.loadLibrary() } }
+                return
+            }
             // iOS can interrupt a UISlider without delivering touchUp/touchCancel
             // (Control Centre, app switcher, lock, incoming system UI). Never leave
             // the editor in its focused state, which hides the other controls.
@@ -302,6 +306,28 @@ struct EditorView: View {
         if result.isRAW { return "RAW" }
         let ext = URL(fileURLWithPath: session.document?.originalName ?? "").pathExtension.uppercased()
         return ext == "JPEG" ? "JPG" : ext.isEmpty ? "IMAGE" : ext
+    }
+
+    private func importSharedItem(at url: URL) async {
+        let fileExtension = url.pathExtension.lowercased()
+        let contentType = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType
+        let isXMP = fileExtension == "xmp" || contentType?.identifier == "com.adobe.xmp"
+        if isXMP {
+            await presetController.importPreset(from: url)
+            if presetController.lastImportedPresetName != nil { selectPanel(.presets) }
+            return
+        }
+
+        let extensionType = fileExtension.isEmpty ? nil : UTType(filenameExtension: fileExtension)
+        let isImage = contentType?.conforms(to: .image) == true
+            || contentType?.conforms(to: .rawImage) == true
+            || extensionType?.conforms(to: .image) == true
+            || extensionType?.conforms(to: .rawImage) == true
+        guard isImage else {
+            session.error = String(localized: "Lumora can open image, RAW and XMP preset files.")
+            return
+        }
+        await session.importPhoto(at: url)
     }
 
     private var showsPhotoInformation: Bool {
@@ -627,7 +653,7 @@ struct EditorView: View {
         case .help:
             EditorHelpView()
         case .settings:
-            EditorSettingsView(showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
+            EditorSettingsView(session: session, showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
                                tabOrder: $tabOrder, hiddenTabs: $hiddenTabs)
         case .light, .color:
             controls
