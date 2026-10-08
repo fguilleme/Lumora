@@ -54,7 +54,7 @@ public final class DepthLensRenderer {
         context=CIContext(mtlDevice:device,options:[.workingColorSpace:workingSpace,.workingFormat:CIFormat.RGBAh,.cacheIntermediates:false])
         shaderURL=URL(fileURLWithPath:"DepthLensShader.swift")
         let source=DepthLensShader.source
-        let options=MTLCompileOptions();options.fastMathEnabled=false
+        let options=MTLCompileOptions();options.mathMode = .safe
         let library=try device.makeLibrary(source:source,options:options)
         self.library=library
         normalize=try device.makeComputePipelineState(function:library.makeFunction(name:"normalizeDepth")!)

@@ -27,7 +27,7 @@ final class CinematicGlowGPU {
   guard let d=MTLCreateSystemDefaultDevice(),let q=d.makeCommandQueue() else{throw CinematicGlowError.metalUnavailable}
   device=d;queue=q
   context=CIContext(mtlDevice:d,options:[.workingColorSpace:colorSpace,.workingFormat:CIFormat.RGBAf,.cacheIntermediates:false])
-  let opts=MTLCompileOptions();opts.fastMathEnabled=false
+  let opts=MTLCompileOptions();opts.mathMode = .safe
   let lib=try d.makeLibrary(source:CinematicGlowShader.source,options:opts)
   extract=try d.makeComputePipelineState(function:lib.makeFunction(name:"extractLevel")!)
   combine=try d.makeComputePipelineState(function:lib.makeFunction(name:"finish")!)

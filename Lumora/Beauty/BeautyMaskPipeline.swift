@@ -136,21 +136,6 @@ enum BeautyMaskPipeline {
         return float4(candidate, dark * compact, red, 1.0);
     }
     """)
-    private static let blemishKernel = CreativeMetal.compile("""
-    [[ stitchable ]] float4 beautyBlemishMask(coreimage::sample_t candidate,
-        coreimage::sample_t repeated, coreimage::sample_t skin) {
-        float4 c = unpremultiply(candidate);
-        float density = clamp(unpremultiply(repeated).g, 0.0, 1.0);
-        // Numerous similar dark spots are more likely freckles than isolated
-        // blemishes. Red lesions remain eligible in a freckled area.
-        float freckleGuard = mix(1.0, 0.06,
-            smoothstep(0.015, 0.060, density));
-        float skinWeight = clamp(unpremultiply(skin).r, 0.0, 1.0);
-        float evidence = c.r * freckleGuard * pow(skinWeight, 0.28);
-        float v = smoothstep(0.025, 0.21, evidence);
-        return float4(v, v, v, 1.0);
-    }
-    """)
     // Diagnostic-only decomposition of the detector. These kernels do not
     // participate in production mask construction.
     private static let blemishSignals = CreativeMetal.compile("""
@@ -198,7 +183,7 @@ enum BeautyMaskPipeline {
         let extent = CGRect(x: 0, y: 0, width: source.width, height: source.height)
         guard let colorImage = sourceImage(source), let skinKernel,
               let redChannel, let maskProduct, let teethKernel,
-              let blemishCandidate, let blemishKernel else {
+              let blemishCandidate else {
             throw PhotoError.renderFailed
         }
         let color = CIImage(cgImage: colorImage)

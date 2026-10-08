@@ -243,7 +243,7 @@ struct MasksView: View {
     }
     @ViewBuilder private func shapeControls(_ component: MaskComponent) -> some View {
         switch component.shape {
-        case .brush(let brush):
+        case .brush:
             Picker("Brush mode", selection: Binding(get: { brushMode }, set: { onBrushMode($0) })) {
                 ForEach(BrushMode.editingCases, id: \.self) { mode in Text(mode.title).tag(mode) }
             }
@@ -252,9 +252,9 @@ struct MasksView: View {
             Label(brushInstruction(component.operation),
                   systemImage: brushMode == .pan ? "hand.draw" : "paintbrush.pointed")
                 .font(.caption).foregroundStyle(.secondary)
-        case .linear(let linear):
+        case .linear:
             EmptyView()
-        case .radial(let radial):
+        case .radial:
             EmptyView()
         case .generated(let generated):
             Label("Vision detected \(generated.kind.title.lowercased()) mask",
