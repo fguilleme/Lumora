@@ -7,6 +7,7 @@ xcrun swiftc -O -o /tmp/lumora-relight-probe \
     "$repo_root/Lumora/Adjustments/DepthLightingSettings.swift" \
     "$repo_root/Lumora/Rendering/DepthLighting/DepthLightingRenderer.swift" \
     "$repo_root/Lumora/Rendering/DepthLighting/DepthLightingLegacyRenderer.swift" \
+    "$repo_root/Lumora/Rendering/DepthLighting/DepthLightingGradient.swift" \
     "$repo_root/Lumora/Rendering/DepthLighting/DepthLightingMaterials.swift" \
     "$repo_root/Lumora/Rendering/DepthLighting/MoGeNormalEstimator.swift"
 /tmp/lumora-relight-probe "$repo_root"

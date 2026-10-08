@@ -23,8 +23,9 @@ struct RelightingDeviceProbe: View {
     }
     @MainActor private func run() async {
         let documents=FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0]
-        let inputs=documents.appendingPathComponent("RelightingPhasesInputs")
-        let output=documents.appendingPathComponent("RelightingPhasesProbe")
+        let haloValidation=CommandLine.arguments.contains("--lighting-halo-probe")
+        let inputs=documents.appendingPathComponent(haloValidation ? "LightingHaloInputs":"RelightingPhasesInputs")
+        let output=documents.appendingPathComponent(haloValidation ? "LightingHaloProbe":"RelightingPhasesProbe")
         var rows=[[String:Any]]()
         func save() {
             try? JSONSerialization.data(withJSONObject:["rows":rows,"memoryWarnings":memoryWarnings,"os":UIDevice.current.systemVersion,"device":UIDevice.current.model],options:[.prettyPrinted,.sortedKeys])
@@ -37,15 +38,18 @@ struct RelightingDeviceProbe: View {
         }
         do {
             try FileManager.default.createDirectory(at:output,withIntermediateDirectories:true)
-            let urls=try FileManager.default.contentsOfDirectory(at:inputs,includingPropertiesForKeys:nil).filter{$0.pathExtension=="png"}.sorted{$0.lastPathComponent<$1.lastPathComponent}
+            let urls=try FileManager.default.contentsOfDirectory(at:inputs,includingPropertiesForKeys:nil).filter{["png","jpg","jpeg"].contains($0.pathExtension.lowercased())}.sorted{$0.lastPathComponent<$1.lastPathComponent}
             guard !urls.isEmpty else {throw PhotoError.unreadable}
             let engine=RenderEngine()
             for url in urls {
                 let name=url.deletingPathExtension().lastPathComponent
                 var state=EditState()
-                for phase in ["source","legacy","original75","normals","portrait","shadows","slider"] {
+                let phases=haloValidation ? ["source","studio","relief0"]:["source","legacy","original75","normals","portrait","shadows","slider"]
+                for phase in phases {
                     status="\(name) · \(phase)"
                     if phase=="legacy" { var s=DepthLightingSettings();s.enabled=true;s.azimuth = -55;s.targetX=0.4;s.targetY=0.4;state.depthLighting=s }
+                    if phase=="studio" {var s=DepthLightingSettings();s.enabled=true;state.depthLighting=s}
+                    if phase=="relief0" {state.depthLighting?.relief=0}
                     if phase=="original75" {state.depthLighting?.originalLighting=75}
                     if phase=="normals" {state.depthLighting?.surfaceNormals=true}
                     if phase=="portrait" {state.depthLighting?.portraitShading=70}
@@ -58,6 +62,7 @@ struct RelightingDeviceProbe: View {
                 let reopened=try JSONDecoder().decode(EditState.self,from:JSONEncoder().encode(state))
                 rows.append(["phase":"persistence","sample":name,"equal":state==reopened]);save()
                 var settings=ExportSettings();settings.format = .png
+                if haloValidation {state.depthLighting?.relief=80}
                 let start=CFAbsoluteTimeGetCurrent()
                 let photo=try await engine.export(request:ExportRequest(sourceURL:url,state:state,name:name+"-export"),settings:settings,directory:output)
                 rows.append(["phase":"export","sample":name,"width":photo.width,"height":photo.height,"ms":(CFAbsoluteTimeGetCurrent()-start)*1000,"physicalBytes":memory(),"normalInferences":await engine.lightingNormalInferenceCount()]);save()

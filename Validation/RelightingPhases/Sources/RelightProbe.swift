@@ -28,8 +28,11 @@ struct BeautyMasks { let skin:CGImage?;let eyes:CGImage? }
     var s=DepthLightingSettings();s.enabled=true
     let new=try DepthLightingRenderer.apply(source,depth:depth,low:0,high:1,settings:s)
     let old=try LegacyLightingRenderer.apply(source,depth:depth,low:0,high:1,settings:s)
-    let dif=zip(pixels(new),pixels(old)).map{abs($0-$1)}.max()!
-    assert(dif<0.000001,"Legacy pixels unchanged (max \(dif))")
+    // Compare the smooth plane away from its intentional depth discontinuity
+    // and the clamped image boundaries. The halo fix intentionally changes those.
+    let interior=CGRect(x:16,y:64,width:96,height:110)
+    let dif=zip(pixels(new.cropped(to:interior)),pixels(old.cropped(to:interior))).map{abs($0-$1)}.max()!
+    assert(dif<0.000001,"Smooth-plane lighting unchanged (max \(dif))")
     let decoded=try JSONDecoder().decode(DepthLightingSettings.self,from:Data("{\"enabled\":true,\"azimuth\":-35,\"elevation\":30,\"red\":1,\"green\":0.86,\"blue\":0.72}".utf8))
     assert(decoded==s,"Old document defaults retain legacy renderer")
     s.intensity=0;s.originalLighting=50
@@ -82,6 +85,25 @@ struct BeautyMasks { let skin:CGImage?;let eyes:CGImage? }
     let hdr=CIImage(color:CIColor(red:2,green:1.3,blue:0.6)).cropped(to:rect)
     let litHDR=pixels(try DepthLightingRenderer.apply(hdr,depth:depth,low:0,high:1,settings:geometry,normals:front))
     assert(zip(litHDR,pixels(hdr)).allSatisfy{abs($0-$1)<0.00001},"Existing HDR highlights preserved at original100")
+    let edgeRect=CGRect(x:0,y:0,width:960,height:640)
+    let modelRect=CGRect(x:0,y:0,width:240,height:160)
+    var stepValues=[Float](repeating:1,count:240*160*4)
+    for y in 0..<160 {for x in 0..<240 {for c in 0..<3 {stepValues[(y*240+x)*4+c]=x<120 ? 0.85:0.1}}}
+    let rawStep=CIImage(bitmapData:stepValues.withUnsafeBytes{Data($0)},bytesPerRow:240*16,size:modelRect.size,format:.RGBAf,colorSpace:nil)
+    let blurredStep=rawStep.clampedToExtent().applyingFilter("CIGaussianBlur",parameters:[kCIInputRadiusKey:2]).cropped(to:modelRect)
+    let flatSource=CIImage(color:CIColor(red:0.2,green:0.2,blue:0.2,alpha:0.75)).cropped(to:edgeRect)
+    var edgeSettings=DepthLightingSettings();edgeSettings.enabled=true;edgeSettings.softness=100;edgeSettings.targetX=0.45
+    let beforeEdge=try LegacyLightingRenderer.apply(flatSource,depth:blurredStep,low:0,high:1,settings:edgeSettings)
+    let afterEdge=try DepthLightingRenderer.apply(flatSource,depth:blurredStep,low:0,high:1,settings:edgeSettings)
+    edgeSettings.relief=0
+    let noFalseBevel=try DepthLightingRenderer.apply(flatSource,depth:blurredStep,low:0,high:1,settings:edgeSettings)
+    let edgeStrip=CGRect(x:444,y:280,width:72,height:80)
+    let reference=pixels(noFalseBevel.cropped(to:edgeStrip))
+    let beforeError=zip(pixels(beforeEdge.cropped(to:edgeStrip)),reference).map{abs($0-$1)}.reduce(0,+)
+    let afterError=zip(pixels(afterEdge.cropped(to:edgeStrip)),reference).map{abs($0-$1)}.reduce(0,+)
+    assert(afterError<beforeError*0.65,"False bevel on blurred silhouette reduced (\(beforeError) -> \(afterError))")
+    let afterEdgePixels=pixels(afterEdge)
+    assert(stride(from:3,to:afterEdgePixels.count,by:4).allSatisfy{abs(afterEdgePixels[$0]-0.75)<0.000001},"Halo protection preserves source alpha")
     let modelURL=try MLModel.compileModel(at:root.appendingPathComponent("Lumora/RelightingResources/MoGeNormals.mlpackage"))
     let desc=try MLModel(contentsOf:modelURL).modelDescription
     print(desc)

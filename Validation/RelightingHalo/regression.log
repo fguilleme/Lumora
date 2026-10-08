@@ -1,0 +1,78 @@
+/Volumes/XTRA/Dev/Lumora/Validation/RelightingPhases/Sources/LegacyLightingRenderer.swift:8:33: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 6 | /// Normal derivatives retain the prototype's 960-pixel reference scale at all qualities.
+ 7 | enum LegacyLightingRenderer {
+ 8 |     private static let kernel = CIKernel(source: """
+   |                                 `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 9 |     float depthAt(sampler depth, vec2 uv, vec4 bounds) {
+10 |         vec2 p = bounds.xy + vec2(uv.x, 1.0-uv.y)*bounds.zw;
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/DepthLighting/DepthLightingRenderer.swift:7:33: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+  5 | /// screen-space depth shadows affect only the explicitly enabled new controls.
+  6 | enum DepthLightingRenderer {
+  7 |     private static let kernel = CIKernel(source: """
+    |                                 `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+  8 |     float depthAt(sampler depth, vec2 uv, vec4 bounds) {
+  9 |         vec2 p = bounds.xy + vec2(uv.x, 1.0-uv.y)*bounds.zw;
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/DepthLighting/DepthLightingLegacyRenderer.swift:9:33: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 7 | /// Normal derivatives retain the prototype's 960-pixel reference scale at all qualities.
+ 8 | enum DepthLightingLegacyRenderer {
+ 9 |     private static let kernel = CIKernel(source: """
+   |                                 `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+10 |     float depthAt(sampler depth, vec2 uv, vec4 bounds) {
+11 |         vec2 p = bounds.xy + vec2(uv.x, 1.0-uv.y)*bounds.zw;
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+PASS Smooth-plane lighting unchanged (max 0.0)
+PASS Old document defaults retain legacy renderer
+PASS Original lighting 50%, zero lamp, alpha retained
+PASS New settings round-trip
+PASS Enhanced kernel finite
+PASS Normals orient the diffuse response
+PASS Enhanced source elevation illuminates upward-facing surfaces
+PASS Eye mask restrains added light
+PASS Shadows attenuate only added light
+PASS Depth blockers produce shadows (total difference 517.7092)
+PASS Reference scale and shifted origin (max 0.00046676397)
+PASS Existing HDR highlights preserved at original100
+PASS False bevel on blurred silhouette reduced (488.4417 -> 1.3911256)
+PASS Halo protection preserves source alpha
+
+functionName: (null)
+inputs: (
+    "image : MultiArray (Float32, 1 \U00d7 3 \U00d7 512 \U00d7 768)"
+)
+outputs: (
+    "points : MultiArray (Float16, 1 \U00d7 512 \U00d7 768 \U00d7 3)",
+    "normal : MultiArray (Float16, 1 \U00d7 512 \U00d7 768 \U00d7 3)",
+    "mask : MultiArray (Float16, 1 \U00d7 512 \U00d7 768)",
+    "metric_scale : MultiArray (Float16, 1)"
+)
+states: (
+)
+predictedFeatureName: (null)
+predictedProbabilitiesName: (null)
+classLabels: (null)
+updatable: NO
+trainingInputs: (
+)
+parameters: (
+)
+metadata: {
+    MLModelAuthorKey = "";
+    MLModelCreatorDefinedKey =     {
+        "com.github.apple.coremltools.conversion_date" = "2026-08-06";
+        "com.github.apple.coremltools.source" = "torch==2.7.0";
+        "com.github.apple.coremltools.source_dialect" = "TorchExport::ATEN";
+        "com.github.apple.coremltools.version" = "9.0";
+    };
+    MLModelDescriptionKey = "";
+    MLModelLicenseKey = "";
+    MLModelVersionStringKey = "";
+}
+PASS 01_portrait_simple has valid normals
+PASS 02_hair_bright has valid normals
+PASS 03_glasses has valid normals
+PASS 08_landscape has valid normals

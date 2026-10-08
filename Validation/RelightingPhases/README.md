@@ -115,3 +115,11 @@ aussi ; ses PNG sont les captures livrées, sans transformation des pixels.
 - [Reset](Screenshots/05-Advanced-after-reset.png)
 - [Paysage](Screenshots/06-Landscape.png)
 - [Paysage inversé](Screenshots/07-Landscape-inverted.png)
+
+## Correctif ultérieur du halo
+
+Les résultats de compatibilité pixel identique ci-dessus décrivent le point de
+sauvegarde `8843d08`. La passe suivante corrige volontairement le faux relief aux
+ruptures sujet/fond ; voir `../RelightingHalo/README.md`. Le validateur conserve
+l'ancien renderer comme référence et vérifie désormais l'identité sur la surface
+régulière, puis la réduction du faux contour sur une rupture de profondeur lissée.

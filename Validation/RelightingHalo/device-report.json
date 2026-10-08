@@ -1,0 +1,51 @@
+{
+  "device" : "iPhone",
+  "memoryWarnings" : 0,
+  "os" : "27.0.1",
+  "rows" : [
+    {
+      "depthInferences" : 0,
+      "ms" : 49.674833,
+      "normalInferences" : 0,
+      "phase" : "source",
+      "physicalBytes" : 57214720,
+      "sample" : "portrait",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 722.149542,
+      "normalInferences" : 0,
+      "phase" : "studio",
+      "physicalBytes" : 169854888,
+      "sample" : "portrait",
+      "thermal" : 0
+    },
+    {
+      "depthInferences" : 1,
+      "ms" : 5.8795419999999998,
+      "normalInferences" : 0,
+      "phase" : "relief0",
+      "physicalBytes" : 172230568,
+      "sample" : "portrait",
+      "thermal" : 0
+    },
+    {
+      "equal" : true,
+      "phase" : "persistence",
+      "sample" : "portrait"
+    },
+    {
+      "height" : 1365,
+      "ms" : 153.49400043487549,
+      "normalInferences" : 0,
+      "phase" : "export",
+      "physicalBytes" : 203933608,
+      "sample" : "portrait",
+      "width" : 2048
+    },
+    {
+      "phase" : "completed"
+    }
+  ]
+}

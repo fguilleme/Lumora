@@ -26,6 +26,7 @@ enum DepthLightingRenderer {
         float bias = 0.025+z*0.015;
         return smoothstep(bias,bias+mix(0.015,0.16,softness),rayZ-surfaceZ);
     }
+    \(DepthLightingGradient.kernelSource)
     kernel vec4 lighting(sampler source, sampler depth, vec4 bounds, vec4 depthBounds,
                         vec4 light, vec4 colorRelief, vec4 range, vec2 referenceSize,
                         float relativeDistance, float originalLighting,
@@ -37,14 +38,7 @@ enum DepthLightingRenderer {
         float span = max(range.y-range.x, 0.000001);
         float d = clamp((depthAt(depth,uv,depthBounds)-range.x)/span,0.0,1.0);
 
-        // The depth derivatives form a view-space normal map. Keeping the step
-        // tied to the 960 px reference makes preview and export agree.
-        vec2 step = 4.0/referenceSize;
-        float dx = (depthAt(depth,uv+vec2(step.x,0.0),depthBounds)-depthAt(depth,uv-vec2(step.x,0.0),depthBounds))/span;
-        float dy = (depthAt(depth,uv+vec2(0.0,step.y),depthBounds)-depthAt(depth,uv-vec2(0.0,step.y),depthBounds))/span;
-        float edgeWeight = 1.0-smoothstep(0.035,0.18,length(vec2(dx,dy)));
-        vec2 gradient = -vec2(dx,dy)*referenceSize/8.0*0.25;
-        gradient = clamp(gradient,vec2(-2.5),vec2(2.5))*edgeWeight*colorRelief.w;
+        vec2 gradient = surfaceGradient(depth,uv,depthBounds,span,referenceSize,colorRelief.w);
         vec3 normal = normalize(vec3(gradient,-1.0));
         if (enhancements.x>0.5) {
             vec4 estimated = mapAt(normals,uv,normalBounds);
