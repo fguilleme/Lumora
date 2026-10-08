@@ -60,6 +60,17 @@ struct Preset: Codable, Sendable, Equatable, Identifiable {
         return result.validated
     }
 
+    /// XMP presets saved before 1.2 copied Adobe's white-balance signs directly even
+    /// though Lumora's Core Image control uses the opposite temperature and tint axes.
+    @discardableResult mutating func migrateImportedXMPWhiteBalanceIfNeeded() -> Bool {
+        guard var report = xmpImport, (report.whiteBalanceConventionVersion ?? 1) < 2 else { return false }
+        values.temperature = -values.temperature
+        values.tint = -values.tint
+        report.whiteBalanceConventionVersion = 2
+        xmpImport = report
+        return true
+    }
+
     private static func filtered(_ source: EditState, sections: Set<PresetSection>) -> EditState {
         var result = EditState()
         if sections.contains(.light) { for adjustment in Adjustment.light { result[adjustment] = source[adjustment] } }

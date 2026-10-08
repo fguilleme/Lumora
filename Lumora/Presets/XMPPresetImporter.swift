@@ -12,7 +12,13 @@ struct XMPPresetSnapshot: Codable, Sendable, Equatable {
 
     var editState: EditState {
         var state = EditState()
-        for (key, adjustment) in Self.adjustments { state[adjustment] = values[key] ?? 0 }
+        for (key, adjustment) in Self.adjustments {
+            let value = values[key] ?? 0
+            // Adobe's relative white-balance axes run opposite to the
+            // Core Image primitive used by Lumora: positive is warmer / magenta
+            // in Camera Raw, but cooler / greener in Lumora's internal state.
+            state[adjustment] = key == "IncrementalTemperature" || key == "IncrementalTint" ? -value : value
+        }
         // Modern PV2012 controls take precedence over stale legacy tags in the same XMP.
         if values["Exposure2012"] == nil { state[.exposure] = values["Exposure"] ?? 0 }
         if values["Contrast2012"] == nil, let contrast = values["Contrast"] { state[.contrast] = contrast - 25 }
@@ -23,9 +29,9 @@ struct XMPPresetSnapshot: Codable, Sendable, Equatable {
         if wb != "asshot" {
             if values["IncrementalTemperature"] == nil, let temperature = values["Temperature"] {
                 // Approximation relative to Lumora's already-developed 6500 K reference.
-                state[.temperature] = temperature >= 2000 ? (temperature - 6500) / 35 : temperature
+                state[.temperature] = temperature >= 2000 ? (6500 - temperature) / 35 : -temperature
             }
-            if values["IncrementalTint"] == nil, let tint = values["Tint"] { state[.tint] = tint / 0.6 }
+            if values["IncrementalTint"] == nil, let tint = values["Tint"] { state[.tint] = -tint / 0.6 }
         }
         state.curves = curves
         let brightness = values["Exposure2012"] == nil ? ((values["Brightness"] ?? 50) - 50) / 200 : 0
@@ -195,7 +201,8 @@ enum XMPPresetImporter {
         let metadata: Set<String> = ["Name", "ShortName", "SortName", "Group", "Description", "PresetType", "Cluster",
             "UUID", "Copyright", "ContactInfo", "Version", "ProcessVersion", "HasSettings", "WhiteBalance",
             "CameraModelRestriction", "ToneCurveName", "ToneCurveName2012", "ShowInPresets", "ShowInQuickActions",
-            "CameraProfileDigest", "RawFileName", "AlreadyApplied", "LensProfileDigest", "LensProfileName",
+            "CameraProfileDigest", "RawFileName", "AlreadyApplied", "AsShotTemperature", "AsShotTint",
+            "LensProfileDigest", "LensProfileName",
             "LensProfileFilename", "LensProfileSetup", "CurveRefineSaturation"]
         func inactive(_ key: String) -> Bool {
             guard let text = delegate.fields[key]?.trimmingCharacters(in: .whitespacesAndNewlines) else { return false }
@@ -307,6 +314,14 @@ private final class XMPReader: NSObject, XMLParserDelegate {
 struct XMPImportReport: Codable, Sendable, Equatable {
     var unsupported: [String]
     var approximated: [String]
+    /// Version 2 stores Adobe white-balance values in Lumora's opposite internal direction.
+    var whiteBalanceConventionVersion: Int?
+
+    init(unsupported: [String], approximated: [String], whiteBalanceConventionVersion: Int? = nil) {
+        self.unsupported = unsupported
+        self.approximated = approximated
+        self.whiteBalanceConventionVersion = whiteBalanceConventionVersion
+    }
 }
 
 extension XMPPresetSnapshot {
@@ -327,7 +342,8 @@ extension XMPPresetSnapshot {
         // Identity geometry tags are ubiquitous in presets; do not reset the user's crop for them.
         if !state.geometry.isIdentity { sections.insert(.geometry) }
         var preset = Preset(name: name, sections: sections, values: state)
-        preset.xmpImport = XMPImportReport(unsupported: unsupported, approximated: approximated ?? [])
+        preset.xmpImport = XMPImportReport(unsupported: unsupported, approximated: approximated ?? [],
+                                           whiteBalanceConventionVersion: 2)
         return preset
     }
 }

@@ -18,8 +18,11 @@ actor PresetStore {
             .filter { $0.pathExtension == "lumorapreset" }
         return urls.compactMap { url in
             guard let data = try? Data(contentsOf: url), data.count <= 5_000_000,
-                  let decoded = try? decoder.decode(Preset.self, from: data), let preset = decoded.validated
+                  var decoded = try? decoder.decode(Preset.self, from: data)
             else { return nil }
+            let migrated = decoded.migrateImportedXMPWhiteBalanceIfNeeded()
+            guard let preset = decoded.validated else { return nil }
+            if migrated { try? encoder.encode(preset).write(to: url, options: .atomic) }
             return preset
         }.sorted { $0.createdAt > $1.createdAt }
     }
@@ -48,8 +51,9 @@ actor PresetStore {
         defer { if scoped { source.stopAccessingSecurityScopedResource() } }
         let data = try Data(contentsOf: source)
         guard data.count <= 5_000_000 else { throw PresetError.tooLarge }
-        let decoded = try decoder.decode(Preset.self, from: data)
+        var decoded = try decoder.decode(Preset.self, from: data)
         guard (1...2).contains(decoded.formatVersion) else { throw PresetError.unsupported }
+        decoded.migrateImportedXMPWhiteBalanceIfNeeded()
         guard var preset = decoded.validated else { throw PresetError.invalid }
         preset.id = UUID(); preset.createdAt = Date()
         return try save(preset)

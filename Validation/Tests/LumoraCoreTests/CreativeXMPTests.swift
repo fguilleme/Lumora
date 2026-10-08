@@ -142,8 +142,8 @@ struct CreativeXMPTests {
 
     @Test func whiteBalanceGeometryAndLegacyCurves() throws {
         let preset = try XMPPresetImporter.parse(xml("c:WhiteBalance=\"Custom\" c:Temperature=\"7200\" c:Tint=\"12\" c:PerspectiveRotate=\"2\" c:PerspectiveScale=\"110\" c:PerspectiveX=\"8\"", body: "<c:ToneCurve><r:Seq><r:li>0, 0</r:li><r:li>128, 150</r:li><r:li>255, 255</r:li></r:Seq></c:ToneCurve>"), fallbackName: "WB")
-        #expect(preset.editState.temperature == 20)
-        #expect(preset.editState.tint == 20)
+        #expect(preset.editState.temperature == -20)
+        #expect(preset.editState.tint == -20)
         #expect(preset.editState.geometry.straighten == 2)
         #expect(preset.editState.geometry.perspectiveScale == 110)
         #expect(preset.editState.geometry.perspectiveOffsetX == 8)
@@ -152,6 +152,25 @@ struct CreativeXMPTests {
         #expect(preset.makePreset().sections.contains(.geometry))
         let asShot = try XMPPresetImporter.parse(xml("c:WhiteBalance=\"As Shot\" c:Temperature=\"7200\" c:Tint=\"12\""), fallbackName: "As Shot")
         #expect(asShot.editState.temperature == 0 && asShot.editState.tint == 0)
+    }
+
+    @Test func adobeRelativeWhiteBalanceUsesCameraRawDirection() throws {
+        let preset = try XMPPresetImporter.parse(xml("c:WhiteBalance=\"Custom\" c:IncrementalTemperature=\"+12\" c:IncrementalTint=\"-6\" c:AsShotTemperature=\"5050\" c:AsShotTint=\"5\""), fallbackName: "WB")
+        #expect(preset.editState.temperature == -12)
+        #expect(preset.editState.tint == 6)
+        #expect(!preset.unsupported.contains("AsShotTemperature"))
+        #expect(!preset.unsupported.contains("AsShotTint"))
+    }
+
+    @Test func previouslyImportedXMPMigratesWhiteBalanceOnce() throws {
+        var values = EditState(); values.temperature = 12; values.tint = -6
+        var preset = Preset(name: "Old XMP", sections: [.color], values: values)
+        preset.xmpImport = XMPImportReport(unsupported: [], approximated: [])
+        #expect(preset.migrateImportedXMPWhiteBalanceIfNeeded())
+        #expect(preset.values.temperature == -12)
+        #expect(preset.values.tint == 6)
+        #expect(preset.xmpImport?.whiteBalanceConventionVersion == 2)
+        #expect(!preset.migrateImportedXMPWhiteBalanceIfNeeded())
     }
 
     @Test func globalGradingMigrationAndResponse() throws {
