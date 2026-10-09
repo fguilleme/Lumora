@@ -62,6 +62,11 @@ actor MagicSelectionEngine {
         guard let decoder, let embedding else { throw MagicSelectionError.modelMissing }
         let coordinates = try MLMultiArray(shape: [1, 8, 2], dataType: .float32)
         let labels = try MLMultiArray(shape: [1, 8], dataType: .float32)
+        // Padded prompts and the unused prior still pass through the model.
+        // Fresh MLMultiArray storage can contain NaNs; a zero weight does not
+        // make NaN arithmetic safe, so initialize every input explicitly.
+        coordinates.dataPointer.assumingMemoryBound(to: Float.self)
+            .update(repeating: 0, count: coordinates.count)
         for index in 0..<8 { labels[index] = -1 }
         let scale = 1_024.0 / Double(max(source.width, source.height))
         for (index, point) in points.prefix(8).enumerated() {
@@ -71,6 +76,8 @@ actor MagicSelectionEngine {
         }
         let prior = try MLMultiArray(shape: [1, 1, 256, 256], dataType: .float32)
         let hasPrior = try MLMultiArray(shape: [1], dataType: .float32)
+        prior.dataPointer.assumingMemoryBound(to: Float.self)
+            .update(repeating: 0, count: prior.count)
         // MobileSAM supports iterative refinement through mask_input. Reusing
         // the currently displayed proposal prevents a new positive point from
         // reinterpreting the prompt as a different fragment of the same object.
@@ -103,7 +110,7 @@ actor MagicSelectionEngine {
         let candidate = selection
         latestMask = masks
         latestCandidate = candidate
-        guard let preview = makeMaskImage(masks, candidate: candidate, alpha: true) else {
+        guard let preview = makeMaskImage(masks, candidate: candidate) else {
             throw MagicSelectionError.invalidOutput
         }
         return preview
@@ -115,7 +122,7 @@ actor MagicSelectionEngine {
         guard let latestMask else { throw MagicSelectionError.invalidOutput }
         let candidate = min(2, max(0, index))
         latestCandidate = candidate
-        guard let preview = makeMaskImage(latestMask, candidate: candidate, alpha: true) else {
+        guard let preview = makeMaskImage(latestMask, candidate: candidate) else {
             throw MagicSelectionError.invalidOutput
         }
         return preview
@@ -123,12 +130,12 @@ actor MagicSelectionEngine {
 
     func finalizedMask() throws -> GeneratedMask {
         guard let latestMask,
-              let small = makeMaskCIImage(latestMask, candidate: latestCandidate) else {
+              let image = makeMaskCIImage(latestMask, candidate: latestCandidate) else {
             throw MagicSelectionError.invalidOutput
         }
         let sourceImage = CIImage(cgImage: source)
         let fullExtent = sourceImage.extent
-        let output = scaled(small, to: fullExtent).cropped(to: fullExtent)
+        let output = image.cropped(to: fullExtent)
         guard let gray = CGColorSpace(name: CGColorSpace.linearGray),
               let image = context.createCGImage(output, from: fullExtent, format: .L8, colorSpace: gray)
         else { throw MagicSelectionError.encodingFailed }
@@ -140,13 +147,6 @@ actor MagicSelectionEngine {
         guard CGImageDestinationFinalize(destination) else { throw MagicSelectionError.encodingFailed }
         return GeneratedMask(kind: .magic, pngData: data as Data,
                              width: image.width, height: image.height).validated
-    }
-
-    private func scaled(_ image: CIImage, to extent: CGRect) -> CIImage {
-        image.transformed(by: CGAffineTransform(
-            scaleX: extent.width / image.extent.width,
-            y: extent.height / image.extent.height
-        ))
     }
 
     private func prepareInput() throws -> MLMultiArray {
@@ -178,21 +178,27 @@ actor MagicSelectionEngine {
         return array
     }
 
-    private func makeMaskCIImage(_ masks: MLMultiArray, candidate: Int) -> CIImage? {
-        let width = max(1, min(256, Int(resizedSize.width / 4 + 0.5)))
-        let height = max(1, min(256, Int(resizedSize.height / 4 + 0.5)))
-        var bytes = [UInt8](repeating: 0, count: width * height)
-        for y in 0..<height {
-            for x in 0..<width {
-                let logit = masks[[0, candidate, y, x] as [NSNumber]].floatValue
-                bytes[y * width + x] = logit > 0 ? 255 : 0
+    private func maskCoverage(_ masks: MLMultiArray, candidate: Int) -> [UInt8]? {
+        var logits = [Float](repeating: 0, count: 256 * 256)
+        for y in 0..<256 {
+            for x in 0..<256 {
+                logits[y * 256 + x] = masks[[0, candidate, y, x] as [NSNumber]].floatValue
             }
         }
-        let data = Data(bytes) as CFData
-        guard let provider = CGDataProvider(data: data),
+        // Upsample the padded score field, then crop at the exact content size.
+        // Rounding the small crop first also shifts non-square image boundaries.
+        return MagicMaskRasterizer.coverage(logits: logits, width: 256, height: 256,
+            contentWidth: Double(resizedSize.width) / 4,
+            contentHeight: Double(resizedSize.height) / 4,
+            outputWidth: source.width, outputHeight: source.height)
+    }
+
+    private func makeMaskCIImage(_ masks: MLMultiArray, candidate: Int) -> CIImage? {
+        guard let bytes = maskCoverage(masks, candidate: candidate),
+              let provider = CGDataProvider(data: Data(bytes) as CFData),
               let gray = CGColorSpace(name: CGColorSpace.linearGray),
-              let image = CGImage(width: width, height: height, bitsPerComponent: 8,
-                                  bitsPerPixel: 8, bytesPerRow: width, space: gray,
+              let image = CGImage(width: source.width, height: source.height, bitsPerComponent: 8,
+                                  bitsPerPixel: 8, bytesPerRow: source.width, space: gray,
                                   bitmapInfo: CGBitmapInfo(rawValue: 0), provider: provider,
                                   decode: nil, shouldInterpolate: true, intent: .defaultIntent)
         else { return nil }
@@ -236,17 +242,15 @@ actor MagicSelectionEngine {
         return chosen
     }
 
-    private func makeMaskImage(_ masks: MLMultiArray, candidate: Int, alpha: Bool) -> CGImage? {
-        let width = max(1, min(256, Int(resizedSize.width / 4 + 0.5)))
-        let height = max(1, min(256, Int(resizedSize.height / 4 + 0.5)))
+    private func makeMaskImage(_ masks: MLMultiArray, candidate: Int) -> CGImage? {
+        guard let coverage = maskCoverage(masks, candidate: candidate) else { return nil }
+        let width = source.width, height = source.height
         var rgba = [UInt8](repeating: 0, count: width * height * 4)
-        for y in 0..<height {
-            for x in 0..<width where masks[[0, candidate, y, x] as [NSNumber]].floatValue > 0 {
-                let offset = (y * width + x) * 4
-                // Premultiplied alpha: red and alpha must carry the same value.
-                rgba[offset] = 132
-                rgba[offset + 3] = 132
-            }
+        for index in coverage.indices {
+            // Premultiplied alpha, with exactly the same edge as the saved mask.
+            let alpha = UInt8((Int(coverage[index]) * 132 + 127) / 255)
+            rgba[index * 4] = alpha
+            rgba[index * 4 + 3] = alpha
         }
         guard let provider = CGDataProvider(data: Data(rgba) as CFData),
               let color = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }

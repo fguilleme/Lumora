@@ -26,32 +26,25 @@ private enum MagicContrastRefiner {
         vec3 pixel = unpremultiply(sample(source, samplerTransform(source, p))).rgb;
         float fw = sample(foregroundWeight, samplerTransform(foregroundWeight, p)).r;
         float bw = sample(backgroundWeight, samplerTransform(backgroundWeight, p)).r;
-        // Expanding over missed hair only needs a reliable background sample;
-        // the user's stroke may contain no skin or other selected pixels at all.
-        // Contracting an existing mask is the symmetric case and only needs a
-        // foreground sample.
-        if (original <= 0.5 && bw < 0.015) return vec4(original);
-        if (original > 0.5 && fw < 0.015) return vec4(original);
+        // A stroke only marks the corridor in which the existing boundary may
+        // move. It must not turn every contrast inside that corridor into a new
+        // island. Require evidence from both sides of the current boundary.
+        if (original <= 0.5 && fw < 0.012) return vec4(original);
+        if (original > 0.5 && bw < 0.012) return vec4(original);
         vec3 foreground = sample(foregroundColor, samplerTransform(foregroundColor, p)).rgb / max(fw, 0.001);
         vec3 background = sample(backgroundColor, samplerTransform(backgroundColor, p)).rgb / max(bw, 0.001);
-        float requiredContrast = mix(0.065, 0.006, sensitivity);
         float foregroundDifference = distance(pixel, foreground);
         float backgroundDifference = distance(pixel, background);
-        // An excluded strand may be unlike both the selected skin and the pale
-        // background. Requiring it to resemble the foreground therefore loses
-        // hair. Inside the painted corridor, use contrast against the pixel's
-        // own side instead: exterior pixels that differ from the local background
-        // are added, while selected pixels that differ from the local foreground
-        // may be removed.
-        float exterior = smoothstep(requiredContrast,
-                                    requiredContrast + 0.09, backgroundDifference);
-        float interior = 1.0 - smoothstep(requiredContrast,
-                                          requiredContrast + 0.09, foregroundDifference);
-        float classified = original > 0.5 ? interior : exterior;
-        float evidence = original > 0.5 ? foregroundDifference : backgroundDifference;
-        float confidence = smoothstep(requiredContrast,
-                                      requiredContrast + 0.055, evidence);
-        return vec4(mix(original, classified, amount * confidence));
+        // Classify relative to the two local reference colors. Looking only for
+        // a difference from the background accepts dress patterns and branches.
+        float foregroundAdvantage = backgroundDifference - foregroundDifference;
+        float requiredAdvantage = mix(0.055, -0.012, sensitivity);
+        float classified = smoothstep(requiredAdvantage,
+                                      requiredAdvantage + 0.035,
+                                      foregroundAdvantage);
+        float oppositeWeight = original > 0.5 ? bw : fw;
+        float boundarySupport = smoothstep(0.012, 0.14, oppositeWeight);
+        return vec4(mix(original, classified, amount * boundarySupport));
     }
     """)!
 }
@@ -437,8 +430,28 @@ struct MagicSelectionView: View {
                         blurred(currentMask), blurred(backgroundMask),
                         NSNumber(value: refinementSensitivity / 100)])
         else { throw MagicSelectionError.encodingFailed }
-        guard let gray = CGColorSpace(name: CGColorSpace.linearGray),
-              let image = context.createCGImage(result, from: extent, format: .L8, colorSpace: gray)
+        let width = mask.width
+        let height = mask.height
+        let rowBytes = width
+        var originalBytes = [UInt8](repeating: 0, count: width * height)
+        var proposedBytes = [UInt8](repeating: 0, count: width * height)
+        guard let gray = CGColorSpace(name: CGColorSpace.linearGray) else {
+            throw MagicSelectionError.encodingFailed
+        }
+        context.render(currentMask, toBitmap: &originalBytes, rowBytes: rowBytes,
+                       bounds: extent, format: .L8, colorSpace: gray)
+        context.render(result, toBitmap: &proposedBytes, rowBytes: rowBytes,
+                       bounds: extent, format: .L8, colorSpace: gray)
+        let connectedBytes = connectedBoundaryChanges(original: originalBytes,
+                                                      proposed: proposedBytes,
+                                                      width: width, height: height)
+        guard let provider = CGDataProvider(data: Data(connectedBytes) as CFData),
+              let image = CGImage(width: width, height: height,
+                                  bitsPerComponent: 8, bitsPerPixel: 8,
+                                  bytesPerRow: rowBytes, space: gray,
+                                  bitmapInfo: CGBitmapInfo(rawValue: 0),
+                                  provider: provider, decode: nil,
+                                  shouldInterpolate: true, intent: .defaultIntent)
         else { throw MagicSelectionError.encodingFailed }
         let data = NSMutableData()
         guard let destination = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil)
@@ -446,6 +459,73 @@ struct MagicSelectionView: View {
         CGImageDestinationAddImage(destination, image, nil)
         guard CGImageDestinationFinalize(destination) else { throw MagicSelectionError.encodingFailed }
         return GeneratedMask(kind: .magic, pngData: data as Data, width: image.width, height: image.height)
+    }
+
+    /// Keeps only proposed additions that connect back to the selected region,
+    /// and proposed removals that connect back to the background. This prevents
+    /// isolated texture edges inside the painted corridor from becoming mask
+    /// islands or holes.
+    private func connectedBoundaryChanges(original: [UInt8], proposed: [UInt8],
+                                          width: Int, height: Int) -> [UInt8] {
+        guard original.count == proposed.count, original.count == width * height else {
+            return original
+        }
+        let count = original.count
+        var direction = [Int8](repeating: 0, count: count)
+        for index in 0..<count {
+            let delta = Int(proposed[index]) - Int(original[index])
+            if delta > 2 { direction[index] = 1 }
+            else if delta < -2 { direction[index] = -1 }
+        }
+
+        let neighbors = [(-1, -1), (0, -1), (1, -1),
+                         (-1, 0),           (1, 0),
+                         (-1, 1),  (0, 1),  (1, 1)]
+        var connected = [Bool](repeating: false, count: count)
+        var queue: [Int] = []
+        queue.reserveCapacity(min(count, 65_536))
+
+        func touchesOriginalSide(_ index: Int, adding: Bool) -> Bool {
+            let x = index % width
+            let y = index / width
+            for (dx, dy) in neighbors {
+                let nx = x + dx, ny = y + dy
+                guard nx >= 0, nx < width, ny >= 0, ny < height else { continue }
+                let selected = original[ny * width + nx] >= 128
+                if selected == adding { return true }
+            }
+            return false
+        }
+
+        for index in 0..<count where direction[index] != 0 {
+            let adding = direction[index] > 0
+            if touchesOriginalSide(index, adding: adding) {
+                connected[index] = true
+                queue.append(index)
+            }
+        }
+
+        var cursor = 0
+        while cursor < queue.count {
+            let index = queue[cursor]
+            cursor += 1
+            let x = index % width
+            let y = index / width
+            for (dx, dy) in neighbors {
+                let nx = x + dx, ny = y + dy
+                guard nx >= 0, nx < width, ny >= 0, ny < height else { continue }
+                let neighbor = ny * width + nx
+                guard !connected[neighbor], direction[neighbor] == direction[index] else { continue }
+                connected[neighbor] = true
+                queue.append(neighbor)
+            }
+        }
+
+        var output = proposed
+        for index in 0..<count where direction[index] != 0 && !connected[index] {
+            output[index] = original[index]
+        }
+        return output
     }
 
     private func interpolated(_ points: [CGPoint], radius: CGFloat, extent: CGRect) -> [CGPoint] {
