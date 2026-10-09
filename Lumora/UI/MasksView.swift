@@ -13,6 +13,9 @@ struct MasksView: View {
     let onMoveComponent: (Int) -> Void
     let onDeleteComponent: () -> Void
     let onBrushMode: (BrushMode) -> Void
+    var similaritySampling = false
+    var onSimilaritySampling: () -> Void = {}
+    var onSimilarityConnected: (Bool) -> Void = { _ in }
     let onCreate: (MaskKind) -> Void
     let onAddComponent: (MaskKind, MaskOperation) -> Void
     let onGenerate: (SmartMaskKind, MaskOperation?) -> Void
@@ -43,57 +46,66 @@ struct MasksView: View {
     private var component: MaskComponent? { mask?.components.first { $0.id == selectedComponentID } }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text("Adjustment stack").font(.headline)
-                    Spacer()
-                    if isGenerating {
-                        ProgressView().controlSize(.small).accessibilityLabel("Mask detection")
-                    }
-                    newMaskMenu
-                    if mask != nil {
-                        Button(role: .destructive, action: onDelete) { Image(systemName: "trash") }
-                            .accessibilityLabel("Delete mask")
-                    }
-                }
-                maskPicker
-                if mask == nil {
-                    Label("This base layer covers the entire photo.", systemImage: "rectangle.fill")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                    Text("Paint, draw a gradient, or let Vision detect the subject.")
-                        .font(.subheadline).foregroundStyle(.secondary)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        ForEach(MaskKind.allCases) { kind in
-                            Button(kind.title) { onCreate(kind) }.buttonStyle(.bordered)
+                        Text("Adjustment stack").font(.headline)
+                        Spacer()
+                        if isGenerating {
+                            ProgressView().controlSize(.small).accessibilityLabel("Mask detection")
                         }
-                        smartMaskMenu("Detect", operation: nil)
+                        newMaskMenu
+                        if mask != nil {
+                            Button(role: .destructive, action: onDelete) { Image(systemName: "trash") }
+                                .accessibilityLabel("Delete mask")
+                        }
                     }
-                } else if let mask {
-                        layerControls(mask)
-                        Divider()
+                    maskPicker
+                    if mask == nil {
+                        Label("This base layer covers the entire photo.", systemImage: "rectangle.fill")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                        Text("Paint, draw a gradient, or let Vision detect the subject.")
+                            .font(.subheadline).foregroundStyle(.secondary)
                         HStack {
-                            componentMenu("Add", operation: .add)
-                            componentMenu("Subtract", operation: .subtract)
-                            Spacer()
-                            Toggle("Invert", isOn: Binding(get: { mask.inverted }, set: { _ in onInvert() }))
-                                .fixedSize().accessibilityIdentifier("mask-invert")
+                            ForEach(MaskKind.allCases.filter { $0 != .similarity }) { kind in
+                                Button(kind.title) { onCreate(kind) }.buttonStyle(.bordered)
+                            }
+                            smartMaskMenu("Detect", operation: nil)
                         }
-                        componentPicker(mask)
-                        if let component {
-                            componentControls(component, in: mask)
-                            shapeControls(component)
-                        }
-                        LinearAdjustmentControl(parameters: scalarParameters(mask: mask, component: component),
-                            selectedID: $selectedScalarID,
-                            onBegin: { onBegin("Mask · \($0.title)") },
-                            onChange: { parameter, value in setScalar(parameter.id, value) },
-                            onEnd: onEnd,
-                            onReset: { parameter in setScalar(parameter.id, parameter.resetValue) })
-                            .padding(.horizontal, -18)
+                    } else if let mask {
+                            layerControls(mask)
+                            Divider()
+                            HStack {
+                                componentMenu("Add", operation: .add)
+                                componentMenu("Subtract", operation: .subtract)
+                                Spacer()
+                                Toggle("Invert", isOn: Binding(get: { mask.inverted }, set: { _ in onInvert() }))
+                                    .fixedSize().accessibilityIdentifier("mask-invert")
+                            }
+                            componentPicker(mask)
+                            if let component {
+                                componentControls(component, in: mask)
+                                shapeControls(component)
+                            }
+                            LinearAdjustmentControl(parameters: scalarParameters(mask: mask, component: component),
+                                selectedID: $selectedScalarID,
+                                onBegin: { onBegin("Mask · \($0.title)") },
+                                onChange: { parameter, value in setScalar(parameter.id, value) },
+                                onEnd: onEnd,
+                                onReset: { parameter in setScalar(parameter.id, parameter.resetValue) })
+                                .padding(.horizontal, -18)
+                                .id("mask-parameters")
 
+                    }
+                }.padding(.horizontal, 18).padding(.bottom, 12)
+            }
+            .onChange(of: selectedComponentID) { _, _ in
+                if let component, case .similarity = component.shape {
+                    selectedScalarID = "mask-tolerance"
+                    proxy.scrollTo("mask-parameters", anchor: .bottom)
                 }
-            }.padding(.horizontal, 18).padding(.bottom, 12)
+            }
         }
         .accessibilityIdentifier("masks-controls")
         .alert("Rename layer", isPresented: $showingRename) {
@@ -116,7 +128,10 @@ struct MasksView: View {
 
     private var newMaskMenu: some View {
         Menu {
-            ForEach(MaskKind.allCases) { kind in Button(kind.title) { onCreate(kind) } }
+            ForEach(MaskKind.allCases) { kind in
+                Button(kind.title) { onCreate(kind) }
+                    .accessibilityIdentifier("mask-create-\(kind.id)")
+            }
             Divider()
             ForEach(SmartMaskKind.automaticCases) { kind in
                 Button(kind.title, systemImage: kind.symbol) { onGenerate(kind, nil) }
@@ -256,6 +271,29 @@ struct MasksView: View {
             EmptyView()
         case .radial:
             EmptyView()
+        case .similarity(let similarity):
+            HStack {
+                Button(action: onSimilaritySampling) {
+                    Label("Sample color", systemImage: "eyedropper")
+                        .foregroundStyle(similaritySampling ? Color.accentColor : .primary)
+                }
+                .buttonStyle(.bordered).frame(minHeight: 44)
+                .accessibilityIdentifier("similarity-sample")
+                if !similarity.distancePNG.isEmpty {
+                    Circle().fill(Color(red: similarity.red, green: similarity.green, blue: similarity.blue))
+                        .frame(width: 22, height: 22).overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 1))
+                        .accessibilityLabel("Reference color")
+                }
+                Spacer()
+            }
+            Picker("Propagation", selection: Binding(get: { similarity.connected }, set: { onSimilarityConnected($0) })) {
+                Text("Connected region").tag(true)
+                Text("All similar pixels").tag(false)
+            }
+            .pickerStyle(.segmented).accessibilityIdentifier("similarity-propagation")
+            if similaritySampling {
+                Text("Tap the photo to sample a color.").font(.caption).foregroundStyle(.secondary)
+            }
         case .generated(let generated):
             Label("Vision detected \(generated.kind.title.lowercased()) mask",
                   systemImage: generated.kind.symbol)
@@ -277,6 +315,7 @@ struct MasksView: View {
         case .brush(let brush): values = [(.size, brush.size), (.feather, brush.feather), (.flow, brush.flow), (.opacity, brush.opacity)]
         case .linear(let linear): values = [(.angle, linear.angle), (.centerX, linear.center.x * 100), (.centerY, linear.center.y * 100), (.feather, linear.feather)]
         case .radial(let radial): values = [(.centerX, radial.center.x * 100), (.centerY, radial.center.y * 100), (.radiusX, radial.radiusX * 100), (.radiusY, radial.radiusY * 100), (.feather, radial.feather)]
+        case .similarity(let mask): values = [(.tolerance, mask.tolerance), (.feather, mask.influence.feather), (.radiusX, mask.influence.radiusX * 100), (.radiusY, mask.influence.radiusY * 100)]
         case .generated: values = []
         }
         result += values.map { parameter, value in
@@ -296,6 +335,7 @@ struct MasksView: View {
         switch parameter {
         case .size: 18; case .feather: 50; case .flow: 80; case .opacity: 100
         case .angle: 0; case .centerX, .centerY: 50; case .radiusX: 35; case .radiusY: 25
+        case .tolerance: 25
         }
     }
 }

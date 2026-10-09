@@ -1437,3 +1437,13 @@
 "Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora." = "Surfaces détaillées utilise le modèle MoGe-2 ViT-S de Microsoft, converti en Core ML par ebowwa. Le modèle FP16 inclus fonctionne localement. Les licences MIT et Apache 2.0 de DINOv2 et la provenance de la conversion sont fournies avec Lumora.";
 
 "MoGe-2 Small" = "MoGe-2 Small";
+
+"Color selection" = "Sélection par couleur";
+"Tolerance" = "Tolérance";
+"Sample color" = "Prélever une couleur";
+"Reference color" = "Couleur de référence";
+"Propagation" = "Propagation";
+"Connected region" = "Région reliée";
+"All similar pixels" = "Tous les pixels similaires";
+"Tap the photo to sample a color." = "Touchez la photo pour prélever une couleur.";
+"Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components." = "Prélevez une couleur sur la photo, puis redimensionnez l’ellipse pour limiter la zone d’influence. Tolérance règle l’écart de couleur accepté ; Contour progressif adoucit le bord. Région reliée sélectionne uniquement la zone connectée au point prélevé, sans sortir de l’ellipse. Tous les pixels similaires inclut les zones séparées de couleur proche dans l’ellipse. Déplacer l’ellipse conserve la couleur de référence ; Prélever une couleur permet d’en choisir une autre. Ajouter et Soustraire combinent cette sélection avec les autres composants du masque.";

@@ -208,6 +208,7 @@ enum MaskShape: Codable, Sendable, Equatable {
     case brush(BrushMask)
     case linear(LinearGradientMask)
     case radial(RadialGradientMask)
+    case similarity(SimilarityMask)
     case generated(GeneratedMask)
 
     var title: String {
@@ -215,6 +216,7 @@ enum MaskShape: Codable, Sendable, Equatable {
         case .brush: String(localized: "Brush")
         case .linear: String(localized: "Linear")
         case .radial: "Radial"
+        case .similarity: String(localized: "Color selection")
         case .generated(let mask): mask.kind.title
         }
     }
@@ -232,6 +234,7 @@ struct MaskComponent: Codable, Sendable, Equatable, Identifiable {
         case .brush(let brush): value.shape = .brush(brush.validated)
         case .linear(let linear): value.shape = .linear(linear.validated)
         case .radial(let radial): value.shape = .radial(radial.validated)
+        case .similarity(let mask): value.shape = .similarity(mask.validated)
         case .generated(let mask): value.shape = .generated(mask.validated)
         }
         return value
@@ -459,26 +462,28 @@ struct AdjustmentLayer: Codable, Sendable, Equatable, Identifiable {
 typealias LocalMask = AdjustmentLayer
 
 enum MaskKind: String, CaseIterable, Sendable, Identifiable {
-    case brush, linear, radial
+    case brush, linear, radial, similarity
     var id: String { rawValue }
-    var title: String { switch self { case .brush: String(localized: "Brush"); case .linear: String(localized: "Linear"); case .radial: "Radial" } }
+    var title: String { switch self { case .brush: String(localized: "Brush"); case .linear: String(localized: "Linear"); case .radial: "Radial"; case .similarity: String(localized: "Color selection") } }
     func shape() -> MaskShape {
         switch self {
         case .brush: .brush(BrushMask())
         case .linear: .linear(LinearGradientMask())
         case .radial: .radial(RadialGradientMask())
+        case .similarity: .similarity(SimilarityMask())
         }
     }
 }
 
 enum MaskParameter: String, CaseIterable, Sendable, Identifiable {
-    case size, feather, flow, opacity, angle, centerX, centerY, radiusX, radiusY
+    case size, feather, flow, opacity, angle, centerX, centerY, radiusX, radiusY, tolerance
     var id: String { rawValue }
     var title: String {
         switch self {
         case .size: String(localized: "Size"); case .feather: String(localized: "Feather"); case .flow: String(localized: "Flow")
         case .opacity: String(localized: "Opacity"); case .angle: "Angle"; case .centerX: String(localized: "Horizontal center")
         case .centerY: String(localized: "Vertical center"); case .radiusX: String(localized: "Width"); case .radiusY: String(localized: "Height")
+        case .tolerance: String(localized: "Tolerance")
         }
     }
     var range: ClosedRange<Double> {
@@ -486,6 +491,7 @@ enum MaskParameter: String, CaseIterable, Sendable, Identifiable {
         case .angle: -180...180
         case .centerX, .centerY: 0...100
         case .radiusX, .radiusY: 2...100
+        case .tolerance: 0...100
         default: 1...100
         }
     }

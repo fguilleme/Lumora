@@ -41,6 +41,8 @@ struct PhotoCanvas: View {
     let showsMaskOverlay: Bool
     var maskOutlineOnly = false
     let allowsMaskEditing: Bool
+    var similaritySampling = false
+    var onSimilaritySample: (MaskPoint) -> Void = { _ in }
     let brushMode: BrushMode
     let onBrushBegin: (CGFloat) -> Void
     let onBrushPoint: (MaskPoint) -> Void
@@ -81,10 +83,10 @@ struct PhotoCanvas: View {
     }
 
     private var hasTransformHandles: Bool {
-        guard allowsMaskEditing else { return false }
+        guard allowsMaskEditing, !similaritySampling else { return false }
         guard let component = activeComponent else { return false }
         switch component.shape {
-        case .linear, .radial: return true
+        case .linear, .radial, .similarity: return true
         default: return false
         }
     }
@@ -123,6 +125,12 @@ struct PhotoCanvas: View {
                             case .first:
                                 if !isPainting && !healingPaintZone { restoreZoom() }
                             case .second(let tap):
+                                if similaritySampling {
+                                    let size = CGSize(width: result.image.width, height: result.image.height)
+                                    if let point = normalized(tap.location, viewSize: geometry.size, imageSize: size,
+                                        displayScale: displayScale, displayOffset: displayOffset) { onSimilaritySample(point) }
+                                    return
+                                }
                                 guard !allowsMaskEditing, !curveSampling, !healingPaintZone,
                                       geometrySettings == nil, dlcSettings == nil else { return }
                                 let imageSize = CGSize(width: result.image.width, height: result.image.height)
@@ -530,7 +538,24 @@ private struct MaskHandlesOverlay: View {
             case .linear(let linear):
                 linearHandles(linear, extent: extent)
             case .radial(let radial):
-                radialHandles(radial, extent: extent)
+                radialHandles(radial, extent: extent) { onChange(.radial($0)) }
+            case .similarity(let similarity):
+                ZStack {
+                    let center = screenPoint(similarity.influence.center, in: extent)
+                    Path(ellipseIn: CGRect(x: center.x - extent.width * similarity.influence.radiusX,
+                        y: center.y - extent.height * similarity.influence.radiusY,
+                        width: extent.width * similarity.influence.radiusX * 2,
+                        height: extent.height * similarity.influence.radiusY * 2))
+                        .stroke(Color.accentColor.opacity(0.8), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        .allowsHitTesting(false)
+                    radialHandles(similarity.influence, extent: extent) { radial in
+                        var updated = similarity; updated.influence = radial
+                        onChange(.similarity(updated.validated))
+                    }
+                    Circle().fill(Color.accentColor).frame(width: 8, height: 8)
+                        .overlay(Circle().stroke(.black, lineWidth: 1))
+                        .position(screenPoint(similarity.reference, in: extent)).allowsHitTesting(false)
+                }
             default:
                 EmptyView()
             }
@@ -584,7 +609,8 @@ private struct MaskHandlesOverlay: View {
         }
     }
 
-    private func radialHandles(_ radial: RadialGradientMask, extent: CGRect) -> some View {
+    private func radialHandles(_ radial: RadialGradientMask, extent: CGRect,
+                               change: @escaping (RadialGradientMask) -> Void) -> some View {
         let center = screenPoint(radial.center, in: extent)
         let horizontal = CGPoint(x: min(extent.maxX, center.x + extent.width * radial.radiusX), y: center.y)
         let vertical = CGPoint(x: center.x, y: min(extent.maxY, center.y + extent.height * radial.radiusY))
@@ -609,21 +635,21 @@ private struct MaskHandlesOverlay: View {
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.center = normalized(location, in: extent)
-                onChange(.radial(updated.validated))
+                change(updated.validated)
             } onEnd: { onEnd() }
             MaskDragHandle(position: horizontal, color: .yellow,
                            identifier: "mask-handle-radius-x", label: "Radial width",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.radiusX = Double(abs(location.x - center.x) / max(1, extent.width))
-                onChange(.radial(updated.validated))
+                change(updated.validated)
             } onEnd: { onEnd() }
             MaskDragHandle(position: vertical, color: .yellow,
                            identifier: "mask-handle-radius-y", label: "Radial height",
                            coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
                 var updated = radial
                 updated.radiusY = Double(abs(location.y - center.y) / max(1, extent.height))
-                onChange(.radial(updated.validated))
+                change(updated.validated)
             } onEnd: { onEnd() }
             MaskDragHandle(position: feather, color: .orange,
                            identifier: "mask-handle-feather", label: "Radial feather",
@@ -633,7 +659,7 @@ private struct MaskHandlesOverlay: View {
                 let normalizedY = (location.y - center.y) / max(1, extent.height * radial.radiusY)
                 let innerRadius = min(1, hypot(normalizedX, normalizedY))
                 updated.feather = Double((1 - innerRadius) * 100)
-                onChange(.radial(updated.validated))
+                change(updated.validated)
             } onEnd: { onEnd() }
         }
     }

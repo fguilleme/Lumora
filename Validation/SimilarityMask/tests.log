@@ -1,0 +1,112 @@
+warning: 'lumorasimilarityintegration': resource 'Localizable.strings' in target 'LumoraCore' has both localized and un-localized variants; the localized variants will never be chosen
+warning: 'lumorasimilarityintegration': resource 'Localizable.strings' in target 'LumoraCore' has both localized and un-localized variants; the localized variants will never be chosen
+warning: 'lumorasimilarityintegration': found 33 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/AutoCorrectionTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/BeautyEyesLipsResponseTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/BeautyMainIntegrationTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/BeautyTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/BeautyV2Tests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/CinematicGlowTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ColorGradingPresetTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ColorGradingTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ColorMixerTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/CreativeTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/CreativeVisibilityTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/CreativeXMPTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/CurveSamplingTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/DepthLensTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/DepthLightingTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/DetailTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/EditorTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/EffectsTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ExportTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/GeometryTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/HealingCheekDiagnosticTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/HealingTargetAreaTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/HighlightRecoveryTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/HistogramClippingOverlayTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/HistogramTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/InstanceMaskRasterizerTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/MagicMaskRasterizerTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ManualHealingTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/OpticsTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/PresetTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/RAWDecoderTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/ToneCurveTests.swift
+    /private/tmp/LumoraSimilarityIntegration/Validation/Tests/LumoraCoreTests/XMPVintageDiagnosisTests.swift
+warning: 'lumorasimilarityintegration': found 17 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /private/tmp/LumoraSimilarityIntegration/Lumora/DepthLensResources/DA2Small.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /private/tmp/LumoraSimilarityIntegration/Lumora/DepthLensResources/DA2Small.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /private/tmp/LumoraSimilarityIntegration/Lumora/DepthLensResources/DA2Small.mlpackage/Manifest.json
+    /private/tmp/LumoraSimilarityIntegration/Lumora/DepthLensResources/DepthAnythingV2-LICENSE.txt
+    /private/tmp/LumoraSimilarityIntegration/Lumora/DepthLensResources/ModelProvenance.txt
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMDecoder.mlpackage/Manifest.json
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /private/tmp/LumoraSimilarityIntegration/Lumora/Models/MobileSAMEncoder.mlpackage/Manifest.json
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGe-LICENSE.txt
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGeConversionProvenance.json
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGeNormals.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGeNormals.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGeNormals.mlpackage/Manifest.json
+    /private/tmp/LumoraSimilarityIntegration/Lumora/RelightingResources/MoGeProvenance.txt
+Building for debugging...
+Build complete! (0,38 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test skinMaskCalibratesFromFaceAndSelectsMatchingRegion() started.
+◇ Test subtractiveBrushPaintRemovesPartOfGeneratedSubject() started.
+◇ Test brushEraserRemovesPaintAndRoundTrips() started.
+◇ Test similaritySubtractionUsesSameMatteAndHistoryRestoresField() started.
+◇ Test subtractiveRadialGradientRemovesItsCenter() started.
+◇ Test redMaskOverlaySupportsBrushLinearAndGeneratedMasks() started.
+◇ Test redMaskOverlayUsesExactMatteAlphaAndFeathering() started.
+◇ Test subjectMinusFaceMinusBodyRadialKeepsOnlyRemainingRegion() started.
+◇ Test brushAndLinearMasksUseNormalizedCoordinates() started.
+◇ Test localExposureOnlyChangesMaskedRegionAndKeepsExtent() started.
+◇ Test skyMaskSelectsConnectedBlueUpperRegion() started.
+◇ Test radialMaskHasSoftCenterAndSupportsInversion() started.
+◇ Test brushStoresTheEffectiveSizeOfEachZoomedStroke() started.
+◇ Test similarityConnectedRegionRejectsSeparateIslands() started.
+◇ Test subtractiveLinearGradientRemovesOnlyItsBrightSide() started.
+◇ Test similaritySeedOutsideEllipseAndDiagonalGapDoNotLeak() started.
+◇ Test brushFlowIsCapturedPerStroke() started.
+◇ Test similarityPerceptualColorsAndInvalidInput() started.
+◇ Test layerManagementMigratesPersistsAndControlsRendering() started.
+◇ Test eyeMaskCreatesTwoSeparateFeatheredRegions() started.
+◇ Test masksMigrateValidateSerializeAndParticipateInHistory() started.
+◇ Test maskedLayerCarriesFullDevelopmentAndMigratesLegacyValues() started.
+◇ Test similaritySamplingPersistenceAndOrientation() started.
+◇ Test subtractComponentCutsARealHole() started.
+◇ Test similarityToleranceAndFeatherRemainIndependent() started.
+◇ Test similarityCannotPropagateOutsideInfluenceArea() started.
+✔ Test skinMaskCalibratesFromFaceAndSelectsMatchingRegion() passed after 0.086 seconds.
+✔ Test skyMaskSelectsConnectedBlueUpperRegion() passed after 0.086 seconds.
+✔ Test subtractiveRadialGradientRemovesItsCenter() passed after 0.086 seconds.
+✔ Test similarityConnectedRegionRejectsSeparateIslands() passed after 0.086 seconds.
+✔ Test subjectMinusFaceMinusBodyRadialKeepsOnlyRemainingRegion() passed after 0.086 seconds.
+✔ Test subtractiveBrushPaintRemovesPartOfGeneratedSubject() passed after 0.086 seconds.
+✔ Test similaritySeedOutsideEllipseAndDiagonalGapDoNotLeak() passed after 0.086 seconds.
+✔ Test localExposureOnlyChangesMaskedRegionAndKeepsExtent() passed after 0.086 seconds.
+✔ Test similarityPerceptualColorsAndInvalidInput() passed after 0.086 seconds.
+✔ Test brushEraserRemovesPaintAndRoundTrips() passed after 0.086 seconds.
+✔ Test redMaskOverlayUsesExactMatteAlphaAndFeathering() passed after 0.086 seconds.
+✔ Test similaritySubtractionUsesSameMatteAndHistoryRestoresField() passed after 0.086 seconds.
+✔ Test brushStoresTheEffectiveSizeOfEachZoomedStroke() passed after 0.086 seconds.
+✔ Test radialMaskHasSoftCenterAndSupportsInversion() passed after 0.086 seconds.
+✔ Test masksMigrateValidateSerializeAndParticipateInHistory() passed after 0.086 seconds.
+✔ Test similarityToleranceAndFeatherRemainIndependent() passed after 0.086 seconds.
+✔ Test similarityCannotPropagateOutsideInfluenceArea() passed after 0.086 seconds.
+✔ Test brushFlowIsCapturedPerStroke() passed after 0.086 seconds.
+✔ Test subtractiveLinearGradientRemovesOnlyItsBrightSide() passed after 0.089 seconds.
+✔ Test subtractComponentCutsARealHole() passed after 0.089 seconds.
+✔ Test brushAndLinearMasksUseNormalizedCoordinates() passed after 0.089 seconds.
+✔ Test eyeMaskCreatesTwoSeparateFeatheredRegions() passed after 0.090 seconds.
+✔ Test redMaskOverlaySupportsBrushLinearAndGeneratedMasks() passed after 0.099 seconds.
+✔ Test similaritySamplingPersistenceAndOrientation() passed after 0.099 seconds.
+✔ Test layerManagementMigratesPersistsAndControlsRendering() passed after 0.128 seconds.
+✔ Test maskedLayerCarriesFullDevelopmentAndMigratesLegacyValues() passed after 0.214 seconds.
+✔ Test run with 26 tests in 0 suites passed after 0.215 seconds.

@@ -173,6 +173,7 @@ private struct HelpItem: Identifiable {
         case "Name, opacity, and order": "list.bullet"
         case "Invert": "circle.lefthalf.filled.inverse"
         case "Gradients": "circle.lefthalf.filled"
+        case "Color selection": "eyedropper"
         case "Smart masks", "Magic Selection": "wand.and.stars"
         case "Add / Subtract": "plusminus"
         case "Include metadata in exports", "Keep metadata": "doc.text"
@@ -548,6 +549,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpSection("Create an area", [
                     HelpItem("Brush", "Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn."),
                     HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
+                    HelpItem("Color selection", "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components."),
                     HelpItem("Smart masks", "Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment."),
                     HelpItem("Magic Selection", "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay."),
                     HelpItem("Add / Subtract", "Combine several components for a more precise selection. Each can be selected, reordered, or removed."),

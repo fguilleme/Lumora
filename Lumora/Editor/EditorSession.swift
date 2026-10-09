@@ -11,6 +11,38 @@ final class EditorSession {
     private(set) var isImporting = false
     private(set) var isRendering = false
     private(set) var isGeneratingMask = false
+    var similaritySamplerID: UUID?
+    var similaritySampling: Bool {
+        guard let component = selectedMaskComponent, case .similarity(let mask) = component.shape else { return false }
+        return mask.distancePNG.isEmpty || similaritySamplerID == component.id
+    }
+    func toggleSimilaritySampling() {
+        finishInteraction()
+        similaritySamplerID = similaritySamplerID == selectedMaskComponentID ? nil : selectedMaskComponentID
+    }
+    func setSimilarityConnected(_ connected: Bool) {
+        finishInteraction()
+        guard let component = selectedMaskComponent, case .similarity(var mask) = component.shape,
+              mask.connected != connected else { return }
+        mask.connected = connected
+        setSelectedMaskShape(.similarity(mask))
+    }
+    func sampleSimilarity(_ point: MaskPoint) async {
+        finishInteraction()
+        guard !isGeneratingMask, let image = result?.image, let documentID = document?.id,
+              let component = selectedMaskComponent, case .similarity(let mask) = component.shape else { return }
+        isGeneratingMask = true
+        defer { isGeneratingMask = false }
+        do {
+            let sampled = try await Task.detached(priority: .userInitiated) {
+                try SimilarityMaskEngine.sample(point, image: image, mask: mask)
+            }.value
+            guard document?.id == documentID, selectedMaskComponent == component else { return }
+            finishInteraction()
+            setSelectedMaskShape(.similarity(sampled))
+            similaritySamplerID = nil
+        } catch { self.error = error.localizedDescription }
+    }
     private(set) var isAnalyzingGeometry = false
     private(set) var beautyFaceCount: Int?
     private(set) var isAnalyzingBeauty = false
@@ -1002,6 +1034,17 @@ final class EditorSession {
             default: break
             }
             shape = .radial(radial.validated)
+        case .similarity(var similarity):
+            switch parameter {
+            case .tolerance: similarity.tolerance = value
+            case .centerX: similarity.influence.center.x = value / 100
+            case .centerY: similarity.influence.center.y = value / 100
+            case .radiusX: similarity.influence.radiusX = value / 100
+            case .radiusY: similarity.influence.radiusY = value / 100
+            case .feather: similarity.influence.feather = value
+            default: break
+            }
+            shape = .similarity(similarity.validated)
         case .generated:
             return
         }

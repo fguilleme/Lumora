@@ -1431,3 +1431,13 @@
 "Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora." = "Detailed surfaces uses Microsoft's MoGe-2 ViT-S normal model, converted to Core ML by ebowwa. The bundled FP16 model runs locally. The MIT and DINOv2 Apache 2.0 license notices and conversion provenance are included with Lumora.";
 
 "MoGe-2 Small" = "MoGe-2 Small";
+
+"Color selection" = "Color selection";
+"Tolerance" = "Tolerance";
+"Sample color" = "Sample color";
+"Reference color" = "Reference color";
+"Propagation" = "Propagation";
+"Connected region" = "Connected region";
+"All similar pixels" = "All similar pixels";
+"Tap the photo to sample a color." = "Tap the photo to sample a color.";
+"Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components." = "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components.";

@@ -132,6 +132,8 @@ enum MaskRenderer {
             guard let output = gradient.outputImage else { throw PhotoError.renderFailed }
             let transformed = output.transformed(by: CGAffineTransform(scaleX: 1, y: scaleY))
             return transformed.cropped(to: extent)
+        case .similarity(let mask):
+            return try SimilarityMaskEngine.image(mask, extent: extent)
         case .generated(let generated):
             let value = generated.validated
             guard !value.pngData.isEmpty, let decoded = CIImage(data: value.pngData),

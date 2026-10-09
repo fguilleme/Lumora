@@ -143,6 +143,8 @@ struct EditorView: View {
                             showsMaskOverlay: panel == .masks && !isAdjustingSelectedMask,
                             maskOutlineOnly: !maskOverlayVisible,
                             allowsMaskEditing: panel == .masks,
+                            similaritySampling: panel == .masks && session.similaritySampling,
+                            onSimilaritySample: { point in Task { await session.sampleSimilarity(point) } },
                             brushMode: session.brushMode,
                             onBrushBegin: { session.beginBrushStroke(displayScale: $0) },
                             onBrushPoint: session.appendBrushPoint,
@@ -629,6 +631,9 @@ struct EditorView: View {
                       onMoveComponent: session.moveSelectedMaskComponent,
                       onDeleteComponent: session.deleteSelectedMaskComponent,
                       onBrushMode: { session.brushMode = $0 },
+                      similaritySampling: session.similaritySampling,
+                      onSimilaritySampling: session.toggleSimilaritySampling,
+                      onSimilarityConnected: session.setSimilarityConnected,
                       onCreate: session.createMask,
                       onAddComponent: session.addMaskComponent,
                       onGenerate: { kind, operation in
