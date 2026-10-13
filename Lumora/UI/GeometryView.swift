@@ -32,10 +32,11 @@ struct GeometryView: View {
                     }
                     .pickerStyle(.segmented)
                     .accessibilityIdentifier("geometry-mode")
-                    if isAnalyzing { ProgressView().controlSize(.small) }
                     toolButton("Reset", "arrow.counterclockwise", identifier: "geometry-reset",
                                expands: false, action: onResetAll)
                 }
+
+                if isAnalyzing { AnimatedLoadingMessage("Analyzing geometry…", compact: true) }
 
                 if mode == .crop {
                     HStack(spacing: 5) {

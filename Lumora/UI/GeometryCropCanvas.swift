@@ -54,7 +54,7 @@ struct GeometryCropCanvas: View {
                         Text(error).font(.caption).padding(12)
                             .background(.black.opacity(0.8), in: RoundedRectangle(cornerRadius: 12))
                     } else {
-                        ProgressView("Preparing crop…")
+                        AnimatedLoadingMessage("Preparing crop…")
                             .padding(12).background(.black.opacity(0.7), in: Capsule())
                     }
                 }

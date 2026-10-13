@@ -29,7 +29,7 @@ struct EXIFMetadataView: View {
                 ContentUnavailableView("No metadata", systemImage: "info.circle",
                                        description: Text("This image does not expose readable EXIF metadata."))
             } else {
-                ProgressView("Reading metadata…")
+                AnimatedLoadingMessage("Reading metadata…")
             }
         }
         .accessibilityIdentifier("exif-controls")

@@ -17,7 +17,7 @@ struct AutoCorrectionControls: View {
             .accessibilityIdentifier("auto-" + module.rawValue)
             .disabled(session.isAnalyzingAuto || session.selectedMaskID != nil)
             if session.isAnalyzingAuto {
-                ProgressView().controlSize(.small).accessibilityLabel("Analyzing photo")
+                AnimatedLoadingMessage("Analyzing photo", compact: true)
             }
             if session.coreImageAutoApplied {
                 Button {

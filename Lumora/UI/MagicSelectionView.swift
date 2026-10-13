@@ -222,8 +222,8 @@ struct MagicSelectionView: View {
                             .disabled(brushStrokes.isEmpty)
                     }
                     Spacer()
-                    if busy { ProgressView() }
-                    Text(status).font(.caption).foregroundStyle(.secondary)
+                    if busy { AnimatedLoadingMessage(status, compact: true) }
+                    else { Text(status).font(.caption).foregroundStyle(.secondary) }
                 }
                 Button {
                     beginBrushEditing()

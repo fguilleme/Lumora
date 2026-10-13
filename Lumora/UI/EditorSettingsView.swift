@@ -33,8 +33,8 @@ struct EditorSettingsView: View {
                           systemImage: session.iCloudSyncEnabled ? "icloud.fill" : "iphone")
                         .foregroundStyle(.secondary)
                     Spacer()
-                    if session.isChangingDocumentStorage { ProgressView().controlSize(.small) }
                 }
+                if session.isChangingDocumentStorage { AnimatedLoadingMessage("Moving library…", compact: true) }
             } header: { Text("Library") } footer: {
                 Text("The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices.")
             }

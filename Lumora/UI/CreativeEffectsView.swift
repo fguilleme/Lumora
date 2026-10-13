@@ -329,7 +329,7 @@ struct CreativeTileView: View {
                         Image(decorative: tile, scale: displayScale).interpolation(.none)
                     }
                 }
-                if loading { ProgressView("Native-resolution region…") }
+                if loading { AnimatedLoadingMessage("Native-resolution region…") }
                 if let error { Text(error).font(.caption) }
                 Text("100% · one photo pixel per screen pixel").font(.caption)
                 Slider(value: $x, in: 0...1, step: 0.1).accessibilityLabel("Horizontal position")

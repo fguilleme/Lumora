@@ -54,7 +54,7 @@ struct LibraryView: View {
         NavigationStack {
             Group {
                 if session.isLoadingLibrary {
-                    ProgressView("Loading library…")
+                    AnimatedLoadingMessage("Loading library…")
                 } else if session.libraryDocuments.isEmpty {
                     ContentUnavailableView("Empty library", systemImage: "photo.stack",
                                            description: Text("Import a photo to create a local edit."))

@@ -22,11 +22,7 @@ struct PresetsView: View {
                     Text("My presets").font(.headline)
                     Spacer()
                     Button { showingImporter = true } label: {
-                        if controller.isImporting {
-                            ProgressView().accessibilityLabel("Importing preset…")
-                        } else {
-                            Label("Import", systemImage: "square.and.arrow.down")
-                        }
+                        Label("Import", systemImage: "square.and.arrow.down")
                     }
                         .frame(minHeight: 44)
                         .contentShape(Rectangle())
@@ -43,7 +39,8 @@ struct PresetsView: View {
                         .foregroundStyle(.mint)
                         .accessibilityIdentifier("preset-import-success")
                 }
-                if controller.isLoading { ProgressView("Loading…") }
+                if controller.isImporting { AnimatedLoadingMessage("Importing preset…", compact: true) }
+                if controller.isLoading { AnimatedLoadingMessage("Loading…") }
                 else if controller.presets.isEmpty {
                     ContentUnavailableView("No presets", systemImage: "slider.horizontal.2.square",
                                            description: Text("Save the current settings, then apply them to other photos."))

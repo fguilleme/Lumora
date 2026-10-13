@@ -1457,3 +1457,8 @@
 "Crop photo" = "Cadrer la photo";
 "Pinch to crop. Drag to position the photo inside the frame." = "Pincez pour cadrer. Glissez pour déplacer la photo dans le cadre.";
 "Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats." = "Choisissez Instagram carré, Instagram portrait ou TikTok pour un format social. Pincez la photo pour cadrer et glissez-la dans le cadre fixe. La zone assombrie à l’extérieur du cadre est exclue de l’export. Classique, Photo et Paysage large conservent les formats photographiques habituels.";
+
+"Updating preview…" = "Mise à jour de l’aperçu…";
+"Analyzing geometry…" = "Analyse de la géométrie…";
+"Preparing correction…" = "Préparation de la correction…";
+"Moving library…" = "Déplacement de la bibliothèque…";

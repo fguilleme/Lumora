@@ -1451,3 +1451,8 @@
 "Crop photo" = "Crop photo";
 "Pinch to crop. Drag to position the photo inside the frame." = "Pinch to crop. Drag to position the photo inside the frame.";
 "Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats." = "Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats.";
+
+"Updating preview…" = "Updating preview…";
+"Analyzing geometry…" = "Analyzing geometry…";
+"Preparing correction…" = "Preparing correction…";
+"Moving library…" = "Moving library…";

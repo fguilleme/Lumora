@@ -52,15 +52,13 @@ struct MasksView: View {
                     HStack {
                         Text("Adjustment stack").font(.headline)
                         Spacer()
-                        if isGenerating {
-                            ProgressView().controlSize(.small).accessibilityLabel("Mask detection")
-                        }
                         newMaskMenu
                         if mask != nil {
                             Button(role: .destructive, action: onDelete) { Image(systemName: "trash") }
                                 .accessibilityLabel("Delete mask")
                         }
                     }
+                    if isGenerating { AnimatedLoadingMessage("Mask detection", compact: true) }
                     maskPicker
                     if mask == nil {
                         Label("This base layer covers the entire photo.", systemImage: "rectangle.fill")
@@ -221,7 +219,6 @@ struct MasksView: View {
         }
         .buttonStyle(.bordered)
         .disabled(isGenerating)
-        .overlay { if isGenerating { ProgressView().controlSize(.small) } }
     }
     private func componentPicker(_ mask: LocalMask) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {

@@ -198,6 +198,13 @@ struct EditorView: View {
                     .overlay {
                         if activeToolPanel == .curve { curveOverlay(result) }
                     }
+                    .overlay(alignment: .bottom) {
+                        if session.isRendering && !session.isImporting && !photoLoading {
+                            AnimatedLoadingMessage("Updating preview…", compact: true, delayMilliseconds: 500, inCapsule: true)
+                                .padding(.bottom, 12)
+                                .allowsHitTesting(false)
+                        }
+                    }
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
@@ -232,7 +239,7 @@ struct EditorView: View {
             if session.isImporting || photoLoading {
                 ZStack {
                     Color.black.opacity(0.6).ignoresSafeArea()
-                    ProgressView("Opening original…").padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
+                    AnimatedLoadingMessage("Opening original…").padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
                 }
             }
         }
@@ -420,7 +427,6 @@ struct EditorView: View {
                 .lineLimit(1).truncationMode(.middle)
             activeLayerMenu
             Spacer(minLength: 0)
-            if session.isRendering { ProgressView().controlSize(.mini) }
             Text("\(sourceFormat(result)) · \(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
         }
         .font(.caption2).foregroundStyle(.secondary)

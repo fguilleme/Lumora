@@ -32,10 +32,10 @@ struct BeautyView: View {
                 .controlSize(.small)
                 .dimsDuringAdjustment()
                 HStack(spacing: 8) {
-                    if isAnalyzing { ProgressView().controlSize(.mini) }
-                    Text(session.beautyAnalysisError != nil ? String(localized: "Face analysis unavailable") : faceCount == 0 ? String(localized: "No face detected") :
+                    if isAnalyzing { AnimatedLoadingMessage("Analyzing faces…", compact: true) }
+                    else { Text(session.beautyAnalysisError != nil ? String(localized: "Face analysis unavailable") : faceCount == 0 ? String(localized: "No face detected") :
                          faceCount == nil ? String(localized: "Analyzing faces…") :
-                         String(localized: "All Faces"))
+                         String(localized: "All Faces")) }
                     if let faceCount, faceCount > 0 { Text("(\(faceCount))") }
                     Spacer(minLength: 0)
                     Button("Reset Beauty", systemImage: "arrow.counterclockwise", action: onReset)

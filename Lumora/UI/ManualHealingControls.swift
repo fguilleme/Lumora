@@ -11,7 +11,7 @@ struct ManualHealingControls: View {
           .buttonStyle(.bordered).tint(session.healingActive ? .mint : .secondary)
           .accessibilityAddTraits(session.healingActive ? .isSelected : [])
           .accessibilityIdentifier("manual-healing-toggle")
-        if session.healingPreparing { ProgressView().controlSize(.small) }
+        if session.healingPreparing { AnimatedLoadingMessage("Preparing correction…", compact: true) }
         Spacer()
         if session.healingActive {
           Button("Done") { session.closeHealing() }.buttonStyle(.bordered)
