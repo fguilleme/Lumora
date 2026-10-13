@@ -13,6 +13,7 @@ struct EditorView: View {
     @State private var placingLightingSubject = true
     @State private var panel: Panel = .light
     @State private var controlsVisible = false
+    @State private var tabScrollEdges = TabScrollEdges()
     @State private var geometryMode = GeometryEditorMode.crop
     @State private var cropContextImage: CGImage?
     @State private var cropContextError: String?
@@ -48,8 +49,14 @@ struct EditorView: View {
     @AppStorage("export.includeMetadata") private var includeMetadataInExport = true
     @AppStorage("editor.tabOrder") private var tabOrder = ""
     @AppStorage("editor.hiddenTabs") private var hiddenTabs = ""
+    @AppStorage("editor.helpFirstApplied") private var helpFirstApplied = false
     @State private var showSettingsSheet = false
     private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
+
+    private struct TabScrollEdges: Equatable {
+        var hasPrevious = false
+        var hasNext = false
+    }
 
     private struct CropPreviewRequest: Equatable {
         let url: URL
@@ -302,6 +309,16 @@ struct EditorView: View {
         .onOpenURL { url in Task { await importSharedItem(at: url) } }
         .onChange(of: visiblePanels) { _, tabs in if !tabs.contains(panel) { selectPanel(tabs.first ?? .settings) } }
         .onAppear {
+            if !helpFirstApplied {
+                // Apply the new position once; subsequent user reordering stays available.
+                if !tabOrder.isEmpty {
+                    let order = [.help] + EditorTabPreferences.ordered(tabOrder).filter { $0 != .help }
+                    tabOrder = EditorTabPreferences.encode(order.map(\.rawValue))
+                }
+                let hidden = EditorTabPreferences.hidden(hiddenTabs).subtracting([Panel.help.rawValue])
+                hiddenTabs = EditorTabPreferences.encode(hidden.sorted())
+                helpFirstApplied = true
+            }
             if !visiblePanels.contains(panel) { panel = visiblePanels.first ?? .settings }
             if panel == .curve { curveEditMode = true }
             session.setMaskEditingPreview(activeToolPanel == .masks)
@@ -787,6 +804,20 @@ struct EditorView: View {
                 .padding(.leading, 12)
                 .padding(.trailing, 12 + trailingInset)
             }
+            .onScrollGeometryChange(for: TabScrollEdges.self) { geometry in
+                TabScrollEdges(hasPrevious: geometry.visibleRect.minX > 1,
+                               hasNext: geometry.visibleRect.maxX < geometry.contentSize.width - 1)
+            } action: { _, edges in
+                tabScrollEdges = edges
+            }
+            .overlay(alignment: .leading) {
+                if tabScrollEdges.hasPrevious { tabScrollHint(previous: true) }
+            }
+            .overlay(alignment: .trailing) {
+                if tabScrollEdges.hasNext {
+                    tabScrollHint(previous: false).padding(.trailing, trailingInset)
+                }
+            }
             .onChange(of: panel) { _, selected in
                 guard visiblePanels.contains(selected) else { return }
                 withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(selected, anchor: .center) }
@@ -794,6 +825,21 @@ struct EditorView: View {
         }
         .accessibilityIdentifier("tools-toolbar")
         .padding(.vertical, 2).background(.black.opacity(0.3))
+    }
+
+    private func tabScrollHint(previous: Bool) -> some View {
+        Image(systemName: previous ? "chevron.left" : "chevron.right")
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(.mint.opacity(0.85))
+            .frame(width: 28, height: 52)
+            .background {
+                LinearGradient(colors: [.black.opacity(0.95), .black.opacity(0)],
+                               startPoint: previous ? .leading : .trailing,
+                               endPoint: previous ? .trailing : .leading)
+            }
+            .flipsForRightToLeftLayoutDirection(true)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 
     private func tabButton(_ item: Panel) -> some View {
@@ -814,7 +860,8 @@ struct EditorView: View {
             }
                 .padding(.horizontal, 8)
                 .frame(minWidth: 52, minHeight: 52)
-                .background(selected ? Color.mint.opacity(0.09) : .clear, in: Capsule())
+                .background(selected ? Color.mint.opacity(0.09) : .clear,
+                            in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .contentShape(Rectangle())
         }
         .foregroundStyle(selected ? .mint : .secondary)
