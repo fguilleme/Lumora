@@ -12,6 +12,7 @@ struct EditorView: View {
     @State private var photoLoading = false
     @State private var placingLightingSubject = true
     @State private var panel: Panel = .light
+    @State private var controlsVisible = false
     @State private var maskOverlayVisible = true
     @State private var clippingPressed = false
     @State private var clippingOverlay: CGImage?
@@ -46,18 +47,22 @@ struct EditorView: View {
     @State private var showSettingsSheet = false
     private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
 
+    private var activeToolPanel: Panel? { controlsVisible ? panel : nil }
+    private var showsFullPage: Bool { controlsVisible && [.exif, .help, .settings].contains(panel) }
+
     init() {
         #if DEBUG
         if let option = CommandLine.arguments.firstIndex(of: "--app-store-panel"),
            CommandLine.arguments.indices.contains(option + 1),
            let panel = Panel(rawValue: CommandLine.arguments[option + 1]) {
             _panel = State(initialValue: panel)
+            _controlsVisible = State(initialValue: true)
         }
         #endif
     }
 
     private var activeDLCSettings: DarkenLightenCenterSettings? {
-        guard panel == .creative, !session.bypassCreative,
+        guard activeToolPanel == .creative, !session.bypassCreative,
               let effect = session.state.creative.effects.first(where: { $0.id == selectedCreativeEffectID }),
               effect.kind == .darkenLightenCenter, effect.enabled, effect.opacity > 0 else { return nil }
         return DarkenLightenCenterSettings(effect: effect)
@@ -69,7 +74,7 @@ struct EditorView: View {
                 GeometryReader { available in
                     let landscape = available.size.width > available.size.height
                     VStack(spacing: 0) {
-                        if panel == .exif || panel == .help || panel == .settings {
+                        if showsFullPage {
                             editorControls(result)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .background(.black)
@@ -80,7 +85,7 @@ struct EditorView: View {
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
                                               portraitControlsHeight: portraitControlContentHeight + (showsPhotoInformation ? 24 : 0),
-                                              overlayOnly: false) {
+                                              overlayOnly: !controlsVisible) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
                                 // Test-only accessibility counter: proves the photo overlay
@@ -90,15 +95,15 @@ struct EditorView: View {
                                 }
                             },
                             diagnosticGeneration: ProcessInfo.processInfo.arguments.contains("-ui-testing-landscape") ? session.generation : nil,
-                            curveSampling: panel == .curve && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
+                            curveSampling: activeToolPanel == .curve && curveEyedropper && session.selectedMaskID == nil && curveSamplingBuffer != nil,
                             curveSampleLocation: curveSample?.location,
                             onCurveSample: { location in
                                 if let value = curveSamplingBuffer?.sample(at: location) { curveSample = value }
                             },
-                            depthFocusActive: panel == .depthLens && session.state.depthLens?.enabled == true,
+                            depthFocusActive: activeToolPanel == .depthLens && session.state.depthLens?.enabled == true,
                             depthFocusPoint: CGPoint(x: session.state.depthLens?.focusX ?? 0.5, y: session.state.depthLens?.focusY ?? 0.5),
                             onDepthFocus: session.focusDepthLens,
-                            lightingSettings: panel == .lighting ? session.state.depthLighting : nil,
+                            lightingSettings: activeToolPanel == .lighting ? session.state.depthLighting : nil,
                             lightingSubjectMode: placingLightingSubject,
                             onLightingBegin: { session.beginInteraction(String(localized: "Lighting")) },
                             onLightingMove: { subject, point in
@@ -112,7 +117,7 @@ struct EditorView: View {
                                 }
                             },
                             onLightingEnd: session.finishInteraction,
-                            healingActive: panel == .beauty && session.healingActive,
+                            healingActive: activeToolPanel == .beauty && session.healingActive,
                             healingPaintZone: session.healingPaintZone,
                             onHealingPaint: session.paintHealing,
                             onHealingPaintEnd: session.endHealingStroke,
@@ -140,10 +145,10 @@ struct EditorView: View {
                             onDLCEnd: session.finishInteraction,
                             activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
-                            showsMaskOverlay: panel == .masks && !isAdjustingSelectedMask,
+                            showsMaskOverlay: activeToolPanel == .masks && !isAdjustingSelectedMask,
                             maskOutlineOnly: !maskOverlayVisible,
-                            allowsMaskEditing: panel == .masks,
-                            similaritySampling: panel == .masks && session.similaritySampling,
+                            allowsMaskEditing: activeToolPanel == .masks,
+                            similaritySampling: activeToolPanel == .masks && session.similaritySampling,
                             onSimilaritySample: { point in Task { await session.sampleSimilarity(point) } },
                             brushMode: session.brushMode,
                             onBrushBegin: { session.beginBrushStroke(displayScale: $0) },
@@ -152,8 +157,8 @@ struct EditorView: View {
                             onMaskTransformBegin: { session.beginInteraction("Transform component") },
                             onMaskShapeChange: session.setSelectedMaskShape,
                             onMaskTransformEnd: session.finishInteraction,
-                            showsGeometryGrid: panel == .geometry,
-                            geometrySettings: panel == .geometry ? session.state.geometry : nil,
+                            showsGeometryGrid: activeToolPanel == .geometry,
+                            geometrySettings: activeToolPanel == .geometry ? session.state.geometry : nil,
                             onGeometryBegin: session.beginInteraction,
                             onGeometryChange: session.setGeometry,
                             onGeometryEnd: session.finishInteraction)
@@ -171,15 +176,19 @@ struct EditorView: View {
                         }
                     }
                     .overlay {
-                        if panel == .curve { curveOverlay(result) }
+                        if activeToolPanel == .curve { curveOverlay(result) }
                     }
                 editorControlColumn(result, landscape: landscape)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("editor-controls-column")
+                    .opacity(controlsVisible ? 1 : 0)
+                    .allowsHitTesting(controlsVisible)
+                    .accessibilityHidden(!controlsVisible)
+                    .clipped()
                         }
                         .frame(maxHeight: .infinity)
                         }
-                        if landscape && panel != .exif && panel != .help && panel != .settings { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
+                        if landscape { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
@@ -252,17 +261,26 @@ struct EditorView: View {
         .onOpenURL { url in Task { await importSharedItem(at: url) } }
         .onChange(of: visiblePanels) { _, tabs in if !tabs.contains(panel) { selectPanel(tabs.first ?? .settings) } }
         .onAppear {
-            if !visiblePanels.contains(panel) { selectPanel(visiblePanels.first ?? .settings) }
+            if !visiblePanels.contains(panel) { panel = visiblePanels.first ?? .settings }
             if panel == .curve { curveEditMode = true }
-            session.setMaskEditingPreview(panel == .masks)
+            session.setMaskEditingPreview(activeToolPanel == .masks)
         }
         .onChange(of: panel) { _, newPanel in
             session.closeHealing()
-            session.setMaskEditingPreview(newPanel == .masks)
+            session.setMaskEditingPreview(controlsVisible && newPanel == .masks)
             if newPanel == .beauty { Task { await session.analyzeBeautyFaces() } }
             if newPanel == .curve { curveEditMode = true }
             else { curveEditMode = false; curveEyedropper = false
                 curveSelectedPoint = nil; curveSample = nil; curveSamplingBuffer = nil }
+        }
+        .onChange(of: controlsVisible) { _, visible in
+            session.setMaskEditingPreview(visible && panel == .masks)
+            if !visible {
+                focusedAdjustmentID = nil
+                curveEyedropper = false
+                session.finishInteraction()
+                session.closeHealing()
+            }
         }
         .onChange(of: session.document?.id) { _, _ in
             session.closeHealing()
@@ -392,10 +410,12 @@ struct EditorView: View {
             .accessibilityLabel("Switch controls side")
             .accessibilityValue(controlsSide == .leading ? "Leading" : "Trailing")
             .accessibilityIdentifier("controls-side-switch")
+            .opacity(showsFullPage ? 0 : 1)
+            .allowsHitTesting(!showsFullPage)
+            .accessibilityHidden(showsFullPage)
             .padding(.trailing, 6)
             .background(.black)
         }
-        .frame(height: 56)
         .frame(maxWidth: .infinity)
         .dimsDuringAdjustment()
     }
@@ -713,31 +733,9 @@ struct EditorView: View {
     private func toolBar(trailingInset: CGFloat = 0) -> some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     ForEach(visiblePanels, id: \.self) { item in
-                        Button { selectPanel(item) } label: {
-                            Label(item.title, systemImage: item.symbol)
-                                .font(.subheadline.weight(.medium)).frame(minHeight: 44)
-                                .padding(.horizontal, 8)
-                                .background(panel == item ? Color.mint.opacity(0.09) : .clear, in: Capsule())
-                        }.foregroundStyle(panel == item ? .mint : .secondary)
-                            .id(item)
-                            .accessibilityAddTraits(panel == item ? .isSelected : [])
-                            .accessibilityIdentifier("editor-tab-\(item.rawValue)")
-                            .contextMenu {
-                                Section("Open a tab") {
-                                    ForEach(visiblePanels, id: \.self) { candidate in
-                                        Button {
-                                            selectPanel(candidate)
-                                        } label: {
-                                            Label(candidate.title, systemImage: candidate.symbol)
-                                        }
-                                        .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
-                                    }
-                                }
-                                Divider()
-                                Button("Manage tabs…", systemImage: "list.bullet") { selectPanel(.settings) }
-                            }
+                        tabButton(item)
                     }
                 }
                 .padding(.leading, 12)
@@ -749,13 +747,53 @@ struct EditorView: View {
             }
         }
         .accessibilityIdentifier("tools-toolbar")
-        .padding(.vertical, 4).background(.black.opacity(0.3))
+        .padding(.vertical, 2).background(.black.opacity(0.3))
+    }
+
+    private func tabButton(_ item: Panel) -> some View {
+        let selected = controlsVisible && panel == item
+        return Button {
+            if selected {
+                controlsVisible = false
+            } else {
+                selectPanel(item)
+            }
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: item.symbol)
+                    .font(.system(size: 16, weight: .medium))
+                Text(item.title)
+                    .font(.caption2.weight(.medium))
+                    .fixedSize(horizontal: true, vertical: false)
+            }
+                .padding(.horizontal, 8)
+                .frame(minWidth: 52, minHeight: 52)
+                .background(selected ? Color.mint.opacity(0.09) : .clear, in: Capsule())
+                .contentShape(Rectangle())
+        }
+        .foregroundStyle(selected ? .mint : .secondary)
+        .id(item)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityIdentifier("editor-tab-\(item.rawValue)")
+        .contextMenu {
+            Section("Open a tab") {
+                ForEach(visiblePanels, id: \.self) { candidate in
+                    Button { selectPanel(candidate) } label: {
+                        Label(candidate.title, systemImage: candidate.symbol)
+                    }
+                    .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
+                }
+            }
+            Divider()
+            Button("Manage tabs…", systemImage: "list.bullet") { selectPanel(.settings) }
+        }
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil
         if item == .lighting || item == .depthLens || item == .optics || item == .geometry || item == .beauty || item == .exif { session.selectBaseLayer() }
         else { session.finishInteraction() }
         panel = item
+        controlsVisible = true
     }
     private var isAdjustingSelectedMask: Bool {
         guard session.selectedMaskID != nil, let id = focusedAdjustmentID else { return false }
