@@ -28,13 +28,13 @@ struct ToneCurveEditor: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            HStack(spacing: 6) {
-                Picker("Curve channel", selection: $channel) {
-                    ForEach(CurveChannel.allCases) { item in Text(item.title).tag(item) }
-                }
-                .pickerStyle(.segmented)
-                .onChange(of: channel) { _, _ in finishGesture(); selected = nil }
-                if !graphOnly {
+            if !graphOnly {
+                HStack(spacing: 6) {
+                    Picker("Curve channel", selection: $channel) {
+                        ForEach(CurveChannel.allCases) { item in Text(item.title).tag(item) }
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: channel) { _, _ in finishGesture(); selected = nil }
                     Button {
                         finishGesture()
                         editMode.toggle()
@@ -191,6 +191,7 @@ struct ToneCurveEditor: View {
         }
         .padding(.horizontal, graphOnly ? 8 : 16)
         .onDisappear { finishGesture() }
+        .onChange(of: channel) { _, _ in finishGesture(); selected = nil }
         .onChange(of: curves) { _, _ in
             selected = selected.flatMap { $0 < curve.points.count ? $0 : nil }
             onClearSample()
@@ -266,19 +267,53 @@ struct ToneCurveEditor: View {
         case .blue: bins = histogram.blue
         }
         let peak = max(1, bins.max() ?? 1)
-        var fill = Path(); fill.move(to: CGPoint(x: 0, y: size.height))
         var profile = Path()
         for index in bins.indices {
             let point = CGPoint(x: Double(index) / 255 * size.width,
                                 y: size.height * (1 - Double(bins[index]) / Double(peak)))
-            fill.addLine(to: point)
             if index == bins.startIndex { profile.move(to: point) }
             else { profile.addLine(to: point) }
         }
-        fill.addLine(to: CGPoint(x: size.width, y: size.height)); fill.closeSubpath()
-        context.fill(fill, with: .color(accent.opacity(dragging == nil ? 0.14 : 1)))
-        context.stroke(profile, with: .color(.black), lineWidth: 2.5)
-        context.stroke(profile, with: .color(accent), lineWidth: 1.25)
+        let opacity = dragging == nil ? 0.55 : 1.0
+        context.stroke(profile, with: .color(.black.opacity(opacity)), lineWidth: 2.5)
+        context.stroke(profile, with: .color(accent.opacity(opacity)), lineWidth: 1.25)
+    }
+}
+
+/// Channel buttons also toggle the graph when the active channel is tapped again.
+struct CurveChannelControls: View {
+    @Binding var channel: CurveChannel
+    @Binding var collapsed: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(CurveChannel.allCases) { item in
+                Button {
+                    if channel != item { onSelect() }
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        if channel == item { collapsed.toggle() }
+                        else { channel = item; collapsed = false }
+                    }
+                } label: {
+                    Text(item.title)
+                        .font(.subheadline.weight(.medium))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(channel == item ? Color.white.opacity(0.24) : .clear, in: Capsule())
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(channel == item ? .white : .secondary)
+                .accessibilityAddTraits(channel == item ? .isSelected : [])
+                .accessibilityIdentifier("curve-channel-\(item.rawValue)")
+            }
+        }
+        .padding(.horizontal, 2)
+        .background(.white.opacity(0.10), in: Capsule())
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("curve-channel-controls")
     }
 }
 
@@ -382,14 +417,14 @@ struct CurveOverlayCard: View {
     let onChange: (CurveChannel, ToneCurve) -> Void
     let onEnd: () -> Void
 
-    @State private var collapsed = false
+    @Binding var collapsed: Bool
     @State private var offset = CGSize(width: 10, height: 10)
     @State private var dragOrigin: CGSize?
 
     var body: some View {
         GeometryReader { geometry in
             let cardWidth = min(370, max(280, geometry.size.width - 20))
-            let expandedHeight = min(270, max(210, geometry.size.height - 20))
+            let expandedHeight = min(223, max(210, geometry.size.height - 20))
             let cardSize = CGSize(width: cardWidth, height: collapsed ? 52 : expandedHeight)
             VStack(spacing: 0) {
                 HStack(spacing: 8) {
@@ -399,8 +434,10 @@ struct CurveOverlayCard: View {
                         Spacer(minLength: 8)
                     }
                     .frame(maxWidth: .infinity, minHeight: 52)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("curve-card-drag-handle")
                     .contentShape(Rectangle())
-                    .gesture(DragGesture(minimumDistance: 3)
+                    .gesture(DragGesture(minimumDistance: 3, coordinateSpace: .named("curve-overlay-space"))
                         .onChanged { gesture in
                             if dragOrigin == nil { dragOrigin = offset }
                             let origin = dragOrigin ?? offset
@@ -441,7 +478,6 @@ struct CurveOverlayCard: View {
                                         onClearSample: onClearSample, onBegin: onBegin,
                                         onChange: onChange, onEnd: onEnd)
                     }
-                    .accessibilityIdentifier("curve-controls-scroll")
                     .frame(height: expandedHeight - 52, alignment: .top)
                     .background(.clear)
                     .clipped()
@@ -450,7 +486,7 @@ struct CurveOverlayCard: View {
             .frame(width: cardWidth, height: collapsed ? 52 : expandedHeight, alignment: .top)
             .background {
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(.black.opacity(0.40))
+                    .fill(.black.opacity(0.16))
             }
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .overlay(RoundedRectangle(cornerRadius: 15).stroke(.white.opacity(0.18), lineWidth: 0.7))
@@ -465,6 +501,7 @@ struct CurveOverlayCard: View {
                                  card: CGSize(width: cardWidth, height: collapsed ? 52 : expandedHeight))
             }
         }
+        .coordinateSpace(name: "curve-overlay-space")
     }
 
     private func clamped(_ proposed: CGSize, in bounds: CGSize, card: CGSize) -> CGSize {

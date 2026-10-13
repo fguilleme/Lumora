@@ -29,6 +29,7 @@ struct EditorView: View {
     @State private var focusedAdjustmentID: String?
     @State private var selectedCreativeEffectID: UUID?
     @State private var selectedEffectParameter = EffectAdjustment.cinematicGlow.rawValue
+    @State private var curveCollapsed = false
     @State private var curveChannel: CurveChannel = .rgb
     @State private var curveEditMode = false
     @State private var curveEyedropper = false
@@ -185,7 +186,7 @@ struct EditorView: View {
                     .frame(maxHeight: .infinity)
                     .background(.black)
                     .overlay {
-                        if showHistogram { HistogramView(histogram: result.histogram,
+                        if showHistogram && panel != .curve { HistogramView(histogram: result.histogram,
                                       imageSize: CGSize(width: result.image.width, height: result.image.height),
                                       diagnosticActivationCount: ProcessInfo.processInfo.arguments.contains("-ui-testing-clipping") ? clippingActivationCount : nil,
                                       onClippingPressChanged: { active in
@@ -392,7 +393,7 @@ struct EditorView: View {
         case .effects: 112
         case .light, .color: 154
         case .detail: 118
-        case .curve: 224
+        case .curve: 272
         case .geometry: 220
         default: 252
         }
@@ -606,6 +607,11 @@ struct EditorView: View {
         switch panel {
         case .curve:
             VStack(spacing: 4) {
+                CurveChannelControls(channel: $curveChannel, collapsed: $curveCollapsed) {
+                    session.finishInteraction()
+                    curveSelectedPoint = nil
+                    curveSample = nil
+                }
                 AutoCorrectionControls(session: session, module: .curves)
                 CurvePointControls(curves: session.activeState.curves,
                                    channel: curveChannel,
@@ -755,7 +761,8 @@ struct EditorView: View {
                          eyedropperAvailable: session.selectedMaskID == nil,
                          onClearSample: { curveSample = nil },
                          onBegin: { session.beginInteraction($0) },
-                         onChange: session.setCurve, onEnd: session.finishInteraction)
+                         onChange: session.setCurve, onEnd: session.finishInteraction,
+                         collapsed: $curveCollapsed)
         .task(id: curveEyedropper ? session.generation : -1) {
             guard curveEyedropper, session.selectedMaskID == nil else {
                 curveSamplingBuffer = nil; curveSample = nil; return
