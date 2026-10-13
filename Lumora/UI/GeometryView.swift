@@ -1,12 +1,14 @@
 import SwiftUI
 
+enum GeometryEditorMode: String, CaseIterable, Identifiable {
+    case crop = "Crop"
+    case adjustments = "Adjustments"
+    var id: Self { self }
+    var title: LocalizedStringKey { LocalizedStringKey(rawValue) }
+}
+
 struct GeometryView: View {
-    private enum Mode: String, CaseIterable, Identifiable {
-        case crop = "Crop"
-        case adjustments = "Adjustments"
-        var id: Self { self }
-        var title: LocalizedStringKey { LocalizedStringKey(rawValue) }
-    }
+    @Binding var mode: GeometryEditorMode
     let settings: GeometrySettings
     let onRotate: (Bool) -> Void
     let onFlip: (Bool) -> Void
@@ -20,14 +22,13 @@ struct GeometryView: View {
     let onResetAdjustment: (GeometryAdjustment) -> Void
     let onResetAll: () -> Void
     @State private var selectedID = GeometryAdjustment.straighten.rawValue
-    @State private var mode = Mode.crop
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Picker("Geometry mode", selection: $mode) {
-                        ForEach(Mode.allCases) { item in Text(item.title).tag(item) }
+                        ForEach(GeometryEditorMode.allCases) { item in Text(item.title).tag(item) }
                     }
                     .pickerStyle(.segmented)
                     .accessibilityIdentifier("geometry-mode")
@@ -43,25 +44,26 @@ struct GeometryView: View {
                         toolButton("Flip horizontally", "arrow.left.and.right") { onFlip(true) }
                         toolButton("Flip vertically", "arrow.up.and.down") { onFlip(false) }
                     }
-                    HStack(spacing: 6) {
-                        ForEach(CropAspect.allCases) { aspect in
-                            Button { onAspect(aspect) } label: {
-                                if aspect == .original {
-                                    Image(systemName: "photo")
-                                        .font(.system(size: 17, weight: .medium))
-                                        .frame(minHeight: 22)
-                                } else {
-                                    Text(aspect.title).lineLimit(1)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(CropAspect.allCases) { aspect in
+                                Button { onAspect(aspect) } label: {
+                                    Text(aspect.title)
+                                        .font(.caption.weight(.medium))
+                                        .fixedSize()
+                                        .padding(.horizontal, 12)
+                                        .frame(minHeight: 44)
+                                        .background(settings.aspect == aspect ? Color.mint.opacity(0.17) : Color.white.opacity(0.06), in: Capsule())
                                 }
+                                .buttonStyle(.plain)
+                                .foregroundStyle(settings.aspect == aspect ? .mint : .secondary)
+                                .accessibilityLabel(aspect.title)
+                                .accessibilityIdentifier("geometry-aspect-\(aspect.rawValue)")
+                                .accessibilityAddTraits(settings.aspect == aspect ? .isSelected : [])
                             }
-                            .buttonStyle(.bordered)
-                            .tint(settings.aspect == aspect ? .mint : .secondary)
-                            .frame(maxWidth: .infinity)
-                            .accessibilityLabel(aspect.title)
-                            .accessibilityIdentifier("geometry-aspect-\(aspect.rawValue)")
-                            .accessibilityAddTraits(settings.aspect == aspect ? .isSelected : [])
                         }
                     }
+                    .accessibilityIdentifier("geometry-formats")
                 } else {
                     HStack(spacing: 5) {
                         autoToolButton("Auto horizon", "level",

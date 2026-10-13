@@ -739,6 +739,12 @@ final class EditorSession {
         requestRender(interacting ? .interactive : .high)
         if !interacting { history.commit(state); persist() }
     }
+    /// A UI-only context image reveals what lies outside the crop. The saved
+    /// state, ordinary preview and export continue to use the actual crop.
+    func cropContextPreview(url: URL, state: EditState, bypassCreative: Bool) async throws -> CGImage {
+        try await engine.render(url: url, state: state, quality: .high, bypassCreative: bypassCreative).image
+    }
+
     func setCropAspect(_ aspect: CropAspect) {
         finishInteraction()
         history.begin("Format \(aspect.title)", state: state)

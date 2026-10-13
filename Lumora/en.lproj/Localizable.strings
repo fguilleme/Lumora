@@ -1441,3 +1441,13 @@
 "All similar pixels" = "All similar pixels";
 "Tap the photo to sample a color." = "Tap the photo to sample a color.";
 "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components." = "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components.";
+
+"Instagram square" = "Instagram square";
+"Instagram portrait" = "Instagram portrait";
+"TikTok" = "TikTok";
+"Classic" = "Classic";
+"Wide landscape" = "Wide landscape";
+"Preparing crop…" = "Preparing crop…";
+"Crop photo" = "Crop photo";
+"Pinch to crop. Drag to position the photo inside the frame." = "Pinch to crop. Drag to position the photo inside the frame.";
+"Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats." = "Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats.";

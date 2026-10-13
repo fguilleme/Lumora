@@ -3,22 +3,26 @@ import CoreGraphics
 import CoreImage
 
 enum CropAspect: String, CaseIterable, Codable, Sendable, Identifiable {
-    case original, square, fourThree, threeTwo, sixteenNine
+    case original, square, fourFive, nineSixteen, fourThree, threeTwo, sixteenNine
 
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .original: "Original"
-        case .square: "1:1"
-        case .fourThree: "4:3"
-        case .threeTwo: "3:2"
-        case .sixteenNine: "16:9"
+        case .original: String(localized: "Original")
+        case .square: String(localized: "Instagram square")
+        case .fourFive: String(localized: "Instagram portrait")
+        case .nineSixteen: String(localized: "TikTok")
+        case .fourThree: String(localized: "Classic")
+        case .threeTwo: String(localized: "Photo")
+        case .sixteenNine: String(localized: "Wide landscape")
         }
     }
     var ratio: Double? {
         switch self {
         case .original: nil
         case .square: 1
+        case .fourFive: 4 / 5
+        case .nineSixteen: 9 / 16
         case .fourThree: 4 / 3
         case .threeTwo: 3 / 2
         case .sixteenNine: 16 / 9
@@ -67,6 +71,14 @@ struct GeometrySettings: Codable, Sendable, Equatable {
         perspectiveOffsetX = try values.decodeIfPresent(Double.self, forKey: .perspectiveOffsetX) ?? 0
         perspectiveOffsetY = try values.decodeIfPresent(Double.self, forKey: .perspectiveOffsetY) ?? 0
         self = validated
+    }
+
+    /// Display context for crop editing; never saved as the document's geometry.
+    var withoutCrop: Self {
+        var value = self
+        value.aspect = .original
+        value.cropZoom = 0; value.cropX = 0; value.cropY = 0
+        return value
     }
 
     var validated: Self {

@@ -534,7 +534,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Auto perspective", "Suggests a geometric correction, particularly for converging lines. You can undo or refine the result manually."),
                     HelpItem("Vertical and horizontal", "Straighten convergence in either direction. Watch the edges and subject shape after a strong correction."),
                     HelpItem("Aspect, scale, and offsets", "Refine proportions and position after perspective correction to recover a useful frame."),
-                    HelpItem("Format", "Choose a crop aspect ratio. Crop changes zoom; Horizontal and Vertical position move the visible window across the photo.")
+                    HelpItem("Format", "Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats.")
                 ])
             ]
         case .masks:

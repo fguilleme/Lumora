@@ -1,0 +1,37 @@
+Building for debugging...
+[Planning deferred tasks]
+[27 / 50]
+[28 / 51] LumoraCore
+[38 / 96]
+[40 / 96]
+[45 / 96]
+[47 / 96]
+[51 / 96]
+[54 / 96]
+[59 / 96]
+[63 / 96]
+[64 / 96]
+[68 / 96]
+[70 / 96]
+[73 / 96] LumoraCore
+[81 / 96] LumoraCore
+[86 / 97] LumoraCoreTests-product
+[87 / 104]
+[90 / 104]
+[93 / 104] LumoraCoreTests-product
+[98 / 104] LumoraCoreTests-product
+[100 / 104] LumoraCoreTests-product
+Build complete! (8,05 secs)
+Test Suite 'All tests' started at 2026-10-13 18:51:14.005.
+Test Suite 'All tests' passed at 2026-10-13 18:51:14.006.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test cropGesturesFollowTheFingerKeepCoverageAndClampZoom() started.
+◇ Test socialFormatsMatchRendererAndSurviveSerialization() started.
+◇ Test cropGesturesPreserveFirstContactAndRejectInvalidInput() started.
+✔ Test cropGesturesPreserveFirstContactAndRejectInvalidInput() passed after 0.001 seconds.
+✔ Test cropGesturesFollowTheFingerKeepCoverageAndClampZoom() passed after 0.001 seconds.
+✔ Test socialFormatsMatchRendererAndSurviveSerialization() passed after 0.004 seconds.
+✔ Test run with 3 tests in 0 suites passed after 0.004 seconds.

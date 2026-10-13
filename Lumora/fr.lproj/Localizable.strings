@@ -1447,3 +1447,13 @@
 "All similar pixels" = "Tous les pixels similaires";
 "Tap the photo to sample a color." = "Touchez la photo pour prélever une couleur.";
 "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components." = "Prélevez une couleur sur la photo, puis redimensionnez l’ellipse pour limiter la zone d’influence. Tolérance règle l’écart de couleur accepté ; Contour progressif adoucit le bord. Région reliée sélectionne uniquement la zone connectée au point prélevé, sans sortir de l’ellipse. Tous les pixels similaires inclut les zones séparées de couleur proche dans l’ellipse. Déplacer l’ellipse conserve la couleur de référence ; Prélever une couleur permet d’en choisir une autre. Ajouter et Soustraire combinent cette sélection avec les autres composants du masque.";
+
+"Instagram square" = "Instagram carré";
+"Instagram portrait" = "Instagram portrait";
+"TikTok" = "TikTok";
+"Classic" = "Classique";
+"Wide landscape" = "Paysage large";
+"Preparing crop…" = "Préparation du cadrage…";
+"Crop photo" = "Cadrer la photo";
+"Pinch to crop. Drag to position the photo inside the frame." = "Pincez pour cadrer. Glissez pour déplacer la photo dans le cadre.";
+"Choose Instagram square, Instagram portrait, or TikTok for a social format. Pinch the photo to crop and drag it inside the fixed frame. The shaded area outside the frame is excluded from the export. Classic, Photo, and Wide landscape keep the usual photographic formats." = "Choisissez Instagram carré, Instagram portrait ou TikTok pour un format social. Pincez la photo pour cadrer et glissez-la dans le cadre fixe. La zone assombrie à l’extérieur du cadre est exclue de l’export. Classique, Photo et Paysage large conservent les formats photographiques habituels.";

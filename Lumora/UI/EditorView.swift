@@ -13,6 +13,9 @@ struct EditorView: View {
     @State private var placingLightingSubject = true
     @State private var panel: Panel = .light
     @State private var controlsVisible = false
+    @State private var geometryMode = GeometryEditorMode.crop
+    @State private var cropContextImage: CGImage?
+    @State private var cropContextError: String?
     @State private var maskOverlayVisible = true
     @State private var clippingPressed = false
     @State private var clippingOverlay: CGImage?
@@ -46,6 +49,18 @@ struct EditorView: View {
     @AppStorage("editor.hiddenTabs") private var hiddenTabs = ""
     @State private var showSettingsSheet = false
     private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
+
+    private struct CropPreviewRequest: Equatable {
+        let url: URL
+        let state: EditState
+        let bypassCreative: Bool
+    }
+    private var cropPreviewRequest: CropPreviewRequest? {
+        guard activeToolPanel == .geometry, geometryMode == .crop, let url = session.originalURL else { return nil }
+        var state = session.state
+        state.geometry = state.geometry.withoutCrop
+        return CropPreviewRequest(url: url, state: state, bypassCreative: session.bypassCreative)
+    }
 
     private var activeToolPanel: Panel? { controlsVisible ? panel : nil }
     private var showsFullPage: Bool { controlsVisible && [.exif, .help, .settings].contains(panel) }
@@ -159,6 +174,10 @@ struct EditorView: View {
                             onMaskTransformEnd: session.finishInteraction,
                             showsGeometryGrid: activeToolPanel == .geometry,
                             geometrySettings: activeToolPanel == .geometry ? session.state.geometry : nil,
+                            geometryCropActive: activeToolPanel == .geometry && geometryMode == .crop,
+                            cropContextImage: cropContextImage,
+                            cropContextError: cropContextError,
+                            geometryPreviewPending: session.isRendering,
                             onGeometryBegin: session.beginInteraction,
                             onGeometryChange: session.setGeometry,
                             onGeometryEnd: session.finishInteraction)
@@ -228,6 +247,20 @@ struct EditorView: View {
             }
         }
         .photosPicker(isPresented: $showPhotos, selection: $selection, matching: .images, preferredItemEncoding: .current)
+        .task(id: cropPreviewRequest) {
+            cropContextImage = nil; cropContextError = nil
+            guard let request = cropPreviewRequest else { return }
+            do {
+                let image = try await session.cropContextPreview(url: request.url, state: request.state,
+                                                                bypassCreative: request.bypassCreative)
+                try Task.checkCancellation()
+                cropContextImage = image
+            } catch is CancellationError {
+            } catch {
+                guard !Task.isCancelled else { return }
+                cropContextError = error.localizedDescription
+            }
+        }
         .task { await session.restore() }
         .task { await presetController.load() }
         .task(id: selection) {
@@ -626,7 +659,7 @@ struct EditorView: View {
                        onEnd: session.finishInteraction,
                        onReset: session.resetOptics)
         case .geometry:
-            GeometryView(settings: session.state.geometry,
+            GeometryView(mode: $geometryMode, settings: session.state.geometry,
                          onRotate: session.rotateGeometry,
                          onFlip: session.toggleGeometryFlip,
                          onAspect: session.setCropAspect,

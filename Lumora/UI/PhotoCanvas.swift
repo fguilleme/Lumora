@@ -52,6 +52,10 @@ struct PhotoCanvas: View {
     let onMaskTransformEnd: () -> Void
     let showsGeometryGrid: Bool
     let geometrySettings: GeometrySettings?
+    var geometryCropActive = false
+    var cropContextImage: CGImage?
+    var cropContextError: String?
+    var geometryPreviewPending = false
     let onGeometryBegin: (String) -> Void
     let onGeometryChange: (GeometryAdjustment, Double) -> Void
     let onGeometryEnd: () -> Void
@@ -92,6 +96,17 @@ struct PhotoCanvas: View {
     }
 
     var body: some View {
+        if geometryCropActive, let settings = geometrySettings {
+            GeometryCropCanvas(image: result.image, contextImage: cropContextImage,
+                               error: cropContextError, settings: settings, isRendering: geometryPreviewPending,
+                               onBegin: onGeometryBegin, onChange: onGeometryChange, onEnd: onGeometryEnd)
+                .accessibilityIdentifier("photo-canvas")
+        } else {
+            standardCanvas
+        }
+    }
+
+    private var standardCanvas: some View {
         GeometryReader { geometry in
             let image = showingOriginal || pressing ? result.original : result.image
             let displayScale = min(6, max(1, zoom * magnification))
@@ -443,25 +458,6 @@ private struct GeometryHandlesOverlay: View {
                                   identifier: "geometry-handle-perspective-bottom-right")
                 perspectiveHandle(.bottomLeft, position: corners.bottomLeft, extent: extent,
                                   identifier: "geometry-handle-perspective-bottom-left")
-
-                MaskDragHandle(position: cropPosition(in: extent), color: .white,
-                               identifier: "geometry-handle-crop-position",
-                               label: "Crop position", coordinateSpace: coordinateSpace,
-                               onBegin: { onBegin("Crop position") }) { location in
-                    let point = normalized(location, in: extent)
-                    let crop = GeometryDirectManipulation.cropPosition(normalizedPoint: point)
-                    onChange(.cropX, crop.x)
-                    onChange(.cropY, crop.y)
-                } onEnd: { onEnd() }
-
-                MaskDragHandle(position: cropZoomPosition(in: extent), color: .cyan,
-                               identifier: "geometry-handle-crop-zoom",
-                               label: "Crop zoom", coordinateSpace: coordinateSpace,
-                               onBegin: { onBegin("Crop zoom") }) { location in
-                    let point = normalized(location, in: extent)
-                    onChange(.cropZoom,
-                             GeometryDirectManipulation.cropZoom(normalizedY: Double(point.y)))
-                } onEnd: { onEnd() }
             }
         }
         .coordinateSpace(name: coordinateSpace)
@@ -492,16 +488,6 @@ private struct GeometryHandlesOverlay: View {
             CGPoint(x: extent.maxX - bottomInset, y: extent.maxY - rightInset),
             CGPoint(x: extent.minX + bottomInset, y: extent.maxY - leftInset)
         )
-    }
-
-    private func cropPosition(in extent: CGRect) -> CGPoint {
-        CGPoint(x: extent.minX + extent.width * CGFloat(0.5 + settings.cropX / 200),
-                y: extent.minY + extent.height * CGFloat(0.5 - settings.cropY / 200))
-    }
-
-    private func cropZoomPosition(in extent: CGRect) -> CGPoint {
-        CGPoint(x: extent.midX,
-                y: extent.maxY - extent.height * CGFloat(settings.cropZoom / 100 * 0.35))
     }
 
     private func normalized(_ point: CGPoint, in extent: CGRect) -> CGPoint {
