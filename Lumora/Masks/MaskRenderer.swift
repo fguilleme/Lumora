@@ -18,24 +18,51 @@ enum MaskRenderer {
         return image
     }
 
-    static func makeMask(_ mask: LocalMask, extent: CGRect) throws -> CIImage {
+    static func makeMask(_ mask: LocalMask, extent: CGRect, geometry: MaskRenderGeometry? = nil) throws -> CIImage {
         var result = CIImage(color: .black).cropped(to: extent)
         for component in mask.components {
+            let map = geometry?.mapping(component)
+            let referenceExtent: CGRect
+            if let map, !map.unchanged {
+                // Match the render's pixel density while preserving the creation aspect.
+                let scale = extent.width / map.current.outputSize.width
+                referenceExtent = CGRect(origin: .zero, size: CGSize(
+                    width: map.reference.outputSize.width * scale,
+                    height: map.reference.outputSize.height * scale))
+            } else { referenceExtent = extent }
+            func projected(_ image: CIImage) throws -> CIImage {
+                try map?.warp(image, to: extent) ?? image
+            }
             // An additive brush eraser edits the accumulated mask, including preceding
             // Vision and gradient components. A subtractive brush still uses its own
             // erased paint as the shape to subtract.
             if case .brush(let rawBrush) = component.shape, component.operation == .add {
                 let brush = rawBrush.validated
                 let strength = brush.opacity / 100 * brush.flow / 100
-                let painted = try brushImage(brush, extent: extent, includeErasing: false)
+                let painted = try projected(brushImage(brush, extent: referenceExtent, includeErasing: false))
                 result = try maximum(painted, result, extent: extent)
-                result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
+                if map == nil || map?.unchanged == true {
+                    result = try compositeBrushStrokes(brush.eraseStrokes, onto: result, erasing: true,
+                        sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
+                        feathers: brush.eraseStrokeFeathers, fallbackFeather: brush.feather,
+                        strengths: brush.eraseStrokeStrengths, fallbackStrength: strength, extent: extent)
+                    continue
+                }
+                // Project erase coverage separately so it still edits preceding components.
+                let transmission = try compositeBrushStrokes(brush.eraseStrokes,
+                    onto: CIImage(color: .white).cropped(to: referenceExtent), erasing: true,
                     sizes: brush.eraseStrokeSizes, fallbackSize: brush.size,
                     feathers: brush.eraseStrokeFeathers, fallbackFeather: brush.feather,
-                    strengths: brush.eraseStrokeStrengths, fallbackStrength: strength, extent: extent)
+                    strengths: brush.eraseStrokeStrengths, fallbackStrength: strength, extent: referenceExtent)
+                let coverage = try projected(invertedMatte(transmission, extent: referenceExtent))
+                let multiply = CIFilter.multiplyCompositing()
+                multiply.inputImage = try invertedMatte(coverage, extent: extent)
+                multiply.backgroundImage = result
+                guard let output = multiply.outputImage else { throw PhotoError.renderFailed }
+                result = output.cropped(to: extent)
                 continue
             }
-            let shape = try shapeImage(component.shape, extent: extent)
+            let shape = try projected(shapeImage(component.shape, extent: referenceExtent))
             if component.operation == .add {
                 result = try maximum(shape, result, extent: extent)
             } else {
@@ -87,8 +114,9 @@ enum MaskRenderer {
     /// Produces the editor visualization from the exact composed matte. The matte luminance
     /// becomes red alpha, so brush softness, gradient feathering, subtraction and inversion
     /// are represented exactly as they affect the image.
-    static func makeRedOverlay(_ mask: LocalMask, extent: CGRect, opacity: CGFloat = 0.55) throws -> CIImage {
-        let matte = try makeMask(mask, extent: extent)
+    static func makeRedOverlay(_ mask: LocalMask, extent: CGRect, opacity: CGFloat = 0.55,
+                               geometry: MaskRenderGeometry? = nil) throws -> CIImage {
+        let matte = try makeMask(mask, extent: extent, geometry: geometry)
         let matrix = CIFilter.colorMatrix()
         matrix.inputImage = matte
         matrix.rVector = CIVector(x: 0, y: 0, z: 0, w: 0)

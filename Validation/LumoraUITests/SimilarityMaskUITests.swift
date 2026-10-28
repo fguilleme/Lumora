@@ -40,8 +40,11 @@ final class SimilarityMaskUITests: XCTestCase {
         let field = app.textFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         field.tap(); field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 8) + "40")
-        app.buttons["adjustment-entry-apply"].firstMatch.tap()
-        XCTAssertTrue(tolerance.value as? String == "40")
+        let apply = app.alerts.buttons["adjustment-entry-apply"].firstMatch
+        XCTAssertTrue(apply.waitForExistence(timeout: 5))
+        apply.tap()
+        expectation(for: NSPredicate { _, _ in tolerance.value as? String == "40" }, evaluatedWith: tolerance)
+        waitForExpectations(timeout: 5)
         capture("01-region-reliee", app)
         app.buttons["Tous les pixels similaires"].tap()
         capture("02-tous-les-pixels", app)

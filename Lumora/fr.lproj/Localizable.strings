@@ -1462,3 +1462,16 @@
 "Analyzing geometry…" = "Analyse de la géométrie…";
 "Preparing correction…" = "Préparation de la correction…";
 "Moving library…" = "Déplacement de la bibliothèque…";
+
+/* Detail, adjustment indicators and persistent mask summaries */
+"Blur" = "Flou";
+"Noise L" = "Bruit L";
+"Noise C" = "Bruit C";
+"No adjustments" = "Aucun réglage";
+"Adjustments applied" = "Réglages appliqués";
+"Color Grading" = "Coloration";
+"Softens the photo or the selected mask. Zero leaves the image unchanged." = "Adoucit la photo ou le masque sélectionné. Zéro conserve l’image inchangée.";
+
+/* Gradient guides while making local adjustments */
+"Gradient controls" = "Poignées des dégradés";
+"While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks." = "Pendant le réglage d’un masque radial ou linéaire dans Lumière, Couleur, Courbes, Colorimétrie, Effets ou Détail, ses poignées apparaissent brièvement sans le voile rouge. Touchez la photo pour les réafficher, puis déplacez une poignée pour modifier le masque. Elles restent visibles pendant le geste, puis s’effacent après quelques secondes. Les autres types de masque gardent leurs contrôles dans Masques.";

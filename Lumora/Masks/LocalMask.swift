@@ -228,8 +228,12 @@ struct MaskComponent: Codable, Sendable, Equatable, Identifiable {
     var id = UUID()
     var operation = MaskOperation.add
     var shape: MaskShape
+    /// The photo geometry in which this component was drawn or detected.
+    /// Missing on legacy sidecars; the session anchors those before a geometry edit.
+    var geometry: GeometrySettings? = nil
     var validated: Self {
         var value = self
+        value.geometry = geometry?.validated
         switch shape {
         case .brush(let brush): value.shape = .brush(brush.validated)
         case .linear(let linear): value.shape = .linear(linear.validated)

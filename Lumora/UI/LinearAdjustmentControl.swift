@@ -11,6 +11,7 @@ struct LinearAdjustmentParameter: Identifiable, Equatable {
     var unit: String = ""
     let resetValue: Double
     var isEnabled: Bool = true
+    var group: String? = nil
 
     var formattedValue: String {
         value.formatted(.number.precision(.fractionLength(precision))) + unit
@@ -61,8 +62,21 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
-                            ForEach(parameters) { parameter in
-                                parameterButton(parameter).id(parameter.id)
+                            ForEach(parameterGroups.indices, id: \.self) { index in
+                                let group = parameterGroups[index]
+                                HStack(spacing: 6) {
+                                    ForEach(group) { parameter in
+                                        parameterButton(parameter).id(parameter.id)
+                                    }
+                                }
+                                .padding(group.first?.group == nil ? 0 : 4)
+                                .overlay {
+                                    if group.first?.group != nil {
+                                        RoundedRectangle(cornerRadius: 13)
+                                            .stroke(Color.secondary.opacity(0.45), lineWidth: 0.7)
+                                            .allowsHitTesting(false)
+                                    }
+                                }
                             }
                             accessory()
                         }
@@ -71,6 +85,11 @@ struct LinearAdjustmentControl<Accessory: View>: View {
                     .accessibilityIdentifier("adjustment-parameters")
                     .onChange(of: selectedID) { _, id in
                         withAnimation(.easeOut(duration: 0.18)) { proxy.scrollTo(id, anchor: .center) }
+                    }
+                    .onAppear {
+                        #if DEBUG
+                        if CommandLine.arguments.contains("--app-store-1.3") { proxy.scrollTo(selectedID, anchor: .center) }
+                        #endif
                     }
                 }
             }
@@ -170,6 +189,16 @@ struct LinearAdjustmentControl<Accessory: View>: View {
         .accessibilityValue(parameter.formattedValue)
         .accessibilityAddTraits(active ? .isSelected : [])
         .accessibilityIdentifier("parameter-\(parameter.id)")
+    }
+
+    private var parameterGroups: [[LinearAdjustmentParameter]] {
+        var groups: [[LinearAdjustmentParameter]] = []
+        for parameter in parameters {
+            if let last = groups.last, last.first?.group == parameter.group {
+                groups[groups.count - 1].append(parameter)
+            } else { groups.append([parameter]) }
+        }
+        return groups
     }
 
     private func repairSelection() {

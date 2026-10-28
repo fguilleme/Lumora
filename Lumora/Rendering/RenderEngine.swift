@@ -4,6 +4,25 @@ import CoreImage.CIFilterBuiltins
 import Metal
 import ImageIO
 import UniformTypeIdentifiers
+#if DEBUG
+import Darwin
+#endif
+
+private func traceRenderMemory(_ stage: String) {
+    #if DEBUG
+    guard CommandLine.arguments.contains("--render-memory-probe") else { return }
+    var info = task_vm_info_data_t()
+    var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
+    let status = withUnsafeMutablePointer(to: &info) { pointer in
+        pointer.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+            task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
+        }
+    }
+    if status == KERN_SUCCESS {
+        FileHandle.standardError.write(Data("[Render memory] \(stage): \(info.phys_footprint / 1_048_576) MiB\n".utf8))
+    }
+    #endif
+}
 
 struct RenderResult: Sendable {
     let image: CGImage
@@ -19,6 +38,18 @@ struct RenderResult: Sendable {
 }
 
 enum PreviewQuality: Int, Sendable { case interactive = 960, high = 2048 }
+
+/// Spatial effects and model inference retain image-sized GPU buffers in
+/// addition to the source. Keep their established budget when compensating a crop.
+enum PreviewMemoryBudget {
+    static func sourceLimit(for state: EditState) -> Int {
+        let heavy = !state.beauty.isIdentity || state.depthLens?.enabled == true
+            || state.depthLighting?.isActive == true || state.effects.cinematicGlowIntensity > 0
+            || !state.creative.effects.isEmpty || state.masks.count > 3
+            || state.detail.blur > 0 || state.masks.contains { $0.adjustments.detail.blur > 0 }
+        return heavy ? PreviewQuality.high.rawValue : 4096
+    }
+}
 
 /// Serial GPU owner. No UI state and no full-resolution decode on slider events.
 actor RenderEngine {
@@ -96,6 +127,7 @@ actor RenderEngine {
     }
 
     func render(url: URL, state: EditState, quality: PreviewQuality, bypassCreative: Bool = false) throws -> RenderResult {
+        traceRenderMemory("start")
         try Task.checkCancellation()
         let start = ContinuousClock.now
         if sourceURL != url {
@@ -107,13 +139,39 @@ actor RenderEngine {
         let hit = sources[key] != nil
         let original = try preview(url: url, maximum: maximum, optics: state.optics)
         try Task.checkCancellation()
-        let input = CIImage(cgImage: original)
-        let baseline = try previewAutoBaseline(input, state: state, maximum: maximum)
+        let nativeLong = max(sourceWidth, sourceHeight), nativeShort = min(sourceWidth, sourceHeight)
+        let orientedSize = original.width >= original.height
+            ? CGSize(width: nativeLong, height: nativeShort) : CGSize(width: nativeShort, height: nativeLong)
+        let sourceLimit = PreviewMemoryBudget.sourceLimit(for: state)
+        if sources.keys.contains(where: { $0.maximum > sourceLimit }) {
+            sources = sources.filter { $0.key.maximum <= sourceLimit }
+            context.clearCaches()
+        }
+        let processingMaximum = quality == .high
+            ? GeometryRenderer.previewSourceMaximum(sourceSize: orientedSize, settings: state.geometry,
+                                                    outputMaximum: maximum, sourceLimit: sourceLimit)
+            : maximum
+        let working = processingMaximum == maximum ? original
+            : try preview(url: url, maximum: processingMaximum, optics: state.optics)
+        let input = CIImage(cgImage: working)
+        traceRenderMemory("decoded \(working.width)x\(working.height)")
+        let baseline = try previewAutoBaseline(input, state: state, maximum: processingMaximum)
         let image = try adjusted(input, state: state, bypassCreative: bypassCreative, autoBaseline: baseline)
+        traceRenderMemory("graph prepared")
+        // The source may be larger for a tight crop; bound the displayed result.
+        let displayScale = min(1, CGFloat(maximum) / max(image.extent.width, image.extent.height))
+        let displayed: CIImage
+        if displayScale < 1 {
+            let resize = CIFilter.lanczosScaleTransform()
+            resize.inputImage = image; resize.scale = Float(displayScale); resize.aspectRatio = 1
+            guard let output = resize.outputImage else { throw PhotoError.renderFailed }
+            displayed = output
+        } else { displayed = image }
         try Task.checkCancellation()
         guard let space = CGColorSpace(name: CGColorSpace.displayP3),
-              let result = context.createCGImage(image, from: image.extent, format: .RGBA8, colorSpace: space)
+              let result = context.createCGImage(displayed, from: displayed.extent, format: .RGBA8, colorSpace: space)
         else { throw PhotoError.renderFailed }
+        traceRenderMemory("rendered")
         try Task.checkCancellation()
         let histogram = Histogram.compute(result)
         let duration = start.duration(to: .now)
@@ -146,7 +204,8 @@ actor RenderEngine {
         let prepared: CIImage
         if key.mask != nil { prepared = try adjusted(input, state: key.upstream, bypassCreative: true) }
         else { prepared = GeometryRenderer.apply(try OpticsRenderer.apply(input, settings: state.optics), settings: state.geometry) }
-        let matte = try key.mask.map { try MaskRenderer.makeMask($0, extent: prepared.extent) }
+        let maskGeometry = MaskRenderGeometry(sourceSize: input.extent.size, current: state.geometry)
+        let matte = try key.mask.map { try MaskRenderer.makeMask($0, extent: prepared.extent, geometry: maskGeometry) }
         let pixels = AutoAnalysisInput.pixels(prepared, context: context, maximum: maximum, mask: matte)
         try Task.checkCancellation()
         let proposal = AutoProposal(ImageAnalysis.measure(pixels))
@@ -274,6 +333,7 @@ actor RenderEngine {
     /// Shared adjustment graph for both preview and export. No SwiftUI or bitmap history.
     private func adjusted(_ input: CIImage, state: EditState, bypassCreative: Bool = false,
                           autoBaseline: CIImage? = nil) throws -> CIImage {
+        let maskGeometry = MaskRenderGeometry(sourceSize: input.extent.size, current: state.geometry)
         var image: CIImage
         let beautyActive = !state.beauty.isIdentity
         if let autoBaseline {
@@ -293,6 +353,7 @@ actor RenderEngine {
             image = GeometryRenderer.apply(image, settings: state.geometry)
         }
         if beautyActive {
+            traceRenderMemory("before beauty")
             var frozenV1 = state.beauty
             frozenV1.finishing = nil
             frozenV1.corrections = []
@@ -305,10 +366,11 @@ actor RenderEngine {
             image = try DetailRenderer.apply(image, settings: state.detail)
             var finishing = state.effects; finishing.grain = 0
             image = try EffectsRenderer.applyFinishing(image, settings: finishing)
+            traceRenderMemory("after beauty")
         }
         for layer in state.masks.prefix(16).map(\.validated)
             where layer.isVisible && layer.opacity > 0 && !layer.adjustments.isIdentity {
-            let matte = try MaskRenderer.makeMask(layer, extent: image.extent)
+            let matte = try MaskRenderer.makeMask(layer, extent: image.extent, geometry: maskGeometry)
             let developed = try applyDevelopment(image, state: layer.adjustments.editState)
             let blend = CIFilter.blendWithMask()
             blend.inputImage = developed
@@ -318,6 +380,7 @@ actor RenderEngine {
             image = output.cropped(to: image.extent)
         }
         if state.depthLens?.enabled == true || state.depthLighting?.isActive == true {
+            traceRenderMemory("before depth models")
             if depthLensEngine == nil { depthLensEngine = try DepthLensEngine() }
             if depthLensGeometry != state.geometry || depthLensOptics != state.optics {
                 depthLensEngine?.invalidate()
@@ -330,6 +393,7 @@ actor RenderEngine {
                 else { source = input }
                 let optical = try OpticsRenderer.apply(source, settings: state.optics)
                 try depthLensEngine!.estimate(GeometryRenderer.apply(optical, settings: state.geometry))
+                traceRenderMemory("depth estimated")
             }
             if let lighting = state.depthLighting, lighting.isActive {
                 if lighting.surfaceNormals {
@@ -338,6 +402,7 @@ actor RenderEngine {
                     else { source = input }
                     let optical = try OpticsRenderer.apply(source, settings: state.optics)
                     try depthLensEngine!.prepareNormals(GeometryRenderer.apply(optical, settings:state.geometry))
+                    traceRenderMemory("normals estimated")
                 }
                 let materials: DepthLightingMaterials?
                 if lighting.portraitShading > 0 {
@@ -361,12 +426,12 @@ actor RenderEngine {
             let output = try FilmGrainEngine.apply(image, settings: grain)
             let blend = CIFilter.blendWithMask()
             blend.inputImage = output; blend.backgroundImage = image
-            blend.maskImage = try MaskRenderer.makeMask(layer, extent: image.extent)
+            blend.maskImage = try MaskRenderer.makeMask(layer, extent: image.extent, geometry: maskGeometry)
             guard let mixed = blend.outputImage else { throw PhotoError.renderFailed }
             image = mixed.cropped(to: image.extent)
         }
         if !bypassCreative {
-            image = try CreativeStackRenderer.apply(image, stack: state.creative, masks: state.masks)
+            image = try CreativeStackRenderer.apply(image, stack: state.creative, masks: state.masks, geometry: maskGeometry)
         }
         return image
     }
@@ -395,9 +460,8 @@ actor RenderEngine {
         let input: CIImage
         if let raw = RAWDecoder.filter(request.sourceURL) {
             raw.isLensCorrectionEnabled = request.state.optics.profileCorrection && raw.isLensCorrectionSupported
-            if let maximum = settings.maximumDimension {
-                raw.scaleFactor = Float(min(1, Double(maximum) / max(raw.nativeSize.width, raw.nativeSize.height)))
-            }
+            // Resize only after geometry. Downsampling the RAW before a crop
+            // discarded source detail and undershot the requested export size.
             guard let output = raw.outputImage else { throw PhotoError.unreadable }
             input = output
         } else {
@@ -529,6 +593,9 @@ actor RenderEngine {
             result = thumbnail
         }
         try Task.checkCancellation()
+        if maximum > PreviewQuality.high.rawValue {
+            sources = sources.filter { $0.key.maximum <= PreviewQuality.high.rawValue }
+        }
         sources[key] = result
         return result
     }

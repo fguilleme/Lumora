@@ -1456,3 +1456,16 @@
 "Analyzing geometry…" = "Analyzing geometry…";
 "Preparing correction…" = "Preparing correction…";
 "Moving library…" = "Moving library…";
+
+/* Detail, adjustment indicators and persistent mask summaries */
+"Blur" = "Blur";
+"Noise L" = "Noise L";
+"Noise C" = "Noise C";
+"No adjustments" = "No adjustments";
+"Adjustments applied" = "Adjustments applied";
+"Color Grading" = "Color Grading";
+"Softens the photo or the selected mask. Zero leaves the image unchanged." = "Softens the photo or the selected mask. Zero leaves the image unchanged.";
+
+/* Gradient guides while making local adjustments */
+"Gradient controls" = "Gradient controls";
+"While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks." = "While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks.";

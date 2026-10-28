@@ -38,9 +38,13 @@ struct PhotoCanvas: View {
     let onDLCEnd: () -> Void
     let activeMask: LocalMask?
     let activeComponentID: UUID?
+    var maskGeometry: MaskRenderGeometry? = nil
     let showsMaskOverlay: Bool
     var maskOutlineOnly = false
     let allowsMaskEditing: Bool
+    /// A new context reveals gradient handles briefly outside the Masks tool.
+    /// This is presentation state, never part of the saved mask or renderer.
+    var maskGuidesContext: String? = nil
     var similaritySampling = false
     var onSimilaritySample: (MaskPoint) -> Void = { _ in }
     let brushMode: BrushMode
@@ -71,6 +75,26 @@ struct PhotoCanvas: View {
     @State private var liveBrushPreviewVisible = false
     @State private var liveBrushMode: BrushMode?
     @State private var lightingGuidesVisible = true
+    @State private var maskGuidesVisible = false
+    @State private var maskGuidesDragging = false
+    @State private var maskGuidesReveal = 0
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+
+    private struct MaskGuideLifetime: Equatable {
+        var context: String?
+        var reveal: Int
+        var dragging: Bool
+        var voiceOver: Bool
+    }
+
+    private var hasTransientMaskGuides: Bool {
+        guard maskGuidesContext != nil, activeMask?.isVisible == true,
+              let component = activeComponent else { return false }
+        switch component.shape {
+        case .radial, .linear: return true
+        default: return false
+        }
+    }
 
     private var activeComponent: MaskComponent? {
         activeMask?.components.first { $0.id == activeComponentID }
@@ -87,8 +111,9 @@ struct PhotoCanvas: View {
     }
 
     private var hasTransformHandles: Bool {
-        guard allowsMaskEditing, !similaritySampling else { return false }
+        guard !similaritySampling else { return false }
         guard let component = activeComponent else { return false }
+        if !allowsMaskEditing { return hasTransientMaskGuides && maskGuidesVisible }
         switch component.shape {
         case .linear, .radial, .similarity: return true
         default: return false
@@ -146,6 +171,15 @@ struct PhotoCanvas: View {
                                         displayScale: displayScale, displayOffset: displayOffset) { onSimilaritySample(point) }
                                     return
                                 }
+                                if hasTransientMaskGuides {
+                                    let size = CGSize(width: result.image.width, height: result.image.height)
+                                    guard normalized(tap.location, viewSize: geometry.size, imageSize: size,
+                                        displayScale: displayScale, displayOffset: displayOffset) != nil else { return }
+                                    // A tap only reveals the controls. Moving the mask
+                                    // requires a subsequent drag on a visible handle.
+                                    maskGuidesReveal &+= 1
+                                    return
+                                }
                                 guard !allowsMaskEditing, !curveSampling, !healingPaintZone,
                                       geometrySettings == nil, dlcSettings == nil else { return }
                                 let imageSize = CGSize(width: result.image.width, height: result.image.height)
@@ -184,7 +218,7 @@ struct PhotoCanvas: View {
                 }
                 .overlay {
                     if let activeMask, showsMaskOverlay {
-                        MaskOverlay(mask: activeMask, outlineOnly: maskOutlineOnly,
+                        MaskOverlay(mask: activeMask, outlineOnly: maskOutlineOnly, maskGeometry: maskGeometry,
                                     imageSize: CGSize(width: result.image.width, height: result.image.height),
                                     displayScale: displayScale,
                                     displayOffset: displayOffset,
@@ -316,14 +350,22 @@ struct PhotoCanvas: View {
                 .accessibilityAction(named: "Reset zoom") { restoreZoom() }
                 if let component = activeComponent, hasTransformHandles,
                    !showingOriginal && !pressing {
-                    MaskHandlesOverlay(component: component,
+                    MaskHandlesOverlay(component: component, map: maskGeometry?.mapping(component),
                                        imageSize: CGSize(width: result.image.width,
                                                          height: result.image.height),
                                        displayScale: displayScale,
                                        displayOffset: displayOffset,
-                                       onBegin: onMaskTransformBegin,
+                                       onBegin: {
+                                           if hasTransientMaskGuides { maskGuidesDragging = true }
+                                           onMaskTransformBegin()
+                                       },
                                        onChange: onMaskShapeChange,
-                                       onEnd: onMaskTransformEnd)
+                                       onEnd: {
+                                           onMaskTransformEnd()
+                                           maskGuidesDragging = false
+                                           maskGuidesReveal &+= 1
+                                       })
+                        .transition(.opacity)
                 }
                 // Sibling of the accessible image: its handle remains a separate element.
                 if let dlcSettings, !showingOriginal && !pressing {
@@ -350,6 +392,26 @@ struct PhotoCanvas: View {
         }
         .onChange(of: geometrySettings != nil) { _, editing in
             if editing { zoom = 1; offset = .zero; showingOriginal = false }
+        }
+        .onChange(of: maskGuidesContext) { _, _ in
+            if maskGuidesDragging {
+                onMaskTransformEnd()
+                maskGuidesDragging = false
+            }
+        }
+        .task(id: MaskGuideLifetime(context: maskGuidesContext, reveal: maskGuidesReveal,
+                                   dragging: maskGuidesDragging, voiceOver: voiceOverEnabled)) {
+            guard hasTransientMaskGuides else { maskGuidesVisible = false; return }
+            maskGuidesVisible = true
+            // VoiceOver users need time to reach and manipulate each handle.
+            guard !maskGuidesDragging, !voiceOverEnabled else { return }
+            do { try await Task.sleep(for: .seconds(3.5)) }
+            catch { return }
+            guard !Task.isCancelled, !maskGuidesDragging else { return }
+            withAnimation(.easeOut(duration: 0.25)) { maskGuidesVisible = false }
+        }
+        .onDisappear {
+            if maskGuidesDragging { onMaskTransformEnd(); maskGuidesDragging = false }
         }
     }
     private func brushGesture(viewSize: CGSize, displayScale: CGFloat,
@@ -509,6 +571,7 @@ private struct GeometryHandlesOverlay: View {
 
 private struct MaskHandlesOverlay: View {
     let component: MaskComponent
+    let map: MaskGeometry?
     let imageSize: CGSize
     let displayScale: CGFloat
     let displayOffset: CGSize
@@ -519,28 +582,29 @@ private struct MaskHandlesOverlay: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let extent = fittedRect(geometry.size)
+            let displayExtent = fittedRect(geometry.size)
+            let extent = referenceRect(displayExtent)
             switch component.shape {
             case .linear(let linear):
-                linearHandles(linear, extent: extent)
+                linearHandles(linear, extent: extent, displayExtent: displayExtent)
             case .radial(let radial):
-                radialHandles(radial, extent: extent) { onChange(.radial($0)) }
+                radialHandles(radial, extent: extent, displayExtent: displayExtent) { onChange(.radial($0)) }
             case .similarity(let similarity):
                 ZStack {
                     let center = screenPoint(similarity.influence.center, in: extent)
-                    Path(ellipseIn: CGRect(x: center.x - extent.width * similarity.influence.radiusX,
+                    ellipse(CGRect(x: center.x - extent.width * similarity.influence.radiusX,
                         y: center.y - extent.height * similarity.influence.radiusY,
                         width: extent.width * similarity.influence.radiusX * 2,
-                        height: extent.height * similarity.influence.radiusY * 2))
+                        height: extent.height * similarity.influence.radiusY * 2), in: extent, to: displayExtent)
                         .stroke(Color.accentColor.opacity(0.8), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         .allowsHitTesting(false)
-                    radialHandles(similarity.influence, extent: extent) { radial in
+                    radialHandles(similarity.influence, extent: extent, displayExtent: displayExtent) { radial in
                         var updated = similarity; updated.influence = radial
                         onChange(.similarity(updated.validated))
                     }
                     Circle().fill(Color.accentColor).frame(width: 8, height: 8)
                         .overlay(Circle().stroke(.black, lineWidth: 1))
-                        .position(screenPoint(similarity.reference, in: extent)).allowsHitTesting(false)
+                        .position(project(screenPoint(similarity.reference, in: extent), in: extent, to: displayExtent)).allowsHitTesting(false)
                 }
             default:
                 EmptyView()
@@ -550,7 +614,7 @@ private struct MaskHandlesOverlay: View {
         .accessibilityElement(children: .contain)
     }
 
-    private func linearHandles(_ linear: LinearGradientMask, extent: CGRect) -> some View {
+    private func linearHandles(_ linear: LinearGradientMask, extent: CGRect, displayExtent: CGRect) -> some View {
         let center = screenPoint(linear.center, in: extent)
         let radians = CGFloat(linear.angle) * .pi / 180
         let unit = CGVector(dx: cos(radians), dy: sin(radians))
@@ -563,28 +627,32 @@ private struct MaskHandlesOverlay: View {
                               y: center.y - unit.dy * transitionHalfWidth)
         return ZStack {
             Path { path in
-                path.move(to: feather)
-                path.addLine(to: direction)
+                path.move(to: project(feather, in: extent, to: displayExtent))
+                path.addLine(to: project(direction, in: extent, to: displayExtent))
             }
             .stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
-            MaskDragHandle(position: center, color: .white,
+            .allowsHitTesting(false)
+            MaskDragHandle(position: project(center, in: extent, to: displayExtent), color: .white,
                            identifier: "mask-handle-center", label: "Gradient center",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = linear
                 updated.center = normalized(location, in: extent)
                 onChange(.linear(updated.validated))
             } onEnd: { onEnd() }
-            MaskDragHandle(position: direction, color: .yellow,
+            MaskDragHandle(position: project(direction, in: extent, to: displayExtent), color: .yellow,
                            identifier: "mask-handle-direction", label: "Gradient angle",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = linear
                 let angle = atan2(location.y - center.y, location.x - center.x) * 180 / .pi
                 updated.angle = Double(angle)
                 onChange(.linear(updated.validated))
             } onEnd: { onEnd() }
-            MaskDragHandle(position: feather, color: .orange,
+            MaskDragHandle(position: project(feather, in: extent, to: displayExtent), color: .orange,
                            identifier: "mask-handle-feather", label: "Gradient feather",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = linear
                 let projectedDistance = max(0,
                     -((location.x - center.x) * unit.dx + (location.y - center.y) * unit.dy))
@@ -595,7 +663,7 @@ private struct MaskHandlesOverlay: View {
         }
     }
 
-    private func radialHandles(_ radial: RadialGradientMask, extent: CGRect,
+    private func radialHandles(_ radial: RadialGradientMask, extent: CGRect, displayExtent: CGRect,
                                change: @escaping (RadialGradientMask) -> Void) -> some View {
         let center = screenPoint(radial.center, in: extent)
         let horizontal = CGPoint(x: min(extent.maxX, center.x + extent.width * radial.radiusX), y: center.y)
@@ -609,37 +677,43 @@ private struct MaskHandlesOverlay: View {
                                height: extent.height * radial.radiusY * innerScale * 2)
         return ZStack {
             Path { path in
-                path.move(to: center); path.addLine(to: horizontal)
-                path.move(to: center); path.addLine(to: vertical)
-                path.move(to: center); path.addLine(to: feather)
+                path.move(to: project(center, in: extent, to: displayExtent)); path.addLine(to: project(horizontal, in: extent, to: displayExtent))
+                path.move(to: project(center, in: extent, to: displayExtent)); path.addLine(to: project(vertical, in: extent, to: displayExtent))
+                path.move(to: project(center, in: extent, to: displayExtent)); path.addLine(to: project(feather, in: extent, to: displayExtent))
             }
             .stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
-            Path(ellipseIn: innerRect)
+            .allowsHitTesting(false)
+            ellipse(innerRect, in: extent, to: displayExtent)
                 .stroke(.orange.opacity(0.9), style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-            MaskDragHandle(position: center, color: .white,
+                .allowsHitTesting(false)
+            MaskDragHandle(position: project(center, in: extent, to: displayExtent), color: .white,
                            identifier: "mask-handle-center", label: "Radial center",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = radial
                 updated.center = normalized(location, in: extent)
                 change(updated.validated)
             } onEnd: { onEnd() }
-            MaskDragHandle(position: horizontal, color: .yellow,
+            MaskDragHandle(position: project(horizontal, in: extent, to: displayExtent), color: .yellow,
                            identifier: "mask-handle-radius-x", label: "Radial width",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = radial
                 updated.radiusX = Double(abs(location.x - center.x) / max(1, extent.width))
                 change(updated.validated)
             } onEnd: { onEnd() }
-            MaskDragHandle(position: vertical, color: .yellow,
+            MaskDragHandle(position: project(vertical, in: extent, to: displayExtent), color: .yellow,
                            identifier: "mask-handle-radius-y", label: "Radial height",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = radial
                 updated.radiusY = Double(abs(location.y - center.y) / max(1, extent.height))
                 change(updated.validated)
             } onEnd: { onEnd() }
-            MaskDragHandle(position: feather, color: .orange,
+            MaskDragHandle(position: project(feather, in: extent, to: displayExtent), color: .orange,
                            identifier: "mask-handle-feather", label: "Radial feather",
-                           coordinateSpace: coordinateSpace, onBegin: onBegin) { location in
+                           coordinateSpace: coordinateSpace, onBegin: onBegin) { visibleLocation in
+                let location = unproject(visibleLocation, in: extent, from: displayExtent)
                 var updated = radial
                 let normalizedX = (location.x - center.x) / max(1, extent.width * radial.radiusX)
                 let normalizedY = (location.y - center.y) / max(1, extent.height * radial.radiusY)
@@ -647,6 +721,40 @@ private struct MaskHandlesOverlay: View {
                 updated.feather = Double((1 - innerRadius) * 100)
                 change(updated.validated)
             } onEnd: { onEnd() }
+        }
+    }
+
+    private func referenceRect(_ display: CGRect) -> CGRect {
+        guard let map, !map.unchanged else { return display }
+        return CGRect(origin: display.origin, size: CGSize(
+            width: display.width * map.reference.outputSize.width / map.current.outputSize.width,
+            height: display.height * map.reference.outputSize.height / map.current.outputSize.height))
+    }
+
+    private func project(_ point: CGPoint, in reference: CGRect, to display: CGRect) -> CGPoint {
+        guard let map, !map.unchanged else { return point }
+        let value = map.display(MaskPoint(x: (point.x - reference.minX) / reference.width,
+                                          y: (point.y - reference.minY) / reference.height))
+        return screenPoint(value, in: display)
+    }
+
+    private func unproject(_ point: CGPoint, in reference: CGRect, from display: CGRect) -> CGPoint {
+        guard let map, !map.unchanged else { return point }
+        let value = map.stored(MaskPoint(x: (point.x - display.minX) / display.width,
+                                         y: (point.y - display.minY) / display.height))
+        return screenPoint(value, in: reference)
+    }
+
+    private func ellipse(_ rect: CGRect, in reference: CGRect, to display: CGRect) -> Path {
+        Path { path in
+            for index in 0...64 {
+                let angle = CGFloat(index) / 64 * 2 * .pi
+                let point = project(CGPoint(x: rect.midX + cos(angle) * rect.width / 2,
+                                            y: rect.midY + sin(angle) * rect.height / 2),
+                                    in: reference, to: display)
+                if index == 0 { path.move(to: point) } else { path.addLine(to: point) }
+            }
+            path.closeSubpath()
         }
     }
 
@@ -701,7 +809,7 @@ private struct MaskDragHandle: View {
                 }
                 .onEnded { _ in dragging = false; onEnd() })
             .accessibilityElement()
-            .accessibilityLabel(label)
+            .accessibilityLabel(Text(LocalizedStringKey(label)))
             .accessibilityIdentifier(identifier)
     }
 }
@@ -740,6 +848,7 @@ private struct GeometryGrid: View {
 private struct MaskOverlay: View {
     let mask: LocalMask
     let outlineOnly: Bool
+    let maskGeometry: MaskRenderGeometry?
     let imageSize: CGSize
     let displayScale: CGFloat
     let displayOffset: CGSize
@@ -754,6 +863,11 @@ private struct MaskOverlay: View {
         guard let component = mask.components.first(where: { $0.id == activeComponentID }),
               case .brush(let brush) = component.shape else { return nil }
         return brush
+    }
+
+    private var activeMap: MaskGeometry? {
+        guard let component = mask.components.first(where: { $0.id == activeComponentID }) else { return nil }
+        return maskGeometry?.mapping(component)
     }
 
     private var activeOperation: MaskOperation? {
@@ -787,6 +901,7 @@ private struct MaskOverlay: View {
         let mask: LocalMask
         let outlineOnly: Bool
         let imageSize: CGSize
+        let geometry: MaskRenderGeometry?
     }
 
     var body: some View {
@@ -812,8 +927,8 @@ private struct MaskOverlay: View {
             }
         }
         .clipped()
-        .task(id: RenderKey(mask: committedMask, outlineOnly: outlineOnly, imageSize: imageSize)) {
-            let rendered = await MaskOverlayRenderer.shared.render(committedMask, imageSize: imageSize, outlineOnly: outlineOnly)
+        .task(id: RenderKey(mask: committedMask, outlineOnly: outlineOnly, imageSize: imageSize, geometry: maskGeometry)) {
+            let rendered = await MaskOverlayRenderer.shared.render(committedMask, imageSize: imageSize, outlineOnly: outlineOnly, geometry: maskGeometry)
             guard !Task.isCancelled else { return }
             overlay = rendered
             if !liveBrushInProgress, liveBrushMode != nil { onCommittedOverlayReady() }
@@ -821,6 +936,22 @@ private struct MaskOverlay: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(outlineOnly ? "Mask outline" : "Red mask overlay")
         .accessibilityIdentifier(outlineOnly ? "mask-outline-overlay" : "mask-red-overlay")
+    }
+
+    private func liveProjection(canvasSize: CGSize) -> ProjectionTransform {
+        guard let map = activeMap, !map.unchanged else { return ProjectionTransform(.identity) }
+        func fitted(_ image: CGSize) -> CGRect {
+            let scale = min(canvasSize.width / image.width, canvasSize.height / image.height)
+            let size = CGSize(width: image.width * scale, height: image.height * scale)
+            return CGRect(x: (canvasSize.width - size.width) / 2,
+                          y: (canvasSize.height - size.height) / 2, width: size.width, height: size.height)
+        }
+        let h = map.homography(from: fitted(map.reference.outputSize), to: fitted(imageSize))
+        var transform = CATransform3DIdentity
+        transform.m11 = h[0]; transform.m21 = h[1]; transform.m41 = h[2]
+        transform.m12 = h[3]; transform.m22 = h[4]; transform.m42 = h[5]
+        transform.m14 = h[6]; transform.m24 = h[7]; transform.m44 = h[8]
+        return ProjectionTransform(transform)
     }
 
     private func liveStrokeCanvas(brush: BrushMask, mode: BrushMode,
@@ -833,17 +964,21 @@ private struct MaskOverlay: View {
         // SwiftUI flatten the knockout first, so a partial-flow stroke looks
         // fully erased until the committed Core Image matte replaces it.
         let strokeAlpha = outlineOnly ? 0.85 : (removesCoverage ? strength : 0.55 * strength)
+        let referenceSize = activeMap?.reference.outputSize ?? imageSize
+        let pointMap = activeMap
         return Canvas { context, size in
-            guard imageSize.width > 0, imageSize.height > 0 else { return }
-            let scale = min(size.width / imageSize.width, size.height / imageSize.height)
-            let fitted = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+            guard referenceSize.width > 0, referenceSize.height > 0 else { return }
+            let scale = min(size.width / referenceSize.width, size.height / referenceSize.height)
+            let fitted = CGSize(width: referenceSize.width * scale, height: referenceSize.height * scale)
             let origin = CGPoint(x: (size.width - fitted.width) / 2,
                                  y: (size.height - fitted.height) / 2)
-            let points = liveBrushStroke.map {
-                CGPoint(x: origin.x + fitted.width * $0.x, y: origin.y + fitted.height * $0.y)
+            let points = liveBrushStroke.map { visible in
+                let point = pointMap?.stored(visible) ?? visible
+                return CGPoint(x: origin.x + fitted.width * point.x, y: origin.y + fitted.height * point.y)
             }
             guard let first = points.first else { return }
-            let diameter = min(fitted.width, fitted.height) * CGFloat(brush.size / 100) / displayScale
+            let storedSize = mode == .paint ? brush.strokeSizes.last : brush.eraseStrokeSizes.last
+            let diameter = min(fitted.width, fitted.height) * CGFloat((storedSize ?? brush.size / Double(displayScale)) / 100)
             let linePath: Path? = points.count == 1 ? nil : {
                 var line = Path()
                 line.move(to: first)
@@ -887,6 +1022,7 @@ private struct MaskOverlay: View {
             }
         }
         .frame(width: canvasSize.width, height: canvasSize.height)
+        .projectionEffect(liveProjection(canvasSize: canvasSize))
         // A Canvas blend mode only affects pixels already drawn inside that Canvas.
         // Apply destinationOut to the Canvas view so a subtractive live stroke punches
         // through the sibling red-overlay image in the surrounding compositing group.
@@ -899,7 +1035,7 @@ private actor MaskOverlayRenderer {
     static let shared = MaskOverlayRenderer()
     private let context = CIContext(options: [.cacheIntermediates: false])
 
-    func render(_ mask: LocalMask, imageSize: CGSize, outlineOnly: Bool) -> CGImage? {
+    func render(_ mask: LocalMask, imageSize: CGSize, outlineOnly: Bool, geometry: MaskRenderGeometry?) -> CGImage? {
         guard !Task.isCancelled, imageSize.width > 0, imageSize.height > 0 else { return nil }
         let reduction = min(1, 1_024 / max(imageSize.width, imageSize.height))
         let extent = CGRect(x: 0, y: 0,
@@ -911,7 +1047,7 @@ private actor MaskOverlayRenderer {
             // This display-only matte includes subtraction and inversion, including brush/Vision masks.
             var footprint = mask
             footprint.opacity = 100
-            guard let matte = try? MaskRenderer.makeMask(footprint, extent: extent) else { return nil }
+            guard let matte = try? MaskRenderer.makeMask(footprint, extent: extent, geometry: geometry) else { return nil }
             let silhouette = matte.applyingFilter("CIColorThreshold", parameters: ["inputThreshold": 0.05])
             let outer = silhouette.applyingFilter("CIMorphologyMaximum", parameters: ["inputRadius": 1.5])
             let inner = silhouette.applyingFilter("CIMorphologyMinimum", parameters: ["inputRadius": 1.5])
@@ -924,7 +1060,7 @@ private actor MaskOverlayRenderer {
                 "inputBiasVector": CIVector(x: 1, y: 1, z: 1, w: 0)
             ]).cropped(to: extent)
         } else {
-            guard let red = try? MaskRenderer.makeRedOverlay(mask, extent: extent) else { return nil }
+            guard let red = try? MaskRenderer.makeRedOverlay(mask, extent: extent, geometry: geometry) else { return nil }
             image = red
         }
         guard !Task.isCancelled else { return nil }

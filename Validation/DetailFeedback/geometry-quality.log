@@ -1,0 +1,28 @@
+warning: 'feedbackvalidation': found 11 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/DepthAnythingV2-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/ModelProvenance.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGe-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeConversionProvenance.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeProvenance.txt
+Building for debugging...
+[1 / 3] LumoraCoreTests-product
+[2 / 4] LumoraCoreTests-product
+[4 / 6] LumoraCoreTests-product
+[10 / 11] LumoraCoreTests-product
+[12 / 12] LumoraCoreTests-product
+Build complete! (7,38 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() started.
+◇ Test cropPreviewDecodeBudgetIsBoundedAndNeutralIsUnchanged() started.
+✔ Test cropPreviewDecodeBudgetIsBoundedAndNeutralIsUnchanged() passed after 0.003 seconds.
+Tight crop HQ preview: 1151 × 863; native crop 1151 × 863
+✔ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() passed after 1.819 seconds.
+✔ Test run with 2 tests in 0 suites passed after 1.819 seconds.

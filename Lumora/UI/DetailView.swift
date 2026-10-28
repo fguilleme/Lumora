@@ -28,7 +28,8 @@ struct DetailView: View {
         DetailAdjustment.groups.flatMap(\.1).map { adjustment in
             LinearAdjustmentParameter(id: adjustment.rawValue, title: adjustment.title,
                 value: settings[adjustment], range: adjustment.range, step: adjustment.step,
-                precision: adjustment.precision, resetValue: adjustment.defaultValue, isEnabled: isEnabled(adjustment))
+                precision: adjustment.precision, resetValue: adjustment.defaultValue, isEnabled: isEnabled(adjustment),
+                group: adjustment.group == 1 ? "noise-l" : adjustment.group == 2 ? "noise-c" : nil)
         }
     }
 

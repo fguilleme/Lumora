@@ -47,20 +47,28 @@ struct ColorNoiseReductionSettings: Codable, Sendable, Equatable {
 }
 
 struct DetailSettings: Codable, Sendable, Equatable {
+    /// Image-relative Gaussian blur, shared by the base and masked layers.
+    var blur = 0.0
     var sharpening = SharpeningSettings()
     var noiseReduction = NoiseReductionSettings()
     var colorNoiseReduction = ColorNoiseReductionSettings()
-    private enum CodingKeys: String, CodingKey { case sharpening, noiseReduction, colorNoiseReduction }
+    private enum CodingKeys: String, CodingKey { case blur, sharpening, noiseReduction, colorNoiseReduction }
     init() {}
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
+        blur = try values.decodeIfPresent(Double.self, forKey: .blur) ?? 0
         sharpening = try values.decodeIfPresent(SharpeningSettings.self, forKey: .sharpening) ?? SharpeningSettings()
         noiseReduction = try values.decodeIfPresent(NoiseReductionSettings.self, forKey: .noiseReduction) ?? NoiseReductionSettings()
         colorNoiseReduction = try values.decodeIfPresent(ColorNoiseReductionSettings.self, forKey: .colorNoiseReduction) ?? ColorNoiseReductionSettings()
         self = validated
     }
     var isIdentity: Bool {
-        sharpening.amount == 0 && noiseReduction.luminance == 0 && colorNoiseReduction.color == 0
+        blur == 0 && sharpening.amount == 0 && noiseReduction.luminance == 0 && colorNoiseReduction.color == 0
+    }
+    var hasDetailAdjustments: Bool {
+        var value = self
+        value.blur = 0
+        return value != DetailSettings()
     }
     var validated: Self {
         var value = self
@@ -78,20 +86,22 @@ struct DetailSettings: Codable, Sendable, Equatable {
 }
 
 enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
+    case blur
     case sharpeningAmount, sharpeningRadius, sharpeningDetail, sharpeningMasking
     case luminanceNoise, luminanceDetail, luminanceContrast
     case colorNoise, colorDetail, colorSmoothness
     var id: String { rawValue }
     var title: String {
         switch self {
+        case .blur: String(localized: "Blur")
         case .sharpeningAmount: String(localized: "Amount")
         case .sharpeningRadius: String(localized: "Radius")
         case .sharpeningDetail: String(localized: "Detail")
         case .sharpeningMasking: String(localized: "Masking")
-        case .luminanceNoise: "Luminance"
+        case .luminanceNoise: String(localized: "Noise L")
         case .luminanceDetail: String(localized: "Detail")
         case .luminanceContrast: String(localized: "Contrast")
-        case .colorNoise: String(localized: "Color")
+        case .colorNoise: String(localized: "Noise C")
         case .colorDetail: String(localized: "Detail")
         case .colorSmoothness: String(localized: "Smoothing")
         }
@@ -115,6 +125,7 @@ enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
     }
     var group: Int {
         switch self {
+        case .blur: 3
         case .sharpeningAmount, .sharpeningRadius, .sharpeningDetail, .sharpeningMasking: 0
         case .luminanceNoise, .luminanceDetail, .luminanceContrast: 1
         default: 2
@@ -122,6 +133,7 @@ enum DetailAdjustment: String, CaseIterable, Sendable, Identifiable {
     }
     var keyPath: WritableKeyPath<DetailSettings, Double> {
         switch self {
+        case .blur: \.blur
         case .sharpeningAmount: \.sharpening.amount
         case .sharpeningRadius: \.sharpening.radius
         case .sharpeningDetail: \.sharpening.detail
@@ -170,6 +182,13 @@ enum DetailRenderer {
         }
         if settings.sharpening.amount > 0 {
             image = try sharpen(image, settings: settings.sharpening, extent: extent)
+        }
+        if settings.blur > 0 {
+            let blur = CIFilter.gaussianBlur()
+            blur.inputImage = image.clampedToExtent()
+            blur.radius = Float(min(extent.width, extent.height) * settings.blur / 100 * 0.025)
+            guard let output = blur.outputImage else { throw PhotoError.renderFailed }
+            image = output.cropped(to: extent)
         }
         return image
     }

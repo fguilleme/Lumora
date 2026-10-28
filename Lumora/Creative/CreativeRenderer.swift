@@ -18,7 +18,8 @@ enum CreativeStackRenderer {
         .silverBW: SilverBWRenderer(), .silverToning: SilverToningRenderer(),
         .darkenLightenCenter: DarkenLightenCenterRenderer()
     ]
-    static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer]) throws -> CIImage {
+    static func apply(_ input: CIImage, stack: CreativeEffectStack, masks: [AdjustmentLayer],
+                      geometry: MaskRenderGeometry? = nil) throws -> CIImage {
         var image = input
         for effect in stack.validated.effects where effect.enabled && effect.opacity > 0 {
             try Task.checkCancellation()
@@ -26,7 +27,7 @@ enum CreativeStackRenderer {
             if let id = effect.maskID {
                 // Deleted/absent masks never silently broaden an effect to the whole photograph.
                 guard let layer = masks.first(where: { $0.id == id }), layer.isVisible, layer.opacity > 0 else { continue }
-                mask = try MaskRenderer.makeMask(layer, extent: image.extent)
+                mask = try MaskRenderer.makeMask(layer, extent: image.extent, geometry: geometry)
             } else { mask = nil }
             guard let renderer = renderers[effect.kind] else { continue }
             let output = try renderer.apply(image, effect: effect)

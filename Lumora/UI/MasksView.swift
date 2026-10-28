@@ -72,6 +72,10 @@ struct MasksView: View {
                             smartMaskMenu("Detect", operation: nil)
                         }
                     } else if let mask {
+                            Text(mask.adjustments.editState.adjustmentSummary)
+                                .font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("mask-adjustment-summary")
                             layerControls(mask)
                             Divider()
                             HStack {
@@ -150,12 +154,18 @@ struct MasksView: View {
                     .accessibilityAddTraits(selectedMaskID == nil ? .isSelected : [])
                 ForEach(masks) { item in
                     Button { onSelectMask(item.id) } label: {
-                        Label(item.name, systemImage: item.isVisible ? "circle.fill" : "eye.slash")
+                        VStack(alignment: .leading, spacing: 3) {
+                            Label(item.name, systemImage: item.isVisible ? "circle.fill" : "eye.slash")
+                            Text(item.adjustments.editState.adjustmentSummary)
+                                .font(.caption2).foregroundStyle(.secondary)
+                                .lineLimit(2).frame(maxWidth: 220, alignment: .leading)
+                        }
                     }
                         .buttonStyle(.bordered).tint(item.id == selectedMaskID ? .mint : .secondary)
                         .opacity(item.isVisible ? 1 : 0.55)
                         .accessibilityIdentifier("mask-\(item.id)")
                         .accessibilityAddTraits(item.id == selectedMaskID ? .isSelected : [])
+                        .accessibilityValue(item.adjustments.editState.adjustmentSummary)
                 }
             }
         }
@@ -194,7 +204,7 @@ struct MasksView: View {
         }
     }
     private func componentMenu(_ title: String, operation: MaskOperation) -> some View {
-        Menu(title) {
+        Menu(LocalizedStringKey(title)) {
             ForEach(MaskKind.allCases) { kind in Button(kind.title) { onAddComponent(kind, operation) } }
             Divider()
             ForEach(SmartMaskKind.automaticCases) { kind in

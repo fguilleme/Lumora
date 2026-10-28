@@ -5,6 +5,7 @@ enum EditorPanel: String, CaseIterable {
         case creative = "Creative"
         case light = "Light", color = "Color", curve = "Curves", colorTools = "Color Tools", effects = "Effects", detail = "Detail", depthLens = "Depth Lens", lighting = "Lighting", beauty = "Beauty", optics = "Optics", geometry = "Geometry", masks = "Masks", presets = "Presets", exif = "EXIF", settings = "Settings"
         var title: String { NSLocalizedString(rawValue, comment: "Editor tab") }
+        var adjustmentSection: AdjustmentSection? { AdjustmentSection(rawValue: rawValue) }
         var symbol: String {
             switch self {
             case .creative: "sparkles"

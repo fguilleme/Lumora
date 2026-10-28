@@ -1,0 +1,67 @@
+Launched application with com.guilleme.Lumora bundle identifier.
+Waiting for the application to terminate…
+2026-10-28 22:08:55.752 Lumora[6381:973248] Successfully load keyboard extensions
+[Render memory] start: 41 MiB
+[Render memory] decoded 1366x2048: 286 MiB
+[Render memory] before beauty: 287 MiB
+2026-10-28 22:08:56.391 Lumora[6381:973258] FBBA: creating VNFaceBBoxAligner from VNFaceDetectorRevision2: VNFaceDetectorRevision2
+[Render memory] after beauty: 206 MiB
+[Render memory] before depth models: 167 MiB
+[Render memory] depth estimated: 302 MiB
+[Render memory] normals estimated: 557 MiB
+[Render memory] graph prepared: 724 MiB
+[Render memory] rendered: 742 MiB
+[Render memory] start: 341 MiB
+[Render memory] decoded 1206x1460: 221 MiB
+[Render memory] graph prepared: 221 MiB
+[Render memory] rendered: 273 MiB
+2026-10-28 22:09:48.511 Lumora[6381:973248] invalid mode 'kCFRunLoopCommonModes' provided to CFRunLoopRunSpecific - break on _CFRunLoopError_RunCalledWithInvalidMode to debug. This message will only appear once per execution.
+[Render memory] start: 184 MiB
+[Render memory] decoded 1206x1460: 184 MiB
+[Render memory] graph prepared: 184 MiB
+[Render memory] rendered: 228 MiB
+[Render memory] start: 194 MiB
+[Render memory] start: 199 MiB
+[Render memory] start: 198 MiB
+[Render memory] start: 199 MiB
+[Render memory] start: 199 MiB
+[Render memory] decoded 793x960: 199 MiB
+[Render memory] graph prepared: 199 MiB
+[Render memory] rendered: 241 MiB
+[Render memory] start: 238 MiB
+[Render memory] decoded 793x960: 238 MiB
+[Render memory] graph prepared: 238 MiB
+[Render memory] rendered: 242 MiB
+[Render memory] start: 239 MiB
+[Render memory] decoded 793x960: 239 MiB
+[Render memory] graph prepared: 239 MiB
+[Render memory] rendered: 251 MiB
+[Render memory] start: 201 MiB
+[Render memory] decoded 793x960: 201 MiB
+[Render memory] graph prepared: 201 MiB
+[Render memory] rendered: 250 MiB
+[Render memory] start: 247 MiB
+[Render memory] decoded 793x960: 247 MiB
+[Render memory] graph prepared: 247 MiB
+[Render memory] rendered: 250 MiB
+[Render memory] start: 247 MiB
+[Render memory] decoded 793x960: 247 MiB
+[Render memory] graph prepared: 247 MiB
+[Render memory] rendered: 250 MiB
+[Render memory] start: 247 MiB
+[Render memory] decoded 793x960: 247 MiB
+[Render memory] graph prepared: 247 MiB
+[Render memory] rendered: 241 MiB
+[Render memory] start: 225 MiB
+[Render memory] decoded 793x960: 225 MiB
+[Render memory] graph prepared: 225 MiB
+[Render memory] rendered: 243 MiB
+[Render memory] start: 194 MiB
+[Render memory] decoded 1206x1460: 194 MiB
+[Render memory] graph prepared: 194 MiB
+[Render memory] rendered: 253 MiB
+[Render memory] start: 192 MiB
+[Render memory] decoded 1206x1460: 192 MiB
+[Render memory] graph prepared: 192 MiB
+[Render memory] rendered: 266 MiB
+App terminated due to signal 9.

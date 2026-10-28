@@ -71,6 +71,16 @@ struct EditorView: View {
     }
 
     private var activeToolPanel: Panel? { controlsVisible ? panel : nil }
+    private var maskGuidesContext: String? {
+        guard let tool = activeToolPanel,
+              [.light, .color, .curve, .colorTools, .effects, .detail].contains(tool),
+              let mask = session.selectedMask, mask.isVisible,
+              let component = session.selectedMaskComponent else { return nil }
+        switch component.shape {
+        case .radial, .linear: return "\(tool.rawValue)-\(mask.id)-\(component.id)"
+        default: return nil
+        }
+    }
     private var showsFullPage: Bool { controlsVisible && [.exif, .help, .settings].contains(panel) }
 
     init() {
@@ -80,6 +90,10 @@ struct EditorView: View {
            let panel = Panel(rawValue: CommandLine.arguments[option + 1]) {
             _panel = State(initialValue: panel)
             _controlsVisible = State(initialValue: true)
+            if CommandLine.arguments.contains("--app-store-1.3") {
+                if panel == .color { _selectedColorParameter = State(initialValue: Adjustment.vibrance.rawValue) }
+                if panel == .curve { _curveSelectedPoint = State(initialValue: 1) }
+            }
         }
         #endif
     }
@@ -168,9 +182,11 @@ struct EditorView: View {
                             onDLCEnd: session.finishInteraction,
                             activeMask: session.selectedMask,
                             activeComponentID: session.selectedMaskComponentID,
+                            maskGeometry: session.maskRenderGeometry,
                             showsMaskOverlay: activeToolPanel == .masks && !isAdjustingSelectedMask,
                             maskOutlineOnly: !maskOverlayVisible,
                             allowsMaskEditing: activeToolPanel == .masks,
+                            maskGuidesContext: maskGuidesContext,
                             similaritySampling: activeToolPanel == .masks && session.similaritySampling,
                             onSimilaritySample: { point in Task { await session.sampleSimilarity(point) } },
                             brushMode: session.brushMode,
@@ -442,13 +458,14 @@ struct EditorView: View {
             Text(URL(fileURLWithPath: session.document?.originalName ?? "Photo")
                 .deletingPathExtension().lastPathComponent)
                 .lineLimit(1).truncationMode(.middle)
+                .layoutPriority(-1)
             activeLayerMenu
             Spacer(minLength: 0)
             Text("\(sourceFormat(result)) · \(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
         }
         .font(.caption2).foregroundStyle(.secondary)
-        .padding(.horizontal, 12).frame(height: 24)
-        .accessibilityElement(children: .combine)
+        .padding(.horizontal, 12).frame(minHeight: 44)
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("photo-information")
         .dimsDuringAdjustment()
     }
@@ -606,11 +623,15 @@ struct EditorView: View {
                 Image(systemName: session.selectedMaskID == nil ? "rectangle.fill" : "circle.dashed")
                 Text(session.activeLayerName).lineLimit(1)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
             }
+            .padding(.horizontal, 8)
+            .frame(minWidth: 44, minHeight: 44)
+            .background(.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .layoutPriority(1)
         .accessibilityLabel("Active layer")
         .accessibilityValue(session.activeLayerName)
         .accessibilityIdentifier("active-layer")
@@ -822,6 +843,11 @@ struct EditorView: View {
                 guard visiblePanels.contains(selected) else { return }
                 withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(selected, anchor: .center) }
             }
+            .onAppear {
+                #if DEBUG
+                if CommandLine.arguments.contains("--app-store-1.3") { proxy.scrollTo(panel, anchor: .center) }
+                #endif
+            }
         }
         .accessibilityIdentifier("tools-toolbar")
         .padding(.vertical, 2).background(.black.opacity(0.3))
@@ -844,6 +870,7 @@ struct EditorView: View {
 
     private func tabButton(_ item: Panel) -> some View {
         let selected = controlsVisible && panel == item
+        let modified = item.adjustmentSection.map { session.state.hasAdjustments(in: $0, includingMasks: true) } ?? false
         return Button {
             if selected {
                 controlsVisible = false
@@ -854,6 +881,12 @@ struct EditorView: View {
             VStack(spacing: 3) {
                 Image(systemName: item.symbol)
                     .font(.system(size: 16, weight: .medium))
+                    .overlay(alignment: .topTrailing) {
+                        if modified {
+                            Circle().fill(Color.mint).frame(width: 5, height: 5)
+                                .offset(x: 7, y: -2).accessibilityHidden(true)
+                        }
+                    }
                 Text(item.title)
                     .font(.caption2.weight(.medium))
                     .fixedSize(horizontal: true, vertical: false)
@@ -867,6 +900,7 @@ struct EditorView: View {
         .foregroundStyle(selected ? .mint : .secondary)
         .id(item)
         .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityValue(modified ? String(localized: "Adjustments applied") : String(localized: "No adjustments"))
         .accessibilityIdentifier("editor-tab-\(item.rawValue)")
         .contextMenu {
             Section("Open a tab") {
@@ -905,23 +939,29 @@ struct EditorView: View {
                     session.beginInteraction(parameter.title)
                 },
                 onChange: { parameter, value in
-                    if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.setEffect(adjustment, to: value) }
+                    if parameter.id == DetailAdjustment.blur.rawValue { session.setDetail(.blur, to: value) }
+                    else if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.setEffect(adjustment, to: value) }
                 }, onEnd: session.finishInteraction,
                 onReset: { parameter in
-                    if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.resetEffect(adjustment) }
+                    if parameter.id == DetailAdjustment.blur.rawValue { session.resetDetail(.blur) }
+                    else if let adjustment = EffectAdjustment(rawValue: parameter.id) { session.resetEffect(adjustment) }
                 })
                 .padding(.bottom, 12)
         }
         .accessibilityIdentifier("effects-controls")
     }
     private var effectParameters: [LinearAdjustmentParameter] {
+        // Keep Blur's existing spatial instructions and sidecars unchanged;
+        // its presentation and modified-tab indicator belong to Effects.
         EffectAdjustment.allCases.map { adjustment in
             let value = adjustment == .cinematicGlow
                 ? session.state.effects.cinematicGlowIntensity
                 : session.activeState.effects[adjustment]
             return LinearAdjustmentParameter(id: adjustment.rawValue, title: adjustment.title,
                 value: value, range: adjustment.range, step: 1, precision: 0, resetValue: 0)
-        }
+        } + [LinearAdjustmentParameter(id: DetailAdjustment.blur.rawValue, title: DetailAdjustment.blur.title,
+              value: session.activeState.detail.blur, range: DetailAdjustment.blur.range,
+              step: 1, precision: 0, resetValue: 0)]
     }
 
 }

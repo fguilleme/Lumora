@@ -130,7 +130,7 @@ struct HealingGeometry {
     let det = a * v[0] + b * v[3] + c * v[6]
     return v.map { $0 / det }
   }
-  static private func fit(_ from: [CGPoint], _ to: [CGPoint]) -> [Double] {
+  static func fit(_ from: [CGPoint], _ to: [CGPoint]) -> [Double] {
     var rows = [[Double]]()
     for (p, q) in zip(from, to) {
       rows.append([p.x, p.y, 1, 0, 0, 0, -q.x * p.x, -q.x * p.y, q.x])

@@ -1,0 +1,12 @@
+Launched application with com.guilleme.Lumora bundle identifier.
+Waiting for the application to terminate…
+[Render memory] start: 41 MiB
+[Render memory] decoded 2048x3072: 320 MiB
+[Render memory] before beauty: 159 MiB
+2026-10-28 22:08:01.059 Lumora[6378:972427] FBBA: creating VNFaceBBoxAligner from VNFaceDetectorRevision2: VNFaceDetectorRevision2
+[Render memory] after beauty: 255 MiB
+[Render memory] before depth models: 222 MiB
+[Render memory] depth estimated: 294 MiB
+2026-10-28 22:08:16.663 Lumora[6378:972404] Successfully load keyboard extensions
+[Render memory] normals estimated: 499 MiB
+App terminated due to signal 9.

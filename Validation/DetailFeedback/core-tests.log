@@ -1,0 +1,139 @@
+warning: 'feedbackvalidation': found 11 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/DepthAnythingV2-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/ModelProvenance.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGe-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeConversionProvenance.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeProvenance.txt
+Building for debugging...
+[1 / 5]
+[2 / 6] LumoraCore
+[7 / 11] LumoraCore
+[16 / 21] LumoraCore
+[17 / 21] LumoraCore
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/DepthLighting/DepthLightingLegacyRenderer.swift:9:33: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 7 | /// Normal derivatives retain the prototype's 960-pixel reference scale at all qualities.
+ 8 | enum DepthLightingLegacyRenderer {
+ 9 |     private static let kernel = CIKernel(source: """
+   |                                 `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+10 |     float depthAt(sampler depth, vec2 uv, vec4 bounds) {
+11 |         vec2 p = bounds.xy + vec2(uv.x, 1.0-uv.y)*bounds.zw;
+
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/DepthLighting/DepthLightingRenderer.swift:7:33: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+  5 | /// screen-space depth shadows affect only the explicitly enabled new controls.
+  6 | enum DepthLightingRenderer {
+  7 |     private static let kernel = CIKernel(source: """
+    |                                 `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+  8 |     float depthAt(sampler depth, vec2 uv, vec4 bounds) {
+  9 |         vec2 p = bounds.xy + vec2(uv.x, 1.0-uv.y)*bounds.zw;
+
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/HighlightRecoveryRenderer.swift:6:35: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 4 | /// highlights use a shared RGB gain, and remaining HDR headroom survives the LUT.
+ 5 | enum HighlightRecoveryRenderer {
+ 6 |     private static let recovery = CIColorKernel(source: """
+   |                                   `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+ 7 |     kernel vec4 recoverHighlights(__sample pixel, float strength) {
+ 8 |         vec4 c = unpremultiply(pixel);
+
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/HighlightRecoveryRenderer.swift:20:36: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+18 |     }
+19 |     """)
+20 |     private static let normalize = CIColorKernel(source: """
+   |                                    `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+21 |     kernel vec4 boundedColor(__sample pixel) {
+22 |         vec4 c = unpremultiply(pixel);
+
+/Volumes/XTRA/Dev/Lumora/Lumora/Rendering/HighlightRecoveryRenderer.swift:27:34: warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+25 |     }
+26 |     """)
+27 |     private static let restore = CIColorKernel(source: """
+   |                                  `- warning: 'init(source:)' was deprecated in macOS 10.14: Core Image Kernel Language API deprecated. (Define CI_SILENCE_GL_DEPRECATION to silence these warnings) [#DeprecatedDeclaration]
+28 |     kernel vec4 restoreHeadroom(__sample mapped, __sample original) {
+29 |         vec4 c = unpremultiply(original);
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[24 / 27] LumoraCore
+[25 / 27] LumoraCoreTests-product
+[31 / 33] LumoraCoreTests-product
+[37 / 38] LumoraCoreTests-product
+[39 / 39] LumoraCoreTests-product
+[40 / 40] LumoraCore-product
+Build complete! (7,45 secs)
+Test Suite 'All tests' started at 2026-10-28 22:11:31.161.
+Test Suite 'All tests' passed at 2026-10-28 22:11:31.163.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MaskGeometryTests started.
+◇ Test cropPreviewDecodeBudgetIsBoundedAndNeutralIsUnchanged() started.
+◇ Test luminanceNoiseReductionReducesFineLumaVariance() started.
+◇ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() started.
+◇ Test maskedDetailBlurSmoothsOnlyCoveredPixelsAndKeepsDimensions() started.
+◇ Test geometryRotationAndAspectProduceExpectedExtent() started.
+◇ Test geometryRAWExportResizesAfterCrop() started.
+◇ Test geometrySettingsMigrateValidateSerializeAndHistory() started.
+◇ Test cropGesturesPreserveFirstContactAndRejectInvalidInput() started.
+◇ Test sharpeningChangesEdgesAndMaskingProtectsFlatAreas() started.
+◇ Test perspectiveAffineControlsKeepOutputCovered() started.
+◇ Test adjustmentIndicatorsAndSummariesFollowStoredValuesWithoutMutating() started.
+◇ Test socialFormatsMatchRendererAndSurviveSerialization() started.
+◇ Test detailBlurMigratesPersistsClampsAndUndoesPerLayer() started.
+◇ Test cropGesturesFollowTheFingerKeepCoverageAndClampZoom() started.
+◇ Test automaticPerspectiveConvertsWeightsClampsAndRejectsWeakGeometry() started.
+◇ Test expensivePreviewKeepsEstablishedInputBudget() started.
+◇ Test detailSettingsValidateMigrateSerializeAndHistory() started.
+◇ Test directGeometryHandlesMapToPerspectiveAndCropControls() started.
+◇ Test perspectiveChangesPixelsAndKeepsFiniteExtent() started.
+◇ Test colorNoiseReductionSuppressesChromaAndPreservesLuma() started.
+◇ Test automaticStraightenConvertsAndClampsHorizonAngle() started.
+◇ Test geometryChangesPreviewAndFullResolutionExportDimensions() started.
+◇ Test straightenFillsEveryOutputCorner() started.
+◇ Test previewAndExportKeepLocalAdjustmentsOnTheSamePixels() started.
+◇ Test masksFollowPhotoPixels(_:) started.
+◇ Test componentsCreatedInDifferentFramesStayAligned() started.
+◇ Test creationFrameSurvivesSavingAndUndoRedo() started.
+◇ Test legacyComponentsKeepTheirExistingAppearanceUntilAnchored() started.
+✔ Test cropGesturesPreserveFirstContactAndRejectInvalidInput() passed after 0.069 seconds.
+✔ Test cropPreviewDecodeBudgetIsBoundedAndNeutralIsUnchanged() passed after 0.070 seconds.
+✔ Test geometryRotationAndAspectProduceExpectedExtent() passed after 0.069 seconds.
+✔ Test socialFormatsMatchRendererAndSurviveSerialization() passed after 0.069 seconds.
+✔ Test cropGesturesFollowTheFingerKeepCoverageAndClampZoom() passed after 0.069 seconds.
+✔ Test geometrySettingsMigrateValidateSerializeAndHistory() passed after 0.069 seconds.
+✔ Test expensivePreviewKeepsEstablishedInputBudget() passed after 0.069 seconds.
+✔ Test directGeometryHandlesMapToPerspectiveAndCropControls() passed after 0.069 seconds.
+◇ Test case passing 1 argument kind → "rotation" to masksFollowPhotoPixels(_:) started.
+◇ Test case passing 1 argument kind → "mirror" to masksFollowPhotoPixels(_:) started.
+◇ Test case passing 1 argument kind → "crop" to masksFollowPhotoPixels(_:) started.
+◇ Test case passing 1 argument kind → "straighten" to masksFollowPhotoPixels(_:) started.
+◇ Test case passing 1 argument kind → "perspective" to masksFollowPhotoPixels(_:) started.
+◇ Test case passing 1 argument kind → "combined" to masksFollowPhotoPixels(_:) started.
+✔ Test automaticPerspectiveConvertsWeightsClampsAndRejectsWeakGeometry() passed after 0.261 seconds.
+Tight crop HQ preview: 1151 × 863; native crop 1151 × 863
+✔ Test adjustmentIndicatorsAndSummariesFollowStoredValuesWithoutMutating() passed after 0.398 seconds.
+✔ Test automaticStraightenConvertsAndClampsHorizonAngle() passed after 0.398 seconds.
+✔ Test detailBlurMigratesPersistsClampsAndUndoesPerLayer() passed after 0.398 seconds.
+✔ Test detailSettingsValidateMigrateSerializeAndHistory() passed after 0.398 seconds.
+✔ Test straightenFillsEveryOutputCorner() passed after 0.398 seconds.
+✔ Test perspectiveAffineControlsKeepOutputCovered() passed after 0.398 seconds.
+✔ Test perspectiveChangesPixelsAndKeepsFiniteExtent() passed after 0.398 seconds.
+✔ Test geometryChangesPreviewAndFullResolutionExportDimensions() passed after 0.398 seconds.
+✔ Test maskedDetailBlurSmoothsOnlyCoveredPixelsAndKeepsDimensions() passed after 0.399 seconds.
+✔ Test luminanceNoiseReductionReducesFineLumaVariance() passed after 0.399 seconds.
+✔ Test colorNoiseReductionSuppressesChromaAndPreservesLuma() passed after 0.399 seconds.
+✔ Test sharpeningChangesEdgesAndMaskingProtectsFlatAreas() passed after 0.399 seconds.
+✔ Test componentsCreatedInDifferentFramesStayAligned() passed after 0.393 seconds.
+✔ Test creationFrameSurvivesSavingAndUndoRedo() passed after 0.393 seconds.
+✔ Test legacyComponentsKeepTheirExistingAppearanceUntilAnchored() passed after 0.393 seconds.
+✔ Test previewAndExportKeepLocalAdjustmentsOnTheSamePixels() passed after 0.420 seconds.
+✔ Test masksFollowPhotoPixels(_:) with 6 test cases passed after 0.555 seconds.
+✔ Suite MaskGeometryTests passed after 0.561 seconds.
+RAW cropped export: 1279 × 1600, requested longest side 1600
+✔ Test geometryRAWExportResizesAfterCrop() passed after 0.906 seconds.
+✔ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() passed after 1.853 seconds.
+✔ Test run with 28 tests in 1 suite passed after 1.853 seconds.

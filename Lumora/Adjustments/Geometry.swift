@@ -255,6 +255,21 @@ enum GeometryDirectManipulation {
 }
 
 enum GeometryRenderer {
+    /// Decode enough source pixels for the *cropped output*, with a bounded
+    /// cache footprint. Interaction keeps its fast preview; this is for HQ.
+    static func previewSourceMaximum(sourceSize: CGSize, settings: GeometrySettings, outputMaximum: Int,
+                                     sourceLimit: Int = 4096) -> Int {
+        guard sourceSize.width > 0, sourceSize.height > 0, !settings.isIdentity else { return outputMaximum }
+        let bounds = CGRect(origin: .zero, size: sourceSize)
+        let size = apply(CIImage(color: .black).cropped(to: bounds), settings: settings).extent.size
+        let nativeMaximum = max(sourceSize.width, sourceSize.height)
+        let retained = max(size.width, size.height) / nativeMaximum
+        guard retained.isFinite, retained > 0, retained < 1 else { return outputMaximum }
+        // Fixed buckets avoid caching another large bitmap for every crop value.
+        let needed = ceil(Double(outputMaximum) / retained / 1024) * 1024
+        return max(outputMaximum, Int(min(nativeMaximum, min(Double(sourceLimit), needed))))
+    }
+
     static func apply(_ input: CIImage, settings: GeometrySettings) -> CIImage {
         let settings = settings.validated
         guard !settings.isIdentity else { return input }

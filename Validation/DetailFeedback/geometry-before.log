@@ -1,0 +1,33 @@
+warning: 'feedbackvalidation': found 11 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/DepthAnythingV2-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/ModelProvenance.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGe-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeConversionProvenance.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeProvenance.txt
+Building for debugging...
+[1 / 22]
+[3 / 15] LumoraCoreTests-product
+[8 / 20] LumoraCoreTests-product
+[9 / 20] LumoraCoreTests-product
+[12 / 18] LumoraCoreTests-product
+[14 / 18] LumoraCoreTests-product
+[16 / 18] LumoraCoreTests-product
+Build complete! (5,86 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() started.
+✘ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() recorded an issue at DetailFeedbackTests.swift:118:5: Expectation failed: preview.image.width >= min(2048, Int(expected.width)) - 2
+↳ preview.image.width >= min(2048, Int(expected.width)) - 2 → false
+↳   preview.image.width → 737
+↳   min(2048, Int(expected.width)) - 2 → 1149
+✘ Test geometryTightCropKeepsAvailablePreviewAndNativeExportDetail() failed after 1.656 seconds with 1 issue.
+✘ Test run with 1 test in 0 suites failed after 1.657 seconds with 1 issue.
+Note: Some test targets reported failures:
+  - LumoraCoreTests (Swift Testing)

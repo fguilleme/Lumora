@@ -6,7 +6,8 @@ final class GeometryCropUITests: XCTestCase {
         XCUIDevice.shared.orientation = .portrait
         defer { XCUIDevice.shared.orientation = .portrait }
         let app = XCUIApplication()
-        app.launchArguments = ["-AppleLanguages", "(fr)", "-AppleLocale", "fr_FR", "--app-store-panel", "Geometry"]
+        app.launchArguments = ["-AppleLanguages", "(fr)", "-AppleLocale", "fr_FR",
+            "--app-store-image", "DetailFeedback.jpg", "--app-store-panel", "Geometry"]
         app.launch()
         let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
         XCTAssertTrue(canvas.waitForExistence(timeout: 20))

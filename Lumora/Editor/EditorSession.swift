@@ -32,13 +32,28 @@ final class EditorSession {
         guard !isGeneratingMask, let image = result?.image, let documentID = document?.id,
               let component = selectedMaskComponent, case .similarity(let mask) = component.shape else { return }
         isGeneratingMask = true
+        let sampledGeometry = state.geometry
         defer { isGeneratingMask = false }
         do {
+            var displayedMask = mask
+            if let map = selectedMaskGeometry, !map.unchanged {
+                let center = map.display(mask.influence.center)
+                let edgeX = map.display(MaskPoint(x: mask.influence.center.x + mask.influence.radiusX, y: mask.influence.center.y))
+                let edgeY = map.display(MaskPoint(x: mask.influence.center.x, y: mask.influence.center.y + mask.influence.radiusY))
+                displayedMask.influence.radiusX = hypot(edgeX.x - center.x, edgeY.x - center.x)
+                displayedMask.influence.radiusY = hypot(edgeX.y - center.y, edgeY.y - center.y)
+            }
+            let samplingMask = displayedMask
             let sampled = try await Task.detached(priority: .userInitiated) {
-                try SimilarityMaskEngine.sample(point, image: image, mask: mask)
+                try SimilarityMaskEngine.sample(point, image: image, mask: samplingMask)
             }.value
-            guard document?.id == documentID, selectedMaskComponent == component else { return }
+            guard document?.id == documentID, selectedMaskComponent == component,
+                  state.geometry == sampledGeometry else { return }
             finishInteraction()
+            history.begin("Sample color", state: state)
+            if let (layer, index) = selectedComponentIndex {
+                state.masks[layer].components[index].geometry = state.geometry
+            }
             setSelectedMaskShape(.similarity(sampled))
             similaritySamplerID = nil
         } catch { self.error = error.localizedDescription }
@@ -349,7 +364,19 @@ final class EditorSession {
     private func configureAppStoreDemoIfNeeded() {
         guard let option = CommandLine.arguments.firstIndex(of: "--app-store-panel"),
               CommandLine.arguments.indices.contains(option + 1) else { return }
+        let version13 = CommandLine.arguments.contains("--app-store-1.3")
+        if version13 { setCropAspect(.fourFive) }
         switch CommandLine.arguments[option + 1] {
+        case "Light" where version13:
+            set(.exposure, to: 0.25)
+        case "Color" where version13:
+            set(.vibrance, to: 12)
+        case "Curves" where version13:
+            setCurve(.rgb, curve: ToneCurve(points: [.init(x: 0, y: 0), .init(x: 0.4, y: 0.5), .init(x: 1, y: 1)]))
+        case "Effects" where version13:
+            setEffect(.cinematicGlow, to: 12)
+        case "Detail" where version13:
+            setDetail(.sharpeningAmount, to: 35)
         case "Depth Lens":
             changeDepthLens {
                 $0.enabled = true; $0.aperture = 1.4; $0.focal = 85
@@ -359,14 +386,14 @@ final class EditorSession {
             changeDepthLighting {
                 $0.enabled = true; $0.intensity = 161; $0.distance = 0; $0.softness = 77
                 $0.relief = 80; $0.azimuth = 68; $0.elevation = 20
-                $0.red = 0.03; $0.green = 0.32; $0.blue = 1
+                $0.red = version13 ? 1 : 0.03; $0.green = version13 ? 0.93 : 0.32; $0.blue = version13 ? 0.85 : 1
                 $0.targetX = 0.48; $0.targetY = 0.40
             }
         case "Beauty":
             // The App Store simulator cannot always create Vision's inference context.
             // Populate the controls without requesting a render; device captures and the
             // production path continue to use the normal face-analysis pipeline.
-            state.beauty = BeautyPreset.portrait.settings
+            state.beauty = version13 ? BeautyState() : BeautyPreset.portrait.settings
         case "Masks":
             createMask(.radial)
         default:
@@ -577,6 +604,7 @@ final class EditorSession {
         beginInteraction(adjustment.title)
     }
     func beginInteraction(_ name: String) {
+        anchorLegacyMasks()
         history.begin(name, state: state)
         interacting = true
     }
@@ -733,7 +761,16 @@ final class EditorSession {
         state.optics.profileCorrection = enabled
         history.commit(state); persist(); requestRender(.high)
     }
+    private func anchorLegacyMasks() {
+        for layer in state.masks.indices {
+            for component in state.masks[layer].components.indices
+                where state.masks[layer].components[component].geometry == nil {
+                state.masks[layer].components[component].geometry = state.geometry
+            }
+        }
+    }
     func setGeometry(_ adjustment: GeometryAdjustment, to value: Double) {
+        anchorLegacyMasks()
         if !interacting { history.begin(adjustment.title, state: state) }
         state.geometry[adjustment] = value
         requestRender(interacting ? .interactive : .high)
@@ -747,12 +784,14 @@ final class EditorSession {
 
     func setCropAspect(_ aspect: CropAspect) {
         finishInteraction()
+        anchorLegacyMasks()
         history.begin("Format \(aspect.title)", state: state)
         state.geometry.aspect = aspect
         history.commit(state); persist(); requestRender(.high)
     }
     func rotateGeometry(clockwise: Bool) {
         finishInteraction()
+        anchorLegacyMasks()
         history.begin(clockwise ? "Rotate right" : "Rotate left", state: state)
         state.geometry.quarterTurns += clockwise ? 1 : -1
         state.geometry = state.geometry.validated
@@ -760,6 +799,7 @@ final class EditorSession {
     }
     func toggleGeometryFlip(horizontal: Bool) {
         finishInteraction()
+        anchorLegacyMasks()
         history.begin(horizontal ? "Flip horizontally" : "Flip vertically", state: state)
         if horizontal { state.geometry.flipHorizontal.toggle() }
         else { state.geometry.flipVertical.toggle() }
@@ -778,6 +818,7 @@ final class EditorSession {
             let updated = min(GeometryAdjustment.straighten.range.upperBound,
                               max(GeometryAdjustment.straighten.range.lowerBound, current + correction))
             guard abs(updated - current) >= 0.01 else { return }
+            anchorLegacyMasks()
             history.begin("Redressement automatique", state: state)
             state.geometry.straighten = updated
             history.commit(state); persist(); requestRender(.high)
@@ -804,6 +845,7 @@ final class EditorSession {
                                  max(GeometryAdjustment.perspectiveHorizontal.range.lowerBound,
                                      currentHorizontal + correction.horizontal))
             guard abs(vertical - currentVertical) >= 0.01 || abs(horizontal - currentHorizontal) >= 0.01 else { return }
+            anchorLegacyMasks()
             history.begin("Perspective automatique", state: state)
             state.geometry.perspectiveVertical = vertical
             state.geometry.perspectiveHorizontal = horizontal
@@ -842,6 +884,15 @@ final class EditorSession {
         projected.optics = state.optics
         projected.geometry = state.geometry
         return projected
+    }
+    var maskRenderGeometry: MaskRenderGeometry? {
+        guard let result else { return nil }
+        return MaskRenderGeometry(sourceSize: CGSize(width: result.original.width, height: result.original.height),
+                                  current: state.geometry)
+    }
+    var selectedMaskGeometry: MaskGeometry? {
+        guard let component = selectedMaskComponent else { return nil }
+        return maskRenderGeometry?.mapping(component)
     }
     var selectedMaskComponent: MaskComponent? {
         selectedMask?.components.first { $0.id == selectedMaskComponentID }
@@ -899,7 +950,7 @@ final class EditorSession {
     }
     func createMask(_ kind: MaskKind) {
         finishInteraction(); history.begin("Create mask", state: state)
-        let component = MaskComponent(shape: kind.shape())
+        let component = MaskComponent(shape: kind.shape(), geometry: state.geometry)
         let mask = LocalMask(name: "\(kind.title) \(state.masks.count + 1)", components: [component])
         state.masks.append(mask); selectedMaskID = mask.id; selectedMaskComponentID = component.id
         if kind == .brush { brushMode = .paint }
@@ -908,7 +959,7 @@ final class EditorSession {
     func addMaskComponent(_ kind: MaskKind, operation: MaskOperation) {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         history.begin(operation == .add ? "Add to mask" : "Subtract from mask", state: state)
-        let component = MaskComponent(operation: operation, shape: kind.shape())
+        let component = MaskComponent(operation: operation, shape: kind.shape(), geometry: state.geometry)
         state.masks[index].components.append(component); selectedMaskComponentID = component.id
         if kind == .brush { brushMode = .paint }
         history.commit(state); persist(); requestRender(.high)
@@ -917,13 +968,14 @@ final class EditorSession {
         finishInteraction()
         guard !isGeneratingMask, let image = result?.image, let documentID = document?.id else { return }
         isGeneratingMask = true
+        let sampledGeometry = state.geometry
         defer { isGeneratingMask = false }
         do {
             let generated = try await maskGenerator.generate(kind, from: image)
             try Task.checkCancellation()
-            guard document?.id == documentID else { return }
+            guard document?.id == documentID, state.geometry == sampledGeometry else { return }
             history.begin(operation == nil ? "Detect \(kind.title)" : "Edit with \(kind.title)", state: state)
-            let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated))
+            let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.geometry)
             if operation != nil, let index = selectedMaskIndex {
                 state.masks[index].components.append(component)
                 selectedMaskComponentID = component.id
@@ -942,7 +994,7 @@ final class EditorSession {
     func commitMagicMask(_ generated: GeneratedMask, operation: MaskOperation? = nil) {
         finishInteraction()
         history.begin(operation == nil ? "Magic Selection" : "Edit with Magic Selection", state: state)
-        let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated))
+        let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.geometry)
         if operation != nil, let index = selectedMaskIndex {
             state.masks[index].components.append(component)
             selectedMaskComponentID = component.id
@@ -1097,8 +1149,16 @@ final class EditorSession {
         guard interacting, let (maskIndex, componentIndex) = selectedComponentIndex,
               case .brush(var brush) = state.masks[maskIndex].components[componentIndex].shape,
               brushMode == .paint ? !brush.strokes.isEmpty : !brush.eraseStrokes.isEmpty else { return }
-        if brushMode == .paint { brush.strokes[brush.strokes.count - 1].append(point.validated) }
-        else { brush.eraseStrokes[brush.eraseStrokes.count - 1].append(point.validated) }
+        let map = selectedMaskGeometry
+        let stored = map?.stored(point) ?? point
+        let scale = map?.brushSizeScale(at: point) ?? 1
+        if brushMode == .paint, brush.strokes.last?.isEmpty == true, !brush.strokeSizes.isEmpty {
+            brush.strokeSizes[brush.strokeSizes.count - 1] /= scale
+        } else if brushMode == .erase, brush.eraseStrokes.last?.isEmpty == true, !brush.eraseStrokeSizes.isEmpty {
+            brush.eraseStrokeSizes[brush.eraseStrokeSizes.count - 1] /= scale
+        }
+        if brushMode == .paint { brush.strokes[brush.strokes.count - 1].append(stored.validated) }
+        else { brush.eraseStrokes[brush.eraseStrokes.count - 1].append(stored.validated) }
         state.masks[maskIndex].components[componentIndex].shape = .brush(brush)
         requestRender(.interactive)
     }
@@ -1155,6 +1215,7 @@ final class EditorSession {
     }
     func resetGeometry() {
         finishInteraction()
+        anchorLegacyMasks()
         history.begin("Reset geometry", state: state)
         state.geometry = GeometrySettings()
         history.commit(state); persist(); requestRender(.high)

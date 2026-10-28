@@ -410,6 +410,9 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
             ]
         case .effects:
             return [
+                HelpSection("Blur", [
+                    HelpItem("Blur", "Softens the photo or the selected mask. Zero leaves the image unchanged.")
+                ]),
                 HelpSection("Finishing controls", [
                     HelpItem("Cinematic Glow", "Diffuses bright sources into a luminous halo. Intensity 0 leaves the image unchanged; increase it gradually for a stronger cinematic glow. This control always affects the whole photo, even with a mask selected. Check windows, lamps, skin, and reflections. The upper range protects bright destinations, but the middle range can still increase SDR clipping; compare with the original and inspect the histogram. Reset returns to 0."),
                     HelpItem("Texture", "Strengthens or softens fine detail such as fabric or hair. Negative values reduce detail."),
@@ -549,6 +552,7 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpSection("Create an area", [
                     HelpItem("Brush", "Choose Add or Subtract, then choose Brush. Trace applies that operation; Pan navigates a zoomed photo. Size and feather are captured for each new stroke, so changing them does not alter strokes already drawn."),
                     HelpItem("Gradients", "Place and resize linear or radial masks with handles on the photo, including after zooming."),
+                    HelpItem("Gradient controls", "While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks."),
                     HelpItem("Color selection", "Sample a color on the photo, then resize the ellipse to limit its influence. Tolerance controls the accepted color difference; Feather softens the edge. Connected region follows only the area linked to the sampled point, entirely inside the ellipse. All similar pixels includes separate matching areas inside it. Moving the ellipse keeps the reference color; use Sample color to choose another. Add and Subtract combine this selection with other mask components."),
                     HelpItem("Smart masks", "Lumora can automatically propose Subject, Background, Person, or Eyes. Inspect the outline before a strong adjustment."),
                     HelpItem("Magic Selection", "Touch an element, then choose one of the three proposed selections. Add points to extend it or remove points to exclude unwanted areas. Pinch to zoom, drag the enlarged image, and double-tap to return to the full image. Refine with brush lets you draw over an inaccurate edge; Lumora compares the colors on both sides and recalculates only that local boundary. Sensitivity controls how subtle a color difference can move the edge. Use the eye button to switch between the mask alone and the photo overlay."),
