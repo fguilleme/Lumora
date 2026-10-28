@@ -1,0 +1,32 @@
+warning: 'feedbackvalidation': found 11 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/DepthAnythingV2-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/DepthLensResources/ModelProvenance.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMDecoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/model.mlmodel
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Data/com.apple.CoreML/weights/weight.bin
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/Models/MobileSAMEncoder.mlpackage/Manifest.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGe-LICENSE.txt
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeConversionProvenance.json
+    /Volumes/XTRA/Dev/Lumora/.build/FeedbackValidation/Lumora/RelightingResources/MoGeProvenance.txt
+Building for debugging...
+[1 / 18]
+[3 / 13] LumoraCoreTests-product
+[4 / 13] LumoraCoreTests-product
+[10 / 19] LumoraCoreTests-product
+[13 / 17] LumoraCoreTests-product
+[15 / 17] LumoraCoreTests-product
+[17 / 17] LumoraCoreTests-product
+[18 / 18] LumoraCore-product
+Build complete! (5,78 secs)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test deletingMaskClearsOnlyItsReferencesAndPersists() started.
+◇ Test detachedCreativeEffectDoesNotBecomeGlobal() started.
+◇ Test deletingMaskAndReferencesIsOneUndoRedoOperation() started.
+✔ Test deletingMaskAndReferencesIsOneUndoRedoOperation() passed after 0.001 seconds.
+✔ Test detachedCreativeEffectDoesNotBecomeGlobal() passed after 0.003 seconds.
+✔ Test deletingMaskClearsOnlyItsReferencesAndPersists() passed after 0.003 seconds.
+✔ Test run with 3 tests in 0 suites passed after 0.004 seconds.

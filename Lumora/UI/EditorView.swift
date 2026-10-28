@@ -374,12 +374,12 @@ struct EditorView: View {
             clippingOverlay = nil; clippingSource = nil; clippingRequest &+= 1
             if clippingPressed, let image = session.result?.image { setClippingPress(true, image: image) }
         }
-        .onChange(of: session.selectedMaskID) { _, selectedMaskID in
-            if selectedMaskID != nil {
-                curveEyedropper = false
-                curveSample = nil
-                curveSamplingBuffer = nil
-            }
+        .onChange(of: session.selectedMaskID) { _, _ in
+            focusedAdjustmentID = nil
+            curveSelectedPoint = nil
+            curveEyedropper = false
+            curveSample = nil
+            curveSamplingBuffer = nil
         }
         .onDisappear { session.setMaskEditingPreview(false) }
         .onChange(of: scenePhase) { _, phase in

@@ -1,6 +1,36 @@
 import XCTest
 
 final class TransientMaskGuidesUITests: XCTestCase {
+    @MainActor func testDeletingMaskClearsSelectionAndUndoRestoresLocalSettings() throws {
+        let app = try launch()
+        open("Light", title: "Lumière", app)
+        let name = try XCTUnwrap(app.buttons["active-layer"].value as? String)
+        enter("0,70", app)
+        open("Masks", title: "Masques", app)
+        app.buttons["mask-delete"].tap()
+        XCTAssertFalse(handle("center", app).exists)
+        XCTAssertFalse(app.staticTexts["mask-adjustment-summary"].exists)
+        XCTAssertTrue(app.buttons["layer-base"].isSelected)
+        open("Light", title: "Lumière", app)
+        XCTAssertEqual(app.buttons["active-layer"].value as? String, "Photo entière")
+        XCTAssertEqual(app.buttons["editor-tab-Light"].value as? String, "Aucun réglage")
+        app.buttons["active-layer"].tap()
+        XCTAssertFalse(app.collectionViews.buttons[name].firstMatch.exists)
+        app.collectionViews.buttons["Photo entière"].firstMatch.tap()
+        // One Undo restores the removed local settings, without applying them globally.
+        app.buttons["arrow.uturn.backward"].tap()
+        XCTAssertEqual(app.buttons["active-layer"].value as? String, "Photo entière")
+        app.buttons["active-layer"].tap()
+        let restored = app.collectionViews.buttons[name].firstMatch
+        XCTAssertTrue(restored.waitForExistence(timeout: 5))
+        restored.tap()
+        XCTAssertTrue((app.buttons["parameter-exposure"].value as? String)?.hasPrefix("0,70") == true)
+        XCTAssertTrue(handle("center", app).waitForExistence(timeout: 5))
+        app.buttons["arrow.uturn.forward"].tap()
+        XCTAssertEqual(app.buttons["active-layer"].value as? String, "Photo entière")
+        XCTAssertFalse(handle("center", app).exists)
+        XCTAssertEqual(app.buttons["editor-tab-Light"].value as? String, "Aucun réglage")
+    }
 
     @MainActor func testActiveLayerMenuHitArea() throws {
         let app = try launch()

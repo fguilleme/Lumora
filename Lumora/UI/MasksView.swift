@@ -56,6 +56,7 @@ struct MasksView: View {
                         if mask != nil {
                             Button(role: .destructive, action: onDelete) { Image(systemName: "trash") }
                                 .accessibilityLabel("Delete mask")
+                                .accessibilityIdentifier("mask-delete")
                         }
                     }
                     if isGenerating { AnimatedLoadingMessage("Mask detection", compact: true) }

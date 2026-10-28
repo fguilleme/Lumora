@@ -11,6 +11,7 @@ final class EditorSession {
     private(set) var isImporting = false
     private(set) var isRendering = false
     private(set) var isGeneratingMask = false
+    @ObservationIgnored private var maskRequest = 0
     var similaritySamplerID: UUID?
     var similaritySampling: Bool {
         guard let component = selectedMaskComponent, case .similarity(let mask) = component.shape else { return false }
@@ -31,9 +32,11 @@ final class EditorSession {
         finishInteraction()
         guard !isGeneratingMask, let image = result?.image, let documentID = document?.id,
               let component = selectedMaskComponent, case .similarity(let mask) = component.shape else { return }
+        maskRequest &+= 1
+        let token = maskRequest
         isGeneratingMask = true
         let sampledGeometry = state.geometry
-        defer { isGeneratingMask = false }
+        defer { if token == maskRequest { isGeneratingMask = false } }
         do {
             var displayedMask = mask
             if let map = selectedMaskGeometry, !map.unchanged {
@@ -47,7 +50,7 @@ final class EditorSession {
             let sampled = try await Task.detached(priority: .userInitiated) {
                 try SimilarityMaskEngine.sample(point, image: image, mask: samplingMask)
             }.value
-            guard document?.id == documentID, selectedMaskComponent == component,
+            guard token == maskRequest, document?.id == documentID, selectedMaskComponent == component,
                   state.geometry == sampledGeometry else { return }
             finishInteraction()
             history.begin("Sample color", state: state)
@@ -56,7 +59,7 @@ final class EditorSession {
             }
             setSelectedMaskShape(.similarity(sampled))
             similaritySamplerID = nil
-        } catch { self.error = error.localizedDescription }
+        } catch { if token == maskRequest { self.error = error.localizedDescription } }
     }
     private(set) var isAnalyzingGeometry = false
     private(set) var beautyFaceCount: Int?
@@ -898,17 +901,22 @@ final class EditorSession {
         selectedMask?.components.first { $0.id == selectedMaskComponentID }
     }
     func selectMask(_ id: UUID) {
+        guard let mask = state.masks.first(where: { $0.id == id }) else { selectBaseLayer(); return }
         finishInteraction(); selectedMaskID = id
-        selectedMaskComponentID = state.masks.first { $0.id == id }?.components.last?.id
+        selectedMaskComponentID = mask.components.last?.id
+        similaritySamplerID = nil
         showingOriginal = false
     }
     func selectBaseLayer() {
         finishInteraction()
         selectedMaskID = nil
         selectedMaskComponentID = nil
+        similaritySamplerID = nil
         showingOriginal = false
     }
     func selectMaskComponent(_ id: UUID) {
+        guard selectedMask?.components.contains(where: { $0.id == id }) == true else { return }
+        similaritySamplerID = nil
         finishInteraction(); selectedMaskComponentID = id; showingOriginal = false
     }
     func setSelectedMaskComponentOperation(_ operation: MaskOperation) {
@@ -931,6 +939,8 @@ final class EditorSession {
         finishInteraction(); guard let (maskIndex, componentIndex) = selectedComponentIndex,
                                    state.masks[maskIndex].components.count > 1 else { return }
         history.begin("Delete component", state: state)
+        cancelMaskRequest()
+        similaritySamplerID = nil
         state.masks[maskIndex].components.remove(at: componentIndex)
         let replacement = min(componentIndex, state.masks[maskIndex].components.count - 1)
         selectedMaskComponentID = state.masks[maskIndex].components[replacement].id
@@ -967,13 +977,20 @@ final class EditorSession {
     func generateSmartMask(_ kind: SmartMaskKind, operation: MaskOperation? = nil) async {
         finishInteraction()
         guard !isGeneratingMask, let image = result?.image, let documentID = document?.id else { return }
+        let targetMaskID = operation == nil ? nil : selectedMaskID
+        guard operation == nil || selectedMask != nil else { return }
+        maskRequest &+= 1
+        let token = maskRequest
         isGeneratingMask = true
         let sampledGeometry = state.geometry
-        defer { isGeneratingMask = false }
+        defer { if token == maskRequest { isGeneratingMask = false } }
         do {
             let generated = try await maskGenerator.generate(kind, from: image)
             try Task.checkCancellation()
-            guard document?.id == documentID, state.geometry == sampledGeometry else { return }
+            guard token == maskRequest, document?.id == documentID, state.geometry == sampledGeometry else { return }
+            if let targetMaskID {
+                guard selectedMaskID == targetMaskID, state.masks.contains(where: { $0.id == targetMaskID }) else { return }
+            }
             history.begin(operation == nil ? "Detect \(kind.title)" : "Edit with \(kind.title)", state: state)
             let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.geometry)
             if operation != nil, let index = selectedMaskIndex {
@@ -988,7 +1005,7 @@ final class EditorSession {
             history.commit(state); persist(); requestRender(.high); showingOriginal = false
         } catch is CancellationError {
         } catch {
-            self.error = error.localizedDescription
+            if token == maskRequest { self.error = error.localizedDescription }
         }
     }
     func commitMagicMask(_ generated: GeneratedMask, operation: MaskOperation? = nil) {
@@ -1012,9 +1029,18 @@ final class EditorSession {
     func deleteSelectedMask() {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         history.begin("Delete layer", state: state)
-        state.masks.remove(at: index); history.commit(state)
+        state.removeMask(id: state.masks[index].id)
+        cancelMaskRequest()
+        similaritySamplerID = nil
         selectedMaskID = nil; selectedMaskComponentID = nil
-        persist(); requestRender(.high)
+        brushMode = .paint
+        showingOriginal = false
+        history.commit(state)
+        persist(); requestRender(.high, force: true)
+    }
+    private func cancelMaskRequest() {
+        maskRequest &+= 1
+        isGeneratingMask = false
     }
     func renameSelectedLayer(to name: String) {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
@@ -1232,12 +1258,14 @@ final class EditorSession {
     func undo() {
         finishInteraction()
         guard let previous = history.undo() else { return }
-        state = previous; selectFirstMaskIfNeeded(); persist(); requestRender(.high)
+        let masksChanged = state.masks != previous.masks
+        state = previous; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: masksChanged)
     }
     func redo() {
         finishInteraction()
         guard let next = history.redo() else { return }
-        state = next; selectFirstMaskIfNeeded(); persist(); requestRender(.high)
+        let masksChanged = state.masks != next.masks
+        state = next; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: masksChanged)
     }
     func exportRequest() -> ExportRequest? {
         finishInteraction()
@@ -1288,8 +1316,9 @@ final class EditorSession {
             requestRender(.high)
         }
     }
-    private func requestRender(_ quality: PreviewQuality) {
-        if maskEditingPreview { deferredMaskRender = true; return }
+    private func requestRender(_ quality: PreviewQuality, force: Bool = false) {
+        if maskEditingPreview && !force { deferredMaskRender = true; return }
+        if force { deferredMaskRender = false }
         guard let sourceURL else { return }
         generation += 1
         let token = generation, snapshot = state, bypass = bypassCreative
@@ -1320,6 +1349,7 @@ final class EditorSession {
         return (mask, component)
     }
     private func selectFirstMaskIfNeeded() {
+        similaritySamplerID = nil
         if let selectedMaskID, let mask = state.masks.first(where: { $0.id == selectedMaskID }) {
             if let selectedMaskComponentID,
                mask.components.contains(where: { $0.id == selectedMaskComponentID }) { return }

@@ -387,6 +387,13 @@ struct PhotoCanvas: View {
                 })
         }
         .onChange(of: isPainting) { _, painting in if painting { showingOriginal = false } }
+        .onChange(of: activeComponentID) { _, _ in
+            brushActive = false
+            brushLocation = nil
+            liveBrushStroke = []
+            liveBrushPreviewVisible = false
+            liveBrushMode = nil
+        }
         .onChange(of: hasTransformHandles) { _, editing in
             if editing { showingOriginal = false }
         }

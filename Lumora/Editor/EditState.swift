@@ -31,6 +31,19 @@ struct EditState: Codable, Sendable, Equatable {
 
     init() {}
 
+    /// Remove the layer and detach its consumers in the same history transaction.
+    /// A detached effect must not broaden from a local area to the whole photo.
+    @discardableResult
+    mutating func removeMask(id: UUID) -> Bool {
+        guard masks.contains(where: { $0.id == id }) else { return false }
+        masks.removeAll { $0.id == id }
+        for index in creative.effects.indices where creative.effects[index].maskID == id {
+            creative.effects[index].maskID = nil
+            creative.effects[index].enabled = false
+        }
+        return true
+    }
+
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
         case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative, coreImageAuto, depthLens, depthLighting
