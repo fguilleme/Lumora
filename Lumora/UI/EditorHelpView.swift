@@ -576,6 +576,10 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                     HelpItem("Location", "Coordinates appear only when the original contains GPS metadata. Treat them as private information when sharing a screenshot or an exported image."),
                     HelpItem("Read only", "This tab does not edit metadata or the photo. Hiding or reordering the EXIF tab in Settings has no effect on the original or on export settings.")
                 ]),
+                HelpSection("Export", [
+                    HelpItem("Export to Photos", "Export to Photos in the options menu uses the settings of the last file created in Export and the remembered album name."),
+                    HelpItem("Save to Photos", "Create the export file, then enter an optional album name and tap Save to Photos. An existing album is reused or a new album is created. Leave the name empty to save to the library. Albums require Full Access to Photos; without it, the exported file remains available for sharing.")
+                ]),
                 HelpSection("Export metadata", [
                     HelpItem("Keep metadata", "The export screen can include standard EXIF capture fields and selected TIFF fields. It updates dimensions and orientation for the exported pixels, removes proprietary Maker Notes, and does not copy XMP or IPTC blocks."),
                     HelpItem("Remove location", "GPS metadata is removed by default even when other metadata is kept. Disable Remove location only when you deliberately want coordinates in the exported file."),

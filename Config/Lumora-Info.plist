@@ -54,6 +54,8 @@
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save a copy of your edited photo to Photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Save your exported photos to an album you choose or create.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

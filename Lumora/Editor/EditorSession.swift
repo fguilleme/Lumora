@@ -1278,6 +1278,8 @@ final class EditorSession {
         guard let sourceURL, let document else { return nil }
         return ExportRequest(sourceURL: sourceURL, state: state, name: document.originalName)
     }
+    var exportEngine: RenderEngine { engine }
+
     func memoryWarning() {
         Task { await engine.clearCaches() }
     }

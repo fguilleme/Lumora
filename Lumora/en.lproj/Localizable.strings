@@ -1469,4 +1469,22 @@
 
 /* Gradient guides while making local adjustments */
 "Gradient controls" = "Gradient controls";
+
+/* Export to a Photos album */
+"Album name (optional)" = "Album name (optional)";
+"Save to Photos" = "Save to Photos";
+"Export to Photos" = "Export to Photos";
+"Export to Photos in the options menu uses the settings of the last file created in Export and the remembered album name." = "Export to Photos in the options menu uses the settings of the last file created in Export and the remembered album name.";
+"Saved to Photos" = "Saved to Photos";
+"Saved to album “%@”." = "Saved to album “%@”.";
+"Saving to Photos…" = "Saving to Photos…";
+"Create the export file, then enter an optional album name and tap Save to Photos. An existing album is reused or a new album is created. Leave the name empty to save to the library. Albums require Full Access to Photos; without it, the exported file remains available for sharing." = "Create the export file, then enter an optional album name and tap Save to Photos. An existing album is reused or a new album is created. Leave the name empty to save to the library. Albums require Full Access to Photos; without it, the exported file remains available for sharing.";
+"Unable to save to Photos" = "Unable to save to Photos";
+"Leave empty to save to the library. An existing album is reused; otherwise it is created. The last album name is remembered. Albums require Full Access to Photos." = "Leave empty to save to the library. An existing album is reused; otherwise it is created. The last album name is remembered. Albums require Full Access to Photos.";
+"Allow Lumora to add photos in Settings, or use Share or save." = "Allow Lumora to add photos in Settings, or use Share or save.";
+"Saving to an album requires Full Access to Photos in Settings. You can leave the album name empty to save to the library." = "Saving to an album requires Full Access to Photos in Settings. You can leave the album name empty to save to the library.";
+"Several albums have this name. Enter a unique album name to choose the destination safely." = "Several albums have this name. Enter a unique album name to choose the destination safely.";
+"This album cannot be modified. Choose another album name." = "This album cannot be modified. Choose another album name.";
+"The photo could not be saved to Photos. Your exported file is still available." = "The photo could not be saved to Photos. Your exported file is still available.";
+"Save to Photos below, or use Share to save the file to Files or another destination before closing this screen." = "Save to Photos below, or use Share to save the file to Files or another destination before closing this screen.";
 "While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks." = "While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks.";

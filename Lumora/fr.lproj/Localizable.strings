@@ -1475,4 +1475,24 @@
 
 /* Gradient guides while making local adjustments */
 "Gradient controls" = "Poignées des dégradés";
+
+/* Export vers un album Photos */
+"Album name (optional)" = "Nom de l’album (facultatif)";
+"Save to Photos" = "Enregistrer dans Photos";
+"Export to Photos" = "Exporter vers Photos";
+"There is not enough memory to export this photo at the selected size." = "La mémoire disponible ne suffit pas pour exporter cette photo à la taille choisie.";
+"Export up to %@ px" = "Exporter jusqu’à %@ px";
+"Export to Photos in the options menu uses the settings of the last file created in Export and the remembered album name." = "Exporter vers Photos, dans le menu des options, reprend les réglages du dernier fichier créé dans Exporter et le nom d’album mémorisé.";
+"Saved to Photos" = "Enregistré dans Photos";
+"Saved to album “%@”." = "Enregistré dans l’album « %@ ».";
+"Saving to Photos…" = "Enregistrement dans Photos…";
+"Create the export file, then enter an optional album name and tap Save to Photos. An existing album is reused or a new album is created. Leave the name empty to save to the library. Albums require Full Access to Photos; without it, the exported file remains available for sharing." = "Créez le fichier exporté, puis saisissez un nom d’album facultatif et touchez Enregistrer dans Photos. L’album est réutilisé s’il existe, sinon il est créé. Laissez le nom vide pour enregistrer dans la photothèque. Les albums nécessitent un accès complet à Photos ; sans cet accès, le fichier exporté reste disponible pour le partage.";
+"Unable to save to Photos" = "Enregistrement dans Photos impossible";
+"Leave empty to save to the library. An existing album is reused; otherwise it is created. The last album name is remembered. Albums require Full Access to Photos." = "Laissez vide pour enregistrer dans la photothèque. L’album est réutilisé s’il existe, sinon il est créé. Le dernier nom est mémorisé. Les albums nécessitent un accès complet à Photos.";
+"Allow Lumora to add photos in Settings, or use Share or save." = "Autorisez Lumora à ajouter des photos dans Réglages, ou utilisez Partager ou enregistrer.";
+"Saving to an album requires Full Access to Photos in Settings. You can leave the album name empty to save to the library." = "L’enregistrement dans un album nécessite un accès complet à Photos dans Réglages. Laissez le nom de l’album vide pour enregistrer dans la photothèque.";
+"Several albums have this name. Enter a unique album name to choose the destination safely." = "Plusieurs albums portent ce nom. Saisissez un nom d’album unique pour choisir la destination sans ambiguïté.";
+"This album cannot be modified. Choose another album name." = "Cet album ne peut pas être modifié. Choisissez un autre nom d’album.";
+"The photo could not be saved to Photos. Your exported file is still available." = "La photo n’a pas pu être enregistrée dans Photos. Votre fichier exporté reste disponible.";
+"Save to Photos below, or use Share to save the file to Files or another destination before closing this screen." = "Enregistrez dans Photos ci-dessous, ou utilisez Partager pour enregistrer le fichier dans Fichiers ou ailleurs avant de fermer cet écran.";
 "While adjusting a selected radial or linear mask in Light, Color, Curves, Color Tools, Effects, or Detail, its handles briefly appear without the red overlay. Tap the photo to show them again, then drag a handle to move or reshape the mask. They stay visible during the drag and fade after a few seconds. Other mask types keep their controls in Masks." = "Pendant le réglage d’un masque radial ou linéaire dans Lumière, Couleur, Courbes, Colorimétrie, Effets ou Détail, ses poignées apparaissent brièvement sans le voile rouge. Touchez la photo pour les réafficher, puis déplacez une poignée pour modifier le masque. Elles restent visibles pendant le geste, puis s’effacent après quelques secondes. Les autres types de masque gardent leurs contrôles dans Masques.";

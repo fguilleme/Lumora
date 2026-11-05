@@ -23,7 +23,7 @@ struct EditorView: View {
     @State private var clippingSource: CGImage?
     @State private var clippingRequest = 0
     @State private var clippingActivationCount = 0
-    @State private var exportRequest: ExportRequest?
+    @State private var exportPresentation: ExportPresentation?
     @State private var showHeaderOptions = false
     @State private var exporter = ExportController()
     @State private var presetController = PresetController()
@@ -56,6 +56,12 @@ struct EditorView: View {
     private struct TabScrollEdges: Equatable {
         var hasPrevious = false
         var hasNext = false
+    }
+
+    private struct ExportPresentation: Identifiable {
+        let request: ExportRequest
+        let directlyToPhotos: Bool
+        var id: UUID { request.id }
     }
 
     private struct CropPreviewRequest: Equatable {
@@ -264,8 +270,10 @@ struct EditorView: View {
                 PhotoOpeningOverlay(opening: session.photoOpening ?? .original)
             }
         }
-        .sheet(item: $exportRequest, onDismiss: { exporter.close() }) { request in
-            ExportView(request: request, controller: exporter)
+        .sheet(item: $exportPresentation, onDismiss: { exporter.close() }) { presentation in
+            ExportView(request: presentation.request, controller: exporter, engine: session.exportEngine,
+                       directlyToPhotos: presentation.directlyToPhotos,
+                       includeMetadataByDefault: includeMetadataInExport)
         }
         .sheet(isPresented: $showLibrary) { LibraryView(session: session) }
         .fullScreenCover(isPresented: $showFullscreenPhoto) {
@@ -558,10 +566,13 @@ struct EditorView: View {
                         Button("Library", systemImage: "photo.stack") { showLibrary = true }
                         Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
                         Button("Export", systemImage: "square.and.arrow.up") {
-                            exporter.settings.includeMetadata = includeMetadataInExport
-                            exportRequest = session.exportRequest()
+                            presentExport(directlyToPhotos: false)
                         }
                             .accessibilityIdentifier("header-option-export")
+                        Button("Export to Photos", systemImage: "photo.badge.arrow.down") {
+                            presentExport(directlyToPhotos: true)
+                        }
+                        .accessibilityIdentifier("header-option-export-photos")
                         Button("Files", systemImage: "folder") { showFiles = true }
                         Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
                         Button("Cancel", role: .cancel) {}
@@ -570,6 +581,12 @@ struct EditorView: View {
             }
         }.padding(.horizontal)
     }
+    private func presentExport(directlyToPhotos: Bool) {
+        guard !exporter.isBusy, let request = session.exportRequest() else { return }
+        if !directlyToPhotos { exporter.settings.includeMetadata = includeMetadataInExport }
+        exportPresentation = ExportPresentation(request: request, directlyToPhotos: directlyToPhotos)
+    }
+
     private var importButtons: some View {
         HStack(spacing: 8) {
             welcomeImportButton("Library", symbol: "photo.stack") { showLibrary = true }

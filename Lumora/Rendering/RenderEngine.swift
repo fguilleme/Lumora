@@ -4,6 +4,9 @@ import CoreImage.CIFilterBuiltins
 import Metal
 import ImageIO
 import UniformTypeIdentifiers
+#if os(iOS)
+import os
+#endif
 #if DEBUG
 import Darwin
 #endif
@@ -48,6 +51,38 @@ enum PreviewMemoryBudget {
             || !state.creative.effects.isEmpty || state.masks.count > 3
             || state.detail.blur > 0 || state.masks.contains { $0.adjustments.detail.blur > 0 }
         return heavy ? PreviewQuality.high.rawValue : 4096
+    }
+}
+
+/// Estimate peak allocations before decoding the source or allocating full-frame GPU textures.
+struct ExportMemoryBudget {
+    let source: CGSize
+    let cropped: CGSize
+    let isRAW: Bool
+    let state: EditState
+
+    func workingScale(requestedLongEdge: Int, availableBytes: Int) throws -> Double {
+        let longEdge = max(cropped.width, cropped.height)
+        let sourceBytes = source.width * source.height * (isRAW ? 20 : 8)
+        var bytesPerPixel = 16.0
+        if PreviewMemoryBudget.sourceLimit(for: state) == PreviewQuality.high.rawValue { bytesPerPixel += 24 }
+        if state.depthLens?.enabled == true { bytesPerPixel += 48 }
+        if state.depthLighting?.isActive == true { bytesPerPixel += 12 }
+        if state.effects.cinematicGlowIntensity > 0 { bytesPerPixel += 60 }
+        let nativeBytes = sourceBytes + cropped.width * cropped.height * bytesPerPixel
+        // Leave room for inference, encoding and changes in iOS's process limit.
+        let budget = Double(availableBytes) * 0.65
+        if nativeBytes <= budget { return 1 }
+
+        let scale = min(1, Double(requestedLongEdge) / longEdge)
+        if scale < 1, nativeBytes * scale * scale <= budget { return scale }
+
+        let suggested = [2048, 1024].first { maximum in
+            guard maximum < requestedLongEdge else { return false }
+            let ratio = Double(maximum) / longEdge
+            return nativeBytes * ratio * ratio <= budget
+        }
+        throw ExportError.insufficientMemory(suggestedMaximum: suggested)
     }
 }
 
@@ -449,31 +484,73 @@ actor RenderEngine {
     }
 
     func export(request: ExportRequest, settings: ExportSettings, directory: URL,
+                availableMemoryLimit: Int? = nil,
                 progress: @Sendable (ExportStage) -> Void = { _ in }) throws -> ExportedPhoto {
+        traceRenderMemory("export start")
         try Task.checkCancellation()
         if sourceURL != request.sourceURL { clearCaches(); sourceURL = request.sourceURL }
+        cinematicGlowGPU?.releaseFrame()
+        depthLensEngine?.releaseFrame()
+        context.clearCaches()
+        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
         let settings = settings.validated
         guard ExportFormat.available.contains(settings.format) else { throw ExportError.unsupportedFormat }
         progress(.decoding)
         let source = CGImageSourceCreateWithURL(request.sourceURL as CFURL, nil)
         let metadata = source.flatMap { CGImageSourceCopyPropertiesAtIndex($0, 0, nil) as? [CFString: Any] } ?? [:]
-        let input: CIImage
-        if let raw = RAWDecoder.filter(request.sourceURL) {
+        let raw = RAWDecoder.filter(request.sourceURL)
+        let native: CIImage
+        if let raw {
             raw.isLensCorrectionEnabled = request.state.optics.profileCorrection && raw.isLensCorrectionSupported
             // Resize only after geometry. Downsampling the RAW before a crop
             // discarded source detail and undershot the requested export size.
             guard let output = raw.outputImage else { throw PhotoError.unreadable }
-            input = output
+            native = output
         } else {
             guard let decoded = CIImage(contentsOf: request.sourceURL, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
-            input = decoded
+            native = decoded
         }
-        defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
+        let state = request.state.validated
+        let crop = GeometryRenderer.apply(native, settings: state.geometry).extent.size
+        guard crop.width.isFinite, crop.height.isFinite, crop.width >= 1, crop.height >= 1 else {
+            throw PhotoError.renderFailed
+        }
+        let outputSize = settings.dimensions(width: Int(crop.width), height: Int(crop.height))
+        var availableBytes = availableMemoryLimit
+        #if os(iOS) && !targetEnvironment(simulator)
+        availableBytes = min(availableBytes ?? Int.max, os_proc_available_memory())
+        #endif
+        let workingScale: Double
+        if let availableBytes {
+            traceRenderMemory("export crop \(crop), available \(availableBytes / 1_048_576) MiB")
+            workingScale = try ExportMemoryBudget(source: native.extent.size, cropped: crop, isRAW: raw != nil, state: state)
+                .workingScale(requestedLongEdge: max(outputSize.width, outputSize.height), availableBytes: availableBytes)
+        } else { workingScale = 1 }
+        let input: CIImage
+        if workingScale == 1 {
+            input = native
+        } else if let raw {
+            raw.scaleFactor = Float(workingScale)
+            guard let output = raw.outputImage else { throw PhotoError.unreadable }
+            input = output
+        } else {
+            let maximum = Int(ceil(max(native.extent.width, native.extent.height) * workingScale))
+            guard let source,
+                  let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                    kCGImageSourceCreateThumbnailFromImageAlways: true,
+                    kCGImageSourceThumbnailMaxPixelSize: maximum,
+                    kCGImageSourceCreateThumbnailWithTransform: true
+                  ] as CFDictionary) else { throw PhotoError.unreadable }
+            input = CIImage(cgImage: thumbnail)
+        }
+        traceRenderMemory("export source \(input.extent.size)")
         try Task.checkCancellation()
         var image = input.transformed(by: CGAffineTransform(translationX: -input.extent.minX, y: -input.extent.minY))
         progress(.rendering)
-        image = try adjusted(image, state: request.state.validated)
-        let dimensions = settings.dimensions(width: Int(image.extent.width), height: Int(image.extent.height))
+        image = try adjusted(image, state: state)
+        traceRenderMemory("export graph")
+        let dimensions = workingScale < 1 ? outputSize
+            : settings.dimensions(width: Int(image.extent.width), height: Int(image.extent.height))
         if dimensions.width != Int(image.extent.width) || dimensions.height != Int(image.extent.height) {
             let scale = CIFilter.lanczosScaleTransform()
             scale.inputImage = image
@@ -491,6 +568,7 @@ actor RenderEngine {
         guard let space = settings.colorSpace.cgColorSpace,
               let bitmap = context.createCGImage(image, from: bounds, format: .RGBA8, colorSpace: space)
         else { throw PhotoError.renderFailed }
+        traceRenderMemory("export bitmap")
         try Task.checkCancellation()
         progress(.encoding)
         // Unique output directory and staging file: never overwrite the original or expose a partial export.

@@ -80,10 +80,19 @@ enum ExportStage: Int, Sendable {
 
 enum ExportError: LocalizedError {
     case unsupportedFormat, encodingFailed
+    case insufficientMemory(suggestedMaximum: Int?)
+
+    var suggestedMaximum: Int? {
+        if case .insufficientMemory(let maximum) = self { return maximum }
+        return nil
+    }
+
     var errorDescription: String? {
         switch self {
         case .unsupportedFormat: "This format is not available on this device."
         case .encodingFailed: "Unable to encode the exported image. Try another format or smaller dimensions."
+        case .insufficientMemory:
+            String(localized: "There is not enough memory to export this photo at the selected size.")
         }
     }
 }
