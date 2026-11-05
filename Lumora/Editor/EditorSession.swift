@@ -8,7 +8,9 @@ final class EditorSession {
     private(set) var history = HistoryManager()
     private(set) var document: PhotoDocument?
     private(set) var result: RenderResult?
-    private(set) var isImporting = false
+    enum PhotoOpening { case original, withDepth }
+    private(set) var photoOpening: PhotoOpening?
+    var isImporting: Bool { photoOpening != nil }
     private(set) var isRendering = false
     private(set) var isGeneratingMask = false
     @ObservationIgnored private var maskRequest = 0
@@ -358,9 +360,11 @@ final class EditorSession {
         do {
             await loadLibrary()
             if let saved = try await store.restore(), token == importGeneration {
+                photoOpening = .original
+                defer { if token == importGeneration { photoOpening = nil } }
                 try await activate(saved, token: token)
             }
-        } catch { self.error = error.localizedDescription }
+        } catch { if token == importGeneration { self.error = error.localizedDescription } }
     }
 
     #if DEBUG
@@ -428,9 +432,9 @@ final class EditorSession {
         guard document?.id != id else { return }
         importGeneration += 1
         let token = importGeneration
-        isImporting = true
+        photoOpening = .original
         finishInteraction()
-        defer { if token == importGeneration { isImporting = false } }
+        defer { if token == importGeneration { photoOpening = nil } }
         do {
             let saved = try await store.load(id)
             try await activate(saved, token: token)
@@ -442,6 +446,7 @@ final class EditorSession {
             if document?.id == id {
                 finishInteraction()
                 importGeneration += 1
+                photoOpening = nil
                 renderTask?.cancel(); generation += 1
                 document = nil; sourceURL = nil; result = nil; state = EditState(); history = HistoryManager()
                 beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
@@ -556,6 +561,7 @@ final class EditorSession {
             if let currentID = document?.id, documentIDs.contains(currentID) {
                 finishInteraction()
                 importGeneration += 1
+                photoOpening = nil
                 renderTask?.cancel(); generation += 1
                 document = nil; sourceURL = nil; result = nil; state = EditState(); history = HistoryManager()
                 beautyRequest &+= 1; beautyFaceCount = nil; isAnalyzingBeauty = false
@@ -576,10 +582,10 @@ final class EditorSession {
     func importPhoto(at url: URL, temporary: Bool = false) async {
         importGeneration += 1
         let token = importGeneration
-        isImporting = true
+        photoOpening = .original
         finishInteraction()
         defer {
-            if token == importGeneration { isImporting = false }
+            if token == importGeneration { photoOpening = nil }
             if temporary { try? FileManager.default.removeItem(at: url.deletingLastPathComponent()) }
         }
         do {
@@ -1290,6 +1296,10 @@ final class EditorSession {
     }
     private func activate(_ saved: PhotoDocument, token: Int) async throws {
         let url = await store.originalURL(for: saved)
+        guard token == importGeneration else { return }
+        if isImporting && (saved.state.depthLens?.enabled == true || saved.state.depthLighting?.isActive == true) {
+            photoOpening = .withDepth
+        }
         let preview = try await engine.render(url: url, state: saved.state, quality: .high)
         guard token == importGeneration else { return }
         renderTask?.cancel(); generation += 1

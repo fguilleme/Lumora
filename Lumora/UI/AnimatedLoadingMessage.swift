@@ -74,6 +74,19 @@ struct AnimatedLoadingMessage: View {
     }
 }
 
+struct PhotoOpeningOverlay: View {
+    let opening: EditorSession.PhotoOpening
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.6).ignoresSafeArea()
+            AnimatedLoadingMessage(opening == .withDepth ? "Opening photo and preparing depth…" : "Opening original…")
+                .padding(24)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
+        }
+    }
+}
+
 #Preview {
     VStack(spacing: 24) {
         AnimatedLoadingMessage("Opening original…")

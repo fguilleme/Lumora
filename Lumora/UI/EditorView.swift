@@ -258,12 +258,10 @@ struct EditorView: View {
                      AdjustmentFocusContext(activeID: focusedAdjustmentID,
                                             setActive: { focusedAdjustmentID = $0 }))
         .tint(.mint).preferredColorScheme(.dark)
+        .accessibilityHidden(session.isImporting || photoLoading)
         .overlay {
             if session.isImporting || photoLoading {
-                ZStack {
-                    Color.black.opacity(0.6).ignoresSafeArea()
-                    AnimatedLoadingMessage("Opening original…").padding(24).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
-                }
+                PhotoOpeningOverlay(opening: session.photoOpening ?? .original)
             }
         }
         .sheet(item: $exportRequest, onDismiss: { exporter.close() }) { request in

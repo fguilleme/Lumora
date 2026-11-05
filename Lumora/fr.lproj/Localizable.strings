@@ -357,6 +357,7 @@
 "Open library" = "Ouvrir la bibliothèque";
 "Open this edit" = "Ouvre ce développement";
 "Opening original…" = "Ouverture de l’original…";
+"Opening photo and preparing depth…" = "Ouverture de la photo et préparation de la profondeur…";
 "Operation" = "Opération";
 "Optics" = "Optique";
 "Optics corrects lens defects. A manufacturer profile is available only when the RAW exposes a compatible one; manual adjustments remain available otherwise." = "Optique corrige des défauts d’objectif. Le profil constructeur est disponible seulement lorsque le RAW expose un profil compatible ; les corrections manuelles restent utilisables autrement.";

@@ -135,6 +135,12 @@ struct LibraryView: View {
             }
         }
         .searchable(text: $search, prompt: "Search photos")
+        .disabled(session.isImporting)
+        .accessibilityHidden(session.isImporting)
+        .overlay {
+            if let opening = session.photoOpening { PhotoOpeningOverlay(opening: opening) }
+        }
+        .interactiveDismissDisabled(session.isImporting)
         .task { await session.loadLibrary() }
         .sheet(isPresented: $showingFolders) { LibraryFoldersView(session: session) }
         .sheet(isPresented: $showingTags) { LibraryTagsView(session: session) }
