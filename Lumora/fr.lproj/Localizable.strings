@@ -1179,6 +1179,8 @@
 "Display" = "Affichage";
 "Always visible" = "Toujours visible";
 "Editor tabs" = "Onglets de l’éditeur";
+"Sort tabs by recent use" = "Trier les onglets par dernière utilisation";
+"Recently opened tabs move forward. Help stays first and Settings stays last. Turn off automatic sorting to return to your manual order." = "Les onglets ouverts récemment passent en tête. Aide reste en premier et Réglages en dernier. Désactivez le tri automatique pour retrouver votre ordre manuel.";
 "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Déplacez les poignées pour réordonner les onglets. Masquer un onglet conserve ses retouches sur la photo. Réglages reste visible pour vous permettre de réafficher tous les onglets.";
 "Restore interface defaults" = "Rétablir l’interface par défaut";
 "These preferences apply to the app, not to individual photos." = "Ces préférences s’appliquent à l’application, pas à chaque photo.";
@@ -1310,7 +1312,7 @@
 "Quick tab selection" = "Sélection rapide d’un onglet";
 "Touch and hold any tab, then choose the tab you want to open. The tab order does not change." = "Maintenez le doigt sur n’importe quel onglet, puis choisissez celui que vous souhaitez ouvrir. L’ordre des onglets ne change pas.";
 "Quick selection from the tab bar" = "Sélection rapide depuis la barre d’onglets";
-"Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings." = "Maintenez le doigt sur un onglet pour ouvrir la liste des onglets visibles. Choisissez-en un pour l’ouvrir immédiatement. L’ordre ne change pas ; les onglets masqués restent accessibles dans Réglages.";
+"Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately." = "Maintenez le doigt sur un onglet pour ouvrir la liste des onglets visibles. Choisissez-en un pour l’ouvrir immédiatement.";
 "Paint the area to subtract from the mask." = "Peignez la zone à soustraire du masque.";
 "Erase restores part of the subtracted area." = "Effacer restaure une partie de la zone soustraite.";
 "Erase removes paint from the mask." = "Effacer retire la peinture du masque.";

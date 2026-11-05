@@ -49,9 +49,14 @@ struct EditorView: View {
     @AppStorage("export.includeMetadata") private var includeMetadataInExport = true
     @AppStorage("editor.tabOrder") private var tabOrder = ""
     @AppStorage("editor.hiddenTabs") private var hiddenTabs = ""
+    @AppStorage("editor.sortTabsByRecentUse") private var sortTabsByRecentUse = false
+    @AppStorage("editor.recentTabs") private var recentTabs = ""
     @AppStorage("editor.helpFirstApplied") private var helpFirstApplied = false
     @State private var showSettingsSheet = false
-    private var visiblePanels: [Panel] { EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs) }
+    private var visiblePanels: [Panel] {
+        EditorTabPreferences.visible(order: tabOrder, hidden: hiddenTabs,
+                                     recent: sortTabsByRecentUse ? recentTabs : nil)
+    }
 
     private struct TabScrollEdges: Equatable {
         var hasPrevious = false
@@ -322,8 +327,7 @@ struct EditorView: View {
             Button("OK") { session.error = nil }
         } message: { Text(session.error ?? "") }
         .sheet(isPresented: $showSettingsSheet) {
-            NavigationStack { EditorSettingsView(session: session, showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
-                                                  tabOrder: $tabOrder, hiddenTabs: $hiddenTabs).navigationTitle("Settings")
+            NavigationStack { editorSettings.navigationTitle("Settings")
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Close") { showSettingsSheet = false } } }
             }.preferredColorScheme(.dark)
         }
@@ -776,11 +780,17 @@ struct EditorView: View {
         case .help:
             EditorHelpView()
         case .settings:
-            EditorSettingsView(session: session, showHistogram: $showHistogram, includeMetadataInExport: $includeMetadataInExport,
-                               tabOrder: $tabOrder, hiddenTabs: $hiddenTabs)
+            editorSettings
         case .light, .color:
             controls
         }
+    }
+
+    private var editorSettings: some View {
+        EditorSettingsView(session: session, showHistogram: $showHistogram,
+                           includeMetadataInExport: $includeMetadataInExport, tabOrder: $tabOrder,
+                           hiddenTabs: $hiddenTabs, sortTabsByRecentUse: $sortTabsByRecentUse,
+                           recentTabs: $recentTabs)
     }
 
     private var controls: some View {
@@ -858,6 +868,9 @@ struct EditorView: View {
                 guard visiblePanels.contains(selected) else { return }
                 withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(selected, anchor: .center) }
             }
+            .onChange(of: visiblePanels) { _, tabs in
+                if tabs.contains(panel) { proxy.scrollTo(panel, anchor: .center) }
+            }
             .onAppear {
                 #if DEBUG
                 if CommandLine.arguments.contains("--app-store-1.3") { proxy.scrollTo(panel, anchor: .center) }
@@ -890,7 +903,7 @@ struct EditorView: View {
             if selected {
                 controlsVisible = false
             } else {
-                selectPanel(item)
+                openTab(item)
             }
         } label: {
             VStack(spacing: 3) {
@@ -920,7 +933,7 @@ struct EditorView: View {
         .contextMenu {
             Section("Open a tab") {
                 ForEach(visiblePanels, id: \.self) { candidate in
-                    Button { selectPanel(candidate) } label: {
+                    Button { openTab(candidate) } label: {
                         Label(candidate.title, systemImage: candidate.symbol)
                     }
                     .accessibilityIdentifier("tab-select-\(candidate.rawValue)")
@@ -929,6 +942,13 @@ struct EditorView: View {
             Divider()
             Button("Manage tabs…", systemImage: "list.bullet") { selectPanel(.settings) }
         }
+    }
+    private func openTab(_ item: Panel) {
+        if item != .help && item != .settings {
+            let updated = EditorTabPreferences.recordingUse(of: item, in: recentTabs)
+            if recentTabs != updated { recentTabs = updated }
+        }
+        selectPanel(item)
     }
     private func selectPanel(_ item: Panel) {
         focusedAdjustmentID = nil

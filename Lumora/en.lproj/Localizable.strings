@@ -1179,6 +1179,8 @@
 "Display" = "Display";
 "Always visible" = "Always visible";
 "Editor tabs" = "Editor tabs";
+"Sort tabs by recent use" = "Sort tabs by recent use";
+"Recently opened tabs move forward. Help stays first and Settings stays last. Turn off automatic sorting to return to your manual order." = "Recently opened tabs move forward. Help stays first and Settings stays last. Turn off automatic sorting to return to your manual order.";
 "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab." = "Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab.";
 "Restore interface defaults" = "Restore interface defaults";
 "These preferences apply to the app, not to individual photos." = "These preferences apply to the app, not to individual photos.";
@@ -1310,7 +1312,7 @@
 "Quick tab selection" = "Quick tab selection";
 "Touch and hold any tab, then choose the tab you want to open. The tab order does not change." = "Touch and hold any tab, then choose the tab you want to open. The tab order does not change.";
 "Quick selection from the tab bar" = "Quick selection from the tab bar";
-"Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings." = "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings.";
+"Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately." = "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately.";
 "Paint the area to subtract from the mask." = "Paint the area to subtract from the mask.";
 "Erase restores part of the subtracted area." = "Erase restores part of the subtracted area.";
 "Erase removes paint from the mask." = "Erase removes paint from the mask.";

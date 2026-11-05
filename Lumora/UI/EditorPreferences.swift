@@ -32,18 +32,30 @@ enum EditorPanel: String, CaseIterable {
 
 /// String identifiers survive translations and newly added tabs. Settings stays reachable.
 enum EditorTabPreferences {
-    static func ordered(_ stored: String) -> [EditorPanel] {
+    private static func decodedOrder(_ stored: String) -> [EditorPanel] {
         let ids = (try? JSONDecoder().decode([String].self, from: Data(stored.utf8))) ?? []
         var result: [EditorPanel] = []
         for id in ids { if let tab = EditorPanel(rawValue: id), !result.contains(tab) { result.append(tab) } }
-        return result + EditorPanel.allCases.filter { !result.contains($0) }
+        return result
+    }
+    static func ordered(_ stored: String, recent: String? = nil) -> [EditorPanel] {
+        let preferred = decodedOrder(stored)
+        let manual = preferred + EditorPanel.allCases.filter { !preferred.contains($0) }
+        guard let recent else { return manual }
+        let used = decodedOrder(recent).filter { $0 != .help && $0 != .settings }
+        let remaining = manual.filter { $0 != .help && $0 != .settings && !used.contains($0) }
+        return [.help] + used + remaining + [.settings]
+    }
+    static func recordingUse(of panel: EditorPanel, in recent: String) -> String {
+        let used = decodedOrder(recent)
+        return encode(([panel] + used.filter { $0 != panel }).map(\.rawValue))
     }
     static func hidden(_ stored: String) -> Set<String> {
         Set((try? JSONDecoder().decode([String].self, from: Data(stored.utf8))) ?? []).subtracting([EditorPanel.settings.rawValue])
     }
-    static func visible(order: String, hidden: String) -> [EditorPanel] {
+    static func visible(order: String, hidden: String, recent: String? = nil) -> [EditorPanel] {
         let excluded = self.hidden(hidden)
-        return ordered(order).filter { !excluded.contains($0.rawValue) }
+        return ordered(order, recent: recent).filter { !excluded.contains($0.rawValue) }
     }
     static func moving(_ panel: EditorPanel, before target: EditorPanel,
                        in order: [EditorPanel]) -> [EditorPanel] {

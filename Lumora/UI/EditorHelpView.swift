@@ -113,6 +113,7 @@ private struct HelpItem: Identifiable {
         case "Touch and hold", "Touch and hold histogram", "Quick tab selection", "Quick selection from the tab bar": "hand.point.up.left"
         case "Pinch and pan", "Photo gestures": "hand.pinch"
         case "Drag histogram", "Placement", "Change the order": "arrow.up.and.down.and.arrow.left.and.right"
+        case "Sort tabs by recent use": "clock.arrow.circlepath"
         case "Open a tab", "Editor tabs": "rectangle.stack"
         case "Complete organization", "Selection and settings", "Settings default": "gearshape"
         case "Add an effect", "Creative", "Looks and Custom": "sparkles"
@@ -566,7 +567,8 @@ private enum EditorHelpTopic: String, CaseIterable, Identifiable {
                 HelpItem("Include metadata in exports", "Sets the initial state of Keep metadata whenever the export screen opens. You can change it for one export without changing this preference. GPS location remains removed unless you explicitly keep it in the export screen."),
                 HelpItem("Editor tabs", "Use each eye button to show or hide a tab. Hiding a tab does not reset or disable its adjustments: they remain visible in the photo and in exports. Settings cannot be hidden."),
                 HelpItem("Change the order", "Drag the handle at the right of a row to change the tab order. Hidden tabs also keep their place in this list, so you can arrange them before showing them again."),
-                HelpItem("Quick selection from the tab bar", "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately. The order does not change; hidden tabs remain available in Settings."),
+                HelpItem("Sort tabs by recent use", "Recently opened tabs move forward. Help stays first and Settings stays last. Turn off automatic sorting to return to your manual order."),
+                HelpItem("Quick selection from the tab bar", "Touch and hold a tab to open the list of visible tabs. Choose one to open it immediately."),
                 HelpItem("Restore interface defaults", "Restore interface defaults shows the histogram and all tabs again, in their original order. It does not reset any photo edits. Settings is also available from the editor options menu and before importing a photo.")
             ])]
         case .exif:

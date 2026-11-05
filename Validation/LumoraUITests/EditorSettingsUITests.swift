@@ -1,6 +1,66 @@
 import XCTest
 
 final class EditorSettingsUITests: XCTestCase {
+    @MainActor func testRecentTabOrderPersistsAndCanBeTurnedOff() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["--app-store-image", "DetailFeedback.jpg", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        let toolbar = app.scrollViews["tools-toolbar"]
+        let help = app.buttons["editor-tab-Help"]
+        let light = app.buttons["editor-tab-Light"]
+        let color = app.buttons["editor-tab-Color"]
+        let toggle = app.switches["settings-recent-tabs"].firstMatch
+
+        func openSettings() {
+            let options = app.buttons["header-options"]
+            XCTAssertTrue(options.waitForExistence(timeout: 30))
+            options.tap()
+            app.buttons["open-editor-settings"].firstMatch.tap()
+            for _ in 0..<5 where !toggle.isHittable { app.collectionViews.firstMatch.swipeUp() }
+            XCTAssertTrue(toggle.isHittable)
+        }
+
+        func showFirstTabs() {
+            for _ in 0..<8 where !help.isHittable { toolbar.swipeRight() }
+            XCTAssertTrue(help.isHittable)
+        }
+
+        func assertOrder(_ first: XCUIElement, before second: XCUIElement) {
+            let ordered = NSPredicate { _, _ in
+                first.isHittable && second.isHittable && first.frame.minX < second.frame.minX
+            }
+            XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ordered, object: nil)], timeout: 5),
+                           .completed, "Expected \(first.identifier) before \(second.identifier)")
+        }
+
+        app.launch()
+        openSettings()
+        if toggle.value as? String == "1" { toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap() }
+        showFirstTabs()
+        assertOrder(light, before: color)
+        openSettings()
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        XCTAssertEqual(toggle.value as? String, "1")
+        showFirstTabs()
+        color.tap()
+        assertOrder(help, before: color)
+        assertOrder(color, before: light)
+        light.tap()
+        assertOrder(light, before: color)
+        color.tap()
+        assertOrder(color, before: light)
+
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(toolbar.waitForExistence(timeout: 30))
+        assertOrder(color, before: light)
+        openSettings()
+        XCTAssertEqual(toggle.value as? String, "1")
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        showFirstTabs()
+        assertOrder(light, before: color)
+    }
+
     @MainActor func testHistogramAndTabVisibilityPersist() throws {
         continueAfterFailure = false
         let app = XCUIApplication()

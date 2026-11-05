@@ -6,7 +6,11 @@ struct EditorSettingsView: View {
     @Binding var includeMetadataInExport: Bool
     @Binding var tabOrder: String
     @Binding var hiddenTabs: String
-    private var tabs: [EditorPanel] { EditorTabPreferences.ordered(tabOrder) }
+    @Binding var sortTabsByRecentUse: Bool
+    @Binding var recentTabs: String
+    private var tabs: [EditorPanel] {
+        EditorTabPreferences.ordered(tabOrder, recent: sortTabsByRecentUse ? recentTabs : nil)
+    }
     var body: some View {
         List {
             Section {
@@ -39,6 +43,8 @@ struct EditorSettingsView: View {
                 Text("The Lumora folder is stored in Documents. iCloud sync is off by default; enabling it moves the library to iCloud Drive so it can appear on your other devices.")
             }
             Section {
+                Toggle("Sort tabs by recent use", isOn: $sortTabsByRecentUse)
+                    .accessibilityIdentifier("settings-recent-tabs")
                 ForEach(tabs, id: \.self) { tab in
                     HStack {
                         Image(systemName: tab.symbol).foregroundStyle(.mint).frame(width: 24).accessibilityHidden(true)
@@ -62,18 +68,25 @@ struct EditorSettingsView: View {
                                 .accessibilityValue(visible ? String(localized: "Visible") : String(localized: "Hidden"))
                                 .accessibilityIdentifier("settings-visible-\(tab.rawValue)")
                         }
-                    }.listRowBackground(Color.clear)
+                    }
+                    .listRowBackground(Color.clear)
+                    .moveDisabled(sortTabsByRecentUse)
                 }.onMove { indices, destination in
                     var order = tabs
                     order.move(fromOffsets: indices, toOffset: destination)
                     tabOrder = EditorTabPreferences.encode(order.map(\.rawValue))
                 }
             } header: { Text("Editor tabs") } footer: {
-                Text("Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab.")
+                if sortTabsByRecentUse {
+                    Text("Recently opened tabs move forward. Help stays first and Settings stays last. Turn off automatic sorting to return to your manual order.")
+                } else {
+                    Text("Drag the handles to reorder tabs. Hiding a tab keeps its photo adjustments active. Settings stays visible so you can restore any tab.")
+                }
             }
             Section {
                 Button("Restore interface defaults") {
                     showHistogram = true; includeMetadataInExport = true; tabOrder = ""; hiddenTabs = ""
+                    sortTabsByRecentUse = false; recentTabs = ""
                 }.accessibilityIdentifier("settings-reset")
             } footer: { Text("These preferences apply to the app, not to individual photos.") }
         }
