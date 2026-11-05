@@ -1,6 +1,43 @@
 import XCTest
+import UIKit
 
 final class LinearAdjustmentUITests: XCTestCase {
+    @MainActor func testIPadRulerHasRoomToDragInBothOrientations() throws {
+        try XCTSkipUnless(UIDevice.current.userInterfaceIdiom == .pad)
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .portrait
+        defer { XCUIDevice.shared.orientation = .portrait }
+
+        let app = XCUIApplication()
+        app.launchArguments = ["--app-store-image", "DetailFeedback.jpg", "--app-store-panel", "Light",
+                               "-AppleLanguages", "(en)"]
+        app.launch()
+        let ruler = app.descendants(matching: .any).matching(identifier: "adjustment-ruler").firstMatch
+        let toolbar = app.scrollViews["tools-toolbar"]
+        let lightTab = app.buttons["editor-tab-Light"]
+
+        func checkRuler(minimumWidth: CGFloat) {
+            XCTAssertTrue(ruler.isHittable)
+            XCTAssertGreaterThanOrEqual(ruler.frame.height, 59)
+            XCTAssertGreaterThanOrEqual(ruler.frame.width, minimumWidth)
+            XCTAssertGreaterThanOrEqual(toolbar.frame.minY - ruler.frame.maxY, 8)
+            let initial = ruler.value as? String
+            ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.88))
+                .press(forDuration: 0.1, thenDragTo: ruler.coordinate(withNormalizedOffset: CGVector(dx: 0.4, dy: 0.88)))
+            XCTAssertNotEqual(ruler.value as? String, initial)
+            XCTAssertTrue(lightTab.isSelected)
+        }
+
+        XCTAssertTrue(ruler.waitForExistence(timeout: 30))
+        checkRuler(minimumWidth: app.frame.width - 176)
+        capture("ipad-ruler-portrait", app)
+
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.buttons["controls-side-switch"].waitForExistence(timeout: 10))
+        checkRuler(minimumWidth: app.frame.width * 0.5 - 176)
+        capture("ipad-ruler-landscape", app)
+    }
+
     @MainActor private func openDocument(_ app: XCUIApplication) {
         let canvas = app.descendants(matching: .any).matching(identifier: "photo-canvas").firstMatch
         if canvas.waitForExistence(timeout: 8) { return }

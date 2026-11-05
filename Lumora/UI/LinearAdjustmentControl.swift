@@ -236,6 +236,11 @@ extension LinearAdjustmentControl where Accessory == EmptyView {
     }
 }
 
+enum AdjustmentRulerMetrics {
+    static let compactHeight: CGFloat = 44
+    static let tabletHeight: CGFloat = 60
+}
+
 private struct RelativeRuler: View {
     let parameter: LinearAdjustmentParameter
     let onBegin: () -> Void
@@ -245,6 +250,8 @@ private struct RelativeRuler: View {
     @State private var origin: Double?
     @State private var lastSent: Double?
 
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -253,7 +260,7 @@ private struct RelativeRuler: View {
                 }
                 Rectangle()
                     .fill(Color.mint)
-                    .frame(width: 2.5, height: 28)
+                    .frame(width: 2.5, height: isPad ? 38 : 28)
                     .shadow(color: .black.opacity(0.55), radius: 1)
                     .allowsHitTesting(false)
             }
@@ -275,8 +282,8 @@ private struct RelativeRuler: View {
                 }
                 .onEnded { _ in finish() })
         }
-        .frame(height: 44)
-        .background(Color.white.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
+        .frame(height: isPad ? AdjustmentRulerMetrics.tabletHeight : AdjustmentRulerMetrics.compactHeight)
+        .background(Color.white.opacity(isPad ? 0.075 : 0.035), in: RoundedRectangle(cornerRadius: 10))
         .clipped()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(parameter.title)
@@ -306,6 +313,7 @@ private struct RelativeRuler: View {
         let major = minor * 5
         let pointsForRange = max(360, Double(size.width) * 2.2)
         let pointsPerUnit = pointsForRange / span
+        let baseline = size.height - (isPad ? 10 : 7)
         let firstIndex = Int(floor(parameter.range.lowerBound / minor))
         let lastIndex = Int(ceil(parameter.range.upperBound / minor))
         for index in firstIndex...lastIndex {
@@ -313,10 +321,10 @@ private struct RelativeRuler: View {
             let x = size.width / 2 + CGFloat((tickValue - parameter.value) * pointsPerUnit)
             guard x >= -2, x <= size.width + 2 else { continue }
             let isMajor = abs((tickValue / major).rounded() - tickValue / major) < 0.001
-            let height: CGFloat = isMajor ? 21 : 11
+            let height: CGFloat = isMajor ? (isPad ? 27 : 21) : (isPad ? 14 : 11)
             var path = Path()
-            path.move(to: CGPoint(x: x, y: size.height - 7))
-            path.addLine(to: CGPoint(x: x, y: size.height - 7 - height))
+            path.move(to: CGPoint(x: x, y: baseline))
+            path.addLine(to: CGPoint(x: x, y: baseline - height))
             context.stroke(path, with: .color(.white.opacity(isMajor ? 0.62 : 0.30)), lineWidth: isMajor ? 1 : 0.7)
         }
     }

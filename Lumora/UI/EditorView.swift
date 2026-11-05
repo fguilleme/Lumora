@@ -93,6 +93,8 @@ struct EditorView: View {
         }
     }
     private var showsFullPage: Bool { controlsVisible && [.exif, .help, .settings].contains(panel) }
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+    private let photoInformationHeight: CGFloat = 44
 
     init() {
         #if DEBUG
@@ -130,9 +132,10 @@ struct EditorView: View {
                         } else {
                         EditorWorkspaceLayout(landscape: landscape,
                                               isPhone: UIDevice.current.userInterfaceIdiom == .phone,
+                                              isPad: isPad,
                                               controlsSide: controlsSideRaw,
                                               direction: layoutDirection,
-                                              portraitControlsHeight: portraitControlContentHeight + (showsPhotoInformation ? 24 : 0),
+                                              portraitControlsHeight: portraitControlContentHeight + portraitPhotoInformationHeight,
                                               overlayOnly: !controlsVisible) {
                 PhotoCanvas(result: result, clippingOverlay: activeClippingOverlay(for: result.image),
                             onClippingOverlayAppear: {
@@ -249,7 +252,7 @@ struct EditorView: View {
                         }
                         .frame(maxHeight: .infinity)
                         }
-                        if landscape { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
+                        editorToolbar(landscape: landscape)
                     }
                     .onChange(of: landscape) { _, _ in session.finishInteraction() }
                 }
@@ -439,7 +442,7 @@ struct EditorView: View {
     }
 
     private var portraitControlContentHeight: CGFloat {
-        switch panel {
+        let base: CGFloat = switch panel {
         case .effects: 112
         case .light, .color: 154
         case .detail: 118
@@ -447,6 +450,12 @@ struct EditorView: View {
         case .geometry: 220
         default: 252
         }
+        return base + (isPad ? AdjustmentRulerMetrics.tabletHeight - AdjustmentRulerMetrics.compactHeight : 0)
+    }
+
+    private var portraitPhotoInformationHeight: CGFloat {
+        guard showsPhotoInformation else { return 0 }
+        return isPad ? photoInformationHeight : 24
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
@@ -474,10 +483,24 @@ struct EditorView: View {
             Text("\(sourceFormat(result)) · \(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
         }
         .font(.caption2).foregroundStyle(.secondary)
-        .padding(.horizontal, 12).frame(minHeight: 44)
+        .padding(.horizontal, 12).frame(minHeight: photoInformationHeight)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("photo-information")
         .dimsDuringAdjustment()
+    }
+
+    private func editorToolbar(landscape: Bool) -> some View {
+        let separatesControls = isPad && controlsVisible && !showsFullPage
+        return Group {
+            if landscape { landscapeToolbar } else { toolBar().dimsDuringAdjustment() }
+        }
+        .padding(.top, separatesControls ? 8 : 0)
+        .background {
+            if separatesControls { Color(red: 0.055, green: 0.065, blue: 0.07) }
+        }
+        .overlay(alignment: .top) {
+            if separatesControls { Divider().overlay(.white.opacity(0.12)).allowsHitTesting(false) }
+        }
     }
 
     private var landscapeToolbar: some View {
@@ -1044,6 +1067,7 @@ private struct WelcomeImportButtonStyle: ButtonStyle {
 private struct EditorWorkspaceLayout: Layout {
     let landscape: Bool
     let isPhone: Bool
+    let isPad: Bool
     let controlsSide: String
     let direction: LayoutDirection
     let portraitControlsHeight: CGFloat
@@ -1064,7 +1088,9 @@ private struct EditorWorkspaceLayout: Layout {
             return
         }
         if landscape {
-            let desiredControlsWidth = min(640, max(460, bounds.width * 0.47))
+            let desiredControlsWidth = isPad
+                ? min(700, max(460, bounds.width * 0.51))
+                : min(640, max(460, bounds.width * 0.47))
             let minimumPhotoWidth = min(220, bounds.width * 0.32)
             let maximumControlsWidth = isPhone ? bounds.width * 0.5 : bounds.width
             let controlsWidth = min(desiredControlsWidth,
