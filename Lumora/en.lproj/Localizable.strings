@@ -1466,6 +1466,11 @@
 "Noise C" = "Noise C";
 "No adjustments" = "No adjustments";
 "Adjustments applied" = "Adjustments applied";
+"Effect enabled" = "Effect enabled";
+"Effect suspended" = "Effect suspended";
+"Enable tab effect" = "Enable tab effect";
+"Suspend tab effect" = "Suspend tab effect";
+"Toggle tab effect" = "Toggle tab effect";
 "Color Grading" = "Color Grading";
 "Softens the photo or the selected mask. Zero leaves the image unchanged." = "Softens the photo or the selected mask. Zero leaves the image unchanged.";
 

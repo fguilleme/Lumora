@@ -75,13 +75,20 @@ struct EditorView: View {
         let bypassCreative: Bool
     }
     private var cropPreviewRequest: CropPreviewRequest? {
-        guard activeToolPanel == .geometry, geometryMode == .crop, let url = session.originalURL else { return nil }
+        guard geometryToolsActive, geometryMode == .crop, let url = session.originalURL else { return nil }
         var state = session.state
         state.geometry = state.geometry.withoutCrop
         return CropPreviewRequest(url: url, state: state, bypassCreative: session.bypassCreative)
     }
 
     private var activeToolPanel: Panel? { controlsVisible ? panel : nil }
+    private var eyeToggleSection: AdjustmentSection? {
+        guard let section = panel.adjustmentSection, section.supportsEyeToggle else { return nil }
+        return section
+    }
+    private var geometryToolsActive: Bool {
+        activeToolPanel == .geometry && !session.state.suspendedSections.contains(.geometry)
+    }
     private var maskGuidesContext: String? {
         guard let tool = activeToolPanel,
               [.light, .color, .curve, .colorTools, .effects, .detail].contains(tool),
@@ -113,7 +120,9 @@ struct EditorView: View {
 
     private var activeDLCSettings: DarkenLightenCenterSettings? {
         guard activeToolPanel == .creative, !session.bypassCreative,
+              !session.state.suspendedSections.contains(.creative),
               let effect = session.state.creative.effects.first(where: { $0.id == selectedCreativeEffectID }),
+              effect.maskID == nil || !session.state.suspendedSections.contains(.masks),
               effect.kind == .darkenLightenCenter, effect.enabled, effect.opacity > 0 else { return nil }
         return DarkenLightenCenterSettings(effect: effect)
     }
@@ -210,9 +219,9 @@ struct EditorView: View {
                             onMaskTransformBegin: { session.beginInteraction("Transform component") },
                             onMaskShapeChange: session.setSelectedMaskShape,
                             onMaskTransformEnd: session.finishInteraction,
-                            showsGeometryGrid: activeToolPanel == .geometry,
-                            geometrySettings: activeToolPanel == .geometry ? session.state.geometry : nil,
-                            geometryCropActive: activeToolPanel == .geometry && geometryMode == .crop,
+                            showsGeometryGrid: geometryToolsActive,
+                            geometrySettings: geometryToolsActive ? session.state.geometry : nil,
+                            geometryCropActive: geometryToolsActive && geometryMode == .crop,
                             cropContextImage: cropContextImage,
                             cropContextError: cropContextError,
                             geometryPreviewPending: session.isRendering,
@@ -454,13 +463,22 @@ struct EditorView: View {
     }
 
     private var portraitPhotoInformationHeight: CGFloat {
-        guard showsPhotoInformation else { return 0 }
-        return isPad ? photoInformationHeight : 24
+        showsPhotoInformation || eyeToggleSection != nil ? photoInformationHeight : 0
     }
 
     private func editorControlColumn(_ result: RenderResult, landscape: Bool) -> some View {
         VStack(spacing: 0) {
-            if showsPhotoInformation { photoInformation(result) }
+            if showsPhotoInformation {
+                photoInformation(result)
+            } else if let section = eyeToggleSection {
+                HStack {
+                    Text(panel.title).font(.caption).foregroundStyle(.secondary)
+                    Spacer(minLength: 0)
+                    effectVisibilityButton(section)
+                }
+                .padding(.horizontal, 12)
+                .dimsDuringAdjustment()
+            }
             editorControls(result)
                 .environment(\.usesSideControlLayout, landscape)
                 .frame(height: landscape ? nil : portraitControlContentHeight)
@@ -481,12 +499,30 @@ struct EditorView: View {
             activeLayerMenu
             Spacer(minLength: 0)
             Text("\(sourceFormat(result)) · \(result.sourceWidth) × \(result.sourceHeight)").fixedSize()
+            if let section = eyeToggleSection { effectVisibilityButton(section) }
         }
         .font(.caption2).foregroundStyle(.secondary)
         .padding(.horizontal, 12).frame(minHeight: photoInformationHeight)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("photo-information")
         .dimsDuringAdjustment()
+    }
+
+    private func effectVisibilityButton(_ section: AdjustmentSection) -> some View {
+        let suspended = session.state.suspendedSections.contains(section)
+        return Button {
+            session.toggleSection(section)
+        } label: {
+            Image(systemName: suspended ? "eye.slash" : "eye")
+                .font(.system(size: 16, weight: .medium))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(suspended ? Color.orange : Color.mint)
+        .accessibilityLabel(suspended ? String(localized: "Enable tab effect") : String(localized: "Suspend tab effect"))
+        .accessibilityValue(suspended ? String(localized: "Effect suspended") : String(localized: "Effect enabled"))
+        .accessibilityIdentifier("tab-effect-visibility")
     }
 
     private func editorToolbar(landscape: Bool) -> some View {
@@ -859,7 +895,7 @@ struct EditorView: View {
             guard curveEyedropper, session.selectedMaskID == nil else {
                 curveSamplingBuffer = nil; curveSample = nil; return
             }
-            curveSamplingBuffer = try? CurveSamplingBuffer.prepare(original: result.original, state: session.state)
+            curveSamplingBuffer = try? CurveSamplingBuffer.prepare(original: result.original, state: session.state.renderingState)
         }
     }
     private func toolBar(trailingInset: CGFloat = 0) -> some View {
@@ -922,6 +958,11 @@ struct EditorView: View {
     private func tabButton(_ item: Panel) -> some View {
         let selected = controlsVisible && panel == item
         let modified = item.adjustmentSection.map { session.state.hasAdjustments(in: $0, includingMasks: true) } ?? false
+        let suspended = switch item {
+        case .lighting: modified && session.state.depthLighting?.enabled == false
+        case .depthLens: modified && session.state.depthLens?.enabled == false
+        default: item.adjustmentSection.map { session.state.suspendedSections.contains($0) } ?? false
+        }
         return Button {
             if selected {
                 controlsVisible = false
@@ -933,8 +974,8 @@ struct EditorView: View {
                 Image(systemName: item.symbol)
                     .font(.system(size: 16, weight: .medium))
                     .overlay(alignment: .topTrailing) {
-                        if modified {
-                            Circle().fill(Color.mint).frame(width: 5, height: 5)
+                        if modified || suspended {
+                            Circle().fill(suspended ? Color.orange : Color.mint).frame(width: 5, height: 5)
                                 .offset(x: 7, y: -2).accessibilityHidden(true)
                         }
                     }
@@ -951,7 +992,8 @@ struct EditorView: View {
         .foregroundStyle(selected ? .mint : .secondary)
         .id(item)
         .accessibilityAddTraits(selected ? .isSelected : [])
-        .accessibilityValue(modified ? String(localized: "Adjustments applied") : String(localized: "No adjustments"))
+        .accessibilityValue(suspended ? String(localized: "Effect suspended")
+                            : modified ? String(localized: "Adjustments applied") : String(localized: "No adjustments"))
         .accessibilityIdentifier("editor-tab-\(item.rawValue)")
         .contextMenu {
             Section("Open a tab") {

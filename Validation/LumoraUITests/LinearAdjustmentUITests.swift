@@ -2,6 +2,41 @@ import XCTest
 import UIKit
 
 final class LinearAdjustmentUITests: XCTestCase {
+    @MainActor func testTabEyeSuspendsAndRestoresTheSameAdjustment() {
+        continueAfterFailure = false
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        app.launchArguments = ["--app-store-image", "DetailFeedback.jpg", "--app-store-panel", "Light",
+                               "--app-store-1.3", "-AppleLanguages", "(en)"]
+        app.launch()
+        let eye = app.buttons["tab-effect-visibility"]
+        let tab = app.buttons["editor-tab-Light"]
+        let ruler = app.descendants(matching: .any).matching(identifier: "adjustment-ruler").firstMatch
+        XCTAssertTrue(eye.waitForExistence(timeout: 30))
+        let originalValue = ruler.value as? String
+        XCTAssertNotNil(originalValue)
+        XCTAssertEqual(tab.value as? String, "Adjustments applied")
+
+        eye.tap()
+        XCTAssertEqual(eye.value as? String, "Effect suspended")
+        XCTAssertEqual(tab.value as? String, "Effect suspended")
+        XCTAssertEqual(ruler.value as? String, originalValue)
+        app.buttons["Undo"].tap()
+        XCTAssertEqual(eye.value as? String, "Effect enabled")
+        app.buttons["Redo"].tap()
+        XCTAssertEqual(eye.value as? String, "Effect suspended")
+        eye.tap()
+        XCTAssertEqual(tab.value as? String, "Adjustments applied")
+        XCTAssertEqual(ruler.value as? String, originalValue)
+
+        selectPanel("Lighting", in: app)
+        XCTAssertTrue(app.switches["depth-lighting-enable"].waitForExistence(timeout: 5))
+        XCTAssertFalse(eye.exists)
+        selectPanel("Depth Lens", in: app)
+        XCTAssertTrue(app.switches["depth-lens-enable"].waitForExistence(timeout: 5))
+        XCTAssertFalse(eye.exists)
+    }
+
     @MainActor func testIPadRulerHasRoomToDragInBothOrientations() throws {
         try XCTSkipUnless(UIDevice.current.userInterfaceIdiom == .pad)
         continueAfterFailure = false

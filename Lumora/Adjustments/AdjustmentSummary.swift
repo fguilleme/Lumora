@@ -1,13 +1,68 @@
 import Foundation
 
-/// Read-only presentation of saved instructions; never changes rendering or history.
-enum AdjustmentSection: String, CaseIterable, Sendable {
+/// A tab groups its adjustments across the base and masked layers.
+enum AdjustmentSection: String, CaseIterable, Codable, Sendable {
     case light = "Light", color = "Color", curves = "Curves", colorTools = "Color Tools"
     case effects = "Effects", detail = "Detail", creative = "Creative", beauty = "Beauty"
     case depthLens = "Depth Lens", lighting = "Lighting", optics = "Optics", geometry = "Geometry", masks = "Masks"
+
+    var supportsEyeToggle: Bool { self != .lighting && self != .depthLens }
 }
 
 extension EditState {
+    var effectiveGeometry: GeometrySettings {
+        suspendedSections.contains(.geometry) ? GeometrySettings() : geometry
+    }
+
+    /// Neutralize suspended modules in a copy for preview and export.
+    var renderingState: EditState {
+        guard !suspendedSections.isEmpty else { return self }
+        var result = self
+        result.suspendedSections.removeAll()
+        for section in suspendedSections { result.clearAdjustments(in: section) }
+
+        let localSections = suspendedSections.intersection([.light, .color, .curves, .colorTools, .effects, .detail])
+        if !localSections.isEmpty {
+            for index in result.masks.indices {
+                var local = result.masks[index].adjustments.editState
+                for section in localSections { local.clearAdjustments(in: section) }
+                result.masks[index].adjustments = LocalAdjustmentState(editState: local)
+            }
+        }
+        return result
+    }
+
+    private mutating func clearAdjustments(in section: AdjustmentSection) {
+        switch section {
+        case .light:
+            for adjustment in Adjustment.light { self[adjustment] = 0 }
+            coreImageAuto = nil
+        case .color:
+            for adjustment in Adjustment.color { self[adjustment] = 0 }
+        case .curves: curves = ToneCurves()
+        case .colorTools:
+            colorMixer = ColorMixer()
+            colorGrading = ColorGrading()
+        case .effects:
+            effects = EffectsSettings()
+            detail.blur = 0
+        case .detail:
+            let blur = detail.blur
+            detail = DetailSettings()
+            detail.blur = blur
+        case .creative: creative = CreativeEffectStack()
+        case .beauty: beauty = BeautyState()
+        case .depthLens, .lighting: break
+        case .optics:
+            optics = OpticsSettings()
+            optics.profileCorrection = false
+        case .geometry: geometry = GeometrySettings()
+        case .masks:
+            masks.removeAll()
+            creative.effects.removeAll { $0.maskID != nil }
+        }
+    }
+
     func hasAdjustments(in section: AdjustmentSection, includingMasks: Bool = false) -> Bool {
         let changed: Bool = switch section {
         case .light: coreImageAuto != nil || Adjustment.light.contains { self[$0] != 0 }

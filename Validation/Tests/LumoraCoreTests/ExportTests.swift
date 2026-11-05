@@ -42,6 +42,80 @@ private func exportFixture(width: Int = 128, height: Int = 64, orientation: Int 
     #expect(try JSONDecoder().decode(ExportSettings.self, from: JSONEncoder().encode(settings)) == settings)
 }
 
+@Test func suspendedTabsStayEditableAndAreExcludedFromPreviewAndExport() async throws {
+    let url = try exportFixture()
+    let root = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: url); try? FileManager.default.removeItem(at: root) }
+    var state = EditState()
+    state.exposure = 1
+    state.geometry.quarterTurns = 1
+    state.suspendedSections = [.light, .geometry]
+    let restored = try JSONDecoder().decode(EditState.self, from: JSONEncoder().encode(state))
+    #expect(restored == state)
+    #expect(restored.hasAdjustments(in: .light))
+    #expect(restored.renderingState == EditState())
+    #expect(try JSONDecoder().decode(EditState.self, from: Data("{}".utf8)).suspendedSections.isEmpty)
+
+    let engine = RenderEngine()
+    let reference = try await engine.render(url: url, state: EditState(), quality: .high)
+    let preview = try await engine.render(url: url, state: restored, quality: .high)
+    #expect(preview.image.width == reference.image.width)
+    #expect(preview.image.dataProvider?.data == reference.image.dataProvider?.data)
+    let request = ExportRequest(sourceURL: url, state: restored, name: "suspended")
+    let photo = try await engine.export(request: request, settings: ExportSettings(), directory: root)
+    #expect(photo.width == 128 && photo.height == 64)
+
+    state.suspendedSections.removeAll()
+    let enabled = try await engine.render(url: url, state: state, quality: .high)
+    #expect(enabled.image.width == 64 && enabled.image.height == 128)
+}
+
+@Test func tabSuspensionPreservesOtherLocalAdjustmentsAndMaskedEffectReferences() {
+    var state = EditState()
+    var layer = LocalMask(name: "Local", components: [])
+    layer.adjustments.exposure = 1
+    layer.adjustments.detail.blur = 20
+    layer.adjustments.detail.sharpening.amount = 30
+    state.masks = [layer]
+    let localEffect = CreativeEffect(.darkenLightenCenter, maskID: layer.id)
+    let globalEffect = CreativeEffect(.darkenLightenCenter)
+    state.creative.effects = [localEffect, globalEffect]
+
+    state.suspendedSections = [.light, .detail]
+    let local = state.renderingState.masks.first?.adjustments
+    #expect(local?.exposure == 0)
+    #expect(local?.detail.sharpening.amount == 0)
+    #expect(local?.detail.blur == 20)
+    #expect(state.renderingState.creative.effects == state.creative.effects)
+    state.suspendedSections = [.effects]
+    #expect(state.renderingState.masks.first?.adjustments.detail.blur == 0)
+    #expect(state.renderingState.masks.first?.adjustments.detail.sharpening.amount == 30)
+    state.suspendedSections = [.masks]
+    #expect(state.renderingState.masks.isEmpty)
+    #expect(state.renderingState.creative.effects == [globalEffect])
+    #expect(state.creative.effects.first?.maskID == layer.id)
+}
+
+@Test func formerDepthTabSuspensionsBecomeNativeSwitchStates() throws {
+    var state = EditState()
+    var lens = DepthLensSettings()
+    lens.enabled = true
+    lens.aperture = 2
+    state.depthLens = lens
+    var lighting = DepthLightingSettings()
+    lighting.enabled = true
+    lighting.intensity = 110
+    state.depthLighting = lighting
+    state.suspendedSections = [.depthLens, .lighting, .curves]
+
+    let restored = try JSONDecoder().decode(EditState.self, from: JSONEncoder().encode(state))
+    #expect(restored.suspendedSections == [.curves])
+    #expect(restored.depthLens?.enabled == false)
+    #expect(restored.depthLens?.aperture == 2)
+    #expect(restored.depthLighting?.enabled == false)
+    #expect(restored.depthLighting?.intensity == 110)
+}
+
 @Test func exportReallyUsesFullResolutionAndPreservesOriginal() async throws {
     let url = try exportFixture(width: 2400, height: 1200)
     let root = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)

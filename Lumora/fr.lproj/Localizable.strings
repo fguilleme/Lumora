@@ -1472,6 +1472,11 @@
 "Noise C" = "Bruit C";
 "No adjustments" = "Aucun réglage";
 "Adjustments applied" = "Réglages appliqués";
+"Effect enabled" = "Effet actif";
+"Effect suspended" = "Effet suspendu";
+"Enable tab effect" = "Activer l’effet de l’onglet";
+"Suspend tab effect" = "Suspendre l’effet de l’onglet";
+"Toggle tab effect" = "Activer ou suspendre l’effet de l’onglet";
 "Color Grading" = "Coloration";
 "Softens the photo or the selected mask. Zero leaves the image unchanged." = "Adoucit la photo ou le masque sélectionné. Zéro conserve l’image inchangée.";
 

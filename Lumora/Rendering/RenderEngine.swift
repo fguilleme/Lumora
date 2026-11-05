@@ -161,7 +161,8 @@ actor RenderEngine {
         context.clearCaches()
     }
 
-    func render(url: URL, state: EditState, quality: PreviewQuality, bypassCreative: Bool = false) throws -> RenderResult {
+    func render(url: URL, state savedState: EditState, quality: PreviewQuality, bypassCreative: Bool = false) throws -> RenderResult {
+        let state = savedState.renderingState
         traceRenderMemory("start")
         try Task.checkCancellation()
         let start = ContinuousClock.now
@@ -217,7 +218,8 @@ actor RenderEngine {
     }
 
     /// Common pre-development input, viewed through the current crop. No Creative FX.
-    func autoAnalysis(url: URL, state: EditState, maskID: UUID? = nil, maximum: Int = 512) throws -> AutoAnalysisResult {
+    func autoAnalysis(url: URL, state savedState: EditState, maskID: UUID? = nil, maximum: Int = 512) throws -> AutoAnalysisResult {
+        let state = savedState.renderingState
         let start = ContinuousClock.now
         let metadata = try url.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey])
         let version = "\(metadata.contentModificationDate?.timeIntervalSince1970 ?? 0)-\(metadata.fileSize ?? 0)"
@@ -282,7 +284,8 @@ actor RenderEngine {
 
     /// Auto sees the oriented source after lens/crop geometry, before any manual
     /// development setting. Only this explicit user action runs Apple's analysis.
-    func captureCoreImageAuto(url: URL, state: EditState) throws -> (CoreImageAutoEngine.Capture, Bool, Double) {
+    func captureCoreImageAuto(url: URL, state savedState: EditState) throws -> (CoreImageAutoEngine.Capture, Bool, Double) {
+        let state = savedState.renderingState
         let start = ContinuousClock.now
         if sourceURL != url {
             clearCaches()
@@ -321,18 +324,20 @@ actor RenderEngine {
 
     /// Diagnostics evaluate the unchanged production graph, not a second Auto renderer.
     func autoDiagnosticDevelopment(_ input: CIImage, state: EditState) throws -> CIImage {
-        try applyDevelopment(input, state: state)
+        try applyDevelopment(input, state: state.renderingState)
     }
 
     /// A single Vision pass is shared by the Beauty panel and subsequent
     /// interactive/HQ renders. The analysis key excludes slider values.
-    func beautyAnalysis(url: URL, state: EditState) throws -> BeautyMasks {
+    func beautyAnalysis(url: URL, state savedState: EditState) throws -> BeautyMasks {
+        let state = savedState.renderingState
         if sourceURL != url { clearCaches(); sourceURL = url }
         let original = try preview(url: url, maximum: 1_024, optics: state.optics)
         return try beautyMasks(for: CIImage(cgImage: original), state: state)
     }
 
-    func prepareManualHealing(url: URL, state: EditState) throws -> ManualHealingAnalysis {
+    func prepareManualHealing(url: URL, state savedState: EditState) throws -> ManualHealingAnalysis {
+        let state = savedState.renderingState
         if sourceURL != url { clearCaches(); sourceURL = url }
         let original = try preview(url: url, maximum: 1_024, optics: state.optics)
         let source = CIImage(cgImage: original)
@@ -494,6 +499,7 @@ actor RenderEngine {
         context.clearCaches()
         defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
         let settings = settings.validated
+        let state = request.state.validated.renderingState
         guard ExportFormat.available.contains(settings.format) else { throw ExportError.unsupportedFormat }
         progress(.decoding)
         let source = CGImageSourceCreateWithURL(request.sourceURL as CFURL, nil)
@@ -501,7 +507,7 @@ actor RenderEngine {
         let raw = RAWDecoder.filter(request.sourceURL)
         let native: CIImage
         if let raw {
-            raw.isLensCorrectionEnabled = request.state.optics.profileCorrection && raw.isLensCorrectionSupported
+            raw.isLensCorrectionEnabled = state.optics.profileCorrection && raw.isLensCorrectionSupported
             // Resize only after geometry. Downsampling the RAW before a crop
             // discarded source detail and undershot the requested export size.
             guard let output = raw.outputImage else { throw PhotoError.unreadable }
@@ -510,7 +516,6 @@ actor RenderEngine {
             guard let decoded = CIImage(contentsOf: request.sourceURL, options: [.applyOrientationProperty: true]) else { throw PhotoError.unreadable }
             native = decoded
         }
-        let state = request.state.validated
         let crop = GeometryRenderer.apply(native, settings: state.geometry).extent.size
         guard crop.width.isFinite, crop.height.isFinite, crop.width >= 1, crop.height >= 1 else {
             throw PhotoError.renderFailed
@@ -598,8 +603,9 @@ actor RenderEngine {
     /// Region is normalized in post-geometry coordinates, origin lower-left.
     /// Builds a lazy full-resolution graph and materializes only a bounded output rectangle.
     /// Decoder internals may still decode the full original (notably RAW).
-    func renderFullResolutionTile(url: URL, state: EditState, region: CGRect,
+    func renderFullResolutionTile(url: URL, state savedState: EditState, region: CGRect,
                                   maximum: Int = 1024, bypassCreative: Bool = false) throws -> CGImage {
+        let state = savedState.validated.renderingState
         try Task.checkCancellation()
         guard [region.origin.x, region.origin.y, region.width, region.height].allSatisfy({ $0.isFinite }), region.width > 0, region.height > 0 else { throw PhotoError.renderFailed }
         defer { context.clearCaches(); cinematicGlowGPU?.releaseFrame(); depthLensEngine?.releaseFrame() }
@@ -614,7 +620,7 @@ actor RenderEngine {
             source = decoded
         }
         let normalized = source.transformed(by: CGAffineTransform(translationX: -source.extent.minX, y: -source.extent.minY))
-        let graph = try adjusted(normalized, state: state.validated, bypassCreative: bypassCreative)
+        let graph = try adjusted(normalized, state: state, bypassCreative: bypassCreative)
         let extent = graph.extent
         let limit = CGFloat(min(2048, max(64, maximum)))
         let width = min(limit, max(1, extent.width * region.width))

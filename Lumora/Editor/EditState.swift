@@ -28,6 +28,7 @@ struct EditState: Codable, Sendable, Equatable {
     var creative = CreativeEffectStack()
     /// Ordered masked adjustment layers. The legacy key name is preserved on disk.
     var masks: [AdjustmentLayer] = []
+    var suspendedSections: Set<AdjustmentSection> = []
 
     init() {}
 
@@ -47,6 +48,7 @@ struct EditState: Codable, Sendable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case exposure, contrast, highlights, shadows, whites, blacks
         case temperature, tint, vibrance, saturation, curves, colorMixer, colorGrading, effects, detail, beauty, optics, geometry, masks, creative, coreImageAuto, depthLens, depthLighting
+        case suspendedSections
     }
 
     /// Additive migration: older documents have no curve or mixer keys.
@@ -75,6 +77,11 @@ struct EditState: Codable, Sendable, Equatable {
         creative = try values.decodeIfPresent(CreativeEffectStack.self, forKey: .creative) ?? CreativeEffectStack()
         depthLens = try values.decodeIfPresent(DepthLensSettings.self, forKey: .depthLens)
         depthLighting = try values.decodeIfPresent(DepthLightingSettings.self, forKey: .depthLighting)
+        let sectionIDs = try values.decodeIfPresent([String].self, forKey: .suspendedSections) ?? []
+        suspendedSections = Set(sectionIDs.compactMap(AdjustmentSection.init(rawValue:)))
+        // Earlier versions could suspend these tabs separately from their native switches.
+        if suspendedSections.remove(.depthLens) != nil { depthLens?.enabled = false }
+        if suspendedSections.remove(.lighting) != nil { depthLighting?.enabled = false }
         self = validated
     }
 

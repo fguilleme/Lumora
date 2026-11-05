@@ -37,7 +37,7 @@ final class EditorSession {
         maskRequest &+= 1
         let token = maskRequest
         isGeneratingMask = true
-        let sampledGeometry = state.geometry
+        let sampledGeometry = state.effectiveGeometry
         defer { if token == maskRequest { isGeneratingMask = false } }
         do {
             var displayedMask = mask
@@ -53,11 +53,11 @@ final class EditorSession {
                 try SimilarityMaskEngine.sample(point, image: image, mask: samplingMask)
             }.value
             guard token == maskRequest, document?.id == documentID, selectedMaskComponent == component,
-                  state.geometry == sampledGeometry else { return }
+                  state.effectiveGeometry == sampledGeometry else { return }
             finishInteraction()
             history.begin("Sample color", state: state)
             if let (layer, index) = selectedComponentIndex {
-                state.masks[layer].components[index].geometry = state.geometry
+                state.masks[layer].components[index].geometry = sampledGeometry
             }
             setSelectedMaskShape(.similarity(sampled))
             similaritySamplerID = nil
@@ -99,7 +99,7 @@ final class EditorSession {
         // circular guide by the squared aspect ratio on portrait RAW files.
         return HealingGeometry(
             size: CGSize(width: result.original.width, height: result.original.height),
-            settings: state.geometry)
+            settings: state.effectiveGeometry)
     }
     func closeHealing() {
         finishInteraction(); healingToken &+= 1; healingTask?.cancel()
@@ -296,7 +296,8 @@ final class EditorSession {
             let (capture, _, _) = try await engine.captureCoreImageAuto(url: url, state: snapshot)
             guard token == autoRequest, importToken == importGeneration,
                   document?.id == documentID, sourceURL == url,
-                  state.optics == snapshot.optics, state.geometry == snapshot.geometry,
+                  state.optics == snapshot.optics, state.effectiveGeometry == snapshot.effectiveGeometry,
+                  state.suspendedSections.contains(.optics) == snapshot.suspendedSections.contains(.optics),
                   selectedMaskID == nil,
                   !Task.isCancelled else { return }
             history.begin("Core Image Auto", state: state)
@@ -720,8 +721,10 @@ final class EditorSession {
         do {
             let masks = try await engine.beautyAnalysis(url: sourceURL, state: snapshot)
             guard token == beautyRequest, importToken == importGeneration,
-                  document?.id == documentID, state.geometry == snapshot.geometry,
-                  state.optics == snapshot.optics, !Task.isCancelled else { return }
+                  document?.id == documentID, state.effectiveGeometry == snapshot.effectiveGeometry,
+                  state.optics == snapshot.optics,
+                  state.suspendedSections.contains(.optics) == snapshot.suspendedSections.contains(.optics),
+                  !Task.isCancelled else { return }
             beautyFaceCount = masks.faceCount
             #if DEBUG
             beautyDebugMasks = masks
@@ -771,10 +774,11 @@ final class EditorSession {
         history.commit(state); persist(); requestRender(.high)
     }
     private func anchorLegacyMasks() {
+        let geometry = state.effectiveGeometry
         for layer in state.masks.indices {
             for component in state.masks[layer].components.indices
                 where state.masks[layer].components[component].geometry == nil {
-                state.masks[layer].components[component].geometry = state.geometry
+                state.masks[layer].components[component].geometry = geometry
             }
         }
     }
@@ -897,7 +901,7 @@ final class EditorSession {
     var maskRenderGeometry: MaskRenderGeometry? {
         guard let result else { return nil }
         return MaskRenderGeometry(sourceSize: CGSize(width: result.original.width, height: result.original.height),
-                                  current: state.geometry)
+                                  current: state.effectiveGeometry)
     }
     var selectedMaskGeometry: MaskGeometry? {
         guard let component = selectedMaskComponent else { return nil }
@@ -966,7 +970,7 @@ final class EditorSession {
     }
     func createMask(_ kind: MaskKind) {
         finishInteraction(); history.begin("Create mask", state: state)
-        let component = MaskComponent(shape: kind.shape(), geometry: state.geometry)
+        let component = MaskComponent(shape: kind.shape(), geometry: state.effectiveGeometry)
         let mask = LocalMask(name: "\(kind.title) \(state.masks.count + 1)", components: [component])
         state.masks.append(mask); selectedMaskID = mask.id; selectedMaskComponentID = component.id
         if kind == .brush { brushMode = .paint }
@@ -975,7 +979,7 @@ final class EditorSession {
     func addMaskComponent(_ kind: MaskKind, operation: MaskOperation) {
         finishInteraction(); guard let index = selectedMaskIndex else { return }
         history.begin(operation == .add ? "Add to mask" : "Subtract from mask", state: state)
-        let component = MaskComponent(operation: operation, shape: kind.shape(), geometry: state.geometry)
+        let component = MaskComponent(operation: operation, shape: kind.shape(), geometry: state.effectiveGeometry)
         state.masks[index].components.append(component); selectedMaskComponentID = component.id
         if kind == .brush { brushMode = .paint }
         history.commit(state); persist(); requestRender(.high)
@@ -988,17 +992,17 @@ final class EditorSession {
         maskRequest &+= 1
         let token = maskRequest
         isGeneratingMask = true
-        let sampledGeometry = state.geometry
+        let sampledGeometry = state.effectiveGeometry
         defer { if token == maskRequest { isGeneratingMask = false } }
         do {
             let generated = try await maskGenerator.generate(kind, from: image)
             try Task.checkCancellation()
-            guard token == maskRequest, document?.id == documentID, state.geometry == sampledGeometry else { return }
+            guard token == maskRequest, document?.id == documentID, state.effectiveGeometry == sampledGeometry else { return }
             if let targetMaskID {
                 guard selectedMaskID == targetMaskID, state.masks.contains(where: { $0.id == targetMaskID }) else { return }
             }
             history.begin(operation == nil ? "Detect \(kind.title)" : "Edit with \(kind.title)", state: state)
-            let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.geometry)
+            let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: sampledGeometry)
             if operation != nil, let index = selectedMaskIndex {
                 state.masks[index].components.append(component)
                 selectedMaskComponentID = component.id
@@ -1017,7 +1021,7 @@ final class EditorSession {
     func commitMagicMask(_ generated: GeneratedMask, operation: MaskOperation? = nil) {
         finishInteraction()
         history.begin(operation == nil ? "Magic Selection" : "Edit with Magic Selection", state: state)
-        let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.geometry)
+        let component = MaskComponent(operation: operation ?? .add, shape: .generated(generated), geometry: state.effectiveGeometry)
         if operation != nil, let index = selectedMaskIndex {
             state.masks[index].components.append(component)
             selectedMaskComponentID = component.id
@@ -1261,17 +1265,26 @@ final class EditorSession {
         history.commit(state)
         persist(); requestRender(.high)
     }
+    func toggleSection(_ section: AdjustmentSection) {
+        guard section.supportsEyeToggle else { return }
+        finishInteraction()
+        history.begin(String(localized: "Toggle tab effect"), state: state)
+        if section == .geometry { anchorLegacyMasks() }
+        if state.suspendedSections.remove(section) == nil { state.suspendedSections.insert(section) }
+        showingOriginal = false
+        history.commit(state); persist(); requestRender(.high, force: true)
+    }
     func undo() {
         finishInteraction()
         guard let previous = history.undo() else { return }
-        let masksChanged = state.masks != previous.masks
-        state = previous; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: masksChanged)
+        let force = state.masks != previous.masks || state.suspendedSections != previous.suspendedSections
+        state = previous; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: force)
     }
     func redo() {
         finishInteraction()
         guard let next = history.redo() else { return }
-        let masksChanged = state.masks != next.masks
-        state = next; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: masksChanged)
+        let force = state.masks != next.masks || state.suspendedSections != next.suspendedSections
+        state = next; selectFirstMaskIfNeeded(); persist(); requestRender(.high, force: force)
     }
     func exportRequest() -> ExportRequest? {
         finishInteraction()
