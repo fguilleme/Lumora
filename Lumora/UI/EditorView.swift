@@ -596,19 +596,27 @@ struct EditorView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Text("LUMORA✨").font(.system(.subheadline, design: .rounded)).tracking(3)
+                .lineLimit(1).minimumScaleFactor(0.8)
             Spacer()
             if session.result != nil {
                 HStack(spacing: 0) {
-                    Button { showPhotos = true } label: {
-                        Image(systemName: "photo.on.rectangle").frame(width: 44, height: 44)
+                    HStack(spacing: 12) {
+                        Button { showPhotos = true } label: {
+                            Image(systemName: "photo.badge.plus")
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .accessibilityLabel("Import from Photos")
+                        .accessibilityIdentifier("header-photos")
+                        Button { showLibrary = true } label: {
+                            Image(systemName: "folder")
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .accessibilityLabel("Open library")
+                        .accessibilityIdentifier("header-library")
                     }
-                    .accessibilityLabel("Import from Photos")
-                    .accessibilityIdentifier("header-photos")
-                    Button { showLibrary = true } label: {
-                        Image(systemName: "photo.stack").frame(width: 44, height: 44)
-                    }
-                    .accessibilityLabel("Open library")
-                    .accessibilityIdentifier("header-library")
+                    .padding(.trailing, 8)
                     Button(action: session.undo) { Image(systemName: "arrow.uturn.backward").frame(width: 44, height: 44) }
                         .disabled(!session.history.canUndo).accessibilityLabel("Undo")
                     Button(action: session.redo) { Image(systemName: "arrow.uturn.forward").frame(width: 44, height: 44) }
@@ -618,7 +626,7 @@ struct EditorView: View {
                             Rectangle().fill(Color(red: 0.055, green: 0.065, blue: 0.07))
                             Image(systemName: "ellipsis.circle")
                         }
-                        .frame(width: 54, height: 48)
+                        .frame(width: 44, height: 48)
                         .contentShape(Rectangle())
                     }
                     .accessibilityLabel("Import and options")
@@ -626,8 +634,8 @@ struct EditorView: View {
                     .confirmationDialog("Options", isPresented: $showHeaderOptions, titleVisibility: .hidden) {
                         Button("Settings", systemImage: "gearshape") { selectPanel(.settings) }
                             .accessibilityIdentifier("open-editor-settings")
-                        Button("Library", systemImage: "photo.stack") { showLibrary = true }
-                        Button("Photos", systemImage: "photo.on.rectangle") { showPhotos = true }
+                        Button("Library", systemImage: "folder") { showLibrary = true }
+                        Button("Photos", systemImage: "photo.badge.plus") { showPhotos = true }
                         Button("Export", systemImage: "square.and.arrow.up") {
                             presentExport(directlyToPhotos: false)
                         }
@@ -636,13 +644,13 @@ struct EditorView: View {
                             presentExport(directlyToPhotos: true)
                         }
                         .accessibilityIdentifier("header-option-export-photos")
-                        Button("Files", systemImage: "folder") { showFiles = true }
+                        Button("Files", systemImage: "doc.badge.plus") { showFiles = true }
                         Button("Reset settings", systemImage: "arrow.counterclockwise", action: session.resetAll)
                         Button("Cancel", role: .cancel) {}
                     }
                 }
             }
-        }.padding(.horizontal)
+        }.padding(.horizontal, 12)
     }
     private func presentExport(directlyToPhotos: Bool) {
         guard !exporter.isBusy, let request = session.exportRequest() else { return }
@@ -652,10 +660,10 @@ struct EditorView: View {
 
     private var importButtons: some View {
         HStack(spacing: 8) {
-            welcomeImportButton("Library", symbol: "photo.stack") { showLibrary = true }
+            welcomeImportButton("Library", symbol: "folder") { showLibrary = true }
                 .accessibilityIdentifier("library-open")
-            welcomeImportButton("Photos", symbol: "photo.on.rectangle", prominent: true) { showPhotos = true }
-            welcomeImportButton("Files", symbol: "folder") { showFiles = true }
+            welcomeImportButton("Photos", symbol: "photo.badge.plus", prominent: true) { showPhotos = true }
+            welcomeImportButton("Files", symbol: "doc.badge.plus") { showFiles = true }
         }
         .padding(.horizontal, 16)
     }
